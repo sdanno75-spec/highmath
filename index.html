@@ -46,6 +46,17 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 /* グループ名は左の決まった幅の欄に置き、単元は折り返しても同じ線からそろえて並べる */
 .units{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:6px;position:relative;padding-left:13.5em}
 .ugrp{font-size:12px;color:var(--muted);position:absolute;left:0;top:0;width:13em;line-height:1.35;padding-top:9px}
+/* 単元のグループの見出しに、選んだ単元の数を出す */
+.gcnt{color:var(--ink);font-weight:600;margin-left:2px}
+/* 設定の項目（教科・単元・問題の量…）は、左の見出しをクリックするとたたむ・ひらく。たたむと今の設定を1行で出す */
+.glab{cursor:pointer;user-select:none}
+.glab:hover{color:var(--muted)}
+.glab .chev{vertical-align:-1px;margin-right:4px;transition:transform .15s}
+.grp.closed .glab .chev{transform:rotate(-90deg)}
+.grp.closed > div:not(.glab) > :not(.gsum){display:none}
+.gsum{display:none;font-size:13px;color:var(--muted);cursor:pointer}
+.grp.closed .gsum{display:block}
+.foldAll{display:flex;justify-content:flex-end;gap:4px;padding-top:8px}
 .h1sub{font-size:14px;font-weight:500;color:var(--muted);margin-left:10px}
 .chk{display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border:1px solid var(--line);border-radius:999px;background:#fff;cursor:pointer;font-size:14px;user-select:none}
 .chk input{accent-color:var(--ink);width:18px;height:18px;margin:0}
@@ -180,9 +191,10 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 
   <section class="view show" id="view-main">
     <div class="panel">
+      <div class="foldAll seg" id="grpFold"><button data-act="close">すべてたたむ</button><button data-act="open">すべてひらく</button></div>
       <div class="grp"><div class="glab">教科</div><div>
-        <div class="seg" data-set="subject"><button data-v="1">数I</button><button data-v="A">数A</button><button data-v="both">数I・数A</button><button data-v="2">数II</button><button data-v="B">数B</button><button data-v="C">数C</button></div>
-        <div class="gnote">教科を切りかえると、その教科の単元が出ます。「数I・数A」では両方の単元をまぜられます。数II・数B は単独で選びます。</div>
+        <div class="seg" data-set="subject"><button data-v="1">数I</button><button data-v="A">数A</button><button data-v="both">数I・数A</button><button data-v="2">数II</button><button data-v="B">数B</button><button data-v="C">数C</button><button data-v="2BC">数II・数B・数C</button></div>
+        <div class="gnote">教科を切りかえると、その教科の単元が出ます（単元は自動では選ばれません）。「数I・数A」「数II・数B・数C」では、いくつかの教科の単元をまぜられます。</div>
       </div></div>
       <div class="grp"><div class="glab">単元</div><div>
         <div class="seg" id="unitAll"><button data-act="all">すべて選択</button><button data-act="none">選択を解除</button></div>
@@ -355,6 +367,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
       </div></div>
       <div class="grp"><div class="glab">難しさ</div><div>
         <div class="seg" data-set="level"><button data-v="basic">基本</button><button data-v="std">標準</button><button data-v="mix">まぜる</button></div>
+        <div id="mixLvBox" style="margin-top:6px"><div class="seg" data-set="mixLv"><button data-v="seq">基本 → 標準の順</button><button data-v="rand">基本と標準をランダムに</button></div></div>
         <div class="gnote" id="levelNote"></div>
       </div></div>
       <div class="grp"><div class="glab">ならび順</div><div>
@@ -440,8 +453,12 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.8.0', UPDATED = '2026-10-28';
+const VERSION = '5.9.3', UPDATED = '2026-10-28';
 const CHANGES = [
+  ['5.9.3', '2026-10-28', 'プリントの題名の横の単元名は3つまで。4つ以上のときは、すべて同じ分野ならその分野名（例：平面ベクトル）、ちがえば教科名（例：数学Ⅰ・A）を出す。'],
+  ['5.9.2', '2026-10-28', 'ページを開いたときは、設定の項目をすべてたたんだ状態にする。'],
+  ['5.9.1', '2026-10-28', 'たたむ単位を、単元のグループから設定の項目（教科・単元・問題の量・配置・難しさ など）に変えた。左の見出しをクリックするとたたみ、たたむと今の設定を1行で表示する。上に「すべてたたむ／すべてひらく」。単元のグループの見出しには選んだ数を出す。'],
+  ['5.9.0', '2026-10-28', '動作を軽くした（解答ページの文字の大きさを見積もってから測る、教科を切りかえても単元を自動で選ばない、単元を続けて選ぶときは最後の操作のあとに1回だけ作りなおす）。教科に「数II・数B・数C」を追加。難しさの「まぜる」で、基本 → 標準の順かランダムかを選べる。単元のグループを見出しのクリックでたためる（すべてたたむ／ひらく、選んだ数を見出しに表示）。'],
   ['5.8.0', '2026-10-28', '数A に5単元を追加（円順列・重複順列、組分け、条件付き確率、期待値、チェバの定理）。期待値は12の場面（さいころ・くじ・硬貨・玉・カード・的当て・2個のさいころ・参加費・2つのくじの比較・賞金を逆に求める・投げる回数）で、同じ場面が続かない。公式・手順つき。数I・数A の11単元がそろった。'],
   ['5.7.0', '2026-10-28', '数I にデータの分析の2単元を追加（平均・分散・標準偏差、相関係数）。分散・標準偏差は分数・根号の正確な値、相関係数は割り切れるデータだけを使い小数で答える。公式・手順つき。'],
   ['5.6.0', '2026-10-28', '数I に4単元を追加（2次関数の平行移動・対称移動、三角比の値、三角比の相互関係、三角形の面積と外接円の半径）。角は 0°〜180°、答えは分数・根号の正確な値。公式・手順つき。'],
@@ -949,7 +966,8 @@ const UNIT_LEVEL = {
 function levelNoteHTML(){
   const us = UNITS.filter(u => ST.units.includes(u[0]));
   const line = ([u, nm]) => { const [b, s] = UNIT_LEVEL[u]; return `${esc(nm)}：${esc(ST.level === 'basic' ? b : ST.level === 'std' ? s : `基本 ${b} → 標準 ${s}`)}`; };
-  return (ST.level === 'mix' ? 'まぜる：基本と標準を半分ずつ。「単元ごとにまとめる」なら、各単元の中で基本から標準へ並べます。<br>' : '') + us.map(line).join('<br>');
+  const mixNote = ST.mixLv === 'rand' ? '基本と標準をランダムにまぜて並べます。' : '基本の問題を先に、標準の問題をあとに並べます（「単元ごとにまとめる」なら、各単元の中で基本から標準へ）。';
+  return (ST.level === 'mix' ? `まぜる：基本と標準を半分ずつ。${mixNote}<br>` : '') + us.map(line).join('<br>');
 }
 
 // 最大・最小のグラフ：画面（SVG）と LaTeX（TikZ）で同じ図になるよう、図形を一度だけ計算する。
@@ -6255,7 +6273,7 @@ const FONTS = {
   gothic: "'Zen Kaku Gothic New','Hiragino Sans','Yu Gothic',system-ui,sans-serif",
   mincho: "'Zen Old Mincho','Hiragino Mincho ProN','Yu Mincho',serif"
 };
-const ST = { units: ['tasuki', 'heihou'], count: '10', level: 'mix', order: 'mix', font: 'maru', tex: 'lua', title: '', pv: 'q', mode: 'work', subject: '1', kahouUnit: 'deg', formula: 'off' };
+const ST = { units: ['tasuki', 'heihou'], count: '10', level: 'mix', order: 'mix', font: 'maru', tex: 'lua', title: '', pv: 'q', mode: 'work', subject: '1', kahouUnit: 'deg', formula: 'off', mixLv: 'seq', closedGrp: [] };
 let PROBS = [];
 const SAVE_KEY = 'suu1print_settings';
 try { Object.assign(ST, JSON.parse(localStorage.getItem(SAVE_KEY) || '{}')); } catch (e) { /* 保存なしで動く */ }
@@ -6284,6 +6302,11 @@ function makeSet(){
     });
   });
   PROBS = ST.order === 'mix' ? spreadSit(out) : out;
+  // まぜるときの難しさの並び：基本 → 標準の順（初期）か、ランダム。out は単元ごとに基本 → 標準の順になっている
+  if (ST.level === 'mix') {
+    if (ST.mixLv !== 'rand') { if (ST.order === 'mix') PROBS = [...spreadSit(out.filter(p => p.lv === 1)), ...spreadSit(out.filter(p => p.lv === 2))]; }
+    else if (ST.order !== 'mix') PROBS = units.flatMap(u => shuffle(out.filter(p => p.unit === u)));
+  }
 }
 // まぜる：同じ単元・同じ場面の問題がとなりに来ない並びになるまでまぜ直す（見つからなければ、となりがいちばん少ない並び）
 function spreadSit(ps){
@@ -6298,9 +6321,21 @@ function spreadSit(ps){
 const K = (tex, display = false) => katex.renderToString(tex, { throwOnError: false, displayMode: display });
 const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 const rich = s => s.split('$').map((x, i) => i % 2 ? K(x) : esc(x)).join('');
-const SUBJ_NAME = { 1: '数I', A: '数A', both: '数I・数A', 2: '数II', B: '数B', C: '数C' };
+const SUBJ_NAME = { 1: '数I', A: '数A', both: '数I・数A', 2: '数II', B: '数B', C: '数C', '2BC': '数II・数B・数C' };
+// いくつかの教科をまとめたタブ：見せる単元の教科
+const SUBJ_SET = { both: ['1', 'A'], '2BC': ['2', 'B', 'C'] };
 const printTitle = () => ST.title.trim() || `${SUBJ_NAME[ST.subject] || '数学'} 基礎計算プリント`;
-const unitList = () => UNITS.filter(u => ST.units.includes(u[0])).map(u => u[1]).join('・');
+// 題名の横に出す単元名：3つまでは名前を並べる。4つ以上は、すべて同じ分野（単元欄のグループ「数C　平面ベクトル」など）ならその分野名だけ、ちがえば出さない（利用者の指定）
+const unitGroupOf = u => { const g = document.querySelector(`input[name="unit"][value="${u}"]`)?.closest('.units')?.querySelector('.ugrp'); return g ? g.firstChild.textContent.trim().split('　').pop() : ''; };
+const unitList = () => {
+  const us = UNITS.filter(u => ST.units.includes(u[0]));
+  if (us.length <= 3) return us.map(u => u[1]).join('・');
+  const gs = new Set(us.map(u => unitGroupOf(u[0])));
+  if (gs.size === 1) return [...gs][0];
+  // 分野がちがうときは教科名（数学Ⅰ・A、数学Ⅱ・B・C など）
+  const ss = ['1', 'A', '2', 'B', 'C'].filter(s => us.some(u => u[2] === s));
+  return '数学' + ss.map(s => ({ 1: 'Ⅰ', A: 'A', 2: 'Ⅱ', B: 'B', C: 'C' })[s]).join('・');
+};
 // 配置：work＝しっかり解く（問題の種類に合わせた高さの解く欄）／ list＝一覧（問題集のように大問＋小問を並べ、解答欄つき。計算用紙は別ページ）
 const INST = {
   work: '次の問いに答えよ。計算は各問の下の余白を使うこと。',
@@ -6636,6 +6671,8 @@ function render(){
   const box = $('sheets');
   box.className = 'sheet-wrap';           // 計測のあいだは全ページを表示しておく
   box.innerHTML = '';
+  // 単元を選んでいないときは、プリントを空にする
+  if (!PROBS.length) { ['pageInfo', 'layoutWarn'].forEach(id => { $(id).textContent = ''; }); $('timeInfo').innerHTML = ''; ISSUES = []; return; }
   const A = arranged();
   if (ST.mode === 'list') { renderList(box, A); renderCalc(box, A); } else renderWork(box, A);
   if (needZ()) box.insertAdjacentHTML('beforeend', zTableHTML());   // 正規分布表は問題と一緒に配れるよう、解答の前
@@ -6819,7 +6856,17 @@ function layoutAnswers(box, blocks, title){
   let w = addPage(10);
   w.innerHTML = blocks.join('');
   fitWide(w);   // 10pt で幅に合わせた縮小率（%）は、文字を小さくしてもそのまま使える
-  for (let fs = 10; over(w) && fs > 7.5;) { fs -= 0.5; w.style.fontSize = fs + 'pt'; }
+  // はみ出しを測るたびに解答全体の並べ直し（数C で1回 0.3 秒ほど）が起きるので、0.5pt ずつ試さない。
+  // 面積は文字の大きさの2乗に比例するとみて、はみ出しの割合から入る大きさを見積もり、その前後だけ確かめる
+  if (over(w)) {
+    const ratio = Math.min(w.clientWidth / w.scrollWidth, w.clientHeight / w.scrollHeight), est = 10 * Math.sqrt(ratio);
+    if (est >= 7.25) {
+      let fs = Math.max(7.5, Math.min(9.5, Math.floor(est * 2) / 2));
+      w.style.fontSize = fs + 'pt';
+      if (over(w)) { while (over(w) && fs > 7.5) { fs -= 0.5; w.style.fontSize = fs + 'pt'; } }
+      else { while (fs < 9.5) { w.style.fontSize = (fs + 0.5) + 'pt'; if (over(w)) { w.style.fontSize = fs + 'pt'; break; } fs += 0.5; } }
+    }
+  }
   if (!over(w)) return;
   // 入らないときは 9pt にして、解答のかたまりを順に次の紙へ。高さは1列にならべて一度に測り、列ごとに詰める
   const qa = [...w.children], first = w.closest('.sheet');
@@ -6935,7 +6982,7 @@ ${noTex(a)}\\ {\\footnotesize\\color{gray} ${(a.p.calc || a.p.math) ? (a.p.calc 
   const answers = A.map(a => { const body = `\\noindent${noTex(a)}\\ ${a.p.head}\\hfill{\\footnotesize 目安 ${fmt3(a.p.sec)}}\\par
 ${joinEq(a.p.steps).map(stepTex).join('\n')}
 \\noindent\\textbf{答}\\ ${a.p.ans}\\par\\medskip\\hrule\\medskip`; return a.p.ansFull ? `\\end{multicols}\n${body}\n\\begin{multicols}{2}\n\\small` : body; }).join('\n\n');
-  return `% ${printTitle()}（${unitList()}）
+  return `% ${printTitle()}${unitList() ? `（${unitList()}）` : ''}
 ${cls}
 \\usepackage[margin=14mm]{geometry}
 \\usepackage{amsmath,amssymb}
@@ -7029,28 +7076,35 @@ function applyFont(){ document.documentElement.style.setProperty('--font', FONTS
 function applySubject(){
   if (!SUBJ_NAME[ST.subject]) ST.subject = '1';
   // 数I・数A は数I と数A の単元だけ。数II・数B は単独
-  const show = sj => ST.subject === 'both' ? (sj === '1' || sj === 'A') : ST.subject === sj;
+  const show = sj => (SUBJ_SET[ST.subject] || [ST.subject]).includes(sj);
   document.querySelectorAll('.units[data-subj]').forEach(u => { u.style.display = show(u.dataset.subj) ? '' : 'none'; });
+  // 教科を切りかえても単元は自動で選ばない（選ぶたびに作りなおすので、選ぶ前のむだな作成をしない）
   ST.units = ST.units.filter(u => show(UNIT_SUBJ[u]));
-  if (!ST.units.length) ST.units = { A: ['junretsu', 'hanpuku'], 2: ['nikou', 'inshuTeiri'], B: ['tousa', 'touhi'], C: ['naiseki', 'nasukaku'] }[ST.subject] || ['tasuki', 'heihou'];
   $('title').placeholder = `プリントの題名（空らんなら「${printTitle()}」）`;
   document.title = '数学 基礎計算プリント';
 }
 // 単元ごとの設定は、その単元を選んでいるときだけ見せる
-function showOpts(){ $('kahouOpt').style.display = ST.subject === '2' && ST.units.includes('kahou') ? '' : 'none'; }
+function showOpts(){
+  $('kahouOpt').style.display = ST.units.includes('kahou') ? '' : 'none';
+  $('mixLvBox').style.display = ST.level === 'mix' ? '' : 'none';
+}
 function syncSeg(){
   applySubject();
   document.querySelectorAll('.seg[data-set]').forEach(sg => sg.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.v === String(ST[sg.dataset.set]))));
   document.querySelectorAll('input[name="unit"]').forEach(i => { i.checked = ST.units.includes(i.value); });
-  $('levelNote').innerHTML = levelNoteHTML(); showOpts();
+  $('levelNote').innerHTML = levelNoteHTML(); showOpts(); applyClosed(); updateGroupCounts();
   $('modeNote').textContent = MODE_NOTE[ST.mode];
   $('title').value = ST.title;
 }
 function regenerate(){
-  if (!ST.units.length) { status('単元を1つ以上選んでください', true); return; }
+  clearTimeout(regenTimer);
+  if (!ST.units.length) { PROBS = []; render(); status('単元を選ぶと，ここにプリントができます。'); return; }
   status('');
   makeSet(); render();
 }
+// 単元のチェックを続けてつけはずしするときは，最後の操作から少し待って1回だけ作りなおす
+let regenTimer = 0;
+const regenSoon = () => { clearTimeout(regenTimer); regenTimer = setTimeout(regenerate, 350); };
 document.querySelectorAll('.seg[data-set] button').forEach(b => b.addEventListener('click', () => {
   const name = b.closest('.seg').dataset.set;
   ST[name] = b.dataset.v; syncSeg(); save();
@@ -7065,12 +7119,48 @@ document.querySelectorAll('#unitAll button').forEach(b => b.addEventListener('cl
   const vis = [...document.querySelectorAll('input[name="unit"]')].filter(i => i.closest('.units').style.display !== 'none');
   ST.units = b.dataset.act === 'all' ? vis.map(i => i.value) : [];
   document.querySelectorAll('input[name="unit"]').forEach(i => { i.checked = ST.units.includes(i.value); });
-  save(); $('levelNote').innerHTML = levelNoteHTML(); showOpts(); regenerate();
+  save(); $('levelNote').innerHTML = levelNoteHTML(); showOpts(); updateGroupCounts(); regenerate();
+}));
+// 単元のグループの見出しに、そのグループで選んでいる単元の数を出す
+const unitGroups = () => [...document.querySelectorAll('.units[data-subj]')];
+unitGroups().forEach(u => { u.querySelector('.ugrp').insertAdjacentHTML('beforeend', '<span class="gcnt"></span>'); });
+function updateGroupCounts(){ unitGroups().forEach(u => { const n = u.querySelectorAll('input[name="unit"]:checked').length; u.querySelector('.gcnt').textContent = n ? `（${n}）` : ''; }); updateGrpSums(); }
+// 設定の項目（教科・単元・問題の量…）：左の見出しをクリックするとたたむ・ひらく。たたんだ項目は ST.closedGrp に見出しの名前で覚える。
+// たたんでいるときは、今の設定（選んでいるボタン、単元の名前など）を1行で出し、その行をクリックしてもひらく
+const CHEV = '<svg class="chev" viewBox="0 0 12 12" width="11" height="11" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const grps = [...document.querySelectorAll('#view-main .panel .grp')];
+grps.forEach(g => {
+  const lab = g.querySelector('.glab'), name = lab.textContent.trim(), body = lab.nextElementSibling;
+  g.dataset.name = name; lab.innerHTML = CHEV + esc(name);
+  lab.setAttribute('role', 'button'); lab.tabIndex = 0;
+  body.insertAdjacentHTML('afterbegin', '<div class="gsum"></div>');
+  const toggle = () => { const c = !g.classList.contains('closed'); g.classList.toggle('closed', c); ST.closedGrp = c ? [...new Set([...ST.closedGrp, name])] : ST.closedGrp.filter(x => x !== name); save(); };
+  lab.addEventListener('click', toggle);
+  body.querySelector('.gsum').addEventListener('click', toggle);
+  lab.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+});
+// ページを開いたときは、すべての項目をたたんでおく（利用者の指定）
+ST.closedGrp = grps.map(g => g.dataset.name);
+function applyClosed(){ if (!Array.isArray(ST.closedGrp)) ST.closedGrp = [];grps.forEach(g => g.classList.toggle('closed', ST.closedGrp.includes(g.dataset.name))); }
+// たたんだときの1行：単元は選んだ単元の名前（多いときは数）、題名の欄は入力した題名、そのほかは選んでいるボタン
+function updateGrpSums(){
+  grps.forEach(g => {
+    let s;
+    if (g.querySelector('input[name="unit"]')) { const nm = UNITS.filter(u => ST.units.includes(u[0])).map(u => u[1]); s = !nm.length ? '単元を選んでいません' : nm.length <= 4 ? nm.join('・') : `${nm.slice(0, 3).join('・')} ほか（${nm.length}単元）`; }
+    // 「まぜる」の並び順のように、いま隠している設定のボタンは入れない
+    else s = [...g.querySelectorAll('.seg button.on')].filter(b => !b.closest('[style*="display: none"]')).map(b => b.textContent).join('・');
+    const t = g.querySelector('#title'); if (t && ST.title.trim()) s = `「${ST.title.trim()}」・${s}`;
+    g.querySelector('.gsum').textContent = s || '（設定なし）';
+  });
+}
+document.querySelectorAll('#grpFold button').forEach(b => b.addEventListener('click', () => {
+  ST.closedGrp = b.dataset.act === 'close' ? grps.map(g => g.dataset.name) : [];
+  applyClosed(); save();
 }));
 document.querySelectorAll('input[name="unit"]').forEach(i => i.addEventListener('change', () => {
-  ST.units = [...document.querySelectorAll('input[name="unit"]:checked')].map(x => x.value); save(); $('levelNote').innerHTML = levelNoteHTML(); showOpts(); regenerate();
+  ST.units = [...document.querySelectorAll('input[name="unit"]:checked')].map(x => x.value); save(); $('levelNote').innerHTML = levelNoteHTML(); showOpts(); updateGroupCounts(); regenSoon();
 }));
-$('title').addEventListener('input', () => { ST.title = $('title').value; save(); if (PROBS.length) render(); });
+$('title').addEventListener('input', () => { ST.title = $('title').value; save(); updateGrpSums(); if (PROBS.length) render(); });
 $('bMake').addEventListener('click', regenerate);
 $('bPdf').addEventListener('click', printPdf);
 $('bImgPdf').addEventListener('click', savePdf);
