@@ -488,8 +488,10 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.18.1', UPDATED = '2026-11-05';
+const VERSION = '5.19.0', UPDATED = '2026-11-05';
 const CHANGES = [
+  ['5.19.0', '2026-11-05', '二次曲線の4単元（方程式・平行移動・共有点・接線）で、問題文と途中式に出る数を、20以下・10の倍数・100までの平方数・144までの平方数どうしの積だけにした。共有点の 23x²−40x+5=0、接線の x²/28+y²/21=1、焦点の √21 などは出ない。'],
+  ['5.18.2', '2026-11-05', '2次曲線の方程式の標準で、(48/5)² や 8・15・17 のような大きな数の計算を出さないようにした。使う組は 3・4・5 と 6・8・10 だけ、楕円が通る点は短軸の端（PF=PF′=√(c²+b²)）にした。焦点は x 軸上・y 軸上の両方。'],
   ['5.18.1', '2026-11-05', 'しっかり解くで、相関係数の問題は2列に分けず横いっぱいの幅で出す（表と計算が横に長いため）。幅が2倍になるので、解くスペースの高さは半分（同じ面積、2問で1ページ）にする。'],
   ['5.18.0', '2026-11-05', '解くスペース（と計算用紙の欄）の高さを、解答・解説の実際の長さの 0.8 倍にした（34〜140mm）。文の段・表・図も長さに入るので、相関係数・合成・チェバ・n 乗根などで小さすぎた欄が、ほかの単元と同じ割合になる。'],
   ['5.17.1', '2026-11-05', 'しっかり解くで、仮説検定・推定・正規分布・標本平均の分布の解くスペースを広くした（仮説や判断などの文の段も、解くスペースの見積もりに入れる。上限 120mm）。'],
@@ -6117,21 +6119,29 @@ Object.assign(SC_GEN, {
           label = byDir ? `焦点が $${FT}$，準線が直線 $${DT}$ である放物線の方程式を求めよ。` : `焦点が $${FT}$ で，頂点が原点である放物線の方程式を求めよ。`; key = `ks1|pa|${axis}|${p}|${byDir}`;
           st = [{ t: 'txt', s: `頂点が原点，焦点が $${axis}$ 軸上にあるから，$${axis === 'x' ? 'y^2=4px' : 'x^2=4py'}$ とおける。焦点から $p=${p}$` }];
         }
-      } else if (pick([0, 1])) {
-        // 漸近線と焦点から双曲線：a, b, c が整数になる組
-        const [a, b, cc] = pick([[3, 4, 5], [4, 3, 5], [5, 12, 13], [12, 5, 13], [6, 8, 10], [8, 6, 10], [8, 15, 17], [15, 8, 17], [9, 12, 15], [12, 9, 15], [7, 24, 25], [24, 7, 25], [15, 20, 25], [20, 15, 25]]), m = new F(b, a);
-        c = { kind: 'hy', A: a * a, B: b * b, h: 0, k: 0, axis: 'x' };
-        label = `2つの直線 $y=\\pm ${numTex(m)}x$ を漸近線とし，2点 $(${cc},\\ 0)$，$(-${cc},\\ 0)$ を焦点とする双曲線の方程式を求めよ。`; key = `ks2|as|${a}|${b}`;
-        st = [{ t: 'txt', s: `$\\frac{x^2}{a^2}-\\frac{y^2}{b^2}=1$（$a>0$，$b>0$）とおくと，漸近線は $y=\\pm\\frac{b}{a}x$ であるから $\\frac{b}{a}=${numTex(m)}$，$b=${numTex(m)}a$` },
-          { t: 'txt', s: `焦点から $a^2+b^2=${cc * cc}$。$b=${numTex(m)}a$ を代入して $${numTex(new F(a * a + b * b, a * a))}a^2=${cc * cc}$，$a^2=${a * a}$，$b^2=${b * b}$` }];
       } else {
-        // 焦点と通る点から楕円：点 (c, b²/a) を通る。PF + PF' = 2a
-        const [a, b, cc] = pick([[5, 4, 3], [5, 3, 4], [10, 8, 6], [10, 6, 8], [13, 12, 5], [13, 5, 12], [17, 15, 8], [17, 8, 15], [15, 12, 9], [15, 9, 12], [25, 24, 7], [20, 16, 12]]), sy = pick([1, -1]), py = new F(sy * b * b, a), pf2 = new F(2 * a * a - b * b, a);
-        c = { kind: 'el', A: a * a, B: b * b, h: 0, k: 0, axis: 'x' };
-        label = `2点 $\\mathrm{F}(${cc},\\ 0)$，$\\mathrm{F}'(-${cc},\\ 0)$ を焦点とし，点 $\\mathrm{P}\\left(${cc},\\ ${numTex(py)}\\right)$ を通る楕円の方程式を求めよ。`; key = `ks2|pt|${a}|${b}|${sy}`;
-        st = [{ t: 'txt', s: `$\\frac{x^2}{a^2}+\\frac{y^2}{b^2}=1$（$a>b>0$）とおくと，$\\mathrm{PF}+\\mathrm{PF}'=2a$` },
-          { t: 'eq', noEval: true, rows: [`\\mathrm{PF} &= ${numTex(py.abs())}`] }, { t: 'eq', noEval: true, rows: [`\\mathrm{PF}' &= \\sqrt{${2 * cc}^2+\\left(${numTex(py)}\\right)^2}`, `&= ${numTex(pf2)}`] },
-          { t: 'txt', s: `よって $2a=${numTex(py.abs())}+${numTex(pf2)}=${2 * a}$，$a=${a}$。$b^2=a^2-${cc}^2=${b * b}$` }];
+        // 標準は暗算できる数だけ（利用者指定）：3・4・5 と 6・8・10 の組。焦点は x 軸上・y 軸上の両方
+        // （以前の 8・15・17 や (48/5)^2 のような計算は出さない）
+        const [a, b, cc] = pick([[3, 4, 5], [4, 3, 5], [6, 8, 10], [8, 6, 10]]), axis = pick(['x', 'y']), onX = axis === 'x';
+        const FT = s2 => onX ? `(${s2}${cc},\\ 0)` : `(0,\\ ${s2}${cc})`;
+        if (pick([0, 1])) {
+          // 漸近線と焦点から双曲線。y 軸上の焦点は …=−1 の形（漸近線 y=±(b/a)x は同じ）
+          const m = new F(b, a), form = `\\frac{x^2}{a^2}-\\frac{y^2}{b^2}=${onX ? 1 : -1}`;
+          c = { kind: 'hy', A: a * a, B: b * b, h: 0, k: 0, axis };
+          label = `2つの直線 $y=\\pm ${numTex(m)}x$ を漸近線とし，2点 $${FT('')}$，$${FT('-')}$ を焦点とする双曲線の方程式を求めよ。`; key = `ks2|as|${axis}|${a}|${b}`;
+          st = [{ t: 'txt', s: `焦点が $${axis}$ 軸上にあるから，$${form}$（$a>0$，$b>0$）とおける。漸近線は $y=\\pm\\frac{b}{a}x$ であるから $\\frac{b}{a}=${numTex(m)}$，$b=${numTex(m)}a$` },
+            { t: 'txt', s: `焦点から $a^2+b^2=${cc}^2$。$b=${numTex(m)}a$ を代入して $${numTex(new F(a * a + b * b, a * a))}a^2=${cc * cc}$，$a^2=${a * a}$，$b^2=${b * b}$` }];
+        } else {
+          // 焦点と通る点から楕円：短軸の端の点 P を通る。PF=PF'=√(c²+b²)=a なので 2a=2PF
+          // 楕円は斜辺が a（長軸の半分）：組 [焦点の c, 短軸の半分 b, a]
+          const [fc, eb, ea] = [a, b, cc], sy = pick(['', '-']), PT = onX ? `(0,\\ ${sy}${eb})` : `(${sy}${eb},\\ 0)`;
+          const EF = s2 => onX ? `(${s2}${fc},\\ 0)` : `(0,\\ ${s2}${fc})`;
+          c = onX ? { kind: 'el', A: ea * ea, B: eb * eb, h: 0, k: 0, axis } : { kind: 'el', A: eb * eb, B: ea * ea, h: 0, k: 0, axis };
+          label = `2点 $\\mathrm{F}${EF('')}$，$\\mathrm{F}'${EF('-')}$ を焦点とし，点 $\\mathrm{P}${PT}$ を通る楕円の方程式を求めよ。`; key = `ks2|pt|${axis}|${ea}|${eb}|${sy}`;
+          st = [{ t: 'txt', s: `焦点が $${axis}$ 軸上にあり，中心が原点であるから，$${onX ? '\\frac{x^2}{a^2}+\\frac{y^2}{b^2}=1' : '\\frac{x^2}{b^2}+\\frac{y^2}{a^2}=1'}$（$a>b>0$）とおける。$\\mathrm{PF}+\\mathrm{PF}'=2a$` },
+            { t: 'eq', noEval: true, rows: [`\\mathrm{PF}=\\mathrm{PF}' &= \\sqrt{${fc}^2+${eb}^2}`, `&= \\sqrt{${fc * fc + eb * eb}}`, `&= ${ea}`] },
+            { t: 'txt', s: `よって $2a=${ea}+${ea}=${2 * ea}$，$a=${ea}$。$b^2=a^2-${fc}^2=${ea * ea}-${fc * fc}=${eb * eb}$` }];
+        }
       }
       const ansT = conicTex(c);
       return {
@@ -6417,6 +6427,15 @@ Object.assign(SC_GEN, {
   }
 });
 Object.assign(GEN, SC_GEN);
+// 二次曲線の4単元は、問題文と途中式に出る数を暗算・筆算できる数だけにする（利用者指定）：
+// 20 以下、10 の倍数、100 までの平方数（x^2/25 など）、144 までの平方数どうしの積（9(x−2)^2+16(y+3)^2=144 など）。
+// 合わない問題は作りなおす（共有点の 23x^2−40x+5=0、接線の x^2/28+y^2/21=1、√21 などは出ない）
+const CONIC_UNITS = ['kyokusenShiki', 'heikouIdou', 'kyouyuuten', 'nijiSessen'];
+const SQ_OK = new Set([1, 4, 9, 16, 25, 36, 49, 64, 81, 100]);
+[1, 4, 9, 16, 25].forEach(a => [1, 4, 9, 16, 25].forEach(b => { if (a * b <= 144) SQ_OK.add(a * b); }));
+const smallNum = n => n <= 20 || n % 10 === 0 || SQ_OK.has(n);
+const conicSmall = p => [p.label, ...flatSteps(p.steps).flatMap(s => s.rows || (s.s ? [s.s] : s.tex ? [s.tex] : []))].join(' ').match(/\d+/g)?.every(x => smallNum(+x)) ?? true;
+CONIC_UNITS.forEach(u => { const g = GEN[u]; GEN[u] = lv => { let p; for (let t = 0; t < 300; t++) { p = g(lv); if (conicSmall(p)) return p; } return p; }; });
 
 /* ========== 検算用：数式（TeX）を数値で計算する ========== */
 // 三角関数の引数（教科書の書き方）：(…)、60^\circ、\frac{7}{6}\pi、\frac{\pi}{6}、2\pi、\pi、2\theta、\theta、\alpha、\beta。^2 は関数の値の2乗
@@ -7620,6 +7639,7 @@ function selfTest(N = 400){
   for (const [u] of UNITS) for (const lv of [1, 2]) for (let i = 0; i < N; i++) {
     const p = GEN[u](lv); count++;
     checkProb(p).forEach(e => errors.push(`[${u} Lv${lv}] ${e}`));
+    if (CONIC_UNITS.includes(u) && !conicSmall(p)) errors.push(`[${u} Lv${lv}] 20 より大きく、10 の倍数・平方数・平方数どうしの積でない数がある: ${p.key}`);
     if (p.nb && !(NB_MAX[p.nb.d] >= p.nb.n)) errors.push(`[${u} Lv${lv}] 二項分布の回数が多すぎる（分母 ${p.nb.d} の ${p.nb.n} 乗）: ${p.key}`);
     if (p.dist && !easyE(momentSteps(p.dist.xs, p.dist.ps).E)) errors.push(`[${u} Lv${lv}] E(X) の分子・分母が19以下か10の倍数でない: ${p.key}`);
   }
