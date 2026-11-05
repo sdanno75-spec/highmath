@@ -57,11 +57,15 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 .gsum{display:none;font-size:13px;color:var(--muted);cursor:pointer}
 .grp.closed .gsum{display:block}
 .foldAll{display:flex;justify-content:flex-end;gap:4px;padding-top:8px}
-.h1sub{font-size:14px;font-weight:500;color:var(--muted);margin-left:10px}
 .chk{display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border:1px solid var(--line);border-radius:999px;background:#fff;cursor:pointer;font-size:14px;user-select:none}
 .chk input{accent-color:var(--ink);width:18px;height:18px;margin:0}
 .chk:has(input:checked){border-color:var(--ink);background:#efebe0}
 .chk small{color:var(--muted);font-size:11.5px}
+.stepper{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.stepper button{min-width:40px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;font-size:14px;cursor:pointer;color:inherit}
+.stepper button:hover{border-color:var(--muted)}
+.stepper input{width:64px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;font-size:15px;text-align:center;background:#fff;color:inherit}
+.stepper .cu{margin-right:4px}
 .txt{border:1px solid var(--line);border-radius:8px;padding:6px 10px;background:#fff;width:100%;max-width:520px;font-size:14px}
 .actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 12px}
 #status{font-size:13px;color:var(--muted)}
@@ -196,8 +200,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 <div class="wrap">
   <header>
     <div class="brand">
-      <h1>数学 基礎計算プリント<span class="h1sub">数I・数A・数II</span></h1>
-      <p>答えから逆算して作るので、問題が破綻しない。A4・2列のプリントと解答解説を自動生成。</p>
+      <h1>数学 基礎計算プリント</h1>
     </div>
     <nav class="tabs" id="tabs">
       <button data-view="main" class="on">プリント作成</button>
@@ -208,6 +211,10 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
   <section class="view show" id="view-main">
     <div class="panel">
       <div class="foldAll seg" id="grpFold"><button data-act="close">すべてたたむ</button><button data-act="open">すべてひらく</button></div>
+      <div class="grp"><div class="glab">題名</div><div>
+        <input class="txt" id="title" placeholder="プリントの題名（空らんなら「数I 基礎計算プリント」）">
+        <div class="gnote">空らんのときは、選んだ教科に合わせて「数I 基礎計算プリント」などになります。</div>
+      </div></div>
       <div class="grp"><div class="glab">教科</div><div>
         <div class="seg" data-set="subject"><button data-v="1">数I</button><button data-v="A">数A</button><button data-v="both">数I・数A</button><button data-v="2">数II</button><button data-v="B">数B</button><button data-v="C">数C</button><button data-v="2BC">数II・数B・数C</button></div>
         <div class="gnote">教科を切りかえると、その教科の単元が出ます（単元は自動では選ばれません）。「数I・数A」「数II・数B・数C」では、いくつかの教科の単元をまぜられます。</div>
@@ -375,7 +382,8 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
         <div class="gnote">複数選ぶと、単元ごとの問題数をできるだけそろえて ランダムにまぜます。</div>
       </div></div>
       <div class="grp"><div class="glab">問題の量</div><div>
-        <div class="seg" data-set="count"><button data-v="10">10問</button><button data-v="20">20問</button><button data-v="30">30問</button><button data-v="40">40問</button><button data-v="50">50問</button></div>
+        <div class="stepper" id="cntBox"><button type="button" data-d="-5">−5</button><button type="button" data-d="-1">−1</button><input type="number" id="cnt" min="1" max="50" step="1" inputmode="numeric" aria-label="問題数"><span class="cu">問</span><button type="button" data-d="1">＋1</button><button type="button" data-d="5">＋5</button></div>
+        <div class="gnote">1〜50問。ボタンで増やす・減らすか，数を入力します（重くなるので50問まで）。</div>
       </div></div>
       <div class="grp"><div class="glab">配置</div><div>
         <div class="seg" data-set="mode"><button data-v="work">しっかり解く（解くスペースつき）</button><button data-v="list">問題を一覧（解答欄＋計算用紙）</button></div>
@@ -394,12 +402,15 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
         <div class="seg" data-set="time"><button data-v="off">目安時間をのせない</button><button data-v="on">目安時間をのせる</button></div>
         <div class="gnote">のせると、1ページ目の題名の右にプリント全体の目安時間、解答の各問題に1問ごとの目安時間が入ります。</div>
       </div></div>
+      <div class="grp"><div class="glab">解答ページ</div><div>
+        <div class="seg" data-set="ans"><button data-v="full">解答・解説（途中式つき）</button><button data-v="only">答えだけ</button></div>
+        <div class="gnote">「答えだけ」にすると、解答のページは各問題の答えだけになります（画面・PDF・印刷・LaTeX とも）。</div>
+      </div></div>
       <div class="grp"><div class="glab">公式・手順</div><div>
         <div class="seg" data-set="formula"><button data-v="off">公式・手順をのせない</button><button data-v="on">公式・手順をのせる</button></div>
         <div class="gnote">のせると、1ページ目の上に、選んだ単元の公式や計算の手順をまとめた枠が入ります。単元が多くて枠が大きいときは、公式・手順だけの1ページになります。</div>
       </div></div>
       <div class="grp"><div class="glab">見た目</div><div>
-        <div style="margin-bottom:6px"><input class="txt" id="title" placeholder="プリントの題名（空らんなら「数I 基礎計算プリント」）"></div>
         <div class="seg" data-set="font"><button data-v="maru">まる文字</button><button data-v="round">まるゴシック</button><button data-v="klee">手書き風</button><button data-v="gothic">ゴシック</button><button data-v="mincho">明朝</button></div>
       </div></div>
       <div class="grp"><div class="glab">LaTeX の形式</div><div>
@@ -440,10 +451,10 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
       </ul>
       <h2>配置</h2>
       <ul>
-        <li><b>しっかり解く</b>：各問の下に解くスペースがあります。高さは、解答の途中式の行数から問題ごとに見積もります（34〜80mm。たすき掛けや √(5+2√6) は小さめ、対称式は大きめ）。</li>
+        <li><b>しっかり解く</b>：各問の下に解くスペースがあります。高さは、その問題の解答・解説（途中式つき）の長さの 0.8 倍です（34〜140mm）。答えの長い問題ほど広くなります。</li>
         <li><b>問題を一覧</b>：問題集のように、大問（「次の式を因数分解せよ。」など）の下に小問を並べ、各問に解答欄をつけます。小問が半分の幅に入る大問は2列、入らない大問（対称式など）は1列です。単元ごとにまとめて並べ、そのあとに問題番号と式が小さく入った計算用紙が続きます。計算用紙の欄の高さは、問題の種類ごとに変わります（平方完成やグラフをかく最大・最小は広く、√(5+2√6) などは小さめ）。</li>
         <li><b>書くスペースの調整</b>：問題のページで、欄の上下の境目のまん中にある小さなつまみを上下にドラッグすると、高さを変えられます（マウスでも iPad の指でも）。上の欄を広げた分だけ下の欄がせまくなり、紙の高さは変わりません。問題文が隠れる高さ・欄 20mm（計算用紙 12mm）より低くはなりません。一覧では小問の行を広げられます（広げた分は下の行の広げた分、ページの下のあきの順に使います）。調整はページごとで、印刷・PDF・LaTeX に反映されます。ページ数の横の「高さを自動にもどす」で、すべてのページを元の高さにもどせます（改ページはそのまま）。</li>
-        <li><b>改ページ</b>：しっかり解くは問題の境目、一覧は大問の境目に「ここで改ページ」のボタンが出ます。押すとその問題（大問）から後ろを次のページに送ります。しっかり解くでは、改ページで問題が減ったページの欄を紙の下まで広げます。改ページで始まったページの「改ページを取り消す」で元にもどります。ページ数の横の「改ページをすべて取り消す」で、まとめて元にもどせます。つまみとボタンは画面だけで、印刷・PDF には出ません。「問題を作りなおす」を押すと、高さと改ページは元にもどります。</li>
+        <li><b>改段・改ページ</b>：しっかり解くは問題の境目に、左の列なら「ここで改段」、右の列なら「ここで改ページ」のボタンが出ます。改段はその問題から後ろを右の列へ、改ページは次のページへ送り、残った欄は列（紙）の下まで広げます。一覧は大問の境目に「ここで改ページ」が出ます。改ページで始まったページの「改ページを取り消す」で元にもどります。ページ数の横の「改ページをすべて取り消す」で、まとめて元にもどせます。つまみとボタンは画面だけで、印刷・PDF には出ません。「問題を作りなおす」を押すと、高さと改ページは元にもどります。</li>
         <li>式は途中で折り返しません。式の折り返し・はみ出し・縮めすぎを自動で点検し、見つかったときはページ数の横に赤字で知らせます。</li>
       </ul>
       <h2>参考タイム</h2>
@@ -477,8 +488,19 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.11.2', UPDATED = '2026-10-29';
+const VERSION = '5.18.1', UPDATED = '2026-11-05';
 const CHANGES = [
+  ['5.18.1', '2026-11-05', 'しっかり解くで、相関係数の問題は2列に分けず横いっぱいの幅で出す（表と計算が横に長いため）。幅が2倍になるので、解くスペースの高さは半分（同じ面積、2問で1ページ）にする。'],
+  ['5.18.0', '2026-11-05', '解くスペース（と計算用紙の欄）の高さを、解答・解説の実際の長さの 0.8 倍にした（34〜140mm）。文の段・表・図も長さに入るので、相関係数・合成・チェバ・n 乗根などで小さすぎた欄が、ほかの単元と同じ割合になる。'],
+  ['5.17.1', '2026-11-05', 'しっかり解くで、仮説検定・推定・正規分布・標本平均の分布の解くスペースを広くした（仮説や判断などの文の段も、解くスペースの見積もりに入れる。上限 120mm）。'],
+  ['5.17.0', '2026-11-05', 'しっかり解くの「ここで改ページ」を「改段」にした。左の列で押すとその問題から右の列へ移り、左の列の残りは列の下まで広がる。右の列で押したときは今までどおり次のページへ。取り消しのボタンも「改段を取り消す／改ページを取り消す」。'],
+  ['5.16.0', '2026-11-05', '問題数を 1〜50問で自由に（−5・−1・＋1・＋5 のボタンと入力）。解答ページを「答えだけ」にもできる（設定「解答ページ」。画面・PDF・印刷・LaTeX とも）。題名の欄を設定のいちばん上の項目「題名」に移した（空らんなら今までどおりの題名）。ページの見出しは「数学 基礎計算プリント」だけにした。'],
+  ['5.15.0', '2026-11-05', '共通テストの統計の問題を参考に、数B の標準に5つの型を追加：推定に「信頼度90%（P(−z₀≦Z≦z₀)=0.901 となる z₀ を表から読む）」と「全体の数の推定（M=Nm）」、標本平均の分布に「標本比率 R の確率」、aX+b に「平均・分散から s, t を求める」、確率分布に「度数の表から確率分布を作る」。'],
+  ['5.14.0', '2026-11-05', '二項分布の確率の問い方を変えた。基本は回数 k を真ん中（1〜n−1）が出やすいように選ぶ（nCn や nC0 ばかりにならないように）。標準は「ちょうど k 回」「1回以下」「n−1回以上」「少なくとも1回（余事象）」の4種類をまぜる。'],
+  ['5.13.1', '2026-11-05', '数A の反復試行も、二項分布と同じく回数を確率の分母に合わせて制限した（さいころの1の目は4回まで、3の倍数・5以上の目は6回まで（ふだんは5回まで））。6⁶ などの大きな分母が出ないように。'],
+  ['5.13.0', '2026-11-05', '二項分布の回数を、確率の分母に合わせて制限した（分母 2 は10回、3 は6回（ふだんは5回まで）、4 は5回、5・6 は4回まで。分母は6まで）。3⁸ のような大きな累乗が出ないように。'],
+  ['5.12.1', '2026-11-05', '確率分布の場面から、さいころ2個の大きい方・小さい方・差と、4人のじゃんけんを外した（E(X) がいつも 91/36 などになり、分散が暗算できないため）。'],
+  ['5.12.0', '2026-11-05', '確率分布（期待値・分散・標準偏差）で、分散の行の {E(X)}² が暗算できる数だけにした（E(X) の分子・分母は19以下の自然数か10の倍数）。E(X) が 91/36 などになる場面（さいころ2個の大きい方・小さい方・差、4人のじゃんけん）と、ゲームの一部の点数は出さない。代わりに4つの場面（正四面体2個の目の差・小さい方、カード4枚から2枚の和、さいころの目の余り）を追加。'],
   ['5.11.2', '2026-10-29', '境目をドラッグして高さを変えたとき、ページ数の横に「高さを自動にもどす」ボタンを出す（押すと、すべてのページの欄を見積もった高さにもどす。改ページはそのまま）。'],
   ['5.11.1', '2026-10-29', '自分で入れた改ページがあるとき、ページ数の横に「改ページをすべて取り消す」ボタンを出す（押すと、いまの配置の改ページをまとめて元にもどす）。'],
   ['5.11.0', '2026-10-29', '問題のページで、欄の上下の境目をドラッグして書くスペースの高さを変えられる（しっかり解く・計算用紙・一覧の行。上を広げた分だけ下がせまくなり、紙の高さは変わらない。マウスでも指でも）。しっかり解くは問題の境目、一覧は大問の境目で「ここで改ページ」ができ、「改ページを取り消す」で元にもどる。つまみとボタンは画面だけで、印刷・PDF には出ない。問題を作りなおすと元の高さ・ページ割りにもどる。'],
@@ -952,14 +974,14 @@ const UNIT_LEVEL = {
   bunsuWa: ['1/k(k+1) の和', '1/(2k−1)(2k+1)・1/k(k+2) の和'],
   sabunWa: ['1+2·2+3·2²+…+n·2ⁿ⁻¹', '(2k−1)·3ᵏ・k·2ᵏ の和'],
   zenka: ['等差型・等比型・階差型', 'aₙ₊₁=paₙ+q 型'],
-  bunpu: ['表から E・V・σ', '試行から表を作って E・V・σ'],
-  henkan: ['E(X)・V(X) から E(aX+b)・V(aX+b)', '試行の X から Y=aX+b'],
+  bunpu: ['表から E・V・σ', '試行や度数の表から確率分布を作って E・V・σ'],
+  henkan: ['E(X)・V(X) から E(aX+b)・V(aX+b)', '試行の X から Y=aX+b／平均・分散から s, t を求める'],
   waSeki: ['E(aX+bY)・V(aX+bY)・E(XY) の公式', '2つの試行から求めて組み合わせる'],
   nikouBunpu: ['B(n, p) の E・V・σ と P(X=k)', '試行の文から B(n, p) を読み取る'],
   seiki: ['標準正規分布の確率を表から', 'N(m, σ²) を標準化して確率'],
   seikiKinji: ['B(n, p) を正規分布で近似', '試行の文から B(n, p) を読んで近似'],
-  hyouhonHeikin: ['E(X̄)・σ(X̄)', '標本平均の確率を正規分布で'],
-  suitei: ['信頼度95%・母標準偏差が既知', '信頼度99%・標本標準偏差で代用・母比率'],
+  hyouhonHeikin: ['E(X̄)・σ(X̄)', '標本平均・標本比率の確率を正規分布で'],
+  suitei: ['信頼度95%・母標準偏差が既知', '信頼度99%・90%（表から z₀）・標本標準偏差で代用・母比率・全体の数の推定'],
   kentei: ['母比率の両側検定', '片側検定・母平均の検定'],
   naiseki: ['成分から内積', '大きさとなす角から内積'],
   nasukaku: ['成分からなす角', '大きさと |a±b| からなす角'],
@@ -1789,7 +1811,7 @@ const GEN = {
         { t: 'eq', rows: chain(`r &= \\frac{${Sxy}}{\\sqrt{${Sxx}\\cdot ${Syy}}}`, `\\frac{${Sxy}}{${rt}}`, rT) });
       const ask = lv === 1 ? '共分散 $s_{xy}$ と相関係数 $r$' : '標準偏差 $s_x$，$s_y$，共分散 $s_{xy}$，相関係数 $r$';
       return {
-        unit: 'soukan', lv, key: 'sk' + xs.join(',') + '|' + ys.join(','), sec: T[lv === 1 ? 'soukan1' : 'soukan2'], sit: 'c' + ci, wide: true, ansFull: true, minSpace: 80,
+        unit: 'soukan', lv, key: 'sk' + xs.join(',') + '|' + ys.join(','), sec: T[lv === 1 ? 'soukan1' : 'soukan2'], sit: 'c' + ci, wide: true, ansFull: true, full: true, halfSpace: true, minSpace: 80,   // full：しっかり解くでは横いっぱい（表と計算が横に長いので、利用者指定）
         label: `次の表は，${cx} $x$ と${cy} $y$ である。${ask}を求めよ。ただし，$r$ は小数で答えよ。`, math: tbl,
         item: `$${tbl}$`, head: `$${tbl}$`, calc: tbl, short: '共分散と相関係数',
         ans: `${lv === 2 ? `$s_x=${sx}$，$s_y=${sy}$，` : ''}$s_{xy}=${numTex(cov)}$，$r=${rT}$`, vars: {}, steps: st,
@@ -1989,7 +2011,8 @@ const A_GEN = {
   hanpuku(lv){
     const EV = [{ nm: '1の目', a: 1, d: 6 }, { nm: '偶数の目', a: 1, d: 2 }, { nm: '3の倍数の目', a: 1, d: 3 }, { nm: '5以上の目', a: 1, d: 3 }, { nm: '3以下の目', a: 1, d: 2 }];
     const coin = Math.random() < 0.3, ev = coin ? { nm: '表', a: 1, d: 2 } : pick(EV);
-    const n = lv === 1 ? ri(3, 5) : ri(4, 6), atLeast = lv === 2 && Math.random() < 0.6;
+    // 回数は分母の累乗が大きくなりすぎない範囲（二項分布と同じ NB_MAX。3 の 6 回はたまに、6 は 4 回まで）
+    const hi = NB_MAX[ev.d], n = lv === 1 ? ri(3, Math.min(5, hi)) : ev.d === 3 ? pick([4, 5, 4, 5, 6]) : ri(4, Math.min(6, hi)), atLeast = lv === 2 && Math.random() < 0.6;
     const k = atLeast ? pick([1, n - 1]) : ri(1, n - 1);
     const p = new F(ev.a, ev.d), q = new F(ev.d - ev.a, ev.d), np = p.n, nq = q.n, dd = p.d, D = dd ** n;   // q の分母も dd
     const term = j => nCr(n, j) * np ** j * nq ** (n - j);
@@ -2009,7 +2032,7 @@ const A_GEN = {
       st.push({ t: 'eq', rows: chain(`P &= ${CTEX(n, n - 1)}${pw_(pf, n - 1)}${pw_(qf, 1)}+${pw_(pf, n)}`, `\\frac{${term(n - 1)}}{${D}}+\\frac{${term(n)}}{${D}}`, `\\frac{${term(n - 1) + term(n)}}{${D}}`, `${fracTex(ans)}`) });
     }
     return {
-      unit: 'hanpuku', lv, key: 'hp' + sent, label: sent, math: null, item: sent, head: sent, ans: `$${fracTex(ans)}$`, vars: {}, steps: st, wide: true, short: '反復試行の確率',
+      unit: 'hanpuku', lv, key: 'hp' + sent, label: sent, math: null, item: sent, head: sent, ans: `$${fracTex(ans)}$`, vars: {}, steps: st, wide: true, short: '反復試行の確率', nb: { d: dd, n },
       sec: atLeast ? T.hanpukuAt : T.hanpuku1,
       chk: () => {   // 1回ごとの確率をかけあわせた分布を計算して確かめる（二項係数の式は使わない）
         let dist = [1];
@@ -4150,6 +4173,14 @@ function momentSteps(xs, ps, name = 'X'){
     { t: 'eq', rows: [`\\sigma(${name}) &= \\sqrt{${numTex(V)}}`].concat(sd === `\\sqrt{${numTex(V)}}` ? [] : [`&= ${sd}`]) }];
   return { E, V, sd, steps };
 }
+// 分散の行で {E(X)}^2 を計算するので、E(X) の分子・分母は暗算で2乗できる数だけにする
+// （19 以下の自然数か、100 までの 10 の倍数。91/36 の 91^2 や 36^2 は出さない。利用者指定）
+const easyNum = n => { n = Math.abs(n); return n <= 19 || (n % 10 === 0 && n <= 100); };
+const easyE = E => easyNum(E.n) && easyNum(E.d);
+// 二項分布の回数 n の上限：確率の分母 d の n 乗が暗算・筆算できる範囲（利用者指定）。
+// 2 は 10 乗（1024）、3 は 6 乗（729。ふだんは 5 乗まで、6 乗はたまに）、4 は 5 乗、5・6 は 4 乗。分母は 6 まで
+const NB_MAX = { 2: 10, 3: 6, 4: 5, 5: 4, 6: 4 };
+const nbN = (d, cap) => { const hi = Math.min(cap, NB_MAX[d]); return d === 3 && hi === 6 ? pick([3, 4, 5, 3, 4, 5, 6]) : ri(3, hi); };
 // σ の段を除く（σ を聞かない問題用）
 const noSd = st => st.filter(s => !(s.rows && /\\sigma/.test(s.rows[0])));
 const momentAns = (name, E, V, sd) => `$E(${name})=${numTex(E)}$，$V(${name})=${numTex(V)}$，$\\sigma(${name})=${sd}$`;
@@ -4157,9 +4188,6 @@ const momentAns = (name, E, V, sd) => `$E(${name})=${numTex(E)}$，$V(${name})=$
 const combos = (arr, k) => k === 0 ? [[]] : arr.flatMap((v, i) => combos(arr.slice(i + 1), k - 1).map(c => [v, ...c]));
 // 試行：同様に確からしい場合（outcomes）ごとの X の値を並べたもの。文・一覧の短い文・計算用紙の題をもつ
 const TRIALS = [
-  () => ({ key: 'diff', text: '2個のさいころを同時に投げるとき，出る目の差の絶対値を $X$ とする。', short: 'さいころ2個の目の差', vals: [1, 2, 3, 4, 5, 6].flatMap(a => [1, 2, 3, 4, 5, 6].map(b => Math.abs(a - b))) }),
-  () => ({ key: 'max', text: '2個のさいころを同時に投げるとき，出る目の大きい方（同じ目のときはその目）を $X$ とする。', short: 'さいころ2個の大きい方の目', vals: [1, 2, 3, 4, 5, 6].flatMap(a => [1, 2, 3, 4, 5, 6].map(b => Math.max(a, b))) }),
-  () => ({ key: 'min', text: '2個のさいころを同時に投げるとき，出る目の小さい方（同じ目のときはその目）を $X$ とする。', short: 'さいころ2個の小さい方の目', vals: [1, 2, 3, 4, 5, 6].flatMap(a => [1, 2, 3, 4, 5, 6].map(b => Math.min(a, b))) }),
   // 2種類のものから同時にいくつか取り出す型（玉・くじ・委員の選出）
   () => { const k = pick([2, 2, 3]), r = ri(k === 3 ? 3 : 2, 5), w = ri(k === 3 ? 3 : 2, 7 - r); if (w < (k === 3 ? 3 : 2)) return null;
     const balls = [...Array(r).fill(1), ...Array(w).fill(0)].map((c, i) => [c, i]), c = pick([0, 1, 2]);
@@ -4175,11 +4203,17 @@ const TRIALS = [
   // カード2枚の数の差
   () => { const N = ri(4, 6); return { key: `cdiff${N}`, text: `$1$ から $${N}$ までの数字が1つずつ書かれた $${N}$ 枚のカードから同時に2枚取り出すとき，2枚の数の差を $X$ とする。`, short: `カード${N}枚から2枚の数の差`, vals: combos(Array.from({ length: N }, (_, i) => i + 1), 2).map(c => c[1] - c[0]) }; },
   // じゃんけんで勝った人数（あいこは 0 人）。グー 0・チョキ 1・パー 2 で、x が y に勝つのは (y−x+3)%3===1
-  () => { const P = pick([3, 4]); let all = [[]]; for (let i = 0; i < P; i++) all = all.flatMap(s => [0, 1, 2].map(h => [...s, h]));
+  // 4人だと E(X)=28/27 になるので3人だけ
+  () => { const P = 3; let all = [[]]; for (let i = 0; i < P; i++) all = all.flatMap(s => [0, 1, 2].map(h => [...s, h]));
     const win = hs => { const u = [...new Set(hs)]; if (u.length !== 2) return 0; const w = (u[1] - u[0] + 3) % 3 === 1 ? u[0] : u[1]; return hs.filter(h => h === w).length; };
     return { key: `janken${P}`, text: `$${P}$ 人で1回じゃんけんをするとき，勝った人の人数を $X$ とする。ただし，あいこのときは $X=0$ とする。`, short: `${P}人のじゃんけんで勝った人数`, vals: all.map(win) }; },
   () => { const n = pick([3, 4]); let all = [[]]; for (let i = 0; i < n; i++) all = all.flatMap(s => [[...s, 1], [...s, -1]]);   // 表 +1・裏 −1 の並びすべて
     return { key: `coin${n}`, text: `硬貨を $${n}$ 回投げるとき，表が出た回数から裏が出た回数を引いた値を $X$ とする。`, short: `硬貨${n}回（表−裏）`, vals: all.map(s => s.reduce((t, v) => t + v, 0)) }; },
+  // E(X) がきれいになる場面（さいころ2個の大きい方・小さい方・差は E(X) が 161/36 などになるので外した。利用者指定）
+  () => ({ key: 'tdiff', text: '正四面体の4つの面に $1$，$2$，$3$，$4$ の数字が書かれたさいころを2個同時に投げるとき，下になった面の数の差の絶対値を $X$ とする。', short: '正四面体2個の目の差', vals: [1, 2, 3, 4].flatMap(a => [1, 2, 3, 4].map(b => Math.abs(a - b))) }),
+  () => ({ key: 'tmin', text: '正四面体の4つの面に $1$，$2$，$3$，$4$ の数字が書かれたさいころを2個同時に投げるとき，下になった面の数の小さい方（同じ数のときはその数）を $X$ とする。', short: '正四面体2個の小さい方の目', vals: [1, 2, 3, 4].flatMap(a => [1, 2, 3, 4].map(b => Math.min(a, b))) }),
+  () => ({ key: 'csum', text: '$1$ から $4$ までの数字が1つずつ書かれた $4$ 枚のカードから同時に2枚取り出すとき，2枚の数の和を $X$ とする。', short: 'カード4枚から2枚の数の和', vals: combos([1, 2, 3, 4], 2).map(c => c[0] + c[1]) }),
+  () => { const m = pick([3, 4]); return { key: `dmod${m}`, text: `1個のさいころを投げるとき，出た目を $${m}$ で割った余りを $X$ とする。`, short: `さいころの目を${m}で割った余り`, vals: [1, 2, 3, 4, 5, 6].map(a => a % m) }; },
   // 値（2〜N）が6個までになるよう N≦7
   () => { const N = ri(5, 7); return { key: `card${N}`, text: `$1$ から $${N}$ までの数字が1つずつ書かれた $${N}$ 枚のカードから同時に2枚取り出すとき，大きい方の数を $X$ とする。`, short: `カード${N}枚から2枚の大きい方`, vals: combos(Array.from({ length: N }, (_, i) => i + 1), 2).map(c => Math.max(...c)) }; }
 ];
@@ -4300,6 +4334,111 @@ const SUITEI_CTX = [
   { key: 'egg', short: '卵の重さ', sample: n => `ある養鶏場の卵から $${n}$ 個を無作為に選んで重さを量ったところ，`, whole: 'この養鶏場の卵の重さの母平均 $m$', u: 'g', xr: [55, 70], sg: [2, 10] },
   { key: 'sleep', short: '睡眠時間', sample: n => `ある県の高校生から $${n}$ 人を無作為に選んで1日の睡眠時間を調べたところ，`, whole: 'この県の高校生の睡眠時間の母平均 $m$', u: '分', xr: [360, 480], sg: [20, 80] }
 ];
+// 度数の表から確率分布を作る場面（センター 2020 の形）。値は 0 から、人数の合計 N、1人（1日）を無作為に選ぶ
+const FREQ_CTX = [
+  { key: 'book', head: '冊数', who: '人数', u: '人', text: N => `ある高校の生徒 $${N}$ 人について，1週間に図書館で借りた本の冊数を調べたところ，次の表のようになった。この中から1人を無作為に選ぶとき，その生徒が借りた本の冊数を $X$ とする。`, short: '図書館で借りた本の冊数' },
+  { key: 'sib', head: '人数', who: '生徒数', u: '人', text: N => `ある学年の生徒 $${N}$ 人について，兄弟姉妹の人数（本人をのぞく）を調べたところ，次の表のようになった。この中から1人を無作為に選ぶとき，その生徒の兄弟姉妹の人数を $X$ とする。`, short: '兄弟姉妹の人数' },
+  { key: 'goal', head: '得点', who: '回数', u: '試合', text: N => `あるサッカーのリーグで，各チームが1試合で入れた得点を $${N}$ 回分調べたところ，次の表のようになった。この中から1回分を無作為に選ぶとき，その得点を $X$ とする。`, short: 'サッカー1試合の得点' },
+  { key: 'late', head: '回数', who: '人数', u: '人', text: N => `ある学年の生徒 $${N}$ 人について，1学期の遅刻の回数を調べたところ，次の表のようになった。この中から1人を無作為に選ぶとき，その生徒の遅刻の回数を $X$ とする。`, short: '1学期の遅刻の回数' }
+];
+function freqTrial(){
+  // 確率を先に分母 D の分数で決め（0 が多めになるよう大きい値ほど少なく）、人数はその k 倍（720 人なら 612・54・36・18 の形）
+  const cx = pick(FREQ_CTX), m = pick([3, 4]), D = pick([4, 5, 8, 10, 20, 40]);
+  if (D < m) return null;
+  const w = Array.from({ length: m }, (_, i) => Math.random() * (m - i) ** 2), sw = w.reduce((a, b) => a + b, 0);
+  const ks = w.map(x => Math.max(1, Math.round(x / sw * D))); ks[0] += D - ks.reduce((a, b) => a + b, 0);
+  if (ks.some(c => c < 1) || ks.every(c => c === ks[0])) return null;   // すべて同じ人数の表は出さない
+  const Ns = [40, 50, 80, 100, 120, 160, 200, 240, 300, 360, 400, 480, 600, 720, 800].filter(N => N % D === 0 && N / D >= 2), N = pick(Ns), cs = ks.map(c => c * N / D);
+  const xs = Array.from({ length: m }, (_, i) => i), vals = xs.flatMap((x, i) => Array(cs[i]).fill(x));
+  // 分散も暗算・筆算できる大きさだけ（分母 100 以下・分子 200 以下）
+  const d = distOf(vals), V = momentSteps(d.xs, d.ps).V;
+  if (V.d > 100 || V.n > 200) return null;
+  const table = `\\def\\arraystretch{1.4}\\begin{array}{${Array(m + 2).fill('c').join('|')}} \\text{${cx.head}} & ${xs.join(' & ')} & \\text{計} \\\\ \\hline \\text{${cx.who}} & ${cs.join(' & ')} & ${N} \\end{array}`;
+  return { key: `freq${cx.key}${N}-${cs.join('-')}`, text: cx.text(N), short: cx.short, vals, table };
+}
+// 【aX+b の逆】Y=sX+t（s>0）の平均・分散が与えられた値になる s, t を求める（センター 2018 の形）
+function henkanRev(lv){
+  for (;;) {
+    const tr = pick(SIMPLE_TRIALS)(), d = distOf(tr.vals), m = momentSteps(d.xs, d.ps), sc = pick([2, 3, 4, 5, 10]), t = nz(-20, 20);
+    const EY = m.E.mul(sc).add(t), VY = m.V.mul(sc * sc);
+    if (!easyE(EY) || EY.n <= 0) continue;
+    const label = `${tr.text} $X$ とする。$s$，$t$ を定数とし，$s>0$ とする。$Y=sX+t$ の期待値が $${numTex(EY)}$，分散が $${numTex(VY)}$ となるように，$s$，$t$ の値を定めよ。`;
+    const st = [{ t: 'txt', s: '$X$ の確率分布は次の表のようになる。' }, { t: 'disp', lines: 3, tex: distTable(d.xs, d.ps) }, ...noSd(m.steps),
+      { t: 'eq', noEval: true, rows: [`V(Y) &= s^2V(X)`] },
+      { t: 'txt', s: `$s^2\\cdot ${numTex(m.V)}=${numTex(VY)}$ より $s^2=${sc * sc}$。$s>0$ であるから $s=${sc}$` },
+      { t: 'eq', noEval: true, rows: [`E(Y) &= sE(X)+t`] },
+      { t: 'txt', s: `$${sc}\\cdot ${numTex(m.E)}+t=${numTex(EY)}$ より $t=${t}$` }];
+    return {
+      unit: 'henkan', lv, sit: 'rev' + tr.key.replace(/\d/g, ''), key: `hk2|rev|${tr.key}|${sc}|${t}`, sec: T.henkan2, wide: true,
+      label, math: '', item: `${tr.text} $X$，$Y=sX+t$（$s>0$）の期待値 $${numTex(EY)}$，分散 $${numTex(VY)}$：$s$，$t$`, head: `$Y=sX+t$ の期待値 $${numTex(EY)}$，分散 $${numTex(VY)}$`, short: 'Y=sX+t の s, t',
+      ans: `$s=${sc}$，$t=${t}$`, vars: {}, steps: st,
+      // X のすべての場合の Y の値から、平均と分散を直接計算して比べる
+      chk: () => { const ys = tr.vals.map(x => sc * x + t), mu = ys.reduce((a, y) => a + y, 0) / ys.length, v = ys.reduce((a, y) => a + (y - mu) ** 2, 0) / ys.length; return Math.abs(mu - EY.val()) + Math.abs(v - VY.val()); }
+    };
+  }
+}
+// 標本比率の場面：p の範囲（lo〜hi）に合うものだけ使う
+const RATIO_CTX = [
+  { key: 'defect', lo: 0, hi: 0.2, t: (p, n) => `不良品の割合が $${p}$ である製品の山から $${n}$ 個を無作為に取り出すとき，取り出した製品のうち不良品の比率を $R$ とする。` },
+  { key: 'tv', lo: 0, hi: 0.36, t: (p, n) => `ある番組の視聴率が $${p}$ である地域で，$${n}$ 世帯を無作為に選ぶとき，その番組を見ている世帯の比率を $R$ とする。` },
+  { key: 'seed', lo: 0.5, hi: 1, t: (p, n) => `発芽率が $${p}$ の種子を $${n}$ 個まくとき，発芽する種子の比率を $R$ とする。` },
+  { key: 'vote', lo: 0, hi: 1, t: (p, n) => `ある政策に賛成する人の割合が $${p}$ である町で，有権者 $${n}$ 人を無作為に選ぶとき，選んだ人のうち賛成する人の比率を $R$ とする。` }
+];
+function ratioProb(lv){
+  // √(p(1−p)) が 0.3, 0.4, 0.5, 0.48 になる p と √n が整数の n。σ(R)=√(p(1−p))/√n を 1万分の1 の整数 s4 で持つ
+  const n = pick([100, 400, 900, 1600, 2500]), [p, sq] = pick([[0.1, 0.3], [0.9, 0.3], [0.2, 0.4], [0.8, 0.4], [0.5, 0.5], [0.36, 0.48], [0.64, 0.48]]);
+  const s4 = sq * 1e4 / Math.sqrt(n); if (Math.abs(s4 - Math.round(s4)) > 1e-9) return null;
+  const S4 = Math.round(s4), p4 = Math.round(p * 1e4), sR = S4 / 1e4, cx = pick(RATIO_CTX.filter(c => p >= c.lo && p <= c.hi));
+  // しきい値は小数第3位まで（1万分の1 で 10 の倍数）、z が小数第2位までで割り切れ 0.1≦|z|≦2.9、0 より大きく 1 より小さい
+  const xs = []; for (let k = -Math.floor(2.9 * S4); k <= 2.9 * S4; k++) { const z = k * 100 / S4, x4 = p4 + k; if (Number.isInteger(z) && Math.abs(z) >= 10 && Math.abs(z) <= 290 && x4 % 10 === 0 && x4 > 0 && x4 < 1e4) xs.push(x4 / 1e4); }
+  if (xs.length < 2) return null;
+  const { kind, a, b } = normPick(xs, sR / 2), o = normSteps({ sym: 'R', m: p, s: sR, kind, a, b }), PT = normProbTex('R', kind, String(a), String(b));
+  const q = +(1 - p).toFixed(2), label = `${cx.t(p, n)}$R$ が ${kindWord(kind, `$${a}$`, `$${b}$`)}である確率を，正規分布表を用いて求めよ。`;
+  return {
+    unit: 'hyouhonHeikin', lv, sit: 'ratio' + cx.key, key: `hh2|ratio|${cx.key}|${p}|${n}|${kind}|${a}|${b}`, sec: T.hyouhon2, wide: true,
+    label, math: '', item: label.replace(/である確率を，正規分布表を用いて求めよ。$/, 'である確率'), head: `標本比率：$p=${p}$，大きさ $${n}$：$${PT}$`, calc: PT, short: PT,
+    ans: `$${decTex(o.ans)}$`, vars: {},
+    steps: [{ t: 'txt', s: `標本の大きさ $${n}$ は大きいので，標本比率 $R$ は近似的に正規分布 $N\\left(p,\\ \\frac{p(1-p)}{n}\\right)$ にしたがう。` },
+      { t: 'eq', rows: [`E(R) &= ${p}`] }, { t: 'eq', rows: [`\\sigma(R) &= \\sqrt{\\frac{${p}\\cdot ${q}}{${n}}}`, `&= ${sR}`] },
+      { t: 'txt', s: `$Z=\\frac{R-${p}}{${sR}}$ とおくと，$Z$ は近似的に標準正規分布 $N(0,\\ 1)$ にしたがう。` }, ...o.steps],
+    chk: () => Math.abs(Math.sqrt(p * (1 - p) / n) - sR) + normChk(o, kind)
+  };
+}
+// 全体の数の推定の場面：N 個の区画（株・世帯）から n を選び、1つあたりの量の母平均 m → 全体の量 M=Nm
+const TOT_CTX = [
+  { key: 'beach', unit: '区画', u: '個', N: [50000, 100000, 125000], xr: [8, 30], sg: [2, 12],
+    text: (N, n) => `ある砂浜を同じ広さの $${N}$ 個の区画に分け，そのうち $${n}$ 区画を無作為に選んで，1区画にあるプラスチック片の個数を調べた。`, what: 'プラスチック片の個数', whole: 'この砂浜全体にあるプラスチック片の個数' },
+  { key: 'tomato', unit: '株', u: '個', N: [2000, 5000, 10000], xr: [20, 60], sg: [4, 15],
+    text: (N, n) => `ある農園にはトマトが $${N}$ 株あり，そのうち $${n}$ 株を無作為に選んで，1株あたりの実の個数を調べた。`, what: '実の個数', whole: 'この農園全体のトマトの実の個数' },
+  { key: 'water', unit: '世帯', u: 'm^3', N: [10000, 20000, 50000], xr: [12, 30], sg: [3, 12],
+    text: (N, n) => `ある市の $${N}$ 世帯から $${n}$ 世帯を無作為に選んで，1か月の水道の使用量を調べた。`, what: '使用量', whole: 'この市の全世帯の1か月の水道の使用量の合計' }
+];
+function suiteiTotal(lv){
+  const cx = pick(TOT_CTX), n = pick([49, 64, 100, 144, 196, 400]), r = Math.sqrt(n), s = pick([0.25, 0.5, 1, 1.5, 2, 2.5]), sg = s * r;
+  if (!Number.isInteger(sg) || sg < cx.sg[0] || sg > cx.sg[1]) return null;
+  const N = pick(cx.N), xb = ri(cx.xr[0] * 10, cx.xr[1] * 10) / 10, X = Math.round(xb * 1e6), Mg = Math.round(196 * s * 1e4), L = X - Mg, U = X + Mg;
+  // 全体の数の端が整数になる組だけ（四捨五入しない）
+  const TL = L * N / 1e6, TU = U * N / 1e6;
+  if (L <= 0 || !Number.isInteger(TL) || !Number.isInteger(TU)) return null;
+  const uT = cx.u === 'm^3' ? ' $\\mathrm{m}^3$' : ` ${cx.u}`, u$ = cx.u === 'm^3' ? '\\,\\mathrm{m}^3' : '';
+  const label = `${cx.text(N, n)}その結果，1${cx.unit}あたりの${cx.what}の平均は $${xb}$${uT}，標準偏差は $${sg}$${uT}であった。標本の大きさが大きいので，この標準偏差を母標準偏差の代わりに用いて，1${cx.unit}あたりの${cx.what}の母平均 $m$ に対する信頼度 $95\\%$ の信頼区間を求めよ。また，${cx.whole} $M$ を $M=${N}m$ で推定するとき，$M$ に対する信頼度 $95\\%$ の信頼区間を求めよ。`;
+  const st = [{ t: 'txt', s: `標本の大きさは $${n}$，標本平均は $${xb}$，標準偏差は $${sg}$ であるから，$m$ に対する信頼度 $95\\%$ の信頼区間は` },
+    { t: 'disp', lines: 2, tex: `\\overline{X}-1.96\\cdot\\frac{\\sigma}{\\sqrt{n}}\\leqq m\\leqq \\overline{X}+1.96\\cdot\\frac{\\sigma}{\\sqrt{n}}` },
+    { t: 'eq', rows: [`1.96\\cdot\\frac{${sg}}{\\sqrt{${n}}} &= 1.96\\cdot ${s}`, `&= ${decU(Mg)}`] },
+    { t: 'disp', lines: 2, tex: `${xb}-${decU(Mg)}\\leqq m\\leqq ${xb}+${decU(Mg)}` },
+    { t: 'disp', lines: 2, tex: `${decU(L)}\\leqq m\\leqq ${decU(U)}` },
+    { t: 'txt', s: `$M=${N}m$ であるから，各辺に $${N}$ をかけて` },
+    { t: 'eq', rows: [`${N}\\cdot ${decU(L)} &= ${TL}`] }, { t: 'eq', rows: [`${N}\\cdot ${decU(U)} &= ${TU}`] },
+    { t: 'disp', lines: 2, tex: `${TL}\\leqq M\\leqq ${TU}` }];
+  return {
+    unit: 'suitei', lv, sit: 'tot' + cx.key, key: `st|tot|${cx.key}|${N}|${n}|${sg}|${xb}`, sec: T.suitei2, wide: true,
+    label, math: '', item: `${cx.text(N, n).replace(/。$/, '')}：平均 $${xb}$，標準偏差 $${sg}$。$m$ と $M=${N}m$ の信頼度 $95\\%$ の信頼区間`,
+    head: `大きさ $${n}$，$\\overline{x}=${xb}$，標準偏差 $${sg}$，$M=${N}m$`, short: `全体の数の推定（${N}${cx.unit}）`,
+    ans: `$${decU(L)}\\leqq m\\leqq ${decU(U)}$，$${TL}${u$}\\leqq M\\leqq ${TU}${u$}$`, vars: {}, steps: st,
+    // 端を浮動小数で計算し直す
+    chk: () => { const m = 1.96 * sg / r; return Math.abs(xb - m - L / 1e6) + Math.abs(xb + m - U / 1e6) + Math.abs(N * (xb - m) - TL) + Math.abs(N * (xb + m) - TU); }
+  };
+}
 // 仮説検定の場面（母比率）。rows：使う KINJI の組、q：p の代わりに 1−p を帰無仮説の値にするか（'any' はどちらも）
 const KT_P = [
   { key: 'coin', kind: 'p', side: 'two', rows: r => r[2] === 2, q: false, short: '硬貨', pDesc: '表が出る確率', cDesc: '表が出る回数',
@@ -4359,7 +4498,7 @@ const SB_GEN = {
   // 【確率分布表から期待値・分散・標準偏差】基本：表を与える／標準：試行から表を作る
   bunpu(lv){
     for (;;) {
-      let xs, ps, label, item, short = '', key, pre = [], vals = null;
+      let xs, ps, label, item, short = '', key, pre = [], vals = null, ftab = '';
       if (lv === 1) {
         // 値は連続した整数 3〜4 個、確率は同じ分母 D の正の数（和が 1）
         const m = pick([3, 4]), s = ri(-2, 3), D = pick([4, 5, 6, 8, 10, 12]);
@@ -4370,15 +4509,17 @@ const SB_GEN = {
         label = `確率変数 $X$ の確率分布が次の表で与えられるとき，$X$ の期待値，分散，標準偏差を求めよ。`;
         item = `$${tb}$`; key = `bp1|${xs}|${ks}`;
       } else {
-        const tr = pick(TRIALS)(); if (!tr) continue;
+        const tr = Math.random() < 0.25 ? freqTrial() : pick(TRIALS)(); if (!tr) continue;
         ({ xs, ps } = distOf(tr.vals)); vals = tr.vals;
         label = `${tr.text}$X$ の期待値，分散，標準偏差を求めよ。`; item = tr.text.replace(/とする。$/, ''); short = tr.short; key = `bp2|${tr.key}`;
         pre = [{ t: 'txt', s: `$X$ のとりうる値は $${xs.join(',\\ ')}$ で，確率分布は次の表のようになる。` }, { t: 'disp', lines: 3, tex: distTable(xs, ps) }];
+        if (tr.table) { ftab = tr.table; item = `${tr.short}：$${tr.table}$`; }
       }
       const m = momentSteps(xs, ps);
+      if (!easyE(m.E)) continue;   // 分散の行の {E(X)}^2 が暗算できない数なら作りなおす
       return {
         unit: 'bunpu', lv, sit: lv === 2 ? key.split('|')[1].replace(/[-\d]/g, '') : undefined, key, sec: T[lv === 1 ? 'bunpu1' : 'bunpu2'], wide: true,
-        label, math: lv === 1 ? distTable(xs, ps) : '', item, head: lv === 1 ? '確率分布表から' : short, short: lv === 1 ? '確率分布表' : short,
+        label, math: lv === 1 ? distTable(xs, ps) : ftab, item, head: lv === 1 ? '確率分布表から' : short, short: lv === 1 ? '確率分布表' : short,
         ans: momentAns('X', m.E, m.V, m.sd), vars: {}, steps: pre.concat(m.steps), dist: { xs, ps },
         // 表：確率の和が 1。E・V：基本は表から、標準は試行のすべての場合の値の平均で別に計算する
         chk: () => {
@@ -4392,6 +4533,7 @@ const SB_GEN = {
 
   // 【aX+b の期待値・分散】基本：E(X)・V(X) を与える／標準：試行の X から Y=aX+b
   henkan(lv){
+    if (lv === 2 && Math.random() < 1 / 3) return henkanRev(lv);
     const a = pick(lv === 1 ? [-3, -2, -1, 2, 3, 4, 5] : [2, 3, 5, 10, -2, -3]), b = ri(lv === 1 ? -10 : -20, lv === 1 ? 10 : 20);
     let EX, VX, pre = [], vals = null, label, item, key, short = '';
     const Ylin = sumTex([[a, 'X'], [b, '']]), nm = lv === 1 ? Ylin : 'Y';
@@ -4495,45 +4637,52 @@ const SB_GEN = {
       let p, n, text = '', key;
       if (lv === 1) {
         p = pick([new F(1, 2), new F(1, 3), new F(2, 3), new F(1, 4), new F(3, 4), new F(1, 5), new F(2, 5), new F(1, 6)]);
-        n = ri(3, Math.min(10, Math.floor(Math.log(1e5) / Math.log(p.d))));
+        n = nbN(p.d, 10);
       } else {
         const tr = pick([
-          () => ({ p: new F(1, 6), n: ri(3, 6), t: 'さいころを $N$ 回投げるとき，$1$ の目が出る回数を', k: 'die1' }),
-          () => ({ p: new F(1, 3), n: ri(3, 8), t: 'さいころを $N$ 回投げるとき，$3$ の倍数の目が出る回数を', k: 'die3' }),
-          () => ({ p: new F(1, 2), n: ri(3, 10), t: '硬貨を $N$ 回投げるとき，表が出る回数を', k: 'coin' }),
-          () => { const q = pick([new F(1, 4), new F(1, 5), new F(2, 5), new F(1, 3), new F(3, 4)]); return { p: q, n: ri(3, Math.min(8, Math.floor(Math.log(1e5) / Math.log(q.d)))), t: `当たる確率が $${numTex(q)}$ のくじを1本引いてはもとに戻すことを $N$ 回くり返すとき，当たる回数を`, k: 'kuji' }; },
-          () => { const q = pick([new F(2, 3), new F(3, 4), new F(3, 5)]); return { p: q, n: ri(3, 6), t: `シュートの成功率が $${numTex(q)}$ の選手が，シュートを $N$ 本打つとき，成功する本数を`, k: 'shoot' }; },
-          () => ({ p: new F(1, 4), n: ri(3, 8), t: '4つの選択肢から1つを選ぶ問題 $N$ 問に，でたらめに答えるとき，正解する問題の数を', k: 'quiz' }),
-          () => { const q = pick([new F(2, 3), new F(4, 5), new F(3, 4)]); return { p: q, n: ri(3, 6), t: `発芽率が $${numTex(q)}$ の種子を $N$ 個まくとき，発芽する個数を`, k: 'seed' }; },
-          () => { const r = ri(1, 3), w = ri(2, 4), q = new F(r, r + w); if (q.d > 7) return null; return { p: q, n: ri(3, Math.min(6, Math.floor(Math.log(1e5) / Math.log(q.d)))), t: `赤玉 $${r}$ 個と白玉 $${w}$ 個が入った袋から1個取り出し，色を調べてもとに戻すことを $N$ 回くり返すとき，赤玉が出る回数を`, k: `ball${r}${w}` }; },
-          () => ({ p: new F(1, 2), n: ri(3, 8), t: '男の子と女の子の生まれる確率をどちらも $\\frac{1}{2}$ とする。$N$ 人の子どもが生まれるとき，男の子の人数を', k: 'birth' })])();
+          () => ({ p: new F(1, 6), n: nbN(6, 6), t: 'さいころを $N$ 回投げるとき，$1$ の目が出る回数を', k: 'die1' }),
+          () => ({ p: new F(1, 3), n: nbN(3, 8), t: 'さいころを $N$ 回投げるとき，$3$ の倍数の目が出る回数を', k: 'die3' }),
+          () => ({ p: new F(1, 2), n: nbN(2, 10), t: '硬貨を $N$ 回投げるとき，表が出る回数を', k: 'coin' }),
+          () => { const q = pick([new F(1, 4), new F(1, 5), new F(2, 5), new F(1, 3), new F(3, 4)]); return { p: q, n: nbN(q.d, 8), t: `当たる確率が $${numTex(q)}$ のくじを1本引いてはもとに戻すことを $N$ 回くり返すとき，当たる回数を`, k: 'kuji' }; },
+          () => { const q = pick([new F(2, 3), new F(3, 4), new F(3, 5)]); return { p: q, n: nbN(q.d, 6), t: `シュートの成功率が $${numTex(q)}$ の選手が，シュートを $N$ 本打つとき，成功する本数を`, k: 'shoot' }; },
+          () => ({ p: new F(1, 4), n: nbN(4, 8), t: '4つの選択肢から1つを選ぶ問題 $N$ 問に，でたらめに答えるとき，正解する問題の数を', k: 'quiz' }),
+          () => { const q = pick([new F(2, 3), new F(4, 5), new F(3, 4)]); return { p: q, n: nbN(q.d, 6), t: `発芽率が $${numTex(q)}$ の種子を $N$ 個まくとき，発芽する個数を`, k: 'seed' }; },
+          () => { const r = ri(1, 3), w = ri(2, 4), q = new F(r, r + w); if (!NB_MAX[q.d]) return null; return { p: q, n: nbN(q.d, 6), t: `赤玉 $${r}$ 個と白玉 $${w}$ 個が入った袋から1個取り出し，色を調べてもとに戻すことを $N$ 回くり返すとき，赤玉が出る回数を`, k: `ball${r}${w}` }; },
+          () => ({ p: new F(1, 2), n: nbN(2, 8), t: '男の子と女の子の生まれる確率をどちらも $\\frac{1}{2}$ とする。$N$ 人の子どもが生まれるとき，男の子の人数を', k: 'birth' })])();
         if (!tr) continue;
         p = tr.p; n = tr.n; text = tr.t.replace('$N$', `$${n}$`); key = tr.k;
       }
-      const q = new F(1).sub(p), k = lv === 1 ? ri(0, n) : n - 1, Bt = `B(${n},\\ ${numTex(p)})`;
+      // 基本：k は 0〜n から。nC2 などの計算が多くなるよう、真ん中（1〜n−1）は端（0・n）の2倍出やすくする
+      // 標準：問い方は4種類（ちょうど k 回／1回以下／n−1回以上／少なくとも1回）をまぜる（利用者指定）
+      const ask = lv === 1 ? 'eq' : pick(['eq', 'le', 'ge', 'atl']);
+      const k = lv === 1 ? pick([0, n, ...Array.from({ length: n - 1 }, (_, i) => i + 1).flatMap(j => [j, j])]) : ri(1, n - 1);
+      const q = new F(1).sub(p), Bt = `B(${n},\\ ${numTex(p)})`;
       const pw = (f, e) => e === 0 ? '' : `\\left(${numTex(f)}\\right)${e === 1 ? '' : `^${e}`}`;
       const fpow = (f, e) => new F(f.n ** e, f.d ** e);
       const Pk = j => fpow(p, j).mul(fpow(q, n - j)).mul(nCr(n, j));
       // P(X=j) の公式の形と、数を入れた形
       const form = j => `{}_{${n}}\\mathrm{C}_{${j}}${pw(p, j)}${pw(q, n - j)}`;
       const nums = j => [nCr(n, j) === 1 ? '' : `${nCr(n, j)}`, j ? numTex(fpow(p, j)) : '', n - j ? numTex(fpow(q, n - j)) : ''].filter(Boolean).join('\\cdot ');
-      const js = lv === 1 ? [k] : [n - 1, n], P = js.reduce((t, j) => t.add(Pk(j)), new F(0));
-      const PT = lv === 1 ? `P(X=${k})` : `P(X\\geqq ${n - 1})`;
+      const js = { eq: [k], le: [0, 1], ge: [n - 1, n], atl: Array.from({ length: n }, (_, i) => i + 1) }[ask], P = js.reduce((t, j) => t.add(Pk(j)), new F(0));
+      const PT = { eq: `P(X=${k})`, le: 'P(X\\leqq 1)', ge: `P(X\\geqq ${n - 1})`, atl: 'P(X\\geqq 1)' }[ask];
+      // 数を入れた形が答えと同じになるとき（k=0, n など）は1行だけ
+      const last = (a, b) => a === numTex(P) ? [`&= ${a}`] : [`&= ${a}`, `&= ${b || numTex(P)}`];
+      const pSteps = ask === 'eq' ? [{ t: 'eq', noEval: true, rows: [`${PT} &= ${form(k)}`] }, { t: 'eq', rows: last(nums(k)) }]
+        : ask === 'atl' ? [{ t: 'txt', s: '「少なくとも1回」は，「1回もない」の余事象を使う。' }, { t: 'eq', noEval: true, rows: [`${PT} &= 1-P(X=0)`, `&= 1-${form(0)}`] }, { t: 'eq', rows: [`&= 1-${nums(0)}`, `&= ${numTex(P)}`] }]
+        : [{ t: 'eq', noEval: true, rows: [`${PT} &= P(X=${js[0]})+P(X=${js[1]})`, `&= ${form(js[0])}+${form(js[1])}`] }, { t: 'eq', rows: last(js.map(nums).join('+')) }];
       const E = p.mul(n), V = p.mul(q).mul(n), sd = sqrtTex(V);
       const st = [{ t: 'txt', s: `${lv === 1 ? '' : `${text} $X$ とすると，`}$X$ は二項分布 $${Bt}$ にしたがう。` },
-        { t: 'eq', noEval: true, rows: lv === 1 ? [`${PT} &= ${form(k)}`] : [`${PT} &= P(X=${n - 1})+P(X=${n})`, `&= ${form(n - 1)}+${form(n)}`] },
-        // k=0, n のときは数を入れた形が答えと同じになるので1行だけ
-        { t: 'eq', rows: js.map(nums).join('+') === numTex(P) ? [`&= ${numTex(P)}`] : [`&= ${js.map(nums).join('+')}`, `&= ${numTex(P)}`] },
+        ...pSteps,
         { t: 'eq', rows: [`E(X) &= ${n}\\cdot ${numTex(p)}`, `&= ${numTex(E)}`] },
         { t: 'eq', rows: [`V(X) &= ${n}\\cdot ${numTex(p)}\\cdot ${numTex(q)}`, `&= ${numTex(V)}`] },
         { t: 'eq', rows: [`\\sigma(X) &= \\sqrt{${numTex(V)}}`].concat(sd === `\\sqrt{${numTex(V)}}` ? [] : [`&= ${sd}`]) }];
       const label = lv === 1 ? `確率変数 $X$ が二項分布 $${Bt}$ にしたがうとき，$${PT}$ と，$X$ の期待値，分散，標準偏差を求めよ。`
         : `${text} $X$ とする。$${PT}$ と，$X$ の期待値，分散，標準偏差を求めよ。`;
       return {
-        unit: 'nikouBunpu', lv, sit: lv === 2 ? key.replace(/\d/g, '') : undefined, key: lv === 1 ? `nb1|${n}|${numTex(p)}|${k}` : `nb2|${key}|${n}|${numTex(p)}`, sec: T[lv === 1 ? 'nbun1' : 'nbun2'], wide: true,
+        unit: 'nikouBunpu', lv, sit: lv === 2 ? key.replace(/\d/g, '') : undefined, key: lv === 1 ? `nb1|${n}|${numTex(p)}|${k}` : `nb2|${key}|${n}|${numTex(p)}|${ask}${ask === 'eq' ? k : ''}`, sec: T[lv === 1 ? 'nbun1' : 'nbun2'], wide: true,
         label, math: '', item: lv === 1 ? `$X$ が $${Bt}$ にしたがうとき，$${PT}$，$E(X)$，$V(X)$，$\\sigma(X)$` : `${text} $X$：$${PT}$，$E(X)$，$V(X)$，$\\sigma(X)$`,
         head: lv === 1 ? `$${Bt}$` : `${text} $X$`, short: `二項分布 B(${n}, ${p.n}/${p.d})`,   // 計算用紙の題は平文（\frac を入れない）
-        ans: `$${PT}=${numTex(P)}$，` + momentAns('X', E, V, sd), vars: {}, steps: st,
+        ans: `$${PT}=${numTex(P)}$，` + momentAns('X', E, V, sd), vars: {}, steps: st, nb: { d: p.d, n },
         // 成功・失敗の並び 2ⁿ 通りをすべて数え上げて X の分布を作り、P・E・V を比べる
         chk: () => {
           const pv = p.val(), dist = Array(n + 1).fill(0);
@@ -4609,7 +4758,9 @@ const SB_GEN = {
   // 【母平均の推定】区間の端は 100万分の1 を単位とする整数で計算し、四捨五入も整数で（境目ちょうどの組は出さない）
   suitei(lv){
     for (;;) {
-      const type = lv === 1 ? 'm95' : pick(['m99', 'mS', 'p']), c100 = type === 'm99' ? 258 : 196, cT = (c100 / 100).toFixed(2), pct = type === 'm99' ? 99 : 95;
+      // m90：共通テスト（2023）の形。P(−z₀≦Z≦z₀)=0.901 となる z₀=1.65 を表から読み、その区間を信頼度 90% とみなす
+      const type = lv === 1 ? 'm95' : pick(['m99', 'mS', 'p', 'm90', 'tot']), c100 = { m99: 258, m90: 165 }[type] || 196, cT = (c100 / 100).toFixed(2), pct = { m99: 99, m90: 90 }[type] || 95;
+      if (type === 'tot') { const r = suiteiTotal(lv); if (r) return r; continue; }
       let X, M, d, label, item, head, st, key, center, sym, n, seF, sitKey;
       if (type !== 'p') {
         n = pick(type === 'mS' ? [64, 100, 144, 225, 400] : [16, 25, 36, 64, 100, 144, 225, 400]);
@@ -4626,6 +4777,7 @@ const SB_GEN = {
         item = `${cx.key === 'gen' ? '' : `${cx.short}：`}大きさ $${n}$，標本平均 $${xb}$，${type === 'mS' ? '標本' : '母'}標準偏差 $${sg}$：信頼度 $${pct}\\%$（小数第1位まで）`;
         head = `大きさ $${n}$，$\\overline{x}=${xb}$，${type === 'mS' ? '標本' : '母'}標準偏差 $${sg}$，信頼度 $${pct}\\%$`;
         key = `st|${type}|${cx.key}|${n}|${sg}|${xb}`;
+        if (type === 'm90') label = label.replace('ただし，', `ただし，$P(-z_0\\leqq Z\\leqq z_0)=0.901$ となる $z_0$ を正規分布表から求め，$\\overline{X}-z_0\\cdot\\frac{\\sigma}{\\sqrt{n}}\\leqq m\\leqq\\overline{X}+z_0\\cdot\\frac{\\sigma}{\\sqrt{n}}$ を信頼度 $90\\%$ の信頼区間とする。また，`);
         st = [{ t: 'txt', s: type === 'mS' ? `標本標準偏差 $${sg}$ を母標準偏差の代わりに用いる。標本の大きさは $${n}$，標本平均は $${xb}$ であるから，信頼度 $${pct}\\%$ の信頼区間は` : `標本の大きさは $${n}$，標本平均は $${xb}$，母標準偏差は $${sg}$ であるから，信頼度 $${pct}\\%$ の信頼区間は` },
           { t: 'disp', lines: 2, tex: `\\overline{X}-${cT}\\cdot\\frac{\\sigma}{\\sqrt{n}}\\leqq m\\leqq \\overline{X}+${cT}\\cdot\\frac{\\sigma}{\\sqrt{n}}` },
           { t: 'eq', rows: s === 1 ? [`${cT}\\cdot\\frac{${sg}}{\\sqrt{${n}}} &= ${cT}`] : [`${cT}\\cdot\\frac{${sg}}{\\sqrt{${n}}} &= ${cT}\\cdot ${s}`, `&= ${decU(M)}`] }];
@@ -4650,6 +4802,7 @@ const SB_GEN = {
           { t: 'eq', rows: [`\\sqrt{\\frac{${R}\\cdot ${+(1 - R).toFixed(2)}}{${n}}} &= ${decU(SE)}`] },
           { t: 'eq', rows: [`1.96\\cdot ${decU(SE)} &= ${decU(M)}`] }];
       }
+      if (type === 'm90') st.unshift({ t: 'txt', s: `$P(-z_0\\leqq Z\\leqq z_0)=0.901$ より $P(0\\leqq Z\\leqq z_0)=0.4505$。正規分布表から $z_0=1.65$` });
       const L = X - M, U = X + M;
       // 四捨五入の境目ちょうど（例 46.35）の端は出さない。比率は 0 以上 1 以下
       if (!Number.isInteger(M) || isTie(L, d) || isTie(U, d) || L <= 0 || (type === 'p' && U >= 1e6)) continue;
@@ -4740,6 +4893,8 @@ const SB_GEN = {
         chk: () => Math.abs(texEval(sd, {}) - sg / Math.sqrt(n))
       };
     }
+    // 標本比率 R の型（共通テスト 2022 の形）を 1/3 の割合で
+    if (Math.random() < 1 / 3) for (;;) { const r = ratioProb(lv); if (r) return r; }
     for (;;) {
       const n = pick([36, 64, 100, 144, 225, 400]), r = Math.sqrt(n), s = pick([0.5, 0.8, 1, 1.2, 1.5, 2, 2.5, 3, 4, 5]), sg = Math.round(s * r * 10) / 10;
       if (!Number.isInteger(sg) || sg < cx.sg[0] || sg > cx.sg[1]) continue;
@@ -6302,13 +6457,15 @@ const FONTS = {
   gothic: "'Zen Kaku Gothic New','Hiragino Sans','Yu Gothic',system-ui,sans-serif",
   mincho: "'Zen Old Mincho','Hiragino Mincho ProN','Yu Mincho',serif"
 };
-const ST = { units: ['tasuki', 'heihou'], count: '10', level: 'mix', order: 'mix', font: 'maru', tex: 'lua', title: '', pv: 'q', mode: 'work', subject: '1', kahouUnit: 'deg', formula: 'off', mixLv: 'seq', closedGrp: [], time: 'off' };
+const ST = { ans: 'full', units: ['tasuki', 'heihou'], count: '10', level: 'mix', order: 'mix', font: 'maru', tex: 'lua', title: '', pv: 'q', mode: 'work', subject: '1', kahouUnit: 'deg', formula: 'off', mixLv: 'seq', closedGrp: [], time: 'off' };
 let PROBS = [];
 const SAVE_KEY = 'suu1print_settings';
 try { Object.assign(ST, JSON.parse(localStorage.getItem(SAVE_KEY) || '{}')); } catch (e) { /* 保存なしで動く */ }
-// 開いたときは公式・手順も目安時間ものせない（利用者の指定）。問題数は 10〜50 の10問ごと（前の 12・14 問などの保存は 10 問にする）
+// 開いたときは公式・手順も目安時間ものせない（利用者の指定）。問題数は 1〜50 問（それ以外の保存は 10 問にする）
 ST.formula = 'off'; ST.time = 'off';
-if (!['10', '20', '30', '40', '50'].includes(String(ST.count))) ST.count = '10';
+const CNT_MAX = 50, clampCnt = v => { v = Math.round(+v); return Number.isFinite(v) && v >= 1 ? Math.min(CNT_MAX, v) : null; };
+ST.count = String(clampCnt(ST.count) || 10);
+if (!['full', 'only'].includes(ST.ans)) ST.ans = 'full';
 const save = () => { try { localStorage.setItem(SAVE_KEY, JSON.stringify(ST)); } catch (e) { /* 保存できなくても動く */ } };
 
 function makeSet(){
@@ -6374,7 +6531,7 @@ const INST = {
   list: '答えは解答欄に書け。計算は計算用紙を使うこと。'
 };
 const MODE_NOTE = {
-  work: 'しっかり解く：解答の途中式の行数から、問題ごとに必要な解くスペースを見積もって高さを変えます（たすき掛けや √(5+2√6) は小さめ、対称式は大きめ）。',
+  work: 'しっかり解く：解答・解説の長さ（0.8 倍）から、問題ごとに必要な解くスペースを決めて高さを変えます（たすき掛けや √(5+2√6) は小さめ、対称式は大きめ）。',
   list: '一覧：問題集のように、大問（「次の式を因数分解せよ。」など）の下に小問を並べ、各問に解答欄をつけます。単元ごとにまとめて並べ、そのあとに問題番号と式つきの計算用紙が続きます。計算用紙の欄は、問題の種類に合わせて高さを変えます（最大・最小や平方完成は広く）。'
 };
 // 一覧の大問の指示
@@ -6480,12 +6637,29 @@ const GROUP_INST = {
 // 解くスペースの見積もり（mm）：解答の途中式の行数（たすき掛けの図は3行）から
 // 左右に並べた途中式（t:'cols'）をほどいて1列に（点検用）
 const flatSteps = st => st.flatMap(s => s.t === 'cols' ? s.cols.flat() : [s]);
+// 解くスペース＝解答・解説（途中式つき、10pt・半分の幅）の実際の長さ × 0.8（利用者指定）。34mm〜140mm。
+// p.halfSpace の問題（相関係数）は横いっぱいで幅が2倍なので、同じ面積になるよう高さは半分（2問で1ページ）。
+// 割り算など、式が長いから横いっぱいにしている問題は、書く行数は変わらないので半分にしない
+// 文の段・表・図・グラフも長さに入るので、どの単元も同じ物差しになる。解答の長さは問題ごとに1回だけ測って覚える（見た目の文字を変えたら測りなおす）
+const ANS_RATIO = 0.8, SPACE_MIN = 34, SPACE_MAX = 140;
+function measureAns(ps){
+  const need = ps.filter(p => p._ahFont !== ST.font); if (!need.length) return;
+  const keep = ST.ans; ST.ans = 'full';
+  const host = document.createElement('div'); host.className = 'sheet';
+  host.style.cssText = 'position:absolute;left:-9999px;top:0;height:auto;display:block;visibility:hidden';
+  host.innerHTML = `<div class="qa-wrap" style="columns:auto;height:auto;overflow:visible;font-size:10pt">${need.map(p => `<div style="width:${(210 - 24 - 7) / 2 * MM}px">${answerBlock({ p, no: '(1)', g: 0 })}</div>`).join('')}</div>`;
+  ST.ans = keep;
+  document.body.appendChild(host);
+  // まとめて書きこんでから、まとめて読みとる（測るたびに画面の再計算が起きないように）
+  const hs = [...host.firstChild.children].map(b => b.getBoundingClientRect().height / MM);
+  host.remove();
+  need.forEach((p, i) => { p._ah = hs[i]; p._ahFont = ST.font; });
+}
 const spaceOf = p => {
-  // グラフをかく問題は、図をかくぶんとして5行ぶん足す（最大・最小は 平方完成＋グラフ で広くなる）。左右に並べた途中式は高い方
-  // 縦ベクトル（pmatrix）を含む行は高いので2行ぶん
-  const linesOf = st => st.reduce((t, s) => t + (s.t === 'eq' ? s.rows.reduce((u, r) => u + (/pmatrix/.test(r) ? 1 + Math.min(2, (r.match(/\\\\/g) || []).length) : 1), 0) : s.t === 'disp' ? (s.lines || 3) : s.t === 'graph' ? 5 : s.t === 'cols' ? Math.max(...s.cols.map(linesOf)) : 0), 0);
-  const lines = linesOf(p.steps);
-  return Math.max(34, p.minSpace || 0, Math.min(100, 18 + lines * 8));
+  if (p._ah != null) return Math.max(SPACE_MIN, p.minSpace || 0, Math.min(SPACE_MAX, p._ah * ANS_RATIO / (p.halfSpace ? 2 : 1)));
+  // まだ測っていないとき（画面のない点検など）は、途中式の行数から見積もる
+  const linesOf = st => st.reduce((t, s) => t + (s.t === 'eq' ? s.rows.length : s.t === 'disp' ? (s.lines || 3) : s.t === 'graph' ? 5 : s.t === 'cols' ? Math.max(...s.cols.map(linesOf)) : 0), 0);
+  return Math.max(SPACE_MIN, p.minSpace || 0, Math.min(100, 18 + linesOf(p.steps) * 8));
 };
 // 並べる順番と番号。一覧は単元ごとに大問 1, 2, … とし、その中で小問 (1), (2), …
 function arranged(){
@@ -6521,7 +6695,7 @@ const joinEq = st => st.reduce((o, s) => {
   else o.push(s.t === 'cols' ? { ...s, cols: s.cols.map(joinEq) } : s);
   return o;
 }, []);
-const answerBlock = a => `<div class="qa${a.p.ansFull ? ' span' : ''}"><div class="qa-head"><b>${a.g ? `<span class="gno">${a.g}</span>` : ''}${a.no}</b>　${rich(a.p.head)}${ST.time !== 'off' ? `<span class="tm">目安 ${fmt3(a.p.sec)}</span>` : ''}</div>${joinEq(a.p.steps).map(stepHTML).join('')}<div class="qa-ans">答　${rich(a.p.ans)}</div></div>`;
+const answerBlock = a => ST.ans === 'only' ? `<div class="qa"><div class="qa-head"><b>${a.g ? `<span class="gno">${a.g}</span>` : ''}${a.no}</b>　${rich(a.p.head)}</div><div class="qa-ans">答　${rich(a.p.ans)}</div></div>` : `<div class="qa${a.p.ansFull ? ' span' : ''}"><div class="qa-head"><b>${a.g ? `<span class="gno">${a.g}</span>` : ''}${a.no}</b>　${rich(a.p.head)}${ST.time !== 'off' ? `<span class="tm">目安 ${fmt3(a.p.sec)}</span>` : ''}</div>${joinEq(a.p.steps).map(stepHTML).join('')}<div class="qa-ans">答　${rich(a.p.ans)}</div></div>`;
 
 const MM = 3.7795;
 let PACK = null, CPACK = null, LISTCOLS = {}, ISSUES = [];
@@ -6606,12 +6780,12 @@ const FORMULA = {
   sabunWa: ['$S=\\sum_{k=1}^{n}k\\,r^{k-1}$ のとき $S-rS=(1+r+\\cdots+r^{n-1})-nr^n$', '$S$ と $rS$ を1項ずらして縦にそろえて引く。最後の項 $-nr^n$ を忘れない。'],
   zenka: ['等差型 $a_{n+1}=a_n+d$，等比型 $a_{n+1}=ra_n$，階差型 $a_{n+1}=a_n+f(n)$', '$a_{n+1}=pa_n+q$ 型：$\\alpha=p\\alpha+q$ の解 $\\alpha$ で $a_{n+1}-\\alpha=p(a_n-\\alpha)$ と変形する。'],
   bunpu: ['$E(X)=\\sum x_kp_k$，$V(X)=E(X^2)-\\{E(X)\\}^2$，$\\sigma(X)=\\sqrt{V(X)}$', '確率の合計が 1 になることを確かめてから計算する。'],
-  henkan: ['$E(aX+b)=aE(X)+b$', '$V(aX+b)=a^2V(X)$，$\\sigma(aX+b)=|a|\\sigma(X)$'],
+  henkan: ['$E(aX+b)=aE(X)+b$', '$V(aX+b)=a^2V(X)$，$\\sigma(aX+b)=|a|\\sigma(X)$', '平均・分散から $a$，$b$ を求めるときは，先に $a^2V(X)$ の式から $a$ を決める。'],
   waSeki: ['$E(aX+bY)=aE(X)+bE(Y)$', '$X$ と $Y$ が独立のとき $V(aX+bY)=a^2V(X)+b^2V(Y)$，$E(XY)=E(X)E(Y)$'],
   nikouBunpu: ['$X$ が $B(n,\\ p)$ にしたがうとき $P(X=k)={}_{n}\\mathrm{C}_{k}\\,p^k q^{n-k}$（$q=1-p$）', '$E(X)=np$，$V(X)=npq$，$\\sigma(X)=\\sqrt{npq}$'],
   seiki: ['$X$ が $N(m,\\ \\sigma^2)$ にしたがうとき，$Z=\\frac{X-m}{\\sigma}$ と標準化する。', '正規分布表の $P(0\\leqq Z\\leqq u)$ と，左右対称であること，片側の全体が $0.5$ であることを使う。'],
   seikiKinji: ['$B(n,\\ p)$ は $n$ が大きいとき $N(np,\\ npq)$ で近似できる（$q=1-p$）。', '$Z=\\frac{X-np}{\\sqrt{npq}}$ と標準化して，正規分布表を使う。'],
-  hyouhonHeikin: ['母平均 $m$，母標準偏差 $\\sigma$ の母集団から大きさ $n$ の標本：$E(\\overline{X})=m$，$\\sigma(\\overline{X})=\\frac{\\sigma}{\\sqrt{n}}$', '$n$ が大きいとき，$\\overline{X}$ は $N\\left(m,\\ \\frac{\\sigma^2}{n}\\right)$ にしたがうとみてよい。'],
+  hyouhonHeikin: ['母平均 $m$，母標準偏差 $\\sigma$ の母集団から大きさ $n$ の標本：$E(\\overline{X})=m$，$\\sigma(\\overline{X})=\\frac{\\sigma}{\\sqrt{n}}$', '$n$ が大きいとき，$\\overline{X}$ は $N\\left(m,\\ \\frac{\\sigma^2}{n}\\right)$ にしたがうとみてよい。', '標本比率 $R$：$E(R)=p$，$\\sigma(R)=\\sqrt{\\frac{p(1-p)}{n}}$，$n$ が大きいとき $R$ は $N\\left(p,\\ \\frac{p(1-p)}{n}\\right)$ にしたがうとみてよい。'],
   suitei: ['信頼度 $95\\%$ の信頼区間：$\\overline{X}-1.96\\cdot\\frac{\\sigma}{\\sqrt{n}}\\leqq m\\leqq\\overline{X}+1.96\\cdot\\frac{\\sigma}{\\sqrt{n}}$（$99\\%$ は $2.58$）', '母標準偏差 $\\sigma$ が分からないときは，標本の大きさが大きければ標本標準偏差で代用する。', '母比率：$R-1.96\\sqrt{\\frac{R(1-R)}{n}}\\leqq p\\leqq R+1.96\\sqrt{\\frac{R(1-R)}{n}}$'],
   kentei: ['帰無仮説が正しいとして $Z$ の値を計算し，棄却域に入れば帰無仮説を棄却する。', '母比率 $p_{0}$ の検定：$Z=\\frac{X-np_{0}}{\\sqrt{np_{0}(1-p_{0})}}$', '有意水準 $5\\%$：両側 $|Z|\\geqq 1.96$，片側 $Z\\geqq 1.64$（または $Z\\leqq -1.64$）'],
   naiseki: ['$\\vec{a}\\cdot\\vec{b}=|\\vec{a}||\\vec{b}|\\cos\\theta$', '成分では $\\vec{a}\\cdot\\vec{b}=a_{1}b_{1}+a_{2}b_{2}$'],
@@ -6708,10 +6882,11 @@ function render(){
   box.innerHTML = '';
   // 単元を選んでいないときは、プリントを空にする
   if (!PROBS.length) { ['pageInfo', 'layoutWarn'].forEach(id => { $(id).textContent = ''; }); $('timeInfo').innerHTML = ''; $('bBrkAll').style.display = $('bAdjAll').style.display = 'none'; ISSUES = []; return; }
+  measureAns(PROBS);   // 解くスペース・計算用紙の欄の高さは解答の長さから
   const A = arranged();
   if (ST.mode === 'list') { renderList(box, A); renderCalc(box, A); } else renderWork(box, A);
   if (needZ()) box.insertAdjacentHTML('beforeend', zTableHTML());   // 正規分布表は問題と一緒に配れるよう、解答の前
-  layoutAnswers(box, A.map(answerBlock), `解答・解説　${printTitle()}`);
+  layoutAnswers(box, A.map(answerBlock), `${ST.ans === 'only' ? '解答' : '解答・解説'}　${printTitle()}`);
   const all = [...box.querySelectorAll('.sheet')];
   all.forEach((s, i) => s.insertAdjacentHTML('beforeend', `<div class="pgno">${i + 1} / ${all.length}</div>`));
   setupAdjust(box);
@@ -6727,7 +6902,7 @@ function render(){
   $('layoutWarn').textContent = ISSUES.length ? `表示の点検：${ISSUES.length}か所で式の折り返し・はみ出し・縮小があります（${ISSUES.slice(0, 4).map(x => x.msg).join('、')}${ISSUES.length > 4 ? ' など' : ''}）` : '';
   applyPv();
 }
-function applyPv(){ $('sheets').className = 'sheet-wrap show-' + ST.pv; }
+function applyPv(){ $('sheets').className = 'sheet-wrap show-' + ST.pv; document.querySelector('.seg[data-set="pv"] button[data-v="a"]').textContent = ST.ans === 'only' ? '解答' : '解答・解説'; }
 
 // しっかり解く：左の列 → 右の列 → 次のページ の順に、見積もった高さで詰めていく
 // 問題ごとに見積もった高さで、左の列 → 右の列 → 次のページ と詰める（しっかり解く・計算用紙で共通）。
@@ -6754,7 +6929,8 @@ const packInfo = (pages, h1, h2) => ({ pages: pages.map(cs => cs.map(col => col.
 
 // しっかり解く：横いっぱいの問題（p.full）があるページは、「2列の帯」と「横いっぱいの1問」を上から積む。
 // 帯の中は 左の列 → 右の列 の順に詰める。p.full がなければ packCols と同じ2列のページになる
-// brk：自分で入れた改ページ（その問題から新しいページ）。改ページで切ったページは、残った欄を紙の下まで広げる
+// brk：自分で入れた改段（利用者の指定）。左の列の途中なら、その問題から右の列へ（左の列の残りは列の下まで広げる）。
+// 右の列・帯のはじめ（横いっぱいの問題のあと）なら、その問題から次のページへ（切ったページは、残った欄を紙の下まで広げる）
 function packWork(A, h1, h2, maxF, brk = new Set()){
   const pages = []; let segs = [], used = 0, band = null, startBrk = null;
   const cap = () => pages.length ? h2 : h1;
@@ -6763,7 +6939,10 @@ function packWork(A, h1, h2, maxF, brk = new Set()){
   const newPage = () => { close(); segs.brk = startBrk; pages.push(segs); segs = []; used = 0; startBrk = null; };
   A.forEach((a, i) => {
     const x = { a, i, need: spaceOf(a.p) };
-    if (brk.has(i) && (segs.length || (band && band.cols[0].length))) { newPage(); pages[pages.length - 1].cut = true; startBrk = i; }
+    if (brk.has(i)) {
+      if (!a.p.full && band && band.c === 0 && band.cols[0].length) { band.c = 1; band.cut0 = true; }
+      else if (segs.length || (band && band.cols[0].length)) { newPage(); pages[pages.length - 1].cut = true; startBrk = i; }
+    }
     if (a.p.full) {
       close();
       if (used + x.need > cap() && segs.length) newPage();
@@ -6780,7 +6959,7 @@ function packWork(A, h1, h2, maxF, brk = new Set()){
   newPage();
   // 横いっぱいの問題があるページの帯は、左の列だけに寄らないよう、順番を保ったまま左右の高さがそろう所で分ける
   const sumOf = xs => xs.reduce((t, x) => t + x.need, 0);
-  pages.filter(segs => segs.some(s => s.k === 'full')).forEach(segs => segs.filter(s => s.k === 'two').forEach(s => {
+  pages.filter(segs => segs.some(s => s.k === 'full')).forEach(segs => segs.filter(s => s.k === 'two' && !s.cut0).forEach(s => {
     const xs = s.cols[0].concat(s.cols[1]); let best = 1;
     for (let j = 1; j <= xs.length; j++) if (Math.max(sumOf(xs.slice(0, j)), sumOf(xs.slice(j))) < Math.max(sumOf(xs.slice(0, best)), sumOf(xs.slice(best)))) best = j;
     s.cols = [xs.slice(0, best), xs.slice(best)]; s.sum = s.cols.map(sumOf);
@@ -6792,7 +6971,7 @@ function packWork(A, h1, h2, maxF, brk = new Set()){
     segs.forEach(s => {
       if (s.k === 'full') { s.h = s.x.h = s.x.need * F; return; }
       s.h = Math.max(...s.sum) * F;
-      s.cols.forEach((col, j) => { const f = Math.min(mf, s.h / Math.max(s.sum[j], 1)); col.forEach(x => { x.h = x.need * f; }); });
+      s.cols.forEach((col, j) => { const f = j === 0 && s.cut0 ? (segs.length === 1 ? H - 0.5 : s.h) / Math.max(s.sum[0], 1) : Math.min(mf, s.h / Math.max(s.sum[j], 1)); col.forEach(x => { x.h = x.need * f; }); });
     });
   });
   return pages;
@@ -6959,9 +7138,9 @@ function planCtl(sh){
   if (k === 'work') {
     const cells = [...sh.querySelectorAll('.cell')], first = Math.min(...cells.map(c => +c.dataset.i));
     cells.forEach(c => {
-      const r = c.getBoundingClientRect(), i = +c.dataset.i, right = S.right - r.right + 4;
-      if (i !== first) out.brk.push({ y: r.top - S.top, right, key: i, un: false });
-      else if (sh.dataset.brk === String(i)) out.brk.push({ y: r.top - S.top + 1.5 * MM, right, key: i, un: true });
+      const r = c.getBoundingClientRect(), i = +c.dataset.i, right = S.right - r.right + 4, left = !!c.closest('.lcol');
+      if (BRK.work.has(i)) out.brk.push({ y: r.top - S.top + 1.5 * MM, right, key: i, un: true, lb: i === first ? '改ページを取り消す' : '改段を取り消す' });
+      else if (i !== first) out.brk.push({ y: r.top - S.top, right, key: i, un: false, lb: left ? 'ここで改段' : 'ここで改ページ' });
     });
   }
   return out;
@@ -6970,7 +7149,7 @@ function placeCtl(p){
   const old = p.sh.querySelector('.ctl'); if (old) old.remove();
   const ctl = document.createElement('div'); ctl.className = 'ctl';
   p.adj.forEach(a => { const d = document.createElement('div'); d.className = 'adj' + (a.l ? ' l' : ''); d.style.cssText = `left:${a.x}px;top:${a.y}px;width:${a.w}px`; d.innerHTML = '<i title="上下にドラッグして高さを変える"></i>'; d.firstChild._drag = a.drag; ctl.appendChild(d); });
-  p.brk.forEach(b => { const e = document.createElement('button'); e.type = 'button'; e.className = 'brk' + (b.un ? ' un' : ''); e.style.cssText = `top:${b.y}px;right:${b.right}px`; e.textContent = b.un ? '改ページを取り消す' : 'ここで改ページ'; e.dataset.key = b.key; ctl.appendChild(e); });
+  p.brk.forEach(b => { const e = document.createElement('button'); e.type = 'button'; e.className = 'brk' + (b.un ? ' un' : ''); e.style.cssText = `top:${b.y}px;right:${b.right}px`; e.textContent = b.lb || (b.un ? '改ページを取り消す' : 'ここで改ページ'); e.dataset.key = b.key; ctl.appendChild(e); });
   p.sh.appendChild(ctl);
 }
 // render のあと：一覧の行のもとの高さを記録 → 覚えている高さを当てる → LaTeX 用の記録 → つまみとボタン
@@ -6999,7 +7178,7 @@ function resetBtns(){
   const na = [...$('sheets').querySelectorAll('.sheet')].filter(sh => kindOf(sh) && ADJ[sigOf(sh)]).length;
   $('bAdjAll').style.display = na ? '' : 'none'; $('bAdjAll').textContent = `高さを自動にもどす（${na}ページ）`;
   const nb = BRK[ST.mode === 'list' ? 'list' : 'work'].size;
-  $('bBrkAll').style.display = nb ? '' : 'none'; $('bBrkAll').textContent = `改ページをすべて取り消す（${nb}か所）`;
+  $('bBrkAll').style.display = nb ? '' : 'none'; $('bBrkAll').textContent = `${ST.mode === 'list' ? '改ページ' : '改段・改ページ'}をすべて取り消す（${nb}か所）`;
 }
 // 高さを自動にもどす：手で変えた高さを全部すて、見積もった高さで並べなおす（改ページはそのまま）
 $('bAdjAll').addEventListener('click', () => { ADJ = {}; const y = window.scrollY; render(); window.scrollTo(0, y); });
@@ -7163,7 +7342,8 @@ ${noTex(a)}\\ {\\footnotesize\\color{gray} ${(a.p.calc || a.p.math) ? (a.p.calc 
   // 左右に並べた途中式は minipage を2つ並べる
   const stepTex = s => s.t === 'cols' ? `\\noindent${s.cols.map(c => `\\begin{minipage}[t]{0.48\\linewidth}\\small\n${c.map(stepTex).join('\n')}\n\\end{minipage}`).join('\\hfill\n')}\\par` : s.t === 'txt' ? `${s.s}\\par` : s.t === 'disp' ? `\\[${s.tex}\\]` : s.t === 'graph' ? graphTikz(s.g) : s.t === 'fig' ? tikzOf(s.f) : `\\begin{align*}\n${s.rows.join('\\\\\n')}\n\\end{align*}`;
   // 横いっぱいの解答（p.ansFull）は2段組みをいったん閉じて出す
-  const answers = A.map(a => { const body = `\\noindent${noTex(a)}\\ ${a.p.head}${ST.time !== 'off' ? `\\hfill{\\footnotesize 目安 ${fmt3(a.p.sec)}}` : ''}\\par
+  const answers = A.map(a => { if (ST.ans === 'only') return `\\noindent${noTex(a)}\\ ${a.p.head}\\par\\noindent\\textbf{答}\\ ${a.p.ans}\\par\\medskip\\hrule\\medskip`;
+    const body = `\\noindent${noTex(a)}\\ ${a.p.head}${ST.time !== 'off' ? `\\hfill{\\footnotesize 目安 ${fmt3(a.p.sec)}}` : ''}\\par
 ${joinEq(a.p.steps).map(stepTex).join('\n')}
 \\noindent\\textbf{答}\\ ${a.p.ans}\\par\\medskip\\hrule\\medskip`; return a.p.ansFull ? `\\end{multicols}\n${body}\n\\begin{multicols}{2}\n\\small` : body; }).join('\n\n');
   return `% ${printTitle()}${unitList() ? `（${unitList()}）` : ''}
@@ -7184,7 +7364,7 @@ ${ST.formula === 'on' && formulaUnits().length > FBIG ? formulaTex(formulaUnits(
 ${INST[ST.mode]}\\par\\vspace{3mm}
 ${ST.formula === 'on' && formulaUnits().length && formulaUnits().length <= FBIG ? formulaTex(formulaUnits()) : ''}
 ${pages.join('\n\n')}
-${needZ() ? zTableTex() : ''}{\\Large\\bfseries 解答・解説}\\par\\vspace{2mm}\\hrule\\vspace{2mm}
+${needZ() ? zTableTex() : ''}{\\Large\\bfseries ${ST.ans === 'only' ? '解答' : '解答・解説'}}\\par\\vspace{2mm}\\hrule\\vspace{2mm}
 \\begin{multicols}{2}
 \\small
 ${answers}
@@ -7278,7 +7458,7 @@ function syncSeg(){
   document.querySelectorAll('input[name="unit"]').forEach(i => { i.checked = ST.units.includes(i.value); });
   $('levelNote').innerHTML = levelNoteHTML(); showOpts(); applyClosed(); updateGroupCounts();
   $('modeNote').textContent = MODE_NOTE[ST.mode];
-  $('title').value = ST.title;
+  $('title').value = ST.title; $('cnt').value = ST.count;
 }
 function regenerate(){
   clearTimeout(regenTimer);
@@ -7295,7 +7475,7 @@ document.querySelectorAll('.seg[data-set] button').forEach(b => b.addEventListen
   ST[name] = b.dataset.v; syncSeg(); save();
   if (name === 'font') { applyFont(); (document.fonts ? document.fonts.ready : Promise.resolve()).then(render); }
   else if (name === 'pv') applyPv();
-  else if (name === 'mode' || name === 'formula' || name === 'time') render();   // 配置だけ変えるときは、同じ問題のまま並べなおす
+  else if (name === 'mode' || name === 'formula' || name === 'time' || name === 'ans') render();   // 配置だけ変えるときは、同じ問題のまま並べなおす
   else if (name === 'tex') status(ST.tex === 'lua' ? 'LaTeX は ltjsarticle（LuaLaTeX）で出力します' : 'LaTeX は jsarticle（pLaTeX）で出力します');
   else regenerate();
 }));
@@ -7334,7 +7514,8 @@ function updateGrpSums(){
     if (g.querySelector('input[name="unit"]')) { const nm = UNITS.filter(u => ST.units.includes(u[0])).map(u => u[1]); s = !nm.length ? '単元を選んでいません' : nm.length <= 4 ? nm.join('・') : `${nm.slice(0, 3).join('・')} ほか（${nm.length}単元）`; }
     // 「まぜる」の並び順のように、いま隠している設定のボタンは入れない
     else s = [...g.querySelectorAll('.seg button.on')].filter(b => !b.closest('[style*="display: none"]')).map(b => b.textContent).join('・');
-    const t = g.querySelector('#title'); if (t && ST.title.trim()) s = `「${ST.title.trim()}」・${s}`;
+    if (g.querySelector('#cnt')) s = `${ST.count}問`;
+    if (g.querySelector('#title')) s = ST.title.trim() ? `「${ST.title.trim()}」` : `（空らん：${printTitle()}）`;
     g.querySelector('.gsum').textContent = s || '（設定なし）';
   });
 }
@@ -7345,7 +7526,14 @@ document.querySelectorAll('#grpFold button').forEach(b => b.addEventListener('cl
 document.querySelectorAll('input[name="unit"]').forEach(i => i.addEventListener('change', () => {
   ST.units = [...document.querySelectorAll('input[name="unit"]:checked')].map(x => x.value); save(); $('levelNote').innerHTML = levelNoteHTML(); showOpts(); updateGroupCounts(); regenSoon();
 }));
-$('title').addEventListener('input', () => { ST.title = $('title').value; save(); updateGrpSums(); if (PROBS.length) render(); });
+// 題名：打つたびに並べなおすと重いので、打ち終わって少し待ってから1回
+let titleTimer = 0;
+$('title').addEventListener('input', () => { ST.title = $('title').value; save(); updateGrpSums(); clearTimeout(titleTimer); titleTimer = setTimeout(() => { if (PROBS.length) render(); }, 400); });
+// 問題数：ボタンは ±1・±5、入力は打ち終わり（change）で 1〜50 に直す。どちらも少し待ってから1回だけ作りなおす
+const setCnt = v => { const c = clampCnt(v) || +ST.count; $('cnt').value = c; if (String(c) === ST.count) return; ST.count = String(c); save(); updateGrpSums(); regenSoon(); };
+document.querySelectorAll('#cntBox button').forEach(b => b.addEventListener('click', () => setCnt(+ST.count + +b.dataset.d)));
+$('cnt').addEventListener('change', () => setCnt($('cnt').value));
+$('cnt').addEventListener('keydown', e => { if (e.key === 'Enter') setCnt($('cnt').value); });
 $('bMake').addEventListener('click', regenerate);
 $('bPdf').addEventListener('click', printPdf);
 $('bImgPdf').addEventListener('click', savePdf);
@@ -7432,7 +7620,11 @@ function selfTest(N = 400){
   for (const [u] of UNITS) for (const lv of [1, 2]) for (let i = 0; i < N; i++) {
     const p = GEN[u](lv); count++;
     checkProb(p).forEach(e => errors.push(`[${u} Lv${lv}] ${e}`));
+    if (p.nb && !(NB_MAX[p.nb.d] >= p.nb.n)) errors.push(`[${u} Lv${lv}] 二項分布の回数が多すぎる（分母 ${p.nb.d} の ${p.nb.n} 乗）: ${p.key}`);
+    if (p.dist && !easyE(momentSteps(p.dist.xs, p.dist.ps).E)) errors.push(`[${u} Lv${lv}] E(X) の分子・分母が19以下か10の倍数でない: ${p.key}`);
   }
+  // aX+b・和と積で使う簡単な試行も、E(X) の分子・分母が暗算で2乗できる数
+  SIMPLE_TRIALS.forEach(t => { for (let i = 0; i < 20; i++) { const tr = t(), d = distOf(tr.vals); if (!easyE(momentSteps(d.xs, d.ps).E)) errors.push(`簡単な試行の E(X) が19以下か10の倍数でない: ${tr.key}`); } });
   // マスターデータそのものの検算
   COS_MASTER.forEach(e => {
     const b = new R(...e.b), c = new R(...e.c), a = new R(...e.a), m = b.mul(c).mul(ANG[e.A].c);
