@@ -416,6 +416,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
           <div class="seg" data-set="zenkaMode"><button data-v="level">難しさに合わせる</button><button data-v="pick">パターンを選ぶ</button></div>
           <div id="zenkaPatBox" style="margin-top:8px">
             <div id="zenkaPats" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+            <div class="seg" data-set="zenkaOrder" style="margin-top:8px"><button data-v="num">番号順</button><button data-v="shuffle">シャッフル</button></div>
             <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">
               <button class="btn" id="zenkaAll" type="button">すべて選ぶ</button>
               <button class="btn" id="zenkaStar2" type="button">★2まで</button>
@@ -524,8 +525,9 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.29.0', UPDATED = '2026-11-07';
+const VERSION = '5.30.0', UPDATED = '2026-11-07';
 const CHANGES = [
+  ['5.30.0', '2026-11-07', '漸化式のパターンに番号（1〜14）をつけ、「番号順」と「シャッフル」のボタンを追加。'],
   ['5.29.0', '2026-11-07', '漸化式のパターンに1次分数型と隣接3項間の応用を追加。これで14型すべてを選べる。1次分数型の問題文に置きかえの誘導は書かない。'],
   ['5.28.1', '2026-11-07', 'しっかり解くの解くスペースを広げた。解答の文字が手書きより小さいことを補って、解答の高さの 1.4 倍（以前は 0.8 倍）にした。上限は 180mm。'],
   ['5.28.0', '2026-11-07', '漸化式のパターンに階比型と対数型を追加し、「★4まで」のボタンを追加。漸化式の問題文で条件が2回出ていたのを1回にした。'],
@@ -6983,7 +6985,7 @@ const FONTS = {
   gothic: "'Zen Kaku Gothic New','Hiragino Sans','Yu Gothic',system-ui,sans-serif",
   mincho: "'Zen Old Mincho','Hiragino Mincho ProN','Yu Mincho',serif"
 };
-const ST = { zenkaMode: 'level', zenkaPats: ['ari', 'geo', 'diff', 'char'], waSekiBig: false, yakusuuBig: false, ans: 'full', units: ['tasuki', 'heihou'], count: '10', level: 'mix', order: 'mix', font: 'maru', tex: 'lua', title: '', pv: 'q', mode: 'work', subject: '1', kahouUnit: 'deg', formula: 'off', mixLv: 'seq', closedGrp: [], time: 'off' };
+const ST = { zenkaOrder: 'num', zenkaMode: 'level', zenkaPats: ['ari', 'geo', 'diff', 'char'], waSekiBig: false, yakusuuBig: false, ans: 'full', units: ['tasuki', 'heihou'], count: '10', level: 'mix', order: 'mix', font: 'maru', tex: 'lua', title: '', pv: 'q', mode: 'work', subject: '1', kahouUnit: 'deg', formula: 'off', mixLv: 'seq', closedGrp: [], time: 'off' };
 let PROBS = [];
 const SAVE_KEY = 'suu1print_settings';
 try { Object.assign(ST, JSON.parse(localStorage.getItem(SAVE_KEY) || '{}')); } catch (e) { /* 保存なしで動く */ }
@@ -7028,6 +7030,14 @@ function makeSet(){
     if (ST.mixLv !== 'rand') { if (ST.order === 'mix') PROBS = [...spreadSit(out.filter(p => p.lv === 1)), ...spreadSit(out.filter(p => p.lv === 2))]; }
     else if (ST.order !== 'mix') PROBS = units.flatMap(u => shuffle(out.filter(p => p.unit === u)));
   }
+  applyZenkaOrder();
+}
+// 漸化式で「パターンを選ぶ」ときの並び：番号順（同じ番号をまとめる）かシャッフル。ほかの単元があるときは、漸化式の問題が入っている場所の中だけで並べかえる
+function applyZenkaOrder(){
+  if (!zenkaPick()) return;
+  const slots = PROBS.map((p, i) => p.unit === 'zenka' ? i : -1).filter(i => i >= 0), no = k => ZENKA_TYPES.findIndex(t => t[0] === k);
+  const list = slots.map(i => PROBS[i]), sorted = ST.zenkaOrder === 'shuffle' ? shuffle(list.slice()) : list.map((p, i) => [p, i]).sort((a, b) => no(a[0].pat) - no(b[0].pat) || a[1] - b[1]).map(x => x[0]);
+  slots.forEach((i, j) => { PROBS[i] = sorted[j]; });
 }
 // まぜる：同じ単元・同じ場面の問題がとなりに来ない並びになるまでまぜ直す（見つからなければ、となりがいちばん少ない並び）
 function spreadSit(ps){
@@ -8002,7 +8012,7 @@ function syncSeg(){
   document.querySelectorAll('input[name="zpat"]').forEach(i => { i.checked = ST.zenkaPats.includes(i.value); });
 }
 // 漸化式のパターンのチェックボタン（ZENKA_TYPES から作る）
-$('zenkaPats').innerHTML = ZENKA_TYPES.map(([k, nm]) => `<label class="chk"><input type="checkbox" name="zpat" value="${k}">${nm}</label>`).join('');
+$('zenkaPats').innerHTML = ZENKA_TYPES.map(([k, nm], i) => `<label class="chk"><input type="checkbox" name="zpat" value="${k}">${i + 1}　${nm}</label>`).join('');
 const zenkaChanged = () => { save(); syncSeg(); regenSoon(); };
 document.querySelectorAll('input[name="zpat"]').forEach(i => i.addEventListener('change', () => { ST.zenkaPats = [...document.querySelectorAll('input[name="zpat"]:checked')].map(x => x.value); zenkaChanged(); }));
 $('zenkaAll').addEventListener('click', () => { ST.zenkaPats = ZENKA_TYPES.map(t => t[0]); zenkaChanged(); });
@@ -8026,6 +8036,7 @@ document.querySelectorAll('.seg[data-set] button').forEach(b => b.addEventListen
   ST[name] = b.dataset.v; syncSeg(); save();
   if (name === 'font') { applyFont(); (document.fonts ? document.fonts.ready : Promise.resolve()).then(render); }
   else if (name === 'pv') applyPv();
+  else if (name === 'zenkaOrder') { ADJ = {}; BRK = { work: new Set(), list: new Set() }; applyZenkaOrder(); render(); }   // 同じ問題のまま並べかえる
   else if (name === 'mode' || name === 'formula' || name === 'time' || name === 'ans') render();   // 配置だけ変えるときは、同じ問題のまま並べなおす
   else if (name === 'tex') status(ST.tex === 'lua' ? 'LaTeX は ltjsarticle（LuaLaTeX）で出力します' : 'LaTeX は jsarticle（pLaTeX）で出力します');
   else regenerate();
