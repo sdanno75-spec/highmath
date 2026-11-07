@@ -71,7 +71,20 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 #status{font-size:13px;color:var(--muted)}
 #status.err{color:var(--err)}
 #bBrkAll,#bAdjAll{padding:4px 10px;font-size:12px}
-.pv-bar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:4px 0 12px;font-size:13px;color:var(--muted)}
+.pv-bar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;font-size:13px;color:var(--muted)}
+.pv-info{display:flex;flex-wrap:wrap;gap:4px 14px;margin:12px 0;font-size:13px;color:var(--muted)}
+.pv-info:empty,.pv-info span:empty{display:none}
+/* 下部に固定するバー。高さは setupDock が測って --dock-h に入れ、その分だけページの下をあける */
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--paper);border-top:1px solid var(--line);box-shadow:0 -2px 10px rgba(0,0,0,.06);padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
+.dock-in{max-width:968px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
+.dock .actions{margin:0}
+.wrap{padding-bottom:calc(var(--dock-h,130px) + 24px)}
+/* スマホでは2行まで：ボタンは横にスクロールして、バーが画面をふさがないようにする */
+@media (max-width:640px){
+  .dock .actions{flex-wrap:nowrap;overflow-x:auto;padding-bottom:2px}
+  .dock .actions .btn{flex:none;white-space:nowrap}
+  .dock .actions #status{flex:none}
+}
 @media (max-width:600px){
   .grp{grid-template-columns:1fr}
   .btn{padding:7px 10px;font-size:13px}
@@ -188,7 +201,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 @media print{
   @page{size:A4 portrait;margin:0}
   body{background:#fff!important}
-  header,.panel,.actions,.pv-bar,#view-help,.ctl{display:none!important}
+  header,.panel,.dock,.pv-info,#view-help,.ctl{display:none!important}
   .wrap{padding:0!important;max-width:none!important}
   .sheet-wrap{overflow:visible;padding:0}
   .sheet{display:flex!important;box-shadow:none;margin:0;height:296mm;page-break-after:always;break-after:page}
@@ -390,9 +403,11 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
         <div class="gnote" id="modeNote"></div>
       </div></div>
       <div class="grp"><div class="glab">難しさ</div><div>
-        <div class="seg" data-set="level"><button data-v="basic">基本</button><button data-v="std">標準</button><button data-v="mix">まぜる</button></div>
+        <div class="seg" data-set="level"><button data-v="basic">基本</button><button data-v="std">標準</button><button data-v="adv">発展</button><button data-v="mix">まぜる</button></div>
         <div id="mixLvBox" style="margin-top:6px"><div class="seg" data-set="mixLv"><button data-v="seq">基本 → 標準の順</button><button data-v="rand">基本と標準をランダムに</button></div></div>
         <div class="gnote" id="levelNote"></div>
+        <label class="chk" id="waSekiBigOpt" style="margin-top:6px"><input type="checkbox" id="waSekiBig">確率変数の和と積：V の分母が大きい問題も出す</label>
+        <label class="chk" id="yakusuuBigOpt" style="margin-top:6px"><input type="checkbox" id="yakusuuBig">約数の総和：3けた × 2けた の計算も出す</label>
       </div></div>
       <div class="grp"><div class="glab">ならび順</div><div>
         <div class="seg" data-set="order"><button data-v="mix">単元をまぜる</button><button data-v="unit">単元ごとにまとめる</button></div>
@@ -418,6 +433,8 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
       </div></div>
     </div>
 
+    <!-- ボタンと問題／解答の切りかえは、画面の下にいつも出す（中学のプリント作成ソフトと同じ形。利用者指定） -->
+    <div class="dock" id="dock"><div class="dock-in">
     <div class="actions">
       <button class="btn" id="bMake"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>問題を作りなおす</button>
       <button class="btn primary" id="bPdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M12 12v6M9 15l3 3 3-3"/></svg>PDF を保存</button>
@@ -433,6 +450,9 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
       <span id="pageInfo"></span>
       <button class="btn" id="bAdjAll" type="button" style="display:none">高さを自動にもどす</button>
       <button class="btn" id="bBrkAll" type="button" style="display:none">改ページをすべて取り消す</button>
+    </div>
+    </div></div>
+    <div class="pv-info">
       <span id="timeInfo"></span>
       <span id="layoutWarn" style="color:var(--err)"></span>
     </div>
@@ -488,8 +508,13 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.19.0', UPDATED = '2026-11-05';
+const VERSION = '5.23.0', UPDATED = '2026-11-07';
 const CHANGES = [
+  ['5.23.0', '2026-11-07', '「問題を作りなおす」「PDF を保存」などのボタンと、問題／解答の切りかえを、画面の下にいつも出すようにした。'],
+  ['5.22.0', '2026-11-07', '母比率の推定と標本比率は、σ が 0.01〜0.05 の1けたの数になる組だけにした。確率変数の和と積は V の分母を36以下に、約数の総和は 3けた×2けた なしにした。この2つは、難しさのチェックボタンで大きい問題も出せる。'],
+  ['5.21.0', '2026-11-05', '計算量のきまり（2乗は19以下か10の倍数・√の中は100以下か平方数・2けた×2けたなし・4けたなし・分母100以下）を6単元に入れた。対称式（26² などが出ない）、相関係数（偏差の2乗の和は100以下、r は √32·√18=4√2·3√2 のように計算）、確率変数の和と積（1471/180 などが出ない）、同じものを含む順列（10! を計算せず約分してかける）、互除法（最小公倍数の問題は2けた、L=30/6×18 の順）、二項定理（係数は3けたまで）。selfTest でも点検。'],
+  ['5.20.0', '2026-11-05', '難しさに「発展」を追加。いまは「条件から2次曲線の方程式」だけで、a²・b² が分数になる3つの型（2点を通る楕円／漸近線と焦点から双曲線／漸近線と通る点から双曲線）。途中式は x²/(9/2) の形、答えは 2x²/9 の形と整数の形（x²+2y²=9）。ほかの単元は発展を選ぶと標準を出す。'],
+  ['5.19.1', '2026-11-05', '2次曲線の方程式の標準に、焦点の真上の分数の点を通る楕円をもどした（例：焦点 (±1, 0)、点 (1, 3/2) → PF′=√(4+9/4)=5/2）。中の数が暗算できる小さい組だけ。'],
   ['5.19.0', '2026-11-05', '二次曲線の4単元（方程式・平行移動・共有点・接線）で、問題文と途中式に出る数を、20以下・10の倍数・100までの平方数・144までの平方数どうしの積だけにした。共有点の 23x²−40x+5=0、接線の x²/28+y²/21=1、焦点の √21 などは出ない。'],
   ['5.18.2', '2026-11-05', '2次曲線の方程式の標準で、(48/5)² や 8・15・17 のような大きな数の計算を出さないようにした。使う組は 3・4・5 と 6・8・10 だけ、楕円が通る点は短軸の端（PF=PF′=√(c²+b²)）にした。焦点は x 軸上・y 軸上の両方。'],
   ['5.18.1', '2026-11-05', 'しっかり解くで、相関係数の問題は2列に分けず横いっぱいの幅で出す（表と計算が横に長いため）。幅が2倍になるので、解くスペースの高さは半分（同じ面積、2問で1ページ）にする。'],
@@ -646,6 +671,19 @@ const pm = v => (v.neg || v.sum) ? `\\left(${v.tex()}\\right)` : v.tex();
 // わる数：正の整数・√n 以外（3√2、分数など）はかっこ
 const pd = v => (v.posInt || (v instanceof R && v.c.one)) ? v.tex() : `\\left(${v.tex()}\\right)`;
 // 途中式の行：同じ式が続く行は省く
+// 約数の総和の (1+p+…)(1+q+…) を左からかけるとき、3けた以上 × 2けた以上 のかけ算が出るか
+const yakuHeavy = sums => { let t = sums[0]; for (const s of sums.slice(1)) { if (Math.max(t, s) >= 100 && Math.min(t, s) >= 10) return true; t *= s; } return false; };
+// n!/(c1!c2!…)（同じものを含む順列・最短経路）を、階乗の大きな数を出さずに書く（利用者指定）：
+// first はいちばん大きい c! で約分した分数（例 10·9·…·4/(3·2·2)）、after は分母を素因数に分けて分子から約分した積
+function factCancel(n, dens){
+  const big = Math.max(...dens), rest = dens.slice(); rest.splice(rest.indexOf(big), 1);
+  const num = []; for (let i = n; i > big; i--) num.push(i);
+  const den = rest.flatMap(c => Array.from({ length: c - 1 }, (_, i) => c - i));
+  if (!den.length) return { first: num.join('\\cdot '), after: '' };
+  const w = num.slice();
+  den.forEach(d => { let x = d; for (let p = 2; p <= x; p++) while (x % p === 0) { w[w.findIndex(v => v % p === 0)] /= p; x /= p; } });
+  return { first: `\\frac{${num.join('\\cdot ')}}{${den.join('\\cdot ')}}`, after: w.filter(v => v !== 1).join('\\cdot ') };
+}
 function chain(first, ...rest){
   const rows = [first]; let last = first.split('&=').pop().trim();
   rest.forEach(r => { const t = r.trim(); if (t && t !== last) { rows.push(`&= ${t}`); last = t; } });
@@ -892,6 +930,7 @@ const TIME_TABLE = [
   ['apollo2', 'アポロニウスの円（α−β が虚数を含む）', [70, 150, 300]],
   ['kyokusen1', '2次曲線の方程式（焦点・長軸・頂点）', [40, 90, 180]],
   ['kyokusen2', '2次曲線の方程式（漸近線・通る点）', [60, 130, 260]],
+  ['kyokusen3', '2次曲線の方程式（発展：a²・b² が分数）', [90, 180, 330]],
   ['heikouidou1', '平行移動した2次曲線（標準形と中心）', [50, 110, 220]],
   ['heikouidou2', '平行移動した2次曲線（焦点も）', [70, 150, 300]],
   ['kyouyuu1', '共有点の個数', [40, 90, 180]],
@@ -917,6 +956,8 @@ const sumSec = ps => [0, 1, 2].map(k => ps.reduce((t, p) => t + p.sec[k], 0));
 const totalMins = () => sumSec(PROBS).map(s => Math.ceil(s / 60));
 const timeText = () => totalMins().map((m, k) => `${TIERS[k]} ${m}分`).join('・');
 // 難しさの説明：選んだ単元の分だけを出す（基本｜標準）
+// 発展（lv 3）がある単元。ほかの単元は「発展」を選ぶと標準を出す
+const ADV_UNITS = new Set(['kyokusenShiki']);
 const UNIT_LEVEL = {
   tasuki: ['x の係数の片方が1', '2文字（x, y）・係数がどちらも2以上'],
   nijuu: ['√(5+2√6) の形', '√(7+4√3)・√(4+√15) の形'],
@@ -1006,7 +1047,7 @@ const UNIT_LEVEL = {
   cxEn: ['|z−α|=r の中心と半径', '|cz−β|=k を整理して'],
   suichoku: ['|z−α|=|z−β|', '共役 z̄ を含む式'],
   apollonius: ['α−β が実数か純虚数', 'α−β が虚数を含む'],
-  kyokusenShiki: ['焦点・長軸・頂点から', '漸近線と焦点・通る点と焦点から'],
+  kyokusenShiki: ['焦点・長軸・頂点から', '漸近線と焦点・通る点と焦点から', '2点を通る楕円・漸近線と焦点（通る点）から双曲線（a²・b² が分数）'],
   heikouIdou: ['標準形と中心（頂点）', '焦点も求める'],
   kyouyuuten: ['判別式で個数', 'k の値で分類'],
   nijiSessen: ['曲線上の点での接線', '傾きが与えられた接線'],
@@ -1018,7 +1059,8 @@ const UNIT_LEVEL = {
 };
 function levelNoteHTML(){
   const us = UNITS.filter(u => ST.units.includes(u[0]));
-  const line = ([u, nm]) => { const [b, s] = UNIT_LEVEL[u]; return `${esc(nm)}：${esc(ST.level === 'basic' ? b : ST.level === 'std' ? s : `基本 ${b} → 標準 ${s}`)}`; };
+  const line = ([u, nm]) => { const [b, s, a] = UNIT_LEVEL[u]; return `${esc(nm)}：${esc(ST.level === 'basic' ? b : ST.level === 'std' ? s : ST.level === 'adv' ? (a ? `発展 ${a}` : `（発展なし）標準 ${s}`) : `基本 ${b} → 標準 ${s}`)}`; };
+  if (ST.level === 'adv') return '発展：発展の問題がある単元（いまは「条件から2次曲線の方程式」）だけ発展を出し、ほかの単元は標準を出します。<br>' + us.map(line).join('<br>');
   const mixNote = ST.mixLv === 'rand' ? '基本と標準をランダムにまぜて並べます。' : '基本の問題を先に、標準の問題をあとに並べます（「単元ごとにまとめる」なら、各単元の中で基本から標準へ）。';
   return (ST.level === 'mix' ? `まぜる：基本と標準を半分ずつ。${mixNote}<br>` : '') + us.map(line).join('<br>');
 }
@@ -1793,7 +1835,10 @@ const GEN = {
       const r = new F(Sxy0, rt0);
       // |r|<1 で、分母が 100 の約数（小数第2位までで割り切れる）
       if (Math.abs(r.val()) >= 1 || 100 % r.d) continue;
-      const kx = lv === 1 ? 1 : pick([2, 3, 5]), ky = lv === 1 ? 1 : pick([2, 3, 5]);
+      // 偏差の2乗の和は100以下（√ の中が100以下、利用者指定）。以前は 5 倍して √(1250·200) のような計算が出ていた
+      const kx = lv === 1 ? 1 : pick([1, 2, 3]), ky = lv === 1 ? 1 : pick([1, 2, 3]);
+      if (lv === 2 && kx === 1 && ky === 1) continue;
+      if (Sxx0 * kx * kx > 100 || Syy0 * ky * ky > 100) continue;
       const mx = lv === 1 ? ri(5, 6) : ri(55, 75), my = lv === 1 ? ri(5, 6) : ri(55, 75);
       const dx = ex.map(v => v * kx), dy = ey.map(v => v * ky), xs = dx.map(v => mx + v), ys = dy.map(v => my + v);
       if ([...xs, ...ys].some(v => v < 0 || v > (lv === 1 ? 10 : 100))) continue;
@@ -1810,7 +1855,8 @@ const GEN = {
       if (lv === 2) st.push({ t: 'txt', s: '標準偏差は' }, { t: 'eq', rows: chain(`s_x &= \\sqrt{\\frac{${Sxx}}{${n}}}`, sx).concat(chain(`s_y &= \\sqrt{\\frac{${Syy}}{${n}}}`, sy)) });
       st.push({ t: 'txt', s: '共分散は' }, { t: 'eq', rows: chain(`s_{xy} &= \\frac{${Sxy}}{${n}}`, numTex(cov)) },
         { t: 'txt', s: `$r=\\dfrac{s_{xy}}{s_xs_y}$ の分母・分子に $${n}$ をかけて，偏差の積の和，偏差の2乗の和で計算すると` },
-        { t: 'eq', rows: chain(`r &= \\frac{${Sxy}}{\\sqrt{${Sxx}\\cdot ${Syy}}}`, `\\frac{${Sxy}}{${rt}}`, rT) });
+        // √ をかけ合わせず、それぞれ簡単にしてからかける（√(32·18) ではなく √32·√18 = 4√2·3√2）
+        { t: 'eq', rows: chain(`r &= \\frac{${Sxy}}{\\sqrt{${Sxx}}\\cdot \\sqrt{${Syy}}}`, `\\frac{${Sxy}}{${sqrtTex(new F(Sxx))}\\cdot ${sqrtTex(new F(Syy))}}`, `\\frac{${Sxy}}{${rt}}`, rT) });
       const ask = lv === 1 ? '共分散 $s_{xy}$ と相関係数 $r$' : '標準偏差 $s_x$，$s_y$，共分散 $s_{xy}$，相関係数 $r$';
       return {
         unit: 'soukan', lv, key: 'sk' + xs.join(',') + '|' + ys.join(','), sec: T[lv === 1 ? 'soukan1' : 'soukan2'], sit: 'c' + ci, wide: true, ansFull: true, full: true, halfSpace: true, minSpace: 80,   // full：しっかり解くでは横いっぱい（表と計算が横に長いので、利用者指定）
@@ -2050,10 +2096,10 @@ const A_GEN = {
     const distinctPerms = arr => { const seen = new Set(); const rec = (cur, rest) => { if (!rest.length) { seen.add(cur); return; } const used = new Set(); rest.forEach((c, i) => { if (used.has(c)) return; used.add(c); rec(cur + c, rest.slice(0, i).concat(rest.slice(i + 1))); }); }; rec('', arr); return seen.size; };
     const base = (sent, v, st, chk, sec, key) => ({ unit: 'onaji', lv, key: 'o' + key, label: sent, math: null, item: sent, head: sent, ans: `$${v}$`, vars: {}, steps: st, chk, sec, wide: true, short: '同じものを含む順列' });
     if (kind === 'path') {
-      const a = ri(3, 6), b = ri(2, 4), v = nCr(a + b, b);
+      const a = ri(3, 6), b = ri(2, 4), v = nCr(a + b, b), fc = factCancel(a + b, [a, b]);
       const sent = `格子状の道がある。A 地点から，右へ${a}区画，上へ${b}区画はなれた B 地点まで，最短で行く道順は何通りあるか。`;
       return base(sent, v, [{ t: 'txt', s: `右へ1区画進むことを R，上へ1区画進むことを U と表すと，R ${a}個と U ${b}個を1列に並べる方法の数に等しい。` },
-        { t: 'eq', rows: chain(`\\frac{${a + b}!}{${a}!\\,${b}!} &= \\frac{${fact(a + b)}}{${fact(a)}\\times${fact(b)}}`, `${v}`) }],
+        { t: 'eq', rows: chain(`\\frac{${a + b}!}{${a}!\\,${b}!} &= ${fc.first}`, fc.after, `${v}`) }],
         () => { const g = Array.from({ length: a + 1 }, () => Array(b + 1).fill(1)); for (let i = 1; i <= a; i++) for (let j = 1; j <= b; j++) g[i][j] = g[i - 1][j] + g[i][j - 1]; return Math.abs(g[a][b] - v); }, T.onajiP, `p${a}${b}`);
     }
     let cs, sent, key, n;
@@ -2070,24 +2116,28 @@ const A_GEN = {
     }
     const dup = cs.filter(c => c > 1), v = fact(n) / dup.reduce((t, c) => t * fact(c), 1);
     const letters = []; cs.forEach((c, i) => { for (let j = 0; j < c; j++) letters.push('ABCDEFGHIJ'[i]); });
+    const fc = factCancel(n, dup);
     return base(sent, v, [{ t: 'txt', s: `${n}個の文字の並べ方 $${n}!$ を，同じ文字どうしの並べ方 ${dup.map(c => `$${c}!$`).join('，')} でわる。` },
-      { t: 'eq', rows: chain(`\\frac{${n}!}{${dup.map(c => `${c}!`).join('\\,')}} &= \\frac{${fact(n)}}{${dup.map(c => fact(c)).join('\\times')}}`, `${v}`) }],
+      { t: 'eq', rows: chain(`\\frac{${n}!}{${dup.map(c => `${c}!`).join('\\,')}} &= ${fc.first}`, fc.after, `${v}`) }],
       () => n <= 8 ? Math.abs(distinctPerms(letters) - v) : Math.abs(cs.reduce(([rem, pr], c) => [rem - c, pr * nCr(rem, c)], [n, 1])[1] - v),
       kind === 'letters' ? T.onaji1 : lv === 1 ? T.onaji1 : T.onajiW, key);
   },
 
   // 【互除法】最大公約数 g と商を先に決め、下から順に 2 数を作る
   gojohou(lv){
+    const both = lv === 2 && Math.random() < 0.6;   // 先に決める（2けたの条件で作りなおしても、最小公倍数の問題の割合が減らないように）
     for (;;) {
       const g = pick(lv === 1 ? [1, 2, 3, 4, 5, 6, 7, 8, 9] : [2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13]), k = lv === 1 ? ri(2, 3) : ri(3, 4);
       const qs = Array.from({ length: k }, (_, i) => i === 0 ? ri(2, 4) : ri(1, 4)), s = [0, g];
       qs.forEach(q => s.push(q * s[s.length - 1] + s[s.length - 2]));
       const a = s[k + 1], b = s[k];
       if (a > (lv === 1 ? 160 : 600)) continue;
-      const both = lv === 2 && Math.random() < 0.6, lcm = a / g * b, rows = [];
+      // 最小公倍数まで求める問題は2数を2けたにし、a/g も 12 以下（2けた×2けたのかけ算を出さない。利用者指定）
+      const lcm = a / g * b, rows = [];
+      if (both && (a > 99 || a / g > 12)) continue;
       for (let i = k - 1; i >= 0; i--) rows.push(`${s[i + 2]} &= ${s[i + 1]}\\times${qs[i]}${s[i] ? `+${s[i]}` : ''}`);
       const st = [{ t: 'txt', s: 'わる数と余りで割りつづける（互除法）。' }, { t: 'eq', rows }, { t: 'txt', s: `余りが 0 になったときのわる数 $${g}$ が最大公約数。` }];
-      if (both) st.push({ t: 'txt', s: '最大公約数を $g$，最小公倍数を $L$ とすると $ab=gL$ より $L=\\dfrac{ab}{g}$。' }, { t: 'eq', rows: chain(`\\frac{${a}\\times${b}}{${g}} &= ${a / g}\\times${b}`, `${lcm}`) });
+      if (both) st.push({ t: 'txt', s: '最大公約数を $g$，最小公倍数を $L$ とすると $ab=gL$ より $L=\\dfrac{ab}{g}$。' }, { t: 'eq', rows: chain(`L &= \\frac{${a}}{${g}}\\times${b}`, `${a / g}\\times${b}`, `${lcm}`) });   // a×b を先に計算しない（約分してからかける）
       const math = `${a},\\ ${b}`, ask = `最大公約数${both ? 'と最小公倍数' : ''}`;
       return {
         unit: 'gojohou', lv, key: 'g' + a + ',' + b, label: `互除法を用いて，次の2数の${ask}を求めよ。`, math, item: `$${math}$ の${ask}`, head: `$${math}$`,
@@ -2196,6 +2246,8 @@ const A_GEN = {
       if (N > (lv === 1 ? 500 : 3000) || N < 12) continue;
       const what = lv === 1 ? pick(['cnt', 'sum']) : 'both', cnt = es.reduce((t, e) => t * (e + 1), 1);
       const sums = primes.map((p, i) => Array.from({ length: es[i] + 1 }, (_, j) => p ** j).reduce((t, x) => t + x, 0)), total = sums.reduce((t, x) => t * x, 1);
+      // 総和のかけ算に 3けた×2けた を出さない（利用者指定）。難しさの「3けた×2けたも出す」をつけると制限なし
+      if (what !== 'cnt' && !ST.yakusuuBig && yakuHeavy(sums)) continue;
       const fac = primes.map((p, i) => es[i] === 1 ? `${p}` : `${p}^${es[i]}`).join('\\times');
       const st = [{ t: 'eq', rows: [`${N} &= ${fac}`] }];
       if (what !== 'sum') st.push({ t: 'txt', s: '個数は，各素数の指数に 1 を足してかける。' }, { t: 'eq', rows: chain(`${es.map(e => `(${e}+1)`).join('')} &= ${es.map(e => e + 1).join('\\times')}`, `${cnt}`) });
@@ -2203,7 +2255,7 @@ const A_GEN = {
         { t: 'eq', rows: chain(`${primes.map((p, i) => `(${Array.from({ length: es[i] + 1 }, (_, j) => j === 0 ? '1' : j === 1 ? `${p}` : `${p}^${j}`).join('+')})`).join('')} &= ${sums.join('\\times')}`, `${total}`) });
       const ask = what === 'cnt' ? '個数' : what === 'sum' ? '総和' : '個数と総和';
       return {
-        unit: 'yakusuu', lv, key: 'y' + N + what, label: `次の数の正の約数の${ask}を求めよ。`, math: `${N}`, item: `$${N}$ の正の約数の${ask}`, head: `$${N}$`,
+        unit: 'yakusuu', lv, yakuSums: what !== 'cnt' ? sums : null, key: 'y' + N + what, label: `次の数の正の約数の${ask}を求めよ。`, math: `${N}`, item: `$${N}$ の正の約数の${ask}`, head: `$${N}$`,
         ans: what === 'cnt' ? `$${cnt}$` : what === 'sum' ? `$${total}$` : `個数 $${cnt}$，総和 $${total}$`, vars: {}, steps: st, sec: what === 'both' ? T.yaku2 : T.yaku1,
         chk: () => { let c = 0, s = 0; for (let d = 1; d <= N; d++) if (N % d === 0) { c++; s += d; } return Math.abs(c - cnt) + Math.abs(s - total); }
       };
@@ -3138,7 +3190,7 @@ const B_GEN = {
         factors = [nCr(n, r), p === 1 ? '' : numPow(p, n - r), q === 1 ? '' : numPow(q, r)];
         coef = nCr(n, r) * p ** (n - r) * q ** r; chkPoly = () => polyPow([q, p], n)[n - r];
       }
-      if (Math.abs(coef) > 20000 || coef === 0) continue;
+      if (Math.abs(coef) > 999 || coef === 0) continue;   // 係数は3けたまで（利用者指定。以前は 2688 のような4けたも出ていた）
       const prod = factors.filter(f => f !== '').join('\\cdot ');
       const st = [{ t: 'txt', s: `展開式の一般項は $${gen}$` }, { t: 'txt', s: cond }];
       if (prod !== String(coef)) st.push({ t: 'txt', s: `よって，求める${ask === '定数項' ? '定数項' : '係数'}は` }, { t: 'eq', rows: [`${prod} &= ${coef}`] });
@@ -4386,9 +4438,12 @@ const RATIO_CTX = [
   { key: 'seed', lo: 0.5, hi: 1, t: (p, n) => `発芽率が $${p}$ の種子を $${n}$ 個まくとき，発芽する種子の比率を $R$ とする。` },
   { key: 'vote', lo: 0, hi: 1, t: (p, n) => `ある政策に賛成する人の割合が $${p}$ である町で，有権者 $${n}$ 人を無作為に選ぶとき，選んだ人のうち賛成する人の比率を $R$ とする。` }
 ];
+// 比率と標本の大きさの組（利用者指定）：σ=√(p(1−p)/n) が 0.01〜0.05 の1けたの数になるものだけ。1.96·0.0096 のような計算を出さない
+// [p, n, √(p(1−p))]
+const P_PAIRS = [[0.1, 900, 0.3], [0.9, 900, 0.3], [0.1, 100, 0.3], [0.9, 100, 0.3], [0.2, 1600, 0.4], [0.8, 1600, 0.4], [0.2, 400, 0.4], [0.8, 400, 0.4], [0.2, 100, 0.4], [0.8, 100, 0.4], [0.5, 2500, 0.5], [0.5, 100, 0.5]];
 function ratioProb(lv){
-  // √(p(1−p)) が 0.3, 0.4, 0.5, 0.48 になる p と √n が整数の n。σ(R)=√(p(1−p))/√n を 1万分の1 の整数 s4 で持つ
-  const n = pick([100, 400, 900, 1600, 2500]), [p, sq] = pick([[0.1, 0.3], [0.9, 0.3], [0.2, 0.4], [0.8, 0.4], [0.5, 0.5], [0.36, 0.48], [0.64, 0.48]]);
+  // σ(R)=√(p(1−p))/√n を 1万分の1 の整数 s4 で持つ
+  const [p, n, sq] = pick(P_PAIRS);
   const s4 = sq * 1e4 / Math.sqrt(n); if (Math.abs(s4 - Math.round(s4)) > 1e-9) return null;
   const S4 = Math.round(s4), p4 = Math.round(p * 1e4), sR = S4 / 1e4, cx = pick(RATIO_CTX.filter(c => p >= c.lo && p <= c.hi));
   // しきい値は小数第3位まで（1万分の1 で 10 の倍数）、z が小数第2位までで割り切れ 0.1≦|z|≦2.9、0 より大きく 1 より小さい
@@ -4607,6 +4662,9 @@ const SB_GEN = {
       const term = (c, vT, first, f) => { if (first && c === 1 && f) return numTex(f); const m = Math.abs(c) === 1 ? '' : `${Math.abs(c)}\\cdot `; return (c < 0 ? '-' : first ? '' : '+') + m + vT; };
       const sqc = c => Math.abs(c) === 1 ? '' : `${c < 0 ? `(${c})` : c}^2`;
       const EZ = EX.mul(a).add(EY.mul(b)), VZ = VX.mul(a * a).add(VY.mul(b * b)), EXY = EX.mul(EY);
+      // V の分母は36以下（利用者指定。35/12+9/25=983/300 などを出さない）。難しさの「分母が大きい問題も出す」をつけると制限なし
+      const vMaxD = useV ? Math.max(VX.d, VY.d, VZ.d) : 1;
+      if (!ST.waSekiBig && vMaxD > 36) continue;
       const sE = [
         { t: 'eq', noEval: true, rows: [`E(${Z}) &= ${sumTex([[a, 'E(X)'], [b, 'E(Y)']])}`] },
         { t: 'eq', rows: [`&= ${term(a, parF(EX), true, EX)}${term(b, parF(EY), false)}`, `&= ${numTex(EZ)}`] }], sI = [];
@@ -4619,7 +4677,7 @@ const SB_GEN = {
       const ans = [`$E(${Z})=${numTex(EZ)}$`].concat(useV ? [`$V(${Z})=${numTex(VZ)}$`] : [], useP ? [`$E(XY)=${numTex(EXY)}$`] : []).join('，');
       return {
         // 標準は解答が1列に入らないので横いっぱい（利用者の選択）
-        unit: 'waSeki', lv, sit: lv === 2 ? key.split('|').slice(1, 3).map(k => k.replace(/\d/g, '')).sort().join('+') : undefined, key, sec: T[lv === 1 ? 'waseki1' : 'waseki2'], wide: true, ansFull: lv === 2,
+        unit: 'waSeki', lv, vMaxD, sit: lv === 2 ? key.split('|').slice(1, 3).map(k => k.replace(/\d/g, '')).sort().join('+') : undefined, key, sec: T[lv === 1 ? 'waseki1' : 'waseki2'], wide: true, ansFull: lv === 2,
         // 解答の見出しは短く（標準は試行の文が長く、解答が1列に入らなくなる）
         label, math: '', item, head: lv === 1 ? item : `$E(${Z})$，$V(${Z})$，$E(XY)$`, short: [`E(${Z})`].concat(useV ? [`V(${Z})`] : [], useP ? ['E(XY)'] : []).join('・'),
         ans, vars: {}, steps: st,
@@ -4784,9 +4842,8 @@ const SB_GEN = {
           { t: 'disp', lines: 2, tex: `\\overline{X}-${cT}\\cdot\\frac{\\sigma}{\\sqrt{n}}\\leqq m\\leqq \\overline{X}+${cT}\\cdot\\frac{\\sigma}{\\sqrt{n}}` },
           { t: 'eq', rows: s === 1 ? [`${cT}\\cdot\\frac{${sg}}{\\sqrt{${n}}} &= ${cT}`] : [`${cT}\\cdot\\frac{${sg}}{\\sqrt{${n}}} &= ${cT}\\cdot ${s}`, `&= ${decU(M)}`] }];
       } else {
-        // 母比率：√(R(1−R)) が 0.3, 0.4, 0.5, 0.48 になる R と、√n が整数の n。√(R(1−R)/n) が割り切れる組だけ
-        n = pick([100, 400, 900, 1600, 2500]);
-        const [R, sq] = pick([[0.1, 0.3], [0.9, 0.3], [0.2, 0.4], [0.8, 0.4], [0.5, 0.5], [0.36, 0.48], [0.64, 0.48]]), se = sq * 1e6 / Math.sqrt(n);
+        // 母比率：σ が 0.01〜0.05 の1けたの数になる組だけ（P_PAIRS）
+        const [R, n0, sq] = pick(P_PAIRS), se = sq * 1e6 / Math.sqrt(n0); n = n0;
         if (Math.abs(se - Math.round(se)) > 1e-6) continue;
         // 場面は比率に合うものだけ（不良品・視聴率は小さい比率、発芽率は大きい比率）
         const k = Math.round(R * n), SE = Math.round(se), [what, whole, thing] = pick([
@@ -6091,9 +6148,85 @@ for (let A = 2; A <= 30; A++) for (let B = 2; B <= 30; B++) for (let x1 = 1; x1 
   if (h > 0 && Number.isInteger(Math.sqrt(h))) CONIC_PTS.hy.push([A, B, x1, Math.sqrt(h)]);
 }
 
+// 【条件から2次曲線の方程式・発展】a^2・b^2 が分数になる3つの型（利用者指定）。
+// 途中式では分母に分数の形（x^2/(9/2)）を書き、答えは分数を外に出した形と、整数だけの形（かっこ）を書く
+const cTermT = (m, v) => m.d === 1 ? `${m.n === 1 ? '' : m.n}${v}^2` : `\\frac{${m.n === 1 ? '' : m.n}${v}^2}{${m.d}}`;
+// m x^2 ± n y^2 = rhs（rhs は 1 か −1）の3つの書き方
+function fracConicT(m, n, sg, rhs){
+  const denT = `\\frac{x^2}{${numTex(new F(1).div(m))}}${sg > 0 ? '+' : '-'}\\frac{y^2}{${numTex(new F(1).div(n))}}=${rhs}`;
+  const outT = `${cTermT(m, 'x')}${sg > 0 ? '+' : '-'}${cTermT(n, 'y')}=${rhs}`;
+  const L = m.d / gcd(m.d, n.d) * n.d, cm = m.n * L / m.d, cn = n.n * L / n.d, g = gcd(gcd(cm, cn), L);
+  const k1 = v => v === 1 ? '' : v;
+  const intT = `${k1(cm / g)}x^2${sg > 0 ? '+' : '-'}${k1(cn / g)}y^2=${rhs * L / g}`;
+  return { denT, outT, intT, ansR: intT === outT ? `$${outT}$` : `$${outT}$（$${intT}$）` };
+}
+// a^2・b^2 が分数のときの検算（conicChk は焦点を √ の式で書くので整数用）：曲線上の点で、焦点の性質（距離の和・差）を数値で確かめる
+function fracConicChk(c){
+  const onX = c.kind === 'el' ? c.A > c.B : c.axis === 'x', cv = Math.sqrt(c.kind === 'el' ? Math.abs(c.A - c.B) : c.A + c.B);
+  const F0 = onX ? [[cv, 0], [-cv, 0]] : [[0, cv], [0, -cv]], d = (x, y, f) => Math.hypot(x - f[0], y - f[1]); let e = 0;
+  for (const t of [0.3, 1.1, 2.0, -0.7]) {
+    const [x, y] = conicPt(c, t); e += Math.abs(conicF(c)(x, y));
+    e += c.kind === 'el' ? Math.abs(d(x, y, F0[0]) + d(x, y, F0[1]) - 2 * Math.sqrt(Math.max(c.A, c.B))) : Math.abs(Math.abs(d(x, y, F0[0]) - d(x, y, F0[1])) - 2 * Math.sqrt(onX ? c.A : c.B));
+  }
+  return e;
+}
+function ksAdv(){
+  // 3つの型が同じくらい出るように、型を先に決めてから数を選ぶ
+  const lv = 3, isFr = f => f.d !== 1, type = pick(['two', 'as', 'pt']);
+  for (;;) {
+    let st, label, key, m, n, sg, rhs, c, extra;
+    if (type === 'two') {
+      // 2点を通る楕円：m x^2 + n y^2 = 1 とおいて2点を代入する
+      const pt = () => [pick([1, -1]) * ri(0, 3), pick([1, -1]) * ri(0, 3)];
+      const P1 = pt(), P2 = pt(); if ((!P1[0] && !P1[1]) || (!P2[0] && !P2[1])) continue;
+      const [x1, y1] = P1.map(v => v * v), [x2, y2] = P2.map(v => v * v), D = x1 * y2 - x2 * y1; if (!D) continue;
+      m = new F(y2 - y1, D); n = new F(x1 - x2, D); sg = 1; rhs = 1;
+      if (m.n <= 0 || n.n <= 0 || (m.n === n.n && m.d === n.d) || !(isFr(new F(1).div(m)) || isFr(new F(1).div(n)))) continue;
+      const PT = ([x, y]) => `(${x},\\ ${y})`, lin = (a, b) => [[a, 'm'], [b, 'n']].filter(([v]) => v).map(([v, s], i) => `${i && v > 0 ? '+' : ''}${v === 1 ? '' : v}${s}`).join('') + '=1';
+      label = `中心が原点で，焦点が座標軸上にあり，2点 $${PT(P1)}$，$${PT(P2)}$ を通る楕円の方程式を求めよ。`; key = `ks3|two|${[P1, P2].map(String).sort().join('|')}`;
+      st = [{ t: 'txt', s: '求める楕円の方程式を $mx^2+ny^2=1$（$m>0$，$n>0$，$m\\neq n$）とおく。' },
+        { t: 'txt', s: `点 $${PT(P1)}$ を通るから $${lin(x1, y1)}$ …①` }, { t: 'txt', s: `点 $${PT(P2)}$ を通るから $${lin(x2, y2)}$ …②` },
+        { t: 'txt', s: `①，② を解いて $m=${numTex(m)}$，$n=${numTex(n)}$` }];
+      extra = () => Math.abs(m.val() * x1 + n.val() * y1 - 1) + Math.abs(m.val() * x2 + n.val() * y2 - 1);
+    } else {
+      // 漸近線 y=±(r/t)x の双曲線。as：焦点 (±c, 0) か (0, ±c)、pt：通る点
+      const [r, t] = pick([[2, 1], [1, 2], [3, 1], [1, 3], [2, 3], [3, 2], [3, 4], [4, 3]]), s = new F(r, t), sT = numTex(s);
+      if (type === 'as') {
+        const cc = ri(1, 6), axis = pick(['x', 'y']), onX = axis === 'x', FT = s2 => onX ? `(${s2}${cc},\\ 0)` : `(0,\\ ${s2}${cc})`;
+        const a2 = new F(cc * cc * t * t, t * t + r * r), b2 = a2.mul(s).mul(s);
+        if (!isFr(a2) && !isFr(b2)) continue;
+        m = new F(1).div(a2); n = new F(1).div(b2); sg = -1; rhs = onX ? 1 : -1;
+        label = `2つの直線 $y=\\pm ${sT}x$ を漸近線とし，2点 $${FT('')}$，$${FT('-')}$ を焦点とする双曲線の方程式を求めよ。`; key = `ks3|as|${axis}|${r}|${t}|${cc}`;
+        st = [{ t: 'txt', s: `焦点が $${axis}$ 軸上にあるから，$\\frac{x^2}{a^2}-\\frac{y^2}{b^2}=${rhs}$（$a>0$，$b>0$）とおける。漸近線は $y=\\pm\\frac{b}{a}x$ であるから $\\frac{b}{a}=${sT}$，$b=${sT}a$` },
+          { t: 'txt', s: `焦点から $a^2+b^2=${cc}^2$。$b=${sT}a$ を代入して $${numTex(s.mul(s).add(1))}a^2=${cc * cc}$，$a^2=${numTex(a2)}$，$b^2=${numTex(b2)}$` }];
+        extra = () => Math.abs(1 / m.val() + 1 / n.val() - cc * cc) + Math.abs(Math.sqrt(m.val() / n.val()) - s.val());
+      } else {
+        const x0 = pick([1, -1]) * ri(0, 3), y0 = pick([1, -1]) * ri(0, 3), R2 = r * r, T2 = t * t, k = R2 * x0 * x0 - T2 * y0 * y0;
+        if (!k) continue;
+        m = new F(R2, Math.abs(k)); n = new F(T2, Math.abs(k)); sg = -1; rhs = k > 0 ? 1 : -1;
+        if (!isFr(new F(1).div(m)) && !isFr(new F(1).div(n))) continue;
+        const lhs = `${R2 === 1 ? '' : R2}x^2-${T2 === 1 ? '' : T2}y^2`, kT = [R2 * x0 * x0, -T2 * y0 * y0].filter(v => v).map((v, i) => `${i && v > 0 ? '+' : ''}${v}`).join('');
+        label = `2つの直線 $y=\\pm ${sT}x$ を漸近線とし，点 $(${x0},\\ ${y0})$ を通る双曲線の方程式を求めよ。`; key = `ks3|pt|${r}|${t}|${x0}|${y0}`;
+        st = [{ t: 'txt', s: `漸近線が $y=\\pm ${sT}x$ であるから，求める双曲線の方程式は $${lhs}=k$（$k\\neq 0$）とおける。` },
+          { t: 'txt', s: `点 $(${x0},\\ ${y0})$ を通るから $k=${kT === String(k) ? k : `${kT}=${k}`}$。よって $${lhs}=${k}$ で，これを $\\frac{x^2}{a^2}-\\frac{y^2}{b^2}=${rhs}$ の形に書くと` }];
+        extra = () => Math.abs(m.val() * x0 * x0 - n.val() * y0 * y0 - rhs) + Math.abs(Math.sqrt(m.val() / n.val()) - s.val());
+      }
+    }
+    const T3 = fracConicT(m, n, sg, rhs), A = 1 / m.val(), B = 1 / n.val();
+    c = sg > 0 ? { kind: 'el', A, B, h: 0, k: 0, axis: A > B ? 'x' : 'y' } : { kind: 'hy', A, B, h: 0, k: 0, axis: rhs > 0 ? 'x' : 'y' };
+    st = st.concat([{ t: 'txt', s: type === 'two' ? `$\\frac{1}{m}=${numTex(new F(1).div(m))}$，$\\frac{1}{n}=${numTex(new F(1).div(n))}$ であるから` : type === 'as' ? '$a^2$，$b^2$ を代入して' : '' },
+      { t: 'disp', tex: T3.denT }, { t: 'txt', s: `分母の分数をなくして，${T3.ansR}` }]).filter(x => x.t !== 'txt' || x.s);
+    return {
+      unit: 'kyokusenShiki', lv, key, sec: T.kyokusen3, wide: true, label, math: '', item: label.replace(/の方程式を求めよ。$/, ''), head: label.replace(/の方程式を求めよ。$/, ''),
+      short: '2次曲線の方程式', calc: '', ans: T3.ansR, vars: {}, steps: st, chk: () => fracConicChk(c) + extra()
+    };
+  }
+}
+
 Object.assign(SC_GEN, {
   // 【条件から2次曲線の方程式】基本：焦点と長軸・頂点・焦点（放物線）／標準：漸近線と焦点（双曲線）・焦点と通る点（楕円）
   kyokusenShiki(lv){
+    if (lv === 3) return ksAdv();
     for (;;) {
       let c, label, st, key;
       if (lv === 1) {
@@ -6131,7 +6264,7 @@ Object.assign(SC_GEN, {
           label = `2つの直線 $y=\\pm ${numTex(m)}x$ を漸近線とし，2点 $${FT('')}$，$${FT('-')}$ を焦点とする双曲線の方程式を求めよ。`; key = `ks2|as|${axis}|${a}|${b}`;
           st = [{ t: 'txt', s: `焦点が $${axis}$ 軸上にあるから，$${form}$（$a>0$，$b>0$）とおける。漸近線は $y=\\pm\\frac{b}{a}x$ であるから $\\frac{b}{a}=${numTex(m)}$，$b=${numTex(m)}a$` },
             { t: 'txt', s: `焦点から $a^2+b^2=${cc}^2$。$b=${numTex(m)}a$ を代入して $${numTex(new F(a * a + b * b, a * a))}a^2=${cc * cc}$，$a^2=${a * a}$，$b^2=${b * b}$` }];
-        } else {
+        } else if (pick([0, 1])) {
           // 焦点と通る点から楕円：短軸の端の点 P を通る。PF=PF'=√(c²+b²)=a なので 2a=2PF
           // 楕円は斜辺が a（長軸の半分）：組 [焦点の c, 短軸の半分 b, a]
           const [fc, eb, ea] = [a, b, cc], sy = pick(['', '-']), PT = onX ? `(0,\\ ${sy}${eb})` : `(${sy}${eb},\\ 0)`;
@@ -6141,6 +6274,19 @@ Object.assign(SC_GEN, {
           st = [{ t: 'txt', s: `焦点が $${axis}$ 軸上にあり，中心が原点であるから，$${onX ? '\\frac{x^2}{a^2}+\\frac{y^2}{b^2}=1' : '\\frac{x^2}{b^2}+\\frac{y^2}{a^2}=1'}$（$a>b>0$）とおける。$\\mathrm{PF}+\\mathrm{PF}'=2a$` },
             { t: 'eq', noEval: true, rows: [`\\mathrm{PF}=\\mathrm{PF}' &= \\sqrt{${fc}^2+${eb}^2}`, `&= \\sqrt{${fc * fc + eb * eb}}`, `&= ${ea}`] },
             { t: 'txt', s: `よって $2a=${ea}+${ea}=${2 * ea}$，$a=${ea}$。$b^2=a^2-${fc}^2=${ea * ea}-${fc * fc}=${eb * eb}$` }];
+        } else {
+          // 焦点と通る点から楕円：焦点の真上の点 P(c, b²/a)（分数の点。利用者の希望）。a, c は小さい整数で、
+          // PF'=√((2c)²+(b²/a)²) の中の数が暗算できる組だけ（二次曲線の数のきまり conicSmall が選ぶ。例 a=2,c=1 なら P(1, 3/2)、PF'=5/2）
+          // 条件に合う組は (a, c) = (2, 1)・(3, 1)・(4, 2) の3つだけ（a≦6 をすべて調べた結果）
+          const [ea, fc] = pick([[2, 1], [3, 1], [4, 2]]), b2 = ea * ea - fc * fc, sy = pick([1, -1]), py = new F(sy * b2, ea), pf = py.abs(), pf2 = new F(2 * ea * ea - b2, ea);
+          const inner = new F(4 * fc * fc * ea * ea + b2 * b2, ea * ea);
+          const PT = onX ? `\\left(${fc},\\ ${numTex(py)}\\right)` : `\\left(${numTex(py)},\\ ${fc}\\right)`, EF = s2 => onX ? `(${s2}${fc},\\ 0)` : `(0,\\ ${s2}${fc})`;
+          c = onX ? { kind: 'el', A: ea * ea, B: b2, h: 0, k: 0, axis } : { kind: 'el', A: b2, B: ea * ea, h: 0, k: 0, axis };
+          label = `2点 $\\mathrm{F}${EF('')}$，$\\mathrm{F}'${EF('-')}$ を焦点とし，点 $\\mathrm{P}${PT}$ を通る楕円の方程式を求めよ。`; key = `ks2|lr|${axis}|${ea}|${fc}|${sy}`;
+          st = [{ t: 'txt', s: `焦点が $${axis}$ 軸上にあり，中心が原点であるから，$${onX ? '\\frac{x^2}{a^2}+\\frac{y^2}{b^2}=1' : '\\frac{x^2}{b^2}+\\frac{y^2}{a^2}=1'}$（$a>b>0$）とおける。$\\mathrm{PF}+\\mathrm{PF}'=2a$` },
+            { t: 'eq', noEval: true, rows: [`\\mathrm{PF} &= ${numTex(pf)}`] },
+            { t: 'eq', noEval: true, rows: [`\\mathrm{PF}' &= \\sqrt{${2 * fc}^2+\\left(${numTex(pf)}\\right)^2}`, `&= \\sqrt{${numTex(inner)}}`, `&= ${numTex(pf2)}`] },
+            { t: 'txt', s: `よって $2a=${numTex(pf)}+${numTex(pf2)}=${2 * ea}$，$a=${ea}$。$b^2=a^2-${fc}^2=${ea * ea}-${fc * fc}=${b2}$` }];
         }
       }
       const ansT = conicTex(c);
@@ -6436,6 +6582,31 @@ const SQ_OK = new Set([1, 4, 9, 16, 25, 36, 49, 64, 81, 100]);
 const smallNum = n => n <= 20 || n % 10 === 0 || SQ_OK.has(n);
 const conicSmall = p => [p.label, ...flatSteps(p.steps).flatMap(s => s.rows || (s.s ? [s.s] : s.tex ? [s.tex] : []))].join(' ').match(/\d+/g)?.every(x => smallNum(+x)) ?? true;
 CONIC_UNITS.forEach(u => { const g = GEN[u]; GEN[u] = lv => { let p; for (let t = 0; t < 300; t++) { p = g(lv); if (conicSmall(p)) return p; } return p; }; });
+// 計算量のきまり（v5.21.0、利用者が決めた全単元の目安）を守らせる単元。ansOk は答えの大きな数を許す（場合の数の答え 50400 など）
+// きまり：2乗する数は19以下か10の倍数／√ の中は100以下か平方数／大きな累乗（3^8 など）は出さない／
+//        2けた×2けた（10の倍数を除く）はしない／4けた以上の数は出さない（100の倍数は除く）／分母は100以下（10の倍数は除く）
+const HEAVY_UNITS = { taisho: {}, soukan: {}, waSeki: { off: () => ST.waSekiBig }, onaji: { ansOk: true }, gojohou: {}, nikou: {} };
+function heavyNums(p){
+  const ok10 = n => n % 10 === 0, out = [];
+  const rich = s => (s || '').split('$').filter((x, i) => i % 2);
+  const ansTok = HEAVY_UNITS[p.unit]?.ansOk ? new Set(rich(p.ans).join(' ').match(/\d+/g) || []) : new Set();
+  const ms = [p.math || '', ...rich(p.label), ...rich(p.ans), ...flatSteps(p.steps).flatMap(s => s.t === 'txt' ? rich(s.s) : s.t === 'disp' ? [s.tex] : s.rows || [])]
+    .map(m => m.replace(/\d+\.\d+/g, ' '));
+  const big = n => n > 19 && !ok10(n), rootBad = n => n > 100 && !isSq(n);
+  ms.forEach(m => {
+    let r;
+    for (const re = /(?<![\d.])(\d+)\s*\^\s*\{?2\}?(?![\d])/g; (r = re.exec(m));) if (big(+r[1])) out.push(`${r[1]} の2乗`);
+    for (const re = /\\left\(\s*-?\\frac\{(\d+)\}\{(\d+)\}\s*\\right\)\^\{?2\}?/g; (r = re.exec(m));) if (big(+r[1]) || big(+r[2])) out.push(`(${r[1]}/${r[2]}) の2乗`);
+    for (const re = /(?<![\d.])(\d+)\s*\^\s*\{?(\d+)\}?/g; (r = re.exec(m));) if (+r[2] >= 3 && +r[1] !== 10 && (+r[1]) ** (+r[2]) > 1100) out.push(`${r[1]}^${r[2]}`);
+    for (const re = /\\sqrt\{(\d+)\}/g; (r = re.exec(m));) if (rootBad(+r[1])) out.push(`√${r[1]}`);
+    for (const re = /\\sqrt\{\\frac\{(\d+)\}\{(\d+)\}\}/g; (r = re.exec(m));) if (rootBad(+r[1]) || rootBad(+r[2])) out.push(`√(${r[1]}/${r[2]})`);
+    for (const re = /(?<![\d.])(\d+)\s*(?:\\times|\\cdot)\s*(\d+)(?![\d.])/g; (r = re.exec(m));) if (+r[1] >= 13 && +r[2] >= 13 && !ok10(+r[1]) && !ok10(+r[2])) out.push(`${r[1]}×${r[2]}`);
+    for (const re = /(?<![\d.])(\d{4,})(?![\d.])/g; (r = re.exec(m));) if (+r[1] % 100 && !ansTok.has(r[1])) out.push(r[1]);
+    for (const re = /\\frac\{-?(\d+)\}\{(\d+)\}/g; (r = re.exec(m));) if (+r[2] > 100 && !ok10(+r[2])) out.push(`分母 ${r[2]}`);
+  });
+  return out;
+}
+Object.keys(HEAVY_UNITS).forEach(u => { const g = GEN[u]; GEN[u] = lv => { if (HEAVY_UNITS[u].off?.()) return g(lv); let p; for (let t = 0; t < 300; t++) { p = g(lv); if (!heavyNums(p).length) return p; } return p; }; });
 
 /* ========== 検算用：数式（TeX）を数値で計算する ========== */
 // 三角関数の引数（教科書の書き方）：(…)、60^\circ、\frac{7}{6}\pi、\frac{\pi}{6}、2\pi、\pi、2\theta、\theta、\alpha、\beta。^2 は関数の値の2乗
@@ -6476,7 +6647,7 @@ const FONTS = {
   gothic: "'Zen Kaku Gothic New','Hiragino Sans','Yu Gothic',system-ui,sans-serif",
   mincho: "'Zen Old Mincho','Hiragino Mincho ProN','Yu Mincho',serif"
 };
-const ST = { ans: 'full', units: ['tasuki', 'heihou'], count: '10', level: 'mix', order: 'mix', font: 'maru', tex: 'lua', title: '', pv: 'q', mode: 'work', subject: '1', kahouUnit: 'deg', formula: 'off', mixLv: 'seq', closedGrp: [], time: 'off' };
+const ST = { waSekiBig: false, yakusuuBig: false, ans: 'full', units: ['tasuki', 'heihou'], count: '10', level: 'mix', order: 'mix', font: 'maru', tex: 'lua', title: '', pv: 'q', mode: 'work', subject: '1', kahouUnit: 'deg', formula: 'off', mixLv: 'seq', closedGrp: [], time: 'off' };
 let PROBS = [];
 const SAVE_KEY = 'suu1print_settings';
 try { Object.assign(ST, JSON.parse(localStorage.getItem(SAVE_KEY) || '{}')); } catch (e) { /* 保存なしで動く */ }
@@ -6493,7 +6664,7 @@ function makeSet(){
   shuffle(units.slice()).slice(0, n % units.length).forEach(u => cnt[u]++);
   const keys = new Set(), out = [];
   units.forEach(u => {
-    const lvs = Array.from({ length: cnt[u] }, (_, i) => ST.level === 'basic' ? 1 : ST.level === 'std' ? 2 : (i < Math.ceil(cnt[u] / 2) ? 1 : 2));
+    const lvs = Array.from({ length: cnt[u] }, (_, i) => ST.level === 'basic' ? 1 : ST.level === 'std' ? 2 : ST.level === 'adv' ? (ADV_UNITS.has(u) ? 3 : 2) : (i < Math.ceil(cnt[u] / 2) ? 1 : 2));
     // 統計の文章題（p.sit が場面）は、単元の中で場面を使い切るまで同じ場面を出さない。使い切ったら、直前の場面だけ残してやり直す
     const used = new Set(); let last = null;
     lvs.forEach(lv => {
@@ -7470,6 +7641,8 @@ function applySubject(){
 function showOpts(){
   $('kahouOpt').style.display = ST.units.includes('kahou') ? '' : 'none';
   $('mixLvBox').style.display = ST.level === 'mix' ? '' : 'none';
+  $('waSekiBigOpt').style.display = ST.units.includes('waSeki') ? '' : 'none';
+  $('yakusuuBigOpt').style.display = ST.units.includes('yakusuu') ? '' : 'none';
 }
 function syncSeg(){
   applySubject();
@@ -7478,7 +7651,11 @@ function syncSeg(){
   $('levelNote').innerHTML = levelNoteHTML(); showOpts(); applyClosed(); updateGroupCounts();
   $('modeNote').textContent = MODE_NOTE[ST.mode];
   $('title').value = ST.title; $('cnt').value = ST.count;
+  $('waSekiBig').checked = !!ST.waSekiBig; $('yakusuuBig').checked = !!ST.yakusuuBig;
 }
+// 下部のバーの高さ（幅や表示で変わる）だけ、ページの下をあける
+new ResizeObserver(() => { const h = $('dock').offsetHeight; if (h) document.documentElement.style.setProperty('--dock-h', h + 'px'); }).observe($('dock'));
+['waSekiBig', 'yakusuuBig'].forEach(id => $(id).addEventListener('change', e => { ST[id] = e.target.checked; save(); regenerate(); }));
 function regenerate(){
   clearTimeout(regenTimer);
   if (!ST.units.length) { PROBS = []; render(); status('単元を選ぶと，ここにプリントができます。'); return; }
@@ -7636,13 +7813,23 @@ function checkProb(p){
 }
 function selfTest(N = 400){
   const errors = []; let count = 0;
-  for (const [u] of UNITS) for (const lv of [1, 2]) for (let i = 0; i < N; i++) {
+  // きまりは「大きい問題も出す」を切った状態で確かめる（設定は最後に元へもどす）
+  const savedBig = [ST.waSekiBig, ST.yakusuuBig]; ST.waSekiBig = ST.yakusuuBig = false;
+  for (const [u] of UNITS) for (const lv of ADV_UNITS.has(u) ? [1, 2, 3] : [1, 2]) for (let i = 0; i < N; i++) {
     const p = GEN[u](lv); count++;
     checkProb(p).forEach(e => errors.push(`[${u} Lv${lv}] ${e}`));
     if (CONIC_UNITS.includes(u) && !conicSmall(p)) errors.push(`[${u} Lv${lv}] 20 より大きく、10 の倍数・平方数・平方数どうしの積でない数がある: ${p.key}`);
+    if (p.vMaxD > 36) errors.push(`[${u} Lv${lv}] V の分母が36より大きい: ${p.key}`);
+    if (p.yakuSums && yakuHeavy(p.yakuSums)) errors.push(`[${u} Lv${lv}] 約数の総和に 3けた×2けた がある: ${p.key}`);
+    if (u === 'suitei' && /^st\|p\|/.test(p.key) && !P_PAIRS.some(([r, n]) => p.key.startsWith(`st|p|${n}|${r}|`))) errors.push(`[${u} Lv${lv}] 比率と大きさの組がきまりにない: ${p.key}`);
+    if (HEAVY_UNITS[u]) { const h = heavyNums(p); if (h.length) errors.push(`[${u} Lv${lv}] 計算量のきまりに合わない数（${h.join('，')}）: ${p.key}`); }
     if (p.nb && !(NB_MAX[p.nb.d] >= p.nb.n)) errors.push(`[${u} Lv${lv}] 二項分布の回数が多すぎる（分母 ${p.nb.d} の ${p.nb.n} 乗）: ${p.key}`);
     if (p.dist && !easyE(momentSteps(p.dist.xs, p.dist.ps).E)) errors.push(`[${u} Lv${lv}] E(X) の分子・分母が19以下か10の倍数でない: ${p.key}`);
   }
+  // 「大きい問題も出す」をつけたときも、問題として正しいこと
+  ST.waSekiBig = ST.yakusuuBig = true;
+  ['waSeki', 'yakusuu'].forEach(u => [1, 2].forEach(lv => { for (let i = 0; i < Math.min(N, 100); i++) { const p = GEN[u](lv); count++; checkProb(p).forEach(e => errors.push(`[${u} Lv${lv} 大きい問題も出す] ${e}`)); } }));
+  [ST.waSekiBig, ST.yakusuuBig] = savedBig;
   // aX+b・和と積で使う簡単な試行も、E(X) の分子・分母が暗算で2乗できる数
   SIMPLE_TRIALS.forEach(t => { for (let i = 0; i < 20; i++) { const tr = t(), d = distOf(tr.vals); if (!easyE(momentSteps(d.xs, d.ps).E)) errors.push(`簡単な試行の E(X) が19以下か10の倍数でない: ${tr.key}`); } });
   // マスターデータそのものの検算
