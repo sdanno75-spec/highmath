@@ -154,6 +154,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 .fbox .fcols{columns:2;column-gap:6mm}
 .fbox .fu{break-inside:avoid;margin-bottom:1.2mm}
 .fbox .fu b{display:block}
+.fbox .fl{margin-bottom:1mm}   /* Σ の上下の文字が、となりの行とぶつからないように */
 .zt-top{display:flex;align-items:center;gap:6mm;margin:2mm 0 3mm;font-size:9.5pt}
 .zt-top p{margin:0}
 .zt{border-collapse:collapse;margin:0 auto;font-size:9.5pt;font-variant-numeric:tabular-nums}
@@ -368,6 +369,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
         </div>
         <div class="units" data-subj="C">
           <span class="ugrp">数C　複素数平面</span>
+          <label class="chk"><input type="checkbox" name="unit" value="kyokkei">絶対値と偏角・極形式</label>
           <label class="chk"><input type="checkbox" name="unit" value="kaiten">点の回転</label>
           <label class="chk"><input type="checkbox" name="unit" value="deMoivre">ド・モアブルの定理</label>
           <label class="chk"><input type="checkbox" name="unit" value="nJouKon">n 乗根</label>
@@ -408,6 +410,20 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
         <div class="gnote" id="levelNote"></div>
         <label class="chk" id="waSekiBigOpt" style="margin-top:6px"><input type="checkbox" id="waSekiBig">確率変数の和と積：V の分母が大きい問題も出す</label>
         <label class="chk" id="yakusuuBigOpt" style="margin-top:6px"><input type="checkbox" id="yakusuuBig">約数の総和：3けた × 2けた の計算も出す</label>
+        <!-- 漸化式を選んでいるときだけ出す -->
+        <div id="zenkaOpt" style="margin-top:10px">
+          <div class="gnote" style="margin-bottom:4px">漸化式の出し方</div>
+          <div class="seg" data-set="zenkaMode"><button data-v="level">難しさに合わせる</button><button data-v="pick">パターンを選ぶ</button></div>
+          <div id="zenkaPatBox" style="margin-top:8px">
+            <div id="zenkaPats" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">
+              <button class="btn" id="zenkaAll" type="button">すべて選ぶ</button>
+              <button class="btn" id="zenkaStar2" type="button">★2まで</button>
+              <button class="btn" id="zenkaStar3" type="button">★3まで</button>
+              <button class="btn" id="zenkaStar4" type="button">★4まで</button>
+            </div>
+          </div>
+        </div>
       </div></div>
       <div class="grp"><div class="glab">ならび順</div><div>
         <div class="seg" data-set="order"><button data-v="mix">単元をまぜる</button><button data-v="unit">単元ごとにまとめる</button></div>
@@ -508,8 +524,16 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.23.0', UPDATED = '2026-11-07';
+const VERSION = '5.29.0', UPDATED = '2026-11-07';
 const CHANGES = [
+  ['5.29.0', '2026-11-07', '漸化式のパターンに1次分数型と隣接3項間の応用を追加。これで14型すべてを選べる。1次分数型の問題文に置きかえの誘導は書かない。'],
+  ['5.28.1', '2026-11-07', 'しっかり解くの解くスペースを広げた。解答の文字が手書きより小さいことを補って、解答の高さの 1.4 倍（以前は 0.8 倍）にした。上限は 180mm。'],
+  ['5.28.0', '2026-11-07', '漸化式のパターンに階比型と対数型を追加し、「★4まで」のボタンを追加。漸化式の問題文で条件が2回出ていたのを1回にした。'],
+  ['5.27.0', '2026-11-07', '漸化式のパターンに、指数型・逆数型・関数スライド型・隣接3項間の基本・和を含む・連立の6型を追加。「★2まで」「★3まで」のボタンと公式・手順の説明も追加。計算量のきまりの点検を漸化式にも入れた。'],
+  ['5.26.0', '2026-11-07', '単元「漸化式」を選んでいるとき、「難しさに合わせる」と「パターンを選ぶ」を切りかえられるようにした。いま選べるのは等差型・等比型・階差型・特性方程式型。'],
+  ['5.25.1', '2026-11-07', '公式・手順の欄の Σ で、変数の範囲（k=1 と n）を Σ の上下に出すようにした。'],
+  ['5.25.0', '2026-11-07', '数C 複素数平面に単元「絶対値と偏角・極形式」を追加。基本は z=1+√3 i などの絶対値と偏角。標準は極形式で表す・a+bi に直す・積と商の絶対値と偏角。'],
+  ['5.24.0', '2026-11-07', '期待値の2個のさいころは、確率を分母36にそろえて (1/36)(2·1+3·2+…+12·1) の形で計算するようにした。確率変数の和と積の標準の参考タイムを、途中式の長さに合わせて 理想130秒・標準280秒・初心者560秒にした。'],
   ['5.23.0', '2026-11-07', '「問題を作りなおす」「PDF を保存」などのボタンと、問題／解答の切りかえを、画面の下にいつも出すようにした。'],
   ['5.22.0', '2026-11-07', '母比率の推定と標本比率は、σ が 0.01〜0.05 の1けたの数になる組だけにした。確率変数の和と積は V の分母を36以下に、約数の総和は 3けた×2けた なしにした。この2つは、難しさのチェックボタンで大きい問題も出せる。'],
   ['5.21.0', '2026-11-05', '計算量のきまり（2乗は19以下か10の倍数・√の中は100以下か平方数・2けた×2けたなし・4けたなし・分母100以下）を6単元に入れた。対称式（26² などが出ない）、相関係数（偏差の2乗の和は100以下、r は √32·√18=4√2·3√2 のように計算）、確率変数の和と積（1471/180 などが出ない）、同じものを含む順列（10! を計算せず約分してかける）、互除法（最小公倍数の問題は2けた、L=30/6×18 の順）、二項定理（係数は3けたまで）。selfTest でも点検。'],
@@ -708,7 +732,7 @@ const UNITS = [
   ['sessen', '接線の方程式', '2'], ['kyokuchi', '3次関数の極値', '2'], ['teisekibun', '定積分の計算', '2'], ['rokubun', '1/6公式の面積', '2'],
   ['tousa', '等差数列', 'B'], ['touhi', '等比数列', 'B'], ['sigma', 'Σの計算', 'B'], ['kaisa', '階差数列', 'B'], ['snAn', '和 Sₙ から一般項', 'B'], ['bunsuWa', '分数の数列の和', 'B'], ['sabunWa', '（等差）×（等比）の和', 'B'], ['zenka', '漸化式', 'B'],
   ['bunpu', '確率分布表から期待値・分散', 'B'], ['henkan', 'aX+b の期待値・分散', 'B'], ['waSeki', '確率変数の和と積', 'B'], ['nikouBunpu', '二項分布', 'B'], ['seiki', '正規分布', 'B'], ['seikiKinji', '二項分布の正規近似', 'B'], ['hyouhonHeikin', '標本平均の分布', 'B'], ['suitei', '母平均の推定', 'B'], ['kentei', '仮説検定', 'B'],
-  ['naiseki', '内積の計算', 'C'], ['nasukaku', 'なす角', 'C'], ['menseki', '三角形の面積', 'C'], ['heikouSuichoku', '平行・垂直の条件', 'C'], ['ookisa', '大きさと内積', 'C'], ['saisyou', '|a+tb| の最小値', 'C'], ['ichiVec', '位置ベクトル', 'C'], ['kouten', '2直線の交点', 'C'], ['chokusenVec', '直線のベクトル方程式', 'C'], ['kuukanNaiseki', '空間ベクトルの内積となす角', 'C'], ['gaiseki', '2本に垂直なベクトル', 'C'], ['heimen', '平面の方程式', 'C'], ['kyuumen', '球面の方程式', 'C'], ['kyori', '点と平面の距離', 'C'], ['kaiten', '点の回転', 'C'], ['deMoivre', 'ド・モアブルの定理', 'C'], ['nJouKon', 'n 乗根', 'C'], ['sanTenKaku', '3点がつくる角', 'C'], ['cxEn', '円 |z−α|=r', 'C'], ['suichoku', '垂直二等分線', 'C'], ['apollonius', 'アポロニウスの円', 'C'], ['kyokusenShiki', '条件から2次曲線の方程式', 'C'], ['heikouIdou', '平行移動した2次曲線', 'C'], ['kyouyuuten', '2次曲線と直線の共有点', 'C'], ['nijiSessen', '2次曲線の接線', 'C'], ['baikaiShoukyo', '媒介変数の消去', 'C'], ['baikaiEn', '円・楕円の媒介変数表示', 'C'], ['kyokuZahyou', '極座標と直交座標', 'C'], ['kyokuToChokkou', '極方程式 → 直交座標', 'C'], ['chokkouToKyoku', '直交座標 → 極方程式', 'C']
+  ['naiseki', '内積の計算', 'C'], ['nasukaku', 'なす角', 'C'], ['menseki', '三角形の面積', 'C'], ['heikouSuichoku', '平行・垂直の条件', 'C'], ['ookisa', '大きさと内積', 'C'], ['saisyou', '|a+tb| の最小値', 'C'], ['ichiVec', '位置ベクトル', 'C'], ['kouten', '2直線の交点', 'C'], ['chokusenVec', '直線のベクトル方程式', 'C'], ['kuukanNaiseki', '空間ベクトルの内積となす角', 'C'], ['gaiseki', '2本に垂直なベクトル', 'C'], ['heimen', '平面の方程式', 'C'], ['kyuumen', '球面の方程式', 'C'], ['kyori', '点と平面の距離', 'C'], ['kyokkei', '絶対値と偏角・極形式', 'C'], ['kaiten', '点の回転', 'C'], ['deMoivre', 'ド・モアブルの定理', 'C'], ['nJouKon', 'n 乗根', 'C'], ['sanTenKaku', '3点がつくる角', 'C'], ['cxEn', '円 |z−α|=r', 'C'], ['suichoku', '垂直二等分線', 'C'], ['apollonius', 'アポロニウスの円', 'C'], ['kyokusenShiki', '条件から2次曲線の方程式', 'C'], ['heikouIdou', '平行移動した2次曲線', 'C'], ['kyouyuuten', '2次曲線と直線の共有点', 'C'], ['nijiSessen', '2次曲線の接線', 'C'], ['baikaiShoukyo', '媒介変数の消去', 'C'], ['baikaiEn', '円・楕円の媒介変数表示', 'C'], ['kyokuZahyou', '極座標と直交座標', 'C'], ['kyokuToChokkou', '極方程式 → 直交座標', 'C'], ['chokkouToKyoku', '直交座標 → 極方程式', 'C']
 ];
 const UNIT_SUBJ = Object.fromEntries(UNITS.map(([u, , s]) => [u, s]));
 const UNIT_NAME = Object.fromEntries(UNITS.map(([u, nm]) => [u, nm]));
@@ -868,12 +892,13 @@ const TIME_TABLE = [
   ['sabun2', '（等差）×（等比）の和（r^k）', [80, 170, 330]],
   ['zenka1', '漸化式（等差型・等比型・階差型）', [30, 70, 140]],
   ['zenka2', '漸化式（aₙ₊₁=paₙ+q 型）', [50, 110, 220]],
+  ['zenka3', '漸化式（指数型・逆数型など）', [80, 170, 340]],
   ['bunpu1', '確率分布表から E・V・σ', [40, 90, 180]],
   ['bunpu2', '試行から表を作って E・V・σ', [70, 150, 300]],
   ['henkan1', 'aX+b の期待値・分散（E(X)・V(X) から）', [20, 50, 100]],
   ['henkan2', 'aX+b の期待値・分散（試行から）', [60, 130, 260]],
   ['waseki1', '確率変数の和と積（公式）', [25, 60, 120]],
-  ['waseki2', '確率変数の和と積（2つの試行から）', [70, 150, 300]],
+  ['waseki2', '確率変数の和と積（2つの試行から）', [130, 280, 560]],
   ['nbun1', '二項分布（B(n, p) から）', [35, 80, 160]],
   ['nbun2', '二項分布（試行の文から）', [50, 110, 220]],
   ['seiki1', '正規分布（標準正規分布）', [20, 45, 90]],
@@ -914,6 +939,8 @@ const TIME_TABLE = [
   ['kyuumen2', '球面の方程式（平方完成・直径）', [40, 90, 180]],
   ['kyori1', '点と平面の距離', [25, 55, 110]],
   ['kyori2', '点と平面の距離（平面を作って）', [40, 90, 180]],
+  ['kyokkei1', '絶対値と偏角・極形式を a+bi に', [30, 60, 120]],
+  ['kyokkei2', '極形式で表す・積と商', [45, 90, 180]],
   ['kaiten1', '点の回転（原点のまわり）', [30, 70, 140]],
   ['kaiten2', '点の回転（点 α のまわり）', [45, 100, 200]],
   ['demoivre1', 'ド・モアブル（答えが整数）', [40, 90, 180]],
@@ -1040,6 +1067,7 @@ const UNIT_LEVEL = {
   heimen: ['点と法線ベクトルから', '3点を通る平面'],
   kyuumen: ['中心と半径から', '平方完成で読む・直径の両端から'],
   kyori: ['公式で距離', '平面を作ってから距離'],
+  kyokkei: ['1+√3 i などの絶対値と偏角', '極形式で表す・a+bi に直す・積と商の絶対値と偏角'],
   kaiten: ['原点のまわりの回転', '点 α のまわりの回転'],
   deMoivre: ['答えが整数になる累乗', '負の指数・答えに根号'],
   nJouKon: ['zⁿ=±1, ±i（n=3, 4, 6）', 'z³=8i・z⁴=−16 など'],
@@ -1057,9 +1085,30 @@ const UNIT_LEVEL = {
   kyokuToChokkou: ['円 r=2a cos θ・直線 r cos θ=p', 'r=2a cos θ+2b sin θ・r cos(θ−α)=p'],
   chokkouToKyoku: ['円・座標軸に平行な直線', '中心がずれた円・直線（合成）']
 };
+// 漸化式のパターン：[キー, 名前, 紙の難しさ（1=基本, 2=標準）, ★]。選ぶ欄と問題作りの両方がこの表を使う
+const ZENKA_TYPES = [['ari', '等差型', 1, 1], ['geo', '等比型', 1, 1], ['diff', '階差型', 1, 2], ['char', '特性方程式型', 2, 2],
+  ['exp', '指数型', 2, 3], ['rev', '逆数型', 2, 3], ['slide', '関数スライド型', 2, 3], ['tri', '隣接3項間の基本', 2, 3], ['sum', '和を含む', 2, 3], ['sys', '連立', 2, 3],
+  ['ratio', '階比型', 2, 4], ['log', '対数型', 2, 4], ['frac', '1次分数型', 2, 5], ['tri2', '隣接3項間の応用', 2, 5]];
+// パターンを選んだときに、公式・手順の欄へ足す行
+const ZENKA_FORM = {
+  exp: '指数型 $a_{n+1}=pa_n+q\\cdot r^n$：両辺を $r^{n+1}$ でわって，$b_n=\\frac{a_n}{r^n}$ とおく。',
+  rev: '逆数型 $a_{n+1}=\\frac{a_n}{qa_n+r}$：両辺の逆数をとって，$b_n=\\frac{1}{a_n}$ とおく。',
+  slide: '関数スライド型 $a_{n+1}=pa_n+sn+t$：$a_{n+1}+\\alpha(n+1)+\\beta=p(a_n+\\alpha n+\\beta)$ と変形する。',
+  tri: '隣接3項間 $a_{n+2}+Pa_{n+1}+Qa_n=0$：$x^2+Px+Q=0$ の解 $\\alpha$，$\\beta$ で，$a_{n+2}-\\alpha a_{n+1}=\\beta(a_{n+1}-\\alpha a_n)$ と変形する。',
+  sum: '和を含む：$S_1=a_1$，$a_{n+1}=S_{n+1}-S_n$ を使って，$a_n$ だけの漸化式にする。',
+  sys: '連立 $a_{n+1}=pa_n+qb_n$，$b_{n+1}=qa_n+pb_n$：和 $a_n+b_n$ と差 $a_n-b_n$ が等比数列になる。',
+  ratio: '階比型 $a_{n+1}=f(n)a_n$：$n\\geqq 2$ で $a_n=f(n-1)f(n-2)\\cdots f(1)a_1$。約分して，$n=1$ でも確かめる。',
+  log: '対数型 $a_{n+1}=pa_n^q$：すべての項が正であることを確かめて，両辺の対数をとり，$b_n=\\log a_n$ とおく。',
+  frac: '1次分数型 $a_{n+1}=\\frac{pa_n+q}{ra_n+s}$：$x=\\frac{px+q}{rx+s}$ の解 $\\alpha$，$\\beta$ で，$b_n=\\frac{a_n-\\alpha}{a_n-\\beta}$ とおくと等比数列になる。',
+  tri2: '隣接3項間の応用 $a_{n+2}+Pa_{n+1}+Qa_n=R$：定数 $c$ をひいて基本の形にする。$x^2+Px+Q=0$ の解に $1$ があるときは，階差 $d_n=a_{n+1}-a_n$ を使う。'
+};
+const fLines = u => u === 'zenka' && zenkaPick() ? [...FORMULA.zenka, ...zenkaPats().filter(k => ZENKA_FORM[k]).map(k => ZENKA_FORM[k])] : FORMULA[u];
+const ZENKA_LV = k => ZENKA_TYPES.find(t => t[0] === k)[2];
+const zenkaPick = () => ST.zenkaMode === 'pick' && ST.units.includes('zenka');
+const zenkaPats = () => ZENKA_TYPES.map(t => t[0]).filter(k => ST.zenkaPats.includes(k));
 function levelNoteHTML(){
   const us = UNITS.filter(u => ST.units.includes(u[0]));
-  const line = ([u, nm]) => { const [b, s, a] = UNIT_LEVEL[u]; return `${esc(nm)}：${esc(ST.level === 'basic' ? b : ST.level === 'std' ? s : ST.level === 'adv' ? (a ? `発展 ${a}` : `（発展なし）標準 ${s}`) : `基本 ${b} → 標準 ${s}`)}`; };
+  const line = ([u, nm]) => { if (u === 'zenka' && zenkaPick()) return `${esc(nm)}：パターンを選ぶ（${zenkaPats().map(k => ZENKA_TYPES.find(t => t[0] === k)[1]).join('・') || 'まだ選んでいません'}）`; const [b, s, a] = UNIT_LEVEL[u]; return `${esc(nm)}：${esc(ST.level === 'basic' ? b : ST.level === 'std' ? s : ST.level === 'adv' ? (a ? `発展 ${a}` : `（発展なし）標準 ${s}`) : `基本 ${b} → 標準 ${s}`)}`; };
   if (ST.level === 'adv') return '発展：発展の問題がある単元（いまは「条件から2次曲線の方程式」）だけ発展を出し、ほかの単元は標準を出します。<br>' + us.map(line).join('<br>');
   const mixNote = ST.mixLv === 'rand' ? '基本と標準をランダムにまぜて並べます。' : '基本の問題を先に、標準の問題をあとに並べます（「単元ごとにまとめる」なら、各単元の中で基本から標準へ）。';
   return (ST.level === 'mix' ? `まぜる：基本と標準を半分ずつ。${mixNote}<br>` : '') + us.map(line).join('<br>');
@@ -2747,6 +2796,13 @@ const A_GEN = {
       const D = ps.reduce((l, p) => l * p.d / gcd(l, p.d), 1), nums = xs.map((x, i) => x * ps[i].mul(D).n);
       const rows = chain(`${xs.map((x, i) => `${x < 0 ? `(${x})` : x}\\cdot ${numTex(ps[i])}`).join('+')} &= \\frac{${sum(nums)}}{${D}}`, numTex(E));
       const nmT = opts.name && opts.name !== 'X' ? `\\text{${opts.name}}` : 'X';
+      // common：確率を約分せず分母をそろえ、くくり出して計算する（利用者指定。2個のさいころで分母がばらばらの11項を通分しない）
+      if (opts.common) {
+        const tbl = `\\def\\arraystretch{1.6}\\begin{array}{${Array(xs.length + 2).fill('c').join('|')}} ${nmT} & ${xs.join(' & ')} & \\text{計} \\\\ \\hline P & ${ws.map(w => `\\frac{${w}}{${W}}`).join(' & ')} & 1 \\end{array}`;
+        const tot = sum(xs.map((x, i) => x * ws[i]));
+        return { ps, E, steps: [{ t: 'txt', s: '$X$ の値と確率は，分母を $' + W + '$ にそろえると次の表のようになる。' }, { t: 'disp', tex: tbl }, { t: 'txt', s: '期待値は' },
+          { t: 'eq', rows: chain(`\\frac{1}{${W}}\\left(${xs.map((x, i) => `${x}\\cdot ${ws[i]}`).join('+')}\\right) &= \\frac{${tot}}{${W}}`, numTex(E)) }], unitW };
+      }
       return { ps, E, steps: [{ t: 'txt', s: `${opts.name && opts.name !== 'X' ? opts.name : '$X$'} の値と確率は次の表のようになる。` }, { t: 'disp', tex: distTable(xs, ps, nmT) }, { t: 'txt', s: '期待値は' }, { t: 'eq', rows }], unitW };
     };
     const mk = (key, label, res, ansT, sec, chk, pre = [], extra = []) => ({
@@ -2829,7 +2885,7 @@ const A_GEN = {
       const t = pick(['sum', 'dif', 'max', 'min']), f = { sum: a => a[0] + a[1], dif: a => Math.abs(a[0] - a[1]), max: a => Math.max(...a), min: a => Math.min(...a) }[t];
       const out = diceOut(2, f), xs = [...new Set(out)].sort((a, b) => a - b), ws = xs.map(x => out.filter(v => v === x).length);
       const nm = { sum: '出る目の和', dif: '出る目の差（大きい方から小さい方を引いた値。同じ目なら 0）', max: '出る目のうち大きい方の値（同じ目ならその値）', min: '出る目のうち小さい方の値（同じ目ならその値）' }[t];
-      const res = build(xs, ws, '', { name: 'X' });
+      const res = build(xs, ws, '', { name: 'X', common: true });
       return mk(t, `2個のさいころを同時に投げるとき，${nm}を $X$ とする。$X$ の期待値を求めよ。`, res, `$${numTex(res.E)}$`, T.kitaiS, () => near(res.E, out),
         [{ t: 'txt', s: '目の出方は全部で $6^2=36$ 通りで，どれも同様に確からしい。' }]);
     }
@@ -4145,6 +4201,217 @@ function sumFormTex(cs){
 }
 // 答えの式 tex と、実際に作った値 valAt(n) を n=from〜10 で比べた誤差の合計
 const seqChk = (tex, valAt, from = 1) => { let e = 0; for (let n = from; n <= 10; n++) { const v = texEval(tex, { n }); e += Number.isFinite(v) ? Math.abs(v - valAt(n)) : Infinity; } return e; };
+// 【漸化式 ★3 の6型】答えの形（係数と底）を先に決めて、そこから漸化式を作る
+const zPow = (c, b) => b === 1 ? String(c) : geoSeq(c, F.of(b)).anT;   // c·b^{n-1}（b=1 なら c）
+const zJoin = (a, b) => `${a}${String(b).startsWith('-') ? '' : '+'}${b}`;
+const zRatio = (c, inner) => c === 1 ? inner : sumTex([[c, `(${inner})`]]);   // 公比 1 ならかっこもつけない
+const zPar = f => { f = F.of(f); return f.n < 0 ? `\\left(${numTex(f)}\\right)` : numTex(f); };
+const ZENKA_MORE = {
+  // 指数型 a_{n+1}=pa_n+q·r^n：両辺を r^{n+1} でわる
+  exp(){
+    const [p, r] = pick([[2, 2], [3, 3], [2, 3], [3, 2]]), a1 = nz(-4, 4), rPow = e => `${r}^{${e}}`;
+    const qPow = q => q === 1 ? `${r}^n` : q === -1 ? `-${r}^n` : `${q}\\cdot ${r}^n`;
+    const bDef = `\\frac{a_n}{${r}^n}`, head = `$b_n=${bDef}$ とおくと，`, b1 = new F(a1, r);
+    if (p === r) {
+      const q = nz(-3, 3), lin = nTex([a1 - q, q]), one = a1 === q;
+      const ansT = one && q === r ? `n\\cdot ${r}^n` : one ? `${q === 1 ? '' : q === -1 ? '-' : q}n\\cdot ${rPow('n-1')}` : `(${lin})\\cdot ${rPow('n-1')}`;
+      const rec = `a_{n+1}=${sumTex([[p, 'a_n']])}${q > 0 ? '+' : ''}${qPow(q)}`, d = new F(q, r);
+      return zenkaProb('exp', `${a1}|${r}|${q}`, `a_1=${a1}`, rec, ansT, [
+        { t: 'txt', s: `両辺を $${rPow('n+1')}$ でわると` },
+        { t: 'eq', noEval: true, rows: [`\\frac{a_{n+1}}{${rPow('n+1')}} &= ${sumTex([[1, bDef], [d, '']])}`] },
+        { t: 'txt', s: `${head}$b_{n+1}=${sumTex([[1, 'b_n'], [d, '']])}$，$b_1=\\frac{a_1}{${r}}=${numTex(b1)}$` },
+        { t: 'txt', s: `数列 $\\{b_n\\}$ は初項 $${numTex(b1)}$，公差 $${numTex(d)}$ の等差数列であるから` },
+        { t: 'eq', noEval: true, rows: [`b_n &= ${numTex(b1)}+(n-1)\\cdot ${zPar(d)}`, `&= \\frac{${lin}}{${r}}`] },
+        { t: 'txt', s: `よって $a_n=${r}^nb_n=${ansT}$` }], (a, n) => r * a + q * r ** n, a1);
+    }
+    const al = nz(-3, 3), q = al * (r - p), C = a1 - al * r; if (!C) return ZENKA_MORE.exp();
+    const k = new F(p, r), d = new F(q, r), c0 = new F(C, r), ansT = zJoin(al === 1 ? `${r}^n` : al === -1 ? `-${r}^n` : `${al}\\cdot ${r}^n`, geoSeq(C, new F(p)).anT);
+    const c0T = c0.one ? '' : c0.n === -c0.d ? '-' : numTex(c0);   // 係数 1 は書かない
+    const bA = sumTex([[1, 'b_n'], [-al, '']]), rec = `a_{n+1}=${sumTex([[p, 'a_n']])}${q > 0 ? '+' : ''}${qPow(q)}`;
+    return zenkaProb('exp', `${a1}|${p}|${r}|${q}`, `a_1=${a1}`, rec, ansT, [
+      { t: 'txt', s: `両辺を $${rPow('n+1')}$ でわると` },
+      { t: 'eq', noEval: true, rows: [`\\frac{a_{n+1}}{${rPow('n+1')}} &= ${sumTex([[k, bDef], [d, '']])}`] },
+      { t: 'txt', s: `${head}$b_{n+1}=${sumTex([[k, 'b_n'], [d, '']])}$，$b_1=\\frac{a_1}{${r}}=${numTex(b1)}$` },
+      { t: 'txt', s: `$\\alpha=${sumTex([[k, '\\alpha'], [d, '']])}$ とおくと $\\alpha=${al}$ であるから，$${sumTex([[1, 'b_{n+1}'], [-al, '']])}=${numTex(k)}(${bA})$` },
+      { t: 'txt', s: `数列 $\\{${bA}\\}$ は初項 $${numTex(c0)}$，公比 $${numTex(k)}$ の等比数列であるから` },
+      { t: 'eq', noEval: true, rows: [`${bA} &= ${c0T}\\left(${numTex(k)}\\right)^{n-1}`] },
+      { t: 'txt', s: `$a_n=${r}^nb_n$ であるから` },
+      { t: 'eq', noEval: true, rows: [`a_n &= ${r}^n\\left\\{${zJoin(al, `${c0T}\\left(${numTex(k)}\\right)^{n-1}`)}\\right\\}`, `&= ${ansT}`] }], (a, n) => p * a + q * r ** n, a1);
+  },
+  // 逆数型 a_{n+1}=a_n/(qa_n+r)：逆数をとる（b_n は正なので分母が 0 にならない）
+  rev(){
+    const c = ri(1, 3), a1 = new F(1, c), r = pick([1, 2, 3]), al = r === 1 ? 0 : pick([-1, -2]), q = r === 1 ? ri(1, 4) : al * (1 - r);
+    const rec = `a_{n+1}=\\frac{a_n}{${sumTex([[q, 'a_n'], [r, '']])}}`, bRec = sumTex([[r, 'b_n'], [q, '']]);
+    const D = r === 1 ? nTex([c - q, q]) : zJoin(geoSeq(c - al, new F(r)).anT, al), ansT = `\\frac{1}{${D}}`;
+    const body = r === 1 ? [{ t: 'txt', s: `数列 $\\{b_n\\}$ は初項 $${c}$，公差 $${q}$ の等差数列であるから` }, { t: 'eq', noEval: true, rows: [`b_n &= ${c}+(n-1)\\cdot ${q}`, `&= ${D}`] }]
+      : [{ t: 'txt', s: `$\\alpha=${sumTex([[r, '\\alpha'], [q, '']])}$ とおくと $\\alpha=${al}$ であるから，$${sumTex([[1, 'b_{n+1}'], [-al, '']])}=${r}(${sumTex([[1, 'b_n'], [-al, '']])})$` },
+        { t: 'txt', s: `数列 $\\{${sumTex([[1, 'b_n'], [-al, '']])}\\}$ は初項 $${c - al}$，公比 $${r}$ の等比数列であるから` },
+        { t: 'eq', noEval: true, rows: [`${sumTex([[1, 'b_n'], [-al, '']])} &= ${geoSeq(c - al, new F(r)).anT}`, `b_n &= ${D}`] }];
+    return zenkaProb('rev', `${c}|${q}|${r}`, `a_1=${numTex(a1)}`, rec, ansT, [
+      { t: 'txt', s: '$a_1>0$ であるから，すべての自然数 $n$ で $a_n>0$ である。両辺の逆数をとると' },
+      { t: 'eq', noEval: true, rows: [`\\frac{1}{a_{n+1}} &= \\frac{${sumTex([[q, 'a_n'], [r, '']])}}{a_n}`, `&= ${sumTex([[r, '\\frac{1}{a_n}'], [q, '']])}`] },
+      { t: 'txt', s: `$b_n=\\frac{1}{a_n}$ とおくと，$b_{n+1}=${bRec}$，$b_1=\\frac{1}{a_1}=${c}$` }, ...body,
+      { t: 'txt', s: `よって $a_n=\\frac{1}{b_n}=${ansT}$` }], a => a / (q * a + r), a1.val());
+  },
+  // 関数スライド型 a_{n+1}=pa_n+sn+t：a_n+un+v を等比数列にする
+  slide(){
+    const p = pick([2, 3]), u = nz(-2, 2), v = ri(-3, 3), a1 = nz(-4, 4), C = a1 + u + v; if (!C) return ZENKA_MORE.slide();
+    const s = (p - 1) * u, t = (p - 1) * v - u, rec = `a_{n+1}=${sumTex([[p, 'a_n'], [s, 'n'], [t, '']])}`, bT = sumTex([[1, 'a_n'], [u, 'n'], [v, '']]), g = geoSeq(C, new F(p)).anT, ansT = zJoin(g, nTex([-v, -u]));
+    return zenkaProb('slide', `${a1}|${p}|${s}|${t}`, `a_1=${a1}`, rec, ansT, [
+      { t: 'txt', s: `$a_{n+1}+\\alpha(n+1)+\\beta=${p}(a_n+\\alpha n+\\beta)$ となる $\\alpha$，$\\beta$ をさがす。展開して整理すると` },
+      { t: 'eq', noEval: true, rows: [`a_{n+1} &= ${sumTex([[p, 'a_n'], [p - 1, '\\alpha n'], [p - 1, '\\beta'], [-1, '\\alpha']])}`] },
+      { t: 'txt', s: `もとの式と比べて $${sumTex([[p - 1, '\\alpha']])}=${s}$，$${sumTex([[p - 1, '\\beta'], [-1, '\\alpha']])}=${t}$ より $\\alpha=${u}$，$\\beta=${v}$` },
+      { t: 'txt', s: `数列 $\\{${bT}\\}$ は初項 $${C}$，公比 $${p}$ の等比数列であるから` },
+      { t: 'eq', noEval: true, rows: [`${bT} &= ${g}`, `a_n &= ${ansT}`] }], (a, n) => p * a + s * n + t, a1);
+  },
+  // 隣接3項間 a_{n+2}+Pa_{n+1}+Qa_n=0：特性方程式の解 α, β で2通りに変形する（解は整数で異なる）
+  tri(){
+    const [al, be] = pick([[1, 2], [1, 3], [2, 3], [-1, 2], [-1, 3], [1, -2]]), A = nz(-2, 2), B = nz(-2, 2), a1 = A + B, a2 = A * al + B * be, P = -(al + be), Q = al * be;
+    const D1 = sumTex([[1, 'a_{n+1}'], [-al, 'a_n']]), D2 = sumTex([[1, 'a_{n+1}'], [-be, 'a_n']]), E1 = a2 - al * a1, E2 = a2 - be * a1;
+    const rec = `${sumTex([[1, 'a_{n+2}'], [P, 'a_{n+1}'], [Q, 'a_n']])}=0`, ansT = zJoin(zPow(A, al), zPow(B, be));
+    const R1 = `${sumTex([[1, 'a_{n+2}'], [-al, 'a_{n+1}']])} &= ${zRatio(be, D1)}`, R2 = `${sumTex([[1, 'a_{n+2}'], [-be, 'a_{n+1}']])} &= ${zRatio(al, D2)}`;
+    return zenkaProb('tri', `${a1}|${a2}|${P}|${Q}`, `a_1=${a1}$，$a_2=${a2}`, rec, ansT, [
+      { t: 'txt', s: `$${sumTex([[1, 'x^2'], [P, 'x'], [Q, '']])}=0$ の解は $x=${al}$，$${be}$ であるから，漸化式は次の2通りに変形できる。` },
+      { t: 'eq', noEval: true, rows: [R1] }, { t: 'eq', noEval: true, rows: [R2] },
+      { t: 'txt', s: `それぞれ等比数列で，初項は $${sumTex([[1, 'a_2'], [-al, 'a_1']])}=${E1}$，$${sumTex([[1, 'a_2'], [-be, 'a_1']])}=${E2}$ であるから` },
+      { t: 'eq', noEval: true, rows: [`${D1} &= ${zPow(E1, be)}`] }, { t: 'eq', noEval: true, rows: [`${D2} &= ${zPow(E2, al)}`] },
+      { t: 'txt', s: '辺々を引くと（下の式 − 上の式）' },
+      { t: 'eq', noEval: true, rows: [`${sumTex([[al - be, 'a_n']])} &= ${zJoin(zPow(E2, al), zPow(-E1, be))}`, `a_n &= ${ansT}`] }], null, null, { a1, a2, P, Q });
+  },
+  // 和を含む漸化式 S_n=pa_n+sn+t：a_{n+1}=S_{n+1}-S_n を使う
+  sum(){
+    const p = pick([2, 2, 2, 3]), s = p === 3 ? 0 : ri(-2, 2), t = p === 3 ? pick([-4, -2, 2, 4]) : ri(-3, 3), a1F = new F(s + t, 1 - p), a1 = a1F.val();
+    if (!a1 || (s && a1 === s)) return ZENKA_MORE.sum();
+    const Sn = sumTex([[p, 'a_n'], [s, 'n'], [t, '']]), Sn1 = sumTex([[p, 'a_{n+1}'], [s, '(n+1)'], [t, '']]), r = p === 2 ? new F(2) : new F(3, 2);
+    const ansT = s ? zJoin(geoSeq(a1 - s, r).anT, s) : geoSeq(a1, r).anT, aS = sumTex([[1, 'a_n'], [-s, '']]);
+    const tail = s ? [{ t: 'txt', s: `$${sumTex([[1, 'a_{n+1}'], [-s, '']])}=2(${aS})$ と変形できる。数列 $\\{${aS}\\}$ は初項 $${a1 - s}$，公比 $2$ の等比数列であるから` },
+      { t: 'eq', noEval: true, rows: [`${aS} &= ${geoSeq(a1 - s, r).anT}`, `a_n &= ${ansT}`] }]
+      : [{ t: 'txt', s: `数列 $\\{a_n\\}$ は初項 $${a1}$，公比 $${numTex(r)}$ の等比数列であるから` }, { t: 'eq', noEval: true, rows: [`a_n &= ${ansT}`] }];
+    const cond = `S_n=${Sn}`;
+    const P = zenkaProb('sum', `${p}|${s}|${t}`, '', cond, ansT, [
+      { t: 'txt', s: `$n=1$ のとき $S_1=a_1$ であるから $a_1=${sumTex([[p, 'a_1'], [s + t, '']])}$ より $a_1=${a1}$` },
+      { t: 'txt', s: '$a_{n+1}=S_{n+1}-S_n$ であるから' },
+      { t: 'eq', noEval: true, rows: [`a_{n+1} &= (${Sn1})-(${Sn})`, `&= ${sumTex([[p, 'a_{n+1}'], [-p, 'a_n'], [s, '']])}`] },
+      { t: 'txt', s: p === 2 ? `よって $a_{n+1}=${sumTex([[2, 'a_n'], [-s, '']])}$` : 'よって $2a_{n+1}=3a_n$ より $a_{n+1}=\\frac{3}{2}a_n$' }, ...tail],
+      a => p === 2 ? 2 * a - s : 1.5 * a, a1, { sum: { p, s, t } });
+    return { ...P, label: `数列 $\\{a_n\\}$ の初項から第 $n$ 項までの和 $S_n$ が $${cond}$ を満たすとき，一般項 $a_n$ を求めよ。`, item: `$${cond}$`, head: `$${cond}$` };
+  },
+  // 1次分数型 a_{n+1}=(pa_n+q)/(ra_n+s)：x=(px+q)/(rx+s) の解 α, β で b_n=(a_n-α)/(a_n-β) とおく。
+  // α, β と公比 k を先に決めて p, q, r, s を作る（誘導は問題文に書かない。利用者指定）
+  frac(){
+    const [al, be] = pick([[1, 2], [1, 3], [2, 3], [-1, 1], [-1, 2], [1, -2]]), k = pick([2, 3]), a1 = ri(-3, 5); if (a1 === al || a1 === be) return ZENKA_MORE.frac();
+    // 固有値 1（α）と k（β）の行列 (α−β)M = [[α−βk, αβ(k−1)], [1−k, αk−β]]
+    let [p, q, r, s] = [al - be * k, al * be * (k - 1), 1 - k, al * k - be]; const g = gcd(gcd(gcd(p, q), r), s) * (r < 0 ? -1 : 1); [p, q, r, s] = [p, q, r, s].map(v => v / g + 0);
+    const b1 = new F(a1 - al, a1 - be), u = b1.n, v = b1.d;
+    for (let m = 0; m < 14; m++) if (u * k ** m === v) return ZENKA_MORE.frac();   // 分母が 0 になる項を出さない
+    // c·k^{n-1} は、c が k でわれるなら (c/k)·k^n と書く（6·2^{n-1} → 3·2^n）
+    const zT = c => { if (c % k) return geoSeq(c, new F(k)).anT; const m = c / k; return m === 1 ? `${k}^n` : m === -1 ? `-${k}^n` : `${m}\\cdot ${k}^n`; };
+    const N = zJoin(zT(be * u), -al * v), D = zJoin(zT(u), -v), ansT = `\\frac{${N}}{${D}}`;
+    const den = sumTex([[r, 'a_n'], [s, '']]), rec = `a_{n+1}=\\frac{${sumTex([[p, 'a_n'], [q, '']])}}{${den}}`, A = sumTex([[1, 'a_n'], [-al, '']]), B = sumTex([[1, 'a_n'], [-be, '']]);
+    const A1 = sumTex([[1, 'a_{n+1}'], [-al, '']]), B1 = sumTex([[1, 'a_{n+1}'], [-be, '']]), c1 = p - r * al, c2 = p - r * be;
+    return zenkaProb('frac', `${a1}|${p}|${q}|${r}|${s}`, `a_1=${a1}`, rec, ansT, [
+      { t: 'txt', s: `$x=\\frac{${sumTex([[p, 'x'], [q, '']])}}{${sumTex([[r, 'x'], [s, '']])}}$ とすると，$${sumTex([[r, 'x^2'], [s - p, 'x'], [-q, '']])}=0$ より $x=${al}$，$${be}$` },
+      { t: 'eq', noEval: true, rows: [`${A1} &= \\frac{${sumTex([[c1, `(${A})`]])}}{${den}}`] }, { t: 'eq', noEval: true, rows: [`${B1} &= \\frac{${sumTex([[c2, `(${B})`]])}}{${den}}`] },
+      { t: 'txt', s: `$a_1\\neq ${be}$ であるから，すべての自然数 $n$ で $a_n\\neq ${be}$ である。上の式を下の式でわると` },
+      { t: 'eq', noEval: true, rows: [`\\frac{${A1}}{${B1}} &= ${k}\\cdot\\frac{${A}}{${B}}`] },
+      { t: 'txt', s: `$b_n=\\frac{${A}}{${B}}$ とおくと，数列 $\\{b_n\\}$ は初項 $${numTex(b1)}$，公比 $${k}$ の等比数列であるから` },
+      { t: 'eq', noEval: true, rows: [`\\frac{${A}}{${B}} &= ${v === 1 ? geoSeq(u, new F(k)).anT : `\\frac{${geoSeq(u, new F(k)).anT}}{${v}}`}`] },
+      { t: 'txt', s: '$a_n$ について解くと' }, { t: 'eq', noEval: true, rows: [`a_n &= ${ansT}`] }], a => (p * a + q) / (r * a + s), a1);
+  },
+  // 隣接3項間の応用 a_{n+2}+Pa_{n+1}+Qa_n=R：解に 1 がなければ定数をひいて基本の形に、解が 1, β なら階差を使う
+  tri2(){
+    if (pick([0, 1])) {
+      const [al, be] = pick([[2, 3], [-1, 2], [-1, 3], [-2, 3]]), A = nz(-2, 2), B = nz(-2, 2), c = nz(-2, 2), P = -(al + be), Q = al * be, R = c * (1 + P + Q), a1 = A + B + c, a2 = A * al + B * be + c;
+      const b1 = a1 - c, b2 = a2 - c, E1 = b2 - al * b1, E2 = b2 - be * b1, D1 = sumTex([[1, 'b_{n+1}'], [-al, 'b_n']]), D2 = sumTex([[1, 'b_{n+1}'], [-be, 'b_n']]), bT = sumTex([[1, 'a_n'], [-c, '']]);
+      const rec = `${sumTex([[1, 'a_{n+2}'], [P, 'a_{n+1}'], [Q, 'a_n']])}=${R}`, bAns = zJoin(zPow(A, al), zPow(B, be)), ansT = zJoin(bAns, c);
+      return zenkaProb('tri2', `c|${a1}|${a2}|${P}|${Q}|${R}`, `a_1=${a1}$，$a_2=${a2}`, rec, ansT, [
+        { t: 'txt', s: `定数 $c$ が $${sumTex([[1, 'c'], [P, 'c'], [Q, 'c']])}=${R}$ を満たすとすると $c=${c}$。$b_n=${bT}$ とおくと` },
+        { t: 'eq', noEval: true, rows: [`${sumTex([[1, 'b_{n+2}'], [P, 'b_{n+1}'], [Q, 'b_n']])} &= 0`] },
+        { t: 'txt', s: `$b_1=${b1}$，$b_2=${b2}$。$${sumTex([[1, 'x^2'], [P, 'x'], [Q, '']])}=0$ の解は $x=${al}$，$${be}$ であるから` },
+        { t: 'eq', noEval: true, rows: [`${D1} &= ${zPow(E1, be)}`] }, { t: 'eq', noEval: true, rows: [`${D2} &= ${zPow(E2, al)}`] },
+        { t: 'txt', s: '辺々を引くと（下の式 − 上の式）' },
+        { t: 'eq', noEval: true, rows: [`${sumTex([[al - be, 'b_n']])} &= ${zJoin(zPow(E2, al), zPow(-E1, be))}`, `b_n &= ${bAns}`] },
+        { t: 'txt', s: `よって $a_n=b_n${c > 0 ? '+' : ''}${c}=${ansT}$` }], null, null, { a1, a2, P, Q, R });
+    }
+    const be = pick([2, 3]), t = nz(-2, 2), A = nz(-2, 2), w = ri(-2, 2), P = -(1 + be), Q = be, R = t * (1 - be), a1 = A + t + w, a2 = A * be + 2 * t + w, d1 = a2 - a1, c0 = d1 - t;
+    const lin = nTex([w, t]), ansT = zJoin(zPow(A, be), lin), dT = sumTex([[1, 'd_n'], [-t, '']]), rec = `${sumTex([[1, 'a_{n+2}'], [P, 'a_{n+1}'], [Q, 'a_n']])}=${R}`;
+    return zenkaProb('tri2', `o|${a1}|${a2}|${P}|${Q}|${R}`, `a_1=${a1}$，$a_2=${a2}`, rec, ansT, [
+      { t: 'txt', s: `$${sumTex([[1, 'x^2'], [P, 'x'], [Q, '']])}=0$ の解は $x=1$，$${be}$ であるから，$d_n=a_{n+1}-a_n$ とおくと` },
+      { t: 'eq', noEval: true, rows: [`d_{n+1} &= ${sumTex([[be, 'd_n'], [R, '']])}`] },
+      { t: 'txt', s: `$d_1=a_2-a_1=${d1}$。$\\alpha=${sumTex([[be, '\\alpha'], [R, '']])}$ とおくと $\\alpha=${t}$ であるから，$${sumTex([[1, 'd_{n+1}'], [-t, '']])}=${be}(${dT})$` },
+      { t: 'txt', s: `数列 $\\{${dT}\\}$ は初項 $${c0}$，公比 $${be}$ の等比数列であるから` },
+      { t: 'eq', noEval: true, rows: [`a_{n+1}-a_n &= ${zJoin(zPow(c0, be), t)}`] },
+      { t: 'txt', s: '$n\\geqq 2$ のとき，階差数列の和を求めて' },
+      { t: 'eq', noEval: true, rows: [`a_n &= ${a1 ? `${a1}+` : ''}\\sum_{k=1}^{n-1}\\left(${zJoin(geoSeq(c0, new F(be)).anT.replace(/n-1/, 'k-1').replace(/\^n$/, '^k'), t)}\\right)`, `&= ${ansT}`] },
+      { t: 'txt', s: `これは $n=1$ のときも成り立つ。` }], null, null, { a1, a2, P, Q, R });
+  },
+  // 階比型 a_{n+1}=f(n)a_n：n≧2 で順にかけて、約分する
+  ratio(){
+    const form = pick(['n1', 'n2', 'up1', 'up2', 'pow']), a1 = nz(-5, 5), half = new F(a1, 2);
+    const d = {
+      n1: { f: '\\frac{n}{n+1}', g: k => k / (k + 1), first: '\\frac{n-1}{n}a_{n-1}', chain: '\\frac{n-1}{n}\\cdot\\frac{n-2}{n-1}\\cdot\\cdots\\cdot\\frac{1}{2}a_1', mid: '\\frac{1}{n}a_1', ans: `${a1 < 0 ? '-' : ''}\\frac{${Math.abs(a1)}}{n}` },
+      n2: { f: '\\frac{n}{n+2}', g: k => k / (k + 2), first: '\\frac{n-1}{n+1}a_{n-1}', chain: '\\frac{n-1}{n+1}\\cdot\\frac{n-2}{n}\\cdot\\frac{n-3}{n-1}\\cdot\\cdots\\cdot\\frac{2}{4}\\cdot\\frac{1}{3}a_1', mid: '\\frac{2}{n(n+1)}a_1', ans: `${a1 < 0 ? '-' : ''}\\frac{${2 * Math.abs(a1)}}{n(n+1)}` },
+      up1: { f: '\\frac{n+1}{n}', g: k => (k + 1) / k, first: '\\frac{n}{n-1}a_{n-1}', chain: '\\frac{n}{n-1}\\cdot\\frac{n-1}{n-2}\\cdot\\cdots\\cdot\\frac{2}{1}a_1', mid: 'na_1', ans: sumTex([[a1, 'n']]) },
+      up2: { f: '\\frac{n+2}{n}', g: k => (k + 2) / k, first: '\\frac{n+1}{n-1}a_{n-1}', chain: '\\frac{n+1}{n-1}\\cdot\\frac{n}{n-2}\\cdot\\frac{n-1}{n-3}\\cdot\\cdots\\cdot\\frac{4}{2}\\cdot\\frac{3}{1}a_1', mid: '\\frac{n(n+1)}{2}a_1', ans: half.int ? sumTex([[half, 'n(n+1)']]) : `${a1 < 0 ? '-' : ''}\\frac{${Math.abs(a1) === 1 ? '' : Math.abs(a1)}n(n+1)}{2}` },
+      pow: { f: '2^n', g: k => 2 ** k, first: '2^{n-1}a_{n-1}', chain: '2^{n-1}\\cdot 2^{n-2}\\cdot\\cdots\\cdot 2\\cdot a_1', mid: '2^{1+2+\\cdots+(n-1)}a_1', ans: `${a1 === 1 ? '' : a1 === -1 ? '-' : `${a1}\\cdot `}2^{\\frac{n(n-1)}{2}}` }
+    }[form];
+    const mid2 = form === 'pow' ? [`&= 2^{\\frac{n(n-1)}{2}}a_1`] : [];
+    return zenkaProb('ratio', `${form}|${a1}`, `a_1=${a1}`, `a_{n+1}=${d.f}a_n`, d.ans, [
+      { t: 'txt', s: '$n\\geqq 2$ のとき，漸化式を順に使うと' },
+      { t: 'eq', noEval: true, rows: [`a_n &= ${d.first}`, `&= ${d.chain}`, `&= ${d.mid}`, ...mid2, `&= ${d.ans}`] },
+      { t: 'txt', s: `$n=1$ を代入すると $${a1}$ となり，$a_1=${a1}$ に合うので，$n=1$ のときも成り立つ。` }], (a, n) => d.g(n) * a, a1);
+  },
+  // 対数型 a_{n+1}=pa_n^q：底 B の対数をとって b_n=log_B a_n とおく（a_1, p は B の累乗）
+  log(){
+    const B = pick([2, 3]), q = pick([2, 2, 3]), s = q === 3 ? pick([0, 2]) : ri(0, 2), e = ri(0, 2), p = B ** s, a1 = B ** e, al = s / (1 - q) + 0, c = e - al;
+    if (!c || (!s && !e)) return ZENKA_MORE.log();
+    const geo = geoSeq(c, new F(q)).anT, expT = al ? zJoin(geo, al) : geo, ansT = `${B}^{${expT}}`, bA = sumTex([[1, 'b_n'], [-al, '']]);
+    const rec = `a_{n+1}=${sumTex([[p, `a_n^${q}`]])}`, bRec = sumTex([[q, 'b_n'], [s, '']]), logA = x => `\\log_{${B}}{${x}}`;
+    const mid = al ? [{ t: 'txt', s: `$\\alpha=${sumTex([[q, '\\alpha'], [s, '']])}$ とおくと $\\alpha=${al}$ であるから，$${sumTex([[1, 'b_{n+1}'], [-al, '']])}=${q}(${bA})$` },
+      { t: 'txt', s: `数列 $\\{${bA}\\}$ は初項 $${c}$，公比 $${q}$ の等比数列であるから` }, { t: 'eq', noEval: true, rows: [`${bA} &= ${geo}`, `b_n &= ${expT}`] }]
+      : [{ t: 'txt', s: `数列 $\\{b_n\\}$ は初項 $${e}$，公比 $${q}$ の等比数列であるから` }, { t: 'eq', noEval: true, rows: [`b_n &= ${expT}`] }];
+    return zenkaProb('log', `${B}|${q}|${s}|${e}`, `a_1=${a1}`, rec, ansT, [
+      { t: 'txt', s: `$a_1>0$ であるから，すべての自然数 $n$ で $a_n>0$ である。両辺の $${B}$ を底とする対数をとると` },
+      { t: 'eq', noEval: true, rows: [`${logA('a_{n+1}')} &= ${s ? `${logA(p)}+` : ''}${q}${logA('a_n')}`] },
+      { t: 'txt', s: `$b_n=${logA('a_n')}$ とおくと，$b_{n+1}=${bRec}$，$b_1=${logA(a1)}=${e}$` }, ...mid,
+      { t: 'txt', s: `よって $a_n=${B}^{b_n}=${ansT}$` }], null, null, {
+        // 項がすぐ大きくなるので、対数 b_n で確かめる（第6項まで）と、はじめの3項はそのままの値でも確かめる
+        chk: () => { let b = e, a = a1, r = 0; for (let n = 1; n <= 6; n++) { r += Math.abs(texEval(expT, { n }) - b); if (n <= 3) r += Math.abs(texEval(ansT, { n }) - a) / a; b = q * b + s; a = p * a ** q; } return r; }
+      });
+  },
+  // 連立漸化式 a_{n+1}=pa_n+qb_n，b_{n+1}=qa_n+pb_n：和と差をとる
+  sys(){
+    const [p, q] = pick([[2, 1], [3, 1], [1, 2], [3, 2]]), X = nz(-2, 2), Y = nz(-2, 2), a1 = X + Y, b1 = X - Y, R1 = p + q, R2 = p - q;
+    const ansA = zJoin(zPow(X, R1), zPow(Y, R2)), ansB = zJoin(zPow(X, R1), zPow(-Y, R2));
+    const ra = `a_{n+1}=${sumTex([[p, 'a_n'], [q, 'b_n']])}`, rb = `b_{n+1}=${sumTex([[q, 'a_n'], [p, 'b_n']])}`, cond = `$a_1=${a1}$，$b_1=${b1}$，$${ra}$，$${rb}$`;
+    return {
+      unit: 'zenka', lv: 2, pat: 'sys', key: `zk|sys|${a1}|${b1}|${p}|${q}`, sec: T.zenka3, wide: true,
+      label: `${cond} で定められる数列 $\\{a_n\\}$，$\\{b_n\\}$ の一般項を求めよ。`, math: '', item: cond, head: cond,   // 条件が長いので問題文（label）だけに書く
+      ans: `$a_n=${ansA}$，$b_n=${ansB}$`, vars: { n: 7 },
+      steps: [{ t: 'txt', s: '2つの式の和と差をとると' },
+        { t: 'eq', noEval: true, rows: [`a_{n+1}+b_{n+1} &= ${zRatio(R1, 'a_n+b_n')}`] }, { t: 'eq', noEval: true, rows: [`a_{n+1}-b_{n+1} &= ${zRatio(R2, 'a_n-b_n')}`] },
+        { t: 'txt', s: `それぞれ等比数列で，初項は $a_1+b_1=${a1 + b1}$，$a_1-b_1=${a1 - b1}$ であるから` },
+        { t: 'eq', noEval: true, rows: [`a_n+b_n &= ${zPow(a1 + b1, R1)}`] }, { t: 'eq', noEval: true, rows: [`a_n-b_n &= ${zPow(a1 - b1, R2)}`] },
+        { t: 'txt', s: '2つの式の和と差を $2$ でわって' }, { t: 'eq', noEval: true, rows: [`a_n &= ${ansA}`] }, { t: 'eq', noEval: true, rows: [`b_n &= ${ansB}`] }],
+      chk: () => { let a = a1, b = b1, e = 0; for (let n = 1; n <= 10; n++) { e += Math.abs(texEval(ansA, { n }) - a) + Math.abs(texEval(ansB, { n }) - b); [a, b] = [p * a + q * b, q * a + p * b]; } return e; }
+    };
+  }
+};
+// 漸化式の問題の形をそろえる。next(a, n) は次の項（3項間は opt の a1, a2, P, Q で計算する）
+function zenkaProb(pat, key, init, rec, ansT, steps, next, a1, opt = {}){
+  const cond = init ? `$${init}$，$${rec}$` : `$${rec}$`;
+  const seq = () => { const o = []; if (opt.a2 !== undefined) { let x = opt.a1, y = opt.a2; for (let n = 1; n <= 10; n++) { o.push(x); [x, y] = [y, -opt.P * y - opt.Q * x + (opt.R || 0)]; } } else { let a = a1; for (let n = 1; n <= 10; n++) { o.push(a); a = next(a, n); } } return o; };
+  return {
+    unit: 'zenka', lv: 2, pat, key: `zk|${pat}|${key}`, sec: T.zenka3, wide: true,
+    label: `${cond} で定められる数列 $\\{a_n\\}$ の一般項を求めよ。`, math: '', item: cond, head: cond, ans: `$a_n=${ansT}$`, vars: { n: 7 }, steps,   // 条件は問題文に書くので、もう一度は出さない
+    chk: opt.chk || (() => {
+      const v = seq(); let e = seqChk(ansT, n => v[n - 1]);
+      // 和を含む型：はじめの数項の和が S_n の式に合うこと
+      if (opt.sum) { let t = 0; v.forEach((x, i) => { t += x; e += Math.abs(t - (opt.sum.p * x + opt.sum.s * (i + 1) + opt.sum.t)); }); }
+      return e;
+    })
+  };
+}
 // 数を式の中に入れるときのかっこ（負の数は \left(-3\right)）
 const parNum = v => v < 0 ? `\\left(${v}\\right)` : `${v}`;
 // 等比数列 a·r^{n-1}（a は整数、r は F）の一般項・和の書き方と途中式
@@ -5245,13 +5512,15 @@ const SB_GEN = {
   },
 
   // 【漸化式】基本：等差型・等比型・階差型／標準：a_{n+1}=pa_n+q（特性方程式 α=pα+q、α は整数、a₁≠α）
-  zenka(lv){
+  // want：パターンを選ぶときの型（ZENKA_TYPES のキー）。ないときは難しさに合わせる
+  zenka(lv, want){
+    if (ZENKA_MORE[want]) return ZENKA_MORE[want]();
     for (;;) {
       const a1 = ri(-5, 5);
       // step：検算で次の項を作るもの（関数＝足す数、数＝かける数、{p, q}＝p·a+q）
       let rec, ansT, st, step, alpha = null;
-      if (lv === 1) {
-        const kind = pick(['ari', 'geo', 'diff']);
+      const kind = want || (lv === 1 ? pick(['ari', 'geo', 'diff']) : 'char');
+      if (kind !== 'char') {
         if (kind === 'ari') {
           const d = nz(-5, 5); rec = `a_{n+1}=${sumTex([[1, 'a_n'], [d, '']])}`; step = n => d;
           ansT = nTex([a1 - d, d]);
@@ -5285,8 +5554,8 @@ const SB_GEN = {
       const term = n => { let t = a1; for (let k = 1; k < n; k++) t = typeof step === 'function' ? t + step(k) : typeof step === 'number' ? t * step : step.p * t + step.q; return t; };
       const label = `$a_1=${a1}$，$${rec}$`;
       return {
-        unit: 'zenka', lv, key: `zk|${a1}|${rec}`, sec: T[lv === 1 ? 'zenka1' : 'zenka2'], wide: true,
-        label: `${label} で定められる数列 $\\{a_n\\}$ の一般項を求めよ。`, math: `a_1=${a1},\\quad ${rec}`, item: label, head: label,
+        unit: 'zenka', lv, pat: kind, key: `zk|${a1}|${rec}`, sec: T[kind === 'char' ? 'zenka2' : 'zenka1'], wide: true,
+        label: `${label} で定められる数列 $\\{a_n\\}$ の一般項を求めよ。`, math: '', item: label, head: label,   // 条件は問題文に書くので、もう一度は出さない
         ans: `$a_n=${ansT}$`, vars: { n: 7 }, steps: st, alpha, a1,
         chk: () => seqChk(ansT, term)
       };
@@ -5917,7 +6186,74 @@ const sqXT = (v, a) => a ? `(${sumTex([[1, v], [-a, '']])})^2` : `${v}^2`;
 const linCx = (X, Y) => { const one = !/ [+-] /.test(Y), yT = one ? `${Y === '1' ? '' : Y === '-1' ? '-' : Y}i` : `(${Y})i`; return X === '0' ? yT : `(${X})${yT.startsWith('-') ? '' : '+'}${yT}`; };
 const ROT_DEG = [30, 45, 60, 90, 120, 135, 150, -30, -45, -60, -90, -120, -135, -150];
 
+// 【絶対値と偏角・極形式】で使う複素数。偏角 deg と大きさの係数 k から、実部・虚部を「係数 × √rad」で作る（答えから問題を作る）
+function cxByArg(deg, k, rad45 = 1){
+  const d = ((deg % 360) + 360) % 360, ref = d <= 90 ? d : d <= 180 ? 180 - d : d <= 270 ? d - 180 : 360 - d;
+  const cs = d === 90 || d === 270 ? 0 : d < 90 || d > 270 ? 1 : -1, ss = d === 0 || d === 180 ? 0 : d < 180 ? 1 : -1, K = F.of(k);
+  const [ra, rb] = ref === 30 ? [3, 1] : ref === 60 ? [1, 3] : ref === 45 ? [rad45, rad45] : [1, 1];
+  const a = { c: K.mul(cs), rad: ra }, b = { c: K.mul(ss), rad: rb };
+  const m2 = a.c.mul(a.c).mul(ra).add(b.c.mul(b.c).mul(rb));
+  const pq = p => p.rad === 1 ? new Q(p.c, 0, 1) : new Q(0, p.c, p.rad), v = p => p.c.val() * Math.sqrt(p.rad);
+  return { deg: d, a, b, m2, rT: sqrtTex(m2), tex: cxTex(pq(a), pq(b)), re: v(a), im: v(b), mod: Math.sqrt(m2.val()), axis: !ref || ref === 90 };
+}
+// |z| を求める行と、cos θ・sin θ から偏角を読む行（数字が苦手な人向けに、手順を省かない）
+function cxArgSteps(z){
+  const absT = p => new R(p.c.abs(), p.rad).tex(), sgT = p => (p.c.n < 0 ? '-' : '') + absT(p);
+  const sqT = p => p.rad === 1 && p.c.d === 1 && p.c.n >= 0 ? `${p.c.n}^2` : `\\left(${sgT(p)}\\right)^2`, val = p => numTex(p.c.mul(p.c).mul(p.rad));
+  const { c, s } = trigQ(z.deg), plain = p => p.c.d === 1;
+  // 約分や有理化で形が変わるときだけ、途中の分数も書く（1/2=1/2 のような同じ式は書かない）
+  const raw = (nm, p, v) => { const t = z.rT === '1' || z.axis || !plain(p) ? '' : `${p.c.n < 0 ? '-' : ''}\\frac{${absT(p)}}{${z.rT}}`; return chain(`\\${nm}\\theta &= ${t || v.tex()}`, v.tex()); };
+  const absRows = z.axis ? [`|z| &= ${z.rT}`] : chain(`|z| &= \\sqrt{${sqT(z.a)}+${sqT(z.b)}}`, `\\sqrt{${val(z.a)}+${val(z.b)}}`, `\\sqrt{${numTex(z.m2)}}`, z.rT);
+  return [{ t: 'eq', noEval: true, rows: absRows },
+    { t: 'txt', s: '偏角を $\\theta$（$0\\leqq\\theta<2\\pi$）とすると' },
+    { t: 'eq', noEval: true, rows: raw('cos', z.a, c) }, { t: 'eq', noEval: true, rows: raw('sin', z.b, s) },
+    { t: 'txt', s: `よって $\\theta=${radT(z.deg)}$` }];
+}
+
 Object.assign(SC_GEN, {
+  // 【絶対値と偏角・極形式】基本：絶対値と偏角／標準：極形式・a+bi に直す・積と商の絶対値と偏角
+  kyokkei(lv){
+    const NOAX = [30, 45, 60, 120, 135, 150, 210, 225, 240, 300, 315, 330], ARG = '偏角 $\\theta$ は $0\\leqq\\theta<2\\pi$ とする。';
+    const pickZ = () => {
+      const deg = pick(lv === 1 ? [...NOAX, ...NOAX, 0, 90, 180, 270] : [...NOAX, ...NOAX, 90, 180, 270]);
+      if (deg % 90 === 0) return cxByArg(deg, ri(1, 5));
+      if (lv === 2 && Math.random() < 0.3) return deg % 45 === 0 ? cxByArg(deg, pick([new F(1, 2), 1, 2]), 2) : cxByArg(deg, new F(1, 2));
+      return cxByArg(deg, ri(1, 3));
+    };
+    const close = (z, re, im) => Math.abs(z.re - re) + Math.abs(z.im - im);
+    const type = lv === 1 ? 'arg' : pick(['polar', 'polar', 'back', 'prod']);
+    if (type === 'prod') {
+      const p1 = cxByArg(pick(NOAX), ri(1, 2)), p2 = cxByArg(pick(NOAX), ri(1, 2)), quo = pick([false, true]);
+      const nm = quo ? '\\frac{z_1}{z_2}' : 'z_1z_2', m = quo ? p1.m2.div(p2.m2) : p1.m2.mul(p2.m2), rT = sqrtTex(m);
+      const raw = quo ? p1.deg - p2.deg : p1.deg + p2.deg, phi = ((raw % 360) + 360) % 360;
+      const absN = quo ? `\\left|${nm}\\right|` : `|${nm}|`, argN = quo ? `\\arg ${nm}` : `\\arg(${nm})`;
+      const absR = chain(`${absN} &= ${quo ? `\\frac{|z_1|}{|z_2|}` : '|z_1||z_2|'}`, quo ? `\\frac{${p1.rT}}{${p2.rT}}` : `${p1.rT}\\cdot ${p2.rT}`, rT);
+      const argT = `${radT(p1.deg)}${quo ? '-' : '+'}${radT(p2.deg)}`, fix = raw === phi ? '' : `。$0\\leqq\\theta<2\\pi$ にすると $\\theta=${radT(phi)}$`;
+      const label = `$z_1=${p1.tex}$，$z_2=${p2.tex}$ のとき，$${nm}$ の絶対値と偏角 $\\theta$ を求めよ。ただし，$0\\leqq\\theta<2\\pi$ とする。`;
+      return {
+        unit: 'kyokkei', lv, key: `kk2|prod|${p1.tex}|${p2.tex}|${quo}`, sec: T.kyokkei2, wide: true, label, math: '', item: label.replace(/ のとき，/, '：').replace(/ただし，.*$/, ''), head: `$z_1=${p1.tex}$，$z_2=${p2.tex}$：$${nm}$`, short: '積と商の絶対値と偏角',
+        ans: `$${absN}=${rT}$，$\\theta=${radT(phi)}$`, vars: {},
+        steps: [{ t: 'txt', s: `$z_1=${polarT(p1.rT, p1.deg)}$` }, { t: 'txt', s: `$z_2=${polarT(p2.rT, p2.deg)}$` }, { t: 'eq', noEval: true, rows: absR },
+          { t: 'txt', s: `偏角は $${argN}=${quo ? '\\arg z_1-\\arg z_2' : '\\arg z_1+\\arg z_2'}=${argT}=${radT(raw)}$${fix}` }],
+        chk: () => {
+          const [a, b, c, d] = [p1.re, p1.im, p2.re, p2.im], D = c * c + d * d, w = quo ? [(a * c + b * d) / D, (b * c - a * d) / D] : [a * c - b * d, a * d + b * c], t = phi * Math.PI / 180, r = Math.sqrt(m.val());
+          return Math.abs(w[0] - r * Math.cos(t)) + Math.abs(w[1] - r * Math.sin(t));
+        }
+      };
+    }
+    const z = pickZ(), pT = polarT(z.rT, z.deg), t = z.deg * Math.PI / 180, chk = () => close(z, z.mod * Math.cos(t), z.mod * Math.sin(t));
+    const base = { unit: 'kyokkei', lv, wide: true, math: `z=${z.tex}`, vars: {}, chk };
+    if (type === 'back') {
+      const { c, s } = trigQ(z.deg), inner = cxTex(asQ(c, c.r), asQ(s, s.r));
+      const math = `z=${pT}`, rows = z.rT === '1' ? [`z &= ${inner}`] : chain(`z &= ${z.rT}\\left(${inner}\\right)`, z.tex);
+      return { ...base, key: `kk2|back|${z.tex}`, sec: T.kyokkei1, label: '次の複素数を $a+bi$ の形で表せ。', math, item: `$${math}$ を $a+bi$ の形で`, head: `$${math}$`, short: '極形式を a+bi に', ans: `$z=${z.tex}$`,
+        steps: [{ t: 'txt', s: `$\\cos ${radT(z.deg)}=${c.tex()}$，$\\sin ${radT(z.deg)}=${s.tex()}$ であるから` }, { t: 'eq', noEval: true, rows }] };
+    }
+    if (type === 'polar') return { ...base, key: `kk2|polar|${z.tex}`, sec: T.kyokkei2, label: `次の複素数を極形式で表せ。ただし，${ARG}`, item: `$z=${z.tex}$ を極形式で`, head: `$z=${z.tex}$`, short: '極形式', ans: `$z=${pT}$`,
+      steps: [...cxArgSteps(z), { t: 'txt', s: `したがって $z=${pT}$` }] };
+    return { ...base, key: `kk1|${z.tex}`, sec: T.kyokkei1, label: `次の複素数の絶対値と偏角を求めよ。ただし，${ARG}`, item: `$z=${z.tex}$ の絶対値と偏角`, head: `$z=${z.tex}$`, short: '絶対値と偏角', ans: `$|z|=${z.rT}$，$\\theta=${radT(z.deg)}$`, steps: cxArgSteps(z) };
+  },
+
   // 【点の回転】基本：原点のまわり／標準：点 α のまわり
   kaiten(lv){
     for (;;) {
@@ -6585,7 +6921,7 @@ CONIC_UNITS.forEach(u => { const g = GEN[u]; GEN[u] = lv => { let p; for (let t 
 // 計算量のきまり（v5.21.0、利用者が決めた全単元の目安）を守らせる単元。ansOk は答えの大きな数を許す（場合の数の答え 50400 など）
 // きまり：2乗する数は19以下か10の倍数／√ の中は100以下か平方数／大きな累乗（3^8 など）は出さない／
 //        2けた×2けた（10の倍数を除く）はしない／4けた以上の数は出さない（100の倍数は除く）／分母は100以下（10の倍数は除く）
-const HEAVY_UNITS = { taisho: {}, soukan: {}, waSeki: { off: () => ST.waSekiBig }, onaji: { ansOk: true }, gojohou: {}, nikou: {} };
+const HEAVY_UNITS = { zenka: {}, taisho: {}, soukan: {}, waSeki: { off: () => ST.waSekiBig }, onaji: { ansOk: true }, gojohou: {}, nikou: {} };
 function heavyNums(p){
   const ok10 = n => n % 10 === 0, out = [];
   const rich = s => (s || '').split('$').filter((x, i) => i % 2);
@@ -6606,7 +6942,7 @@ function heavyNums(p){
   });
   return out;
 }
-Object.keys(HEAVY_UNITS).forEach(u => { const g = GEN[u]; GEN[u] = lv => { if (HEAVY_UNITS[u].off?.()) return g(lv); let p; for (let t = 0; t < 300; t++) { p = g(lv); if (!heavyNums(p).length) return p; } return p; }; });
+Object.keys(HEAVY_UNITS).forEach(u => { const g = GEN[u]; GEN[u] = (lv, ...more) => { if (HEAVY_UNITS[u].off?.()) return g(lv, ...more); let p; for (let t = 0; t < 300; t++) { p = g(lv, ...more); if (!heavyNums(p).length) return p; } return p; }; });
 
 /* ========== 検算用：数式（TeX）を数値で計算する ========== */
 // 三角関数の引数（教科書の書き方）：(…)、60^\circ、\frac{7}{6}\pi、\frac{\pi}{6}、2\pi、\pi、2\theta、\theta、\alpha、\beta。^2 は関数の値の2乗
@@ -6647,7 +6983,7 @@ const FONTS = {
   gothic: "'Zen Kaku Gothic New','Hiragino Sans','Yu Gothic',system-ui,sans-serif",
   mincho: "'Zen Old Mincho','Hiragino Mincho ProN','Yu Mincho',serif"
 };
-const ST = { waSekiBig: false, yakusuuBig: false, ans: 'full', units: ['tasuki', 'heihou'], count: '10', level: 'mix', order: 'mix', font: 'maru', tex: 'lua', title: '', pv: 'q', mode: 'work', subject: '1', kahouUnit: 'deg', formula: 'off', mixLv: 'seq', closedGrp: [], time: 'off' };
+const ST = { zenkaMode: 'level', zenkaPats: ['ari', 'geo', 'diff', 'char'], waSekiBig: false, yakusuuBig: false, ans: 'full', units: ['tasuki', 'heihou'], count: '10', level: 'mix', order: 'mix', font: 'maru', tex: 'lua', title: '', pv: 'q', mode: 'work', subject: '1', kahouUnit: 'deg', formula: 'off', mixLv: 'seq', closedGrp: [], time: 'off' };
 let PROBS = [];
 const SAVE_KEY = 'suu1print_settings';
 try { Object.assign(ST, JSON.parse(localStorage.getItem(SAVE_KEY) || '{}')); } catch (e) { /* 保存なしで動く */ }
@@ -6664,18 +7000,24 @@ function makeSet(){
   shuffle(units.slice()).slice(0, n % units.length).forEach(u => cnt[u]++);
   const keys = new Set(), out = [];
   units.forEach(u => {
-    const lvs = Array.from({ length: cnt[u] }, (_, i) => ST.level === 'basic' ? 1 : ST.level === 'std' ? 2 : ST.level === 'adv' ? (ADV_UNITS.has(u) ? 3 : 2) : (i < Math.ceil(cnt[u] / 2) ? 1 : 2));
+    // 漸化式で「パターンを選ぶ」ときは、難しさのかわりに選んだ型を同じくらいずつ出す
+    const zp = u === 'zenka' && zenkaPick(), zk = zp ? zenkaPats() : [];
+    const zOrder = zp ? Array.from({ length: Math.ceil(cnt[u] / zk.length) }, () => shuffle(zk.slice())).flat().slice(0, cnt[u]) : [];
+    const gen = lv => zp ? GEN.zenka(ZENKA_LV(lv), lv) : GEN[u](lv);
+    const lvs = zp ? zOrder : Array.from({ length: cnt[u] }, (_, i) => ST.level === 'basic' ? 1 : ST.level === 'std' ? 2 : ST.level === 'adv' ? (ADV_UNITS.has(u) ? 3 : 2) : (i < Math.ceil(cnt[u] / 2) ? 1 : 2));
     // 統計の文章題（p.sit が場面）は、単元の中で場面を使い切るまで同じ場面を出さない。使い切ったら、直前の場面だけ残してやり直す
     const used = new Set(); let last = null;
     lvs.forEach(lv => {
       // いちばんよい候補：まだ使っていない場面 → 直前と違う場面 → どれでも（同じ問題は除く）
       let best = null, rank = 9;
       for (let t = 0; t < 120 && rank > 0; t++) {
-        const p = GEN[u](lv); if (keys.has(p.key)) continue;
+        const p = gen(lv); if (keys.has(p.key)) continue;
         const r = !p.sit || !used.has(p.sit) ? 0 : p.sit !== last ? 1 : 2;
         if (r < rank) { best = p; rank = r; }
       }
-      const p = best || GEN[u](lv);
+      // その型の問題を使い切ったら、選んだ別の型へ回す
+      if (!best && zp) for (const k of shuffle(zk.slice())) { for (let t = 0; t < 120 && !best; t++) { const p = gen(k); if (!keys.has(p.key)) best = p; } if (best) break; }
+      const p = best || gen(lv);
       if (p.sit) { if (used.has(p.sit)) used.clear(); used.add(p.sit); last = p.sit; }
       keys.add(p.key); out.push(p);
     });
@@ -6807,6 +7149,7 @@ const GROUP_INST = {
   heimen: '次の平面の方程式を求めよ。',
   kyuumen: '次の問いに答えよ。',
   kyori: '次の距離を求めよ。',
+  kyokkei: '次の複素数の絶対値と偏角を求めよ。',
   kaiten: '次の点を表す複素数を求めよ。',
   deMoivre: '次の式を計算せよ。',
   nJouKon: '次の方程式を解け。',
@@ -6831,7 +7174,8 @@ const flatSteps = st => st.flatMap(s => s.t === 'cols' ? s.cols.flat() : [s]);
 // p.halfSpace の問題（相関係数）は横いっぱいで幅が2倍なので、同じ面積になるよう高さは半分（2問で1ページ）。
 // 割り算など、式が長いから横いっぱいにしている問題は、書く行数は変わらないので半分にしない
 // 文の段・表・図・グラフも長さに入るので、どの単元も同じ物差しになる。解答の長さは問題ごとに1回だけ測って覚える（見た目の文字を変えたら測りなおす）
-const ANS_RATIO = 0.8, SPACE_MIN = 34, SPACE_MAX = 140;
+// 解くスペース＝解答の高さ × ANS_RATIO。解答は小さい文字（10pt、1行 約5.6mm）で、手書きは1行 約8mm なので、8÷5.6≒1.4 倍にする（利用者の指摘。以前は 0.8）
+const ANS_RATIO = 1.4, SPACE_MIN = 34, SPACE_MAX = 180;
 function measureAns(ps){
   const need = ps.filter(p => p._ahFont !== ST.font); if (!need.length) return;
   const keep = ST.ans; ST.ans = 'full';
@@ -6963,11 +7307,11 @@ const FORMULA = {
   rokubun: ['$\\int_{\\alpha}^{\\beta}(x-\\alpha)(x-\\beta)\\,dx=-\\frac{1}{6}(\\beta-\\alpha)^3$（$\\alpha<\\beta$）', '交点の $x$ 座標 $\\alpha$，$\\beta$ を求めて使う。面積は $\\frac{|a|}{6}(\\beta-\\alpha)^3$（$a$ は2つの式の差の $x^2$ の係数）'],
   tousa: ['$a_n=a+(n-1)d$', '$S_n=\\frac{1}{2}n\\{2a+(n-1)d\\}=\\frac{1}{2}n(a+l)$（$l$ は末項）'],
   touhi: ['$a_n=ar^{n-1}$', '$S_n=\\frac{a(r^n-1)}{r-1}$（$r\\neq 1$ のとき），$r=1$ なら $S_n=na$'],
-  sigma: ['$\\sum_{k=1}^{n}k=\\frac{1}{2}n(n+1)$，$\\sum_{k=1}^{n}k^2=\\frac{1}{6}n(n+1)(2n+1)$', '$\\sum_{k=1}^{n}k^3=\\left\\{\\frac{1}{2}n(n+1)\\right\\}^2$，$\\sum_{k=1}^{n}c=cn$'],
-  kaisa: ['$b_n=a_{n+1}-a_n$ のとき，$n\\geqq 2$ で $a_n=a_{1}+\\sum_{k=1}^{n-1}b_k$', '最後に，$n=1$ のときも成り立つかを確かめる。'],
+  sigma: ['$\\displaystyle\\sum_{k=1}^{n}k=\\frac{1}{2}n(n+1)$，$\\displaystyle\\sum_{k=1}^{n}k^2=\\frac{1}{6}n(n+1)(2n+1)$', '$\\displaystyle\\sum_{k=1}^{n}k^3=\\left\\{\\frac{1}{2}n(n+1)\\right\\}^2$，$\\displaystyle\\sum_{k=1}^{n}c=cn$'],
+  kaisa: ['$b_n=a_{n+1}-a_n$ のとき，$n\\geqq 2$ で $a_n=a_{1}+\\displaystyle\\sum_{k=1}^{n-1}b_k$', '最後に，$n=1$ のときも成り立つかを確かめる。'],
   snAn: ['$n\\geqq 2$ のとき $a_n=S_n-S_{n-1}$，$a_{1}=S_{1}$', '$a_{1}$ が $n\\geqq 2$ の式に含まれるかを確かめる。'],
   bunsuWa: ['$\\frac{1}{k(k+1)}=\\frac{1}{k}-\\frac{1}{k+1}$，$\\frac{1}{k(k+2)}=\\frac{1}{2}\\left(\\frac{1}{k}-\\frac{1}{k+2}\\right)$', '$\\frac{1}{(2k-1)(2k+1)}=\\frac{1}{2}\\left(\\frac{1}{2k-1}-\\frac{1}{2k+1}\\right)$。部分分数に分けて，消し合う項を書き出す（はじめと終わりに残る項に注意）。'],
-  sabunWa: ['$S=\\sum_{k=1}^{n}k\\,r^{k-1}$ のとき $S-rS=(1+r+\\cdots+r^{n-1})-nr^n$', '$S$ と $rS$ を1項ずらして縦にそろえて引く。最後の項 $-nr^n$ を忘れない。'],
+  sabunWa: ['$S=\\displaystyle\\sum_{k=1}^{n}k\\,r^{k-1}$ のとき $S-rS=(1+r+\\cdots+r^{n-1})-nr^n$', '$S$ と $rS$ を1項ずらして縦にそろえて引く。最後の項 $-nr^n$ を忘れない。'],
   zenka: ['等差型 $a_{n+1}=a_n+d$，等比型 $a_{n+1}=ra_n$，階差型 $a_{n+1}=a_n+f(n)$', '$a_{n+1}=pa_n+q$ 型：$\\alpha=p\\alpha+q$ の解 $\\alpha$ で $a_{n+1}-\\alpha=p(a_n-\\alpha)$ と変形する。'],
   bunpu: ['$E(X)=\\sum x_kp_k$，$V(X)=E(X^2)-\\{E(X)\\}^2$，$\\sigma(X)=\\sqrt{V(X)}$', '確率の合計が 1 になることを確かめてから計算する。'],
   henkan: ['$E(aX+b)=aE(X)+b$', '$V(aX+b)=a^2V(X)$，$\\sigma(aX+b)=|a|\\sigma(X)$', '平均・分散から $a$，$b$ を求めるときは，先に $a^2V(X)$ の式から $a$ を決める。'],
@@ -6992,6 +7336,7 @@ const FORMULA = {
   heimen: ['点 $(x_{0},\\ y_{0},\\ z_{0})$ を通り $\\vec{n}=(a,\\ b,\\ c)$ に垂直な平面：$a(x-x_{0})+b(y-y_{0})+c(z-z_{0})=0$', '3点を通るときは，2本のベクトルの両方に垂直な $\\vec{n}$ を先に求める。'],
   kyuumen: ['中心 $(a,\\ b,\\ c)$，半径 $r$ の球面：$(x-a)^2+(y-b)^2+(z-c)^2=r^2$', '展開した式は，$x$，$y$，$z$ それぞれ平方完成する。直径の両端が与えられたら，中点が中心。'],
   kyori: ['点 $(x_{0},\\ y_{0},\\ z_{0})$ と平面 $ax+by+cz+d=0$ の距離 $\\frac{|ax_{0}+by_{0}+cz_{0}+d|}{\\sqrt{a^2+b^2+c^2}}$', '平面が点と法線ベクトルで与えられたら，平面の方程式を先に作る。'],
+  kyokkei: ['$z=a+bi$ のとき，絶対値は $|z|=\\sqrt{a^2+b^2}$', '偏角 $\\theta$ は $\\cos\\theta=\\frac{a}{|z|}$，$\\sin\\theta=\\frac{b}{|z|}$ を満たす角', '極形式：$z=r(\\cos\\theta+i\\sin\\theta)$（$r=|z|$）', '$|z_1z_2|=|z_1||z_2|$，$\\arg(z_1z_2)=\\arg z_1+\\arg z_2$，$\\arg\\frac{z_1}{z_2}=\\arg z_1-\\arg z_2$'],
   kaiten: ['原点のまわりに $\\theta$ 回転：$w=(\\cos\\theta+i\\sin\\theta)z$', '点 $\\alpha$ のまわりに $\\theta$ 回転：$w-\\alpha=(\\cos\\theta+i\\sin\\theta)(z-\\alpha)$（反時計回りが正の向き）'],
   deMoivre: ['$\\{r(\\cos\\theta+i\\sin\\theta)\\}^n=r^n(\\cos n\\theta+i\\sin n\\theta)$（$n$ は整数）', 'はじめに極形式に直す。$n\\theta$ は $2\\pi$ の整数倍だけずらして $0$ 以上 $2\\pi$ 未満にしてから値を読む。'],
   nJouKon: ['$z=r(\\cos\\theta+i\\sin\\theta)$ とおき，右辺も極形式にして，$r^n$ と $n\\theta$ を比べる。', '右辺の偏角を $\\alpha$ とすると $n\\theta=\\alpha+2k\\pi$ から $\\theta=\\frac{\\alpha+2k\\pi}{n}$（$k=0,\\ 1,\\ \\cdots,\\ n-1$ の $n$ 個）'],
@@ -7011,11 +7356,11 @@ const FORMULA = {
 };
 // 枠に出す単元：いまのプリントに入っている単元を、単元の並び順で
 const formulaUnits = () => UNITS.filter(([u]) => FORMULA[u] && PROBS.some(p => p.unit === u));
-const formulaHTML = us => `<div class="fbox"><div class="fh">公式・手順</div><div class="fcols"${us.length > 1 ? '' : ' style="columns:1"'}>${us.map(([u, nm]) => `<div class="fu"><b>${esc(nm)}</b>${FORMULA[u].map(l => `<div class="fl">${rich(l)}</div>`).join('')}</div>`).join('')}</div></div>`;
+const formulaHTML = us => `<div class="fbox"><div class="fh">公式・手順</div><div class="fcols"${us.length > 1 ? '' : ' style="columns:1"'}>${us.map(([u, nm]) => `<div class="fu"><b>${esc(nm)}</b>${fLines(u).map(l => `<div class="fl">${rich(l)}</div>`).join('')}</div>`).join('')}</div></div>`;
 // LaTeX の文字として出す単元名（| と Sₙ は数式に）
 const texName = nm => nm.replace(/[|]/g, '$|$').replace(/Sₙ/g, '$S_n$');
 const FBIG = 6;
-const formulaBody = us => us.map(([u, nm]) => `\\textbf{${texName(nm)}}\\par\n${FORMULA[u].join('\\par\n')}\\par\\medskip`).join('\n');
+const formulaBody = us => us.map(([u, nm]) => `\\textbf{${texName(nm)}}\\par\n${fLines(u).join('\\par\n')}\\par\\medskip`).join('\n');
 // 単元が少ないときは1ページ目の指示文の下に枠で。多いときは（枠はページをまたげないので）問題の前に公式・手順だけのページを置く
 const formulaTex = us => us.length > FBIG
   ? `{\\large\\bfseries 公式・手順}\\quad{\\small ${printTitle()}}\\par\\vspace{1mm}\\hrule\\medskip
@@ -7643,6 +7988,8 @@ function showOpts(){
   $('mixLvBox').style.display = ST.level === 'mix' ? '' : 'none';
   $('waSekiBigOpt').style.display = ST.units.includes('waSeki') ? '' : 'none';
   $('yakusuuBigOpt').style.display = ST.units.includes('yakusuu') ? '' : 'none';
+  $('zenkaOpt').style.display = ST.units.includes('zenka') ? '' : 'none';
+  $('zenkaPatBox').style.display = ST.zenkaMode === 'pick' ? '' : 'none';
 }
 function syncSeg(){
   applySubject();
@@ -7652,13 +7999,21 @@ function syncSeg(){
   $('modeNote').textContent = MODE_NOTE[ST.mode];
   $('title').value = ST.title; $('cnt').value = ST.count;
   $('waSekiBig').checked = !!ST.waSekiBig; $('yakusuuBig').checked = !!ST.yakusuuBig;
+  document.querySelectorAll('input[name="zpat"]').forEach(i => { i.checked = ST.zenkaPats.includes(i.value); });
 }
+// 漸化式のパターンのチェックボタン（ZENKA_TYPES から作る）
+$('zenkaPats').innerHTML = ZENKA_TYPES.map(([k, nm]) => `<label class="chk"><input type="checkbox" name="zpat" value="${k}">${nm}</label>`).join('');
+const zenkaChanged = () => { save(); syncSeg(); regenSoon(); };
+document.querySelectorAll('input[name="zpat"]').forEach(i => i.addEventListener('change', () => { ST.zenkaPats = [...document.querySelectorAll('input[name="zpat"]:checked')].map(x => x.value); zenkaChanged(); }));
+$('zenkaAll').addEventListener('click', () => { ST.zenkaPats = ZENKA_TYPES.map(t => t[0]); zenkaChanged(); });
+[2, 3, 4].forEach(n => $(`zenkaStar${n}`).addEventListener('click', () => { ST.zenkaPats = ZENKA_TYPES.filter(t => t[3] <= n).map(t => t[0]); zenkaChanged(); }));
 // 下部のバーの高さ（幅や表示で変わる）だけ、ページの下をあける
 new ResizeObserver(() => { const h = $('dock').offsetHeight; if (h) document.documentElement.style.setProperty('--dock-h', h + 'px'); }).observe($('dock'));
 ['waSekiBig', 'yakusuuBig'].forEach(id => $(id).addEventListener('change', e => { ST[id] = e.target.checked; save(); regenerate(); }));
 function regenerate(){
   clearTimeout(regenTimer);
   if (!ST.units.length) { PROBS = []; render(); status('単元を選ぶと，ここにプリントができます。'); return; }
+  if (zenkaPick() && !zenkaPats().length) { PROBS = []; render(); status('漸化式のパターンを1つ以上選んでください。'); return; }
   status('');
   ADJ = {}; BRK = { work: new Set(), list: new Set() };   // 作りなおすと、調整した高さと改ページは元にもどす
   makeSet(); render();
@@ -7815,6 +8170,8 @@ function selfTest(N = 400){
   const errors = []; let count = 0;
   // きまりは「大きい問題も出す」を切った状態で確かめる（設定は最後に元へもどす）
   const savedBig = [ST.waSekiBig, ST.yakusuuBig]; ST.waSekiBig = ST.yakusuuBig = false;
+  // 漸化式は、パターンごとに正しい型が出ることも確かめる
+  ZENKA_TYPES.forEach(([k]) => { for (let i = 0; i < Math.min(N, 100); i++) { const p = GEN.zenka(ZENKA_LV(k), k); count++; if (p.pat !== k) errors.push(`[zenka] 型がちがう: ${k} → ${p.pat}`); checkProb(p).forEach(e => errors.push(`[zenka ${k}] ${e}`)); } });
   for (const [u] of UNITS) for (const lv of ADV_UNITS.has(u) ? [1, 2, 3] : [1, 2]) for (let i = 0; i < N; i++) {
     const p = GEN[u](lv); count++;
     checkProb(p).forEach(e => errors.push(`[${u} Lv${lv}] ${e}`));
@@ -7843,7 +8200,11 @@ function selfTest(N = 400){
   // 公式・手順：すべての単元にあり、数式が表記ルールを守っている
   UNITS.forEach(([u]) => {
     if (!FORMULA[u]) { errors.push(`公式・手順がない: ${u}`); return; }
-    FORMULA[u].forEach(l => l.split('$').forEach((m, i) => { if (i % 2) BAD.forEach(([re, name]) => { if (re.test(m)) errors.push(`公式・手順 ${u}: ${name}: ${m}`); }); }));
+    if (u === 'zenka') Object.values(ZENKA_FORM).forEach(l => l.split('$').forEach((m, i) => { if (i % 2) { try { katex.renderToString(m, { throwOnError: true }); } catch (e) { errors.push(`公式・手順 zenka: 数式を表示できない: ${m}`); } } }));
+    FORMULA[u].forEach(l => l.split('$').forEach((m, i) => { if (i % 2) {
+      BAD.forEach(([re, name]) => { if (re.test(m)) errors.push(`公式・手順 ${u}: ${name}: ${m}`); });
+      try { katex.renderToString(m, { throwOnError: true }); } catch (e) { errors.push(`公式・手順 ${u}: 数式を表示できない: ${m}`); }
+    } }));
   });
   return { count, errors: [...new Set(errors)].slice(0, 40), nErrors: errors.length };
 }
