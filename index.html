@@ -296,7 +296,17 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 
 /* ===== 使い方・情報 ===== */
 .help{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:6px 22px 16px;margin:12px 0}
-.help h2{font-size:17px;margin:16px 0 6px}
+.help h2{font-size:17px;margin:0}
+.verNow{padding:12px 0 12px;border-bottom:1px solid var(--line)}
+.verNow b{font-size:15px}
+.verNow p{margin:4px 0 0;font-size:13px;color:var(--muted)}
+.hsec{border-bottom:1px solid var(--line)}
+.hsec:last-child{border-bottom:0}
+.hsec > summary{display:flex;align-items:center;gap:10px;padding:12px 0;cursor:pointer;list-style:none}
+.hsec > summary::-webkit-details-marker{display:none}
+.hsec > summary::before{content:"";flex:none;width:7px;height:7px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(-45deg);transition:transform .15s}
+.hsec[open] > summary::before{transform:rotate(45deg)}
+.hsec[open]{padding-bottom:12px}
 .help ul{margin:0;padding-left:1.3em}
 .help li{margin:3px 0}
 .ver{font-size:13px;color:var(--muted)}
@@ -634,7 +644,8 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 
   <section class="view" id="view-help">
     <div class="help">
-      <h2>使い方</h2>
+      <div class="verNow"><b id="verInfo"></b><p id="verLatest"></p></div>
+      <details class="hsec"><summary><h2>使い方</h2></summary>
       <ul>
         <li>「単元」で教科を押し、分野を押してひらき、出したい単元にチェックを入れます。教科をまたいで選べます。選んだ単元は上に札で並び、× で外せます。チェックを変えると、すぐに新しいプリントになります。</li>
         <li><b>単元ごとの問題数</b>：「問題の量」の表で、単元ごとの問題数を決めます（難しさが「まぜる」のときは基本・標準・発展の数。発展は発展の問題がある単元だけ、「パターンを選ぶ」の単元は合計だけです）。数を直すと、全体の問題数はその合計になります。全体の問題数を変えると、単元に同じくらいずつ配りなおします（難しさの比率は単元ごとにそのまま）。「問題のページ数に合わせる」では、単元ごとの数の比率を保ったまま、ページに入るだけふやし・へらします。</li>
@@ -649,32 +660,37 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
         <li><b>印刷する</b>（Ctrl+P でも同じ）：「全部」「問題だけ」「解答だけ」を選ぶと、印刷の画面が開きます。生徒に配る問題と、先生用の解答を別のファイルにできます。紙に印刷するときはプリンターを、PDF にするときは送信先を「PDF に保存」にします。PDF は文字がフォントのまま入るので、拡大してもくっきりします。A4 縦で、「全部」なら問題のページのあとに解答・解説のページが続きます。</li>
         <li><b>.tex を保存</b>：そのままコンパイルできる .tex のファイルを保存します。形式は「LaTeX の形式」で選べます（Overleaf なら ltjsarticle を選び、Compiler を LuaLaTeX に）。</li>
       </ul>
-      <h2>問題のページ</h2>
+      </details>
+      <details class="hsec"><summary><h2>問題のページ</h2></summary>
       <ul>
         <li><b>解くスペース</b>：各問の下に解くスペースがあります。高さは、その問題の解答・解説（途中式つき）の長さの 1.4 倍です（34〜180mm）。答えの長い問題ほど広くなります。</li>
         <li><b>書くスペースの調整</b>：問題のページで、欄の上下の境目のまん中にある小さなつまみを上下にドラッグすると、高さを変えられます（マウスでも iPad の指でも）。上の欄を広げた分だけ下の欄がせまくなり、紙の高さは変わりません。問題文が隠れる高さ・欄 20mm より低くはなりません。調整はページごとで、印刷・PDF・LaTeX に反映されます。ページ数の横の「高さを自動にもどす」で、すべてのページを元の高さにもどせます（改ページはそのまま）。</li>
         <li><b>改段・改ページ</b>：問題の境目に、左の列なら「ここで改段」、右の列なら「ここで改ページ」のボタンが出ます。改段はその問題から後ろを右の列へ、改ページは次のページへ送り、残った欄は列（紙）の下まで広げます。改ページで始まったページの「改ページを取り消す」で元にもどります。ページ数の横の「改ページをすべて取り消す」で、まとめて元にもどせます。つまみとボタンは画面だけで、印刷・PDF には出ません。「問題を作りなおす」を押すと、高さと改ページは元にもどります。</li>
         <li>式は途中で折り返しません。式の折り返し・はみ出し・縮めすぎを自動で点検し、見つかったときはページ数の横に赤字で知らせます。</li>
       </ul>
-      <h2>参考タイム</h2>
+      </details>
+      <details class="hsec"><summary><h2>参考タイム</h2></summary>
       <p class="ver">問題の種類ごとに3段階の秒数を決めてあります。<b>理想</b>は慣れた生徒が暗算まじりで解く速さ、<b>標準</b>はふつうに途中式を書く速さ、<b>初心者</b>は習いたてで確かめながら解く速さです。プリントの問題をそれぞれ足して分に切り上げ、1ページ目に「目安 理想○分・標準○分・初心者○分」と表示します。解答解説にも1問ごとの目安（理想／標準／初心者）が出ます。</p>
       <ul class="ver" id="timeTable"></ul>
-      <h2>問題の作り方</h2>
+      </details>
+      <details class="hsec"><summary><h2>問題の作り方</h2></summary>
       <ul>
         <li>すべての問題は、答え（きれいな数）を先に決めて、そこから逆算して作っています。答えが分数・根号になる単元も、計算の途中で数が大きくなりすぎないようにしています。</li>
         <li>作った問題は、途中式の各行が同じ値になっているか、答えが問題の式に合うかを、数を入れて自動で検算しています。図のある問題は、座標で実際に図をかいて長さや比を確かめています。</li>
         <li>単元ごとの基本・標準（・発展）の中身は、「難しさ」の説明（選んだ単元の分だけ出ます）にあります。</li>
       </ul>
-      <h2>情報</h2>
-      <p class="ver" id="verInfo"></p>
+      </details>
+      <details class="hsec"><summary><h2>これまでの変更</h2></summary>
       <ul id="changes" class="ver"></ul>
+      </details>
     </div>
   </section>
 </div>
 
 <script>
-const VERSION = '5.48.0', UPDATED = '2026-11-09';
+const VERSION = '5.48.1', UPDATED = '2026-11-09';
 const CHANGES = [
+  ['5.48.1', '2026-11-09', '「使い方・情報」のページを整理した。いちばん上に最新の版と変更点をいつも出し、使い方・問題のページ・参考タイム・問題の作り方・これまでの変更は、見出しを押すとひらく形にした（初めはたたんである）。'],
   ['5.48.0', '2026-11-09', '「印刷する」（Ctrl+P も）を押したあとに、全部・問題だけ・解答だけを選ぶ形にした（下のバーの「保存・印刷」はなくした）。「画像で PDF」と「LaTeX をコピー」をなくした（.tex は「.tex を保存」で出せる）。「元にもどす」「やり直す」は画面の左上にいつも出る小さな矢印にした。'],
   ['5.47.0', '2026-11-09', '「問題の量」に単元ごとの問題数の表を作った（札の小さい欄はなくした）。「まぜる」で発展の数も決められる（発展の問題がある単元だけ）。欄を押すと数が全部選ばれて、打った数に置きかわる。「まぜる」の並びは基本 → 標準 → 発展の順か、ランダム。'],
   ['5.46.0', '2026-11-08', '難しさの「まぜる」の基本の割合（％）をなくし、選んだ単元の札で単元ごとの問題数を決めるようにした（まぜるときは基本・標準の数を単元ごとに）。全体の問題数の欄は残し、変えると単元に同じくらいずつ配りなおす。単元ごとに直すと、全体はその合計になる。「問題のページ数に合わせる」は単元ごとの数の比率を保つ。組み合わせ・最近作ったプリント・元にもどすにも単元ごとの数が入る。'],
@@ -9132,7 +9148,8 @@ document.querySelectorAll('#tabs button').forEach(b => b.addEventListener('click
 }));
 $('verInfo').textContent = `バージョン ${VERSION}（${UPDATED} 更新）`;
 $('timeTable').innerHTML = TIME_TABLE.map(r => `<li>${esc(r[1])}：${r[0].endsWith('Add') || r[0] === 'taishoRecip' ? '+' : ''}${r[2].map((v, k) => `${TIERS[k]} ${fmtSec(v)}`).join('・')}</li>`).join('');
-$('changes').innerHTML =CHANGES.map(c => `<li>v${c[0]}（${c[1]}）：${esc(c[2])}</li>`).join('');
+$('verLatest').textContent = CHANGES[0][2];
+$('changes').innerHTML = CHANGES.slice(1).map(c => `<li>v${c[0]}（${c[1]}）：${esc(c[2])}</li>`).join('');
 
 /* ========== 自己点検（ブラウザのコンソールで __engine.selfTest() ） ========== */
 const BAD = [
