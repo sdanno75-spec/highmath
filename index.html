@@ -463,7 +463,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
           <label class="chk"><input type="checkbox" name="unit" value="menelaus">メネラウスの定理</label>
           <label class="chk"><input type="checkbox" name="unit" value="houbeki">方べきの定理</label>
           <label class="chk"><input type="checkbox" name="unit" value="kakunibun">角の二等分線</label>
-          <label class="chk"><input type="checkbox" name="unit" value="goshin">五心</label>
+          <label class="chk"><input type="checkbox" name="unit" value="goshin">三角形の五心</label>
           <label class="chk"><input type="checkbox" name="unit" value="kyoen">共円条件</label>
         </div>
         <div class="units" data-subj="2">
@@ -661,7 +661,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
       <ul>
         <li>「単元」で教科を押し、分野を押してひらき、出したい単元にチェックを入れます。教科をまたいで選べます。選んだ単元は上に札で並び、× で外せます。チェックを変えると、すぐに新しいプリントになります。</li>
         <li><b>単元ごとの問題数</b>：「問題の量」の表で、単元ごとの問題数を決めます（難しさが「まぜる」のときは基本・標準・発展の数。発展は発展の問題がある単元だけ、「パターンを選ぶ」の単元は合計だけです）。数を直すと、全体の問題数はその合計になります。全体の問題数を変えると、単元に同じくらいずつ配りなおします（難しさの比率は単元ごとにそのまま）。「問題のページ数に合わせる」では、単元ごとの数の比率を保ったまま、ページに入るだけふやし・へらします。</li>
-        <li>漸化式・媒介変数の消去・五心・加法定理・確率変数の和と積・約数の個数と総和は、選んだ単元の札の「設定」を押すと、その単元の設定が出ます。</li>
+        <li>漸化式・媒介変数の消去・三角形の五心・加法定理・確率変数の和と積・約数の個数と総和は、選んだ単元の札の「設定」を押すと、その単元の設定が出ます。</li>
         <li>よく使う単元のセットは、「よく使う組み合わせ」に名前をつけて保存できます（このブラウザに保存）。フォルダに分けられ、フォルダを開くと「名前を変える」「消す」が出ます。組み合わせの横のフォルダの印で、別のフォルダに移せます。「ファイルに書き出す」で保存しておくと、ほかのパソコンやブラウザで「ファイルから読みこむ」で使えます。題名・目安時間・解答ページなどは「その他の設定」の中にあります。</li>
         <li>下のバーの「＋別バージョン」を押すと、同じ単元・難しさ・並びで数だけちがう B 版ができます（F 版まで）。「A 版」「B 版」で切りかえ、題名には（A）（B）がつきます。「問題を作りなおす」や設定を変えると、別バージョンはなくなります。版が2つ以上あるときは「全部の版をまとめて印刷」を押しておくと、印刷に A 版から順に全部の版（それぞれ問題と解答）が入ります。ページ番号は版ごとに数えます。</li>
         <li>プリントの各問題の右上と、解答の各問題の番号の左にある丸いボタンを押すと、その1問だけを同じ単元・難しさの別の問題に入れかえます。このボタンは画面だけで、印刷・PDF には出ません。入れかえたあとは、画面の左上の矢印（左が元にもどす、右がやり直す。Ctrl+Z・Ctrl+Y）で前の問題にもどせます。欄の高さのドラッグ、改段・改ページ、「高さを自動にもどす」「改段・改ページをすべて取り消す」も、同じボタンでもどせます。</li>
@@ -700,8 +700,13 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.51.0', UPDATED = '2026-11-09';
+const VERSION = '5.52.3', UPDATED = '2026-11-09';
 const CHANGES = [
+  ['5.52.3', '2026-11-09', '共円条件の図を修正。外角の問題の点 E の黒丸をなくした。円周上の頂点の角で、中に入る文字まで外へ引き出されていたのを直した。'],
+  ['5.52.2', '2026-11-09', '図の改善。角度の文字が角の頂点から離れるときは、角の印を文字のそばまで広げる。点の名前が線や角の印に重なるときは、空いている所へ動かす。'],
+  ['5.52.1', '2026-11-09', '図の角度の文字の置き方を改善。線で区切られたその角の領域に入るなら中に置き、入らないときだけ図の外の近い側に引き出す。となりの角の領域には置かない。'],
+  ['5.52.0', '2026-11-09', '三角形の五心・共円条件の図を読みやすくした。角度の文字は線や他の文字に当たらない場所へ自動で置き、文字の後ろを白くする。角の中に入らないときは細い線で外に引き出す。'],
+  ['5.51.1', '2026-11-09', '単元名「五心」を「三角形の五心」に変更。'],
   ['5.51.0', '2026-11-09', '数A の図形の性質に、単元「五心」と「共円条件」を追加（どちらも図つき）。五心は外心・内心・重心・垂心の性質を使う問題で、単元の「設定」でパターンをチェックして選べる。傍心はチェックしたときだけ出る。共円条件は、対角の和・外角・円周角の定理の逆・方べきの定理の逆・垂線の足。'],
   ['5.50.0', '2026-11-09', '数A に単元「重複組合せ」を追加。基本は，種類から重複を許して選ぶ・同じものを分ける・方程式の 0 以上の整数解・展開式の項の種類・票の割れ方。標準は，x≧3 などの条件がある方程式・正の整数解・不等式・どれも少なくとも○個。答えは全部数え上げて検算する。'],
   ['5.49.0', '2026-11-09', '問題数を変えたときなどに軽くなるよう、問題のページを先に出し、解答のページはそのすぐあとに組み立てるようにした（印刷・.tex の保存・解答の表示のときは、解答の完成を待つ）。'],
@@ -926,7 +931,7 @@ const UNITS = [
   ['junretsu', '順列・組合せの計算', 'A'], ['enJunretsu', '円順列・重複順列', 'A'], ['onaji', '同じものを含む順列', 'A'], ['chofuku', '重複組合せ', 'A'], ['kumiwake', '組分け', 'A'],
   ['hanpuku', '反復試行の確率', 'A'], ['jokenTsuki', '条件付き確率', 'A'], ['kitaichi', '期待値', 'A'],
   ['gojohou', '互除法', 'A'], ['futeishiki', '不定方程式', 'A'], ['nshin', 'n進法', 'A'], ['yakusuu', '約数の個数・総和', 'A'], ['goudou', '合同式', 'A'],
-  ['cheva', 'チェバの定理', 'A'], ['menelaus', 'メネラウスの定理', 'A'], ['houbeki', '方べきの定理', 'A'], ['kakunibun', '角の二等分線', 'A'], ['goshin', '五心', 'A'], ['kyoen', '共円条件', 'A'],
+  ['cheva', 'チェバの定理', 'A'], ['menelaus', 'メネラウスの定理', 'A'], ['houbeki', '方べきの定理', 'A'], ['kakunibun', '角の二等分線', 'A'], ['goshin', '三角形の五心', 'A'], ['kyoen', '共円条件', 'A'],
   ['nikou', '二項定理', '2'], ['warizan', '整式の割り算', '2'], ['soukaSoujo', '相加平均と相乗平均', '2'],
   ['fukuso', '複素数の計算', '2'], ['kaiKeisu2', '解と係数の関係（数II）', '2'], ['inshuTeiri', '因数定理による因数分解', '2'],
   ['en', '円の中心と半径', '2'], ['tenChokusen', '点と直線の距離', '2'],
@@ -1373,7 +1378,7 @@ const BAIKAI_FORM = {
 const PICK = {
   zenka: { types: ZENKA_TYPES, mode: 'zenkaMode', pats: 'zenkaPats', order: 'zenkaOrder', name: '漸化式', box: 'zpat', form: ZENKA_FORM },
   baikaiShoukyo: { types: BAIKAI_TYPES, mode: 'baikaiMode', pats: 'baikaiPats', order: 'baikaiOrder', name: '媒介変数の消去', box: 'bpat', form: BAIKAI_FORM },
-  goshin: { types: GOSHIN_TYPES, mode: 'goshinMode', pats: 'goshinPats', order: 'goshinOrder', name: '五心', box: 'gpat', form: GOSHIN_FORM }
+  goshin: { types: GOSHIN_TYPES, mode: 'goshinMode', pats: 'goshinPats', order: 'goshinOrder', name: '三角形の五心', box: 'gpat', form: GOSHIN_FORM }
 };
 const pickOn = u => ST[PICK[u].mode] === 'pick' && ST.units.includes(u);
 const pickPats = u => { const c = PICK[u], on = ST[c.pats]; return c.types.map(t => t[0]).filter(k => !on || on.includes(k)); };
@@ -1434,7 +1439,8 @@ const GSTYLE = {
   dash:  { svg: 'stroke="#888" stroke-width="0.7" stroke-dasharray="2 2"', tikz: 'gray,densely dashed' },
   thick: { svg: 'stroke="#111" stroke-width="2"', tikz: 'very thick' },
   thin:  { svg: 'stroke="#222" stroke-width="1.1"', tikz: 'thin' },
-  arc:   { svg: 'stroke="#222" stroke-width="0.8"', tikz: 'thin' }
+  arc:   { svg: 'stroke="#222" stroke-width="0.8"', tikz: 'thin' },
+  lead:  { svg: 'stroke="#555" stroke-width="0.6"', tikz: 'very thin,gray' }
 };
 // 文字の位置：above＝点の上、below＝点の下、left / right＝点の左右、center＝点を中心に
 const SVG_POS = { above: [0, -4, 'middle'], below: [0, 10, 'middle'], 'above left': [-3, -3, 'end'], 'above right': [3, -3, 'start'], 'below left': [-3, 10, 'end'], 'below right': [3, 10, 'start'], left: [-4, 3, 'end'], right: [4, 3, 'start'], center: [0, 3, 'middle'] };
@@ -1447,7 +1453,7 @@ function svgOf(sh, cls = 'kg'){
     if (it.k === 'circle') return `<circle cx="${it.x.toFixed(1)}" cy="${fy(it.y)}" r="${it.r.toFixed(1)}" fill="none" ${GSTYLE[it.st || 'thin'].svg}/>`;
     if (it.k === 'dot') return `<circle cx="${it.x.toFixed(1)}" cy="${fy(it.y)}" r="2.6" fill="${it.open ? '#fff' : '#111'}" stroke="#111" stroke-width="0.9"/>`;
     const [dx, dy, anc] = SVG_POS[it.pos];
-    return `<text x="${(it.x + dx).toFixed(1)}" y="${(H - it.y + dy).toFixed(1)}" text-anchor="${anc}" font-size="9">${esc(it.s)}</text>`;
+    return `<text x="${(it.x + dx).toFixed(1)}" y="${(H - it.y + dy).toFixed(1)}" text-anchor="${anc}" font-size="9"${it.halo ? ' paint-order="stroke" stroke="#fff" stroke-width="2.6" stroke-linejoin="round"' : ''}>${esc(it.s)}</text>`;
   }).join('');
   return `<svg class="${cls}" viewBox="-14 -12 188 144" xmlns="http://www.w3.org/2000/svg">${body}</svg>`;
 }
@@ -1460,7 +1466,7 @@ function tikzOf(sh, u = 0.25, center = true){
     if (it.k === 'line') return `\\draw[${GSTYLE[it.st].tikz}] ${it.pts.map(([x, y]) => c(x, y)).join(' -- ')};`;
     if (it.k === 'circle') return `\\draw[${GSTYLE[it.st || 'thin'].tikz}] ${c(it.x, it.y)} circle (${it.r.toFixed(1)});`;
     if (it.k === 'dot') return `\\fill[${it.open ? 'white' : 'black'}] ${c(it.x, it.y)} circle (2.6);${it.open ? ` \\draw ${c(it.x, it.y)} circle (2.6);` : ''}`;
-    return `\\node[${it.pos === 'center' ? '' : it.pos + ','}font=\\tiny,inner sep=1pt] at ${c(it.x, it.y)} {${it.s.replace(/−/g, '$-$').replace(/°/g, '$^\\circ$')}};`;
+    return `\\node[${it.pos === 'center' ? '' : it.pos + ','}${it.halo ? 'fill=white,' : ''}font=\\tiny,inner sep=1pt] at ${c(it.x, it.y)} {${it.s.replace(/−/g, '$-$').replace(/°/g, '$^\\circ$')}};`;
   }).join('\n');
   const pic = `\\begin{tikzpicture}[x=${u}mm,y=${u}mm]\n${body}\n\\end{tikzpicture}`;
   return center ? `\\begin{center}${pic}\\end{center}` : pic;
@@ -2299,6 +2305,30 @@ const isect = (p1, p2, p3, p4) => {
   return [p1[0] + t * d1[0], p1[1] + t * d1[1]];
 };
 const lerp = (P, Q, t) => [P[0] + (Q[0] - P[0]) * t, P[1] + (Q[1] - P[1]) * t];
+// 図の文字の幅と、文字が占める四角 [左, 下, 右, 上]（y は上向き）
+const textW = s => [...String(s)].reduce((t, c) => t + (c === '°' ? 3.5 : /[0-9]/.test(c) ? 5 : /[A-Za-z]/.test(c) ? 5.5 : 9), 0);
+const textBox = it => {
+  const [dx, dy, anc] = SVG_POS[it.pos], w = textW(it.s), x = it.x + dx, b = it.y - dy;
+  return [anc === 'start' ? x : anc === 'end' ? x - w : x - w / 2, b - 1, anc === 'start' ? x + w : anc === 'end' ? x : x + w / 2, b + 7];
+};
+const boxHit = (a, b) => a[0] < b[2] && b[0] < a[2] && a[1] < b[3] && b[1] < a[3];
+// 線分 PQ が四角に入るか
+const segBox = (P, Q, b) => {
+  let t0 = 0, t1 = 1; const d = [Q[0] - P[0], Q[1] - P[1]];
+  for (const [p, q] of [[-d[0], P[0] - b[0]], [d[0], b[2] - P[0]], [-d[1], P[1] - b[1]], [d[1], b[3] - P[1]]]) {
+    if (p === 0) { if (q < 0) return null; continue; }
+    const r = q / p; if (p < 0) { if (r > t1) return null; if (r > t0) t0 = r; } else { if (r < t0) return null; if (r < t1) t1 = r; }
+  }
+  return [t0, t1];
+};
+const convexHull = pts => {
+  const p = pts.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]), half = list => { const h = []; for (const q of list) { while (h.length > 1 && (h[h.length - 1][0] - h[h.length - 2][0]) * (q[1] - h[h.length - 2][1]) - (h[h.length - 1][1] - h[h.length - 2][1]) * (q[0] - h[h.length - 2][0]) <= 0) h.pop(); h.push(q); } h.pop(); return h; };
+  return [...half(p), ...half(p.slice().reverse())];
+};
+const segCross = (P, Q, R, T) => {
+  const o = (a, b, c) => (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]);
+  return o(P, Q, R) * o(P, Q, T) < 0 && o(R, T, P) * o(R, T, Q) < 0;
+};
 const dist = (P, Q) => Math.hypot(P[0] - Q[0], P[1] - Q[1]);
 function figKit(world){
   const names = Object.keys(world), real = names.filter(k => k[0] !== '_');
@@ -2312,7 +2342,7 @@ function figKit(world){
     circle(k, rWorld){ items.push({ k: 'circle', st: 'thin', x: S[k][0], y: S[k][1], r: rWorld * (fit([1, 0])[0] - fit([0, 0])[0]) }); return api; },
     dot(...ks){ ks.forEach(k => items.push({ k: 'dot', x: pt(k)[0], y: pt(k)[1] })); return api; },
     // 頂点の名前：重心（または away）から離れる向きに置く
-    vtx(k, s, away = cen){ const p = S[k]; items.push({ k: 'text', x: p[0], y: p[1], s: s || k, pos: dirPos(p[0] - away[0], p[1] - away[1]) }); return api; },
+    vtx(k, s, away = cen){ const p = S[k]; items.push({ k: 'text', x: p[0], y: p[1], s: s || k, pos: dirPos(p[0] - away[0], p[1] - away[1]), p }); return api; },
     // 辺の長さ：辺の中点から away と反対側へ off だけはなして書く
     side(k1, k2, s, away = cen, off = 7){
       const P = pt(k1), Q = pt(k2), mx = (P[0] + Q[0]) / 2, my = (P[1] + Q[1]) / 2;
@@ -2328,7 +2358,7 @@ function figKit(world){
         const md = Math.min(...rays.map(r => { const v = [pt(r)[0] - P[0], pt(r)[1] - P[1]], L = Math.hypot(v[0], v[1]) || 1; return Math.acos(Math.max(-1, Math.min(1, (v[0] * u[0] + v[1] * u[1]) / L))); }));
         if (md > bd) { bd = md; best = u; }
       }
-      items.push({ k: 'text', x: P[0] + best[0] * off, y: P[1] + best[1] * off, s: s || k, pos: 'center' }); return api;
+      items.push({ k: 'text', x: P[0] + best[0] * off, y: P[1] + best[1] * off, s: s || k, pos: 'center', p: P }); return api;
     },
     arc(k, u, v, r){
       const A = S[k], U = pt(u), V = pt(v), a1 = Math.atan2(U[1] - A[1], U[0] - A[0]), a2 = Math.atan2(V[1] - A[1], V[0] - A[0]);
@@ -2338,12 +2368,96 @@ function figKit(world){
     // 角の印（弧）と、角の内側の文字
     ang(k, u, v, s, r = 9){
       api.arc(k, u, v, r);
-      const A = S[k], U = pt(u), V = pt(v), L1 = Math.hypot(U[0] - A[0], U[1] - A[1]), L2 = Math.hypot(V[0] - A[0], V[1] - A[1]);
-      let dx = (U[0] - A[0]) / L1 + (V[0] - A[0]) / L2, dy = (U[1] - A[1]) / L1 + (V[1] - A[1]) / L2; const L = Math.hypot(dx, dy) || 1; dx /= L; dy /= L;
-      items.push({ k: 'text', x: A[0] + dx * (r + 10), y: A[1] + dy * (r + 10) - 1.5, s: String(s), pos: 'center' }); return api;
+      const arc = items[items.length - 1], A = S[k], U = pt(u), V = pt(v), a1 = Math.atan2(U[1] - A[1], U[0] - A[0]);
+      let d = Math.atan2(V[1] - A[1], V[0] - A[0]) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI;
+      const t = { k: 'text', x: A[0] + Math.cos(a1 + d / 2) * (r + 10), y: A[1] + Math.sin(a1 + d / 2) * (r + 10), s: String(s), pos: 'center', halo: true };
+      items.push(t); pend.push({ t, arc, A, a1, d, r, ray: Math.min(Math.hypot(U[0] - A[0], U[1] - A[1]), Math.hypot(V[0] - A[0], V[1] - A[1])) }); return api;
     },
-    done(){ return { W: 160, H: 120, items }; }
+    done(){
+      // 角の文字の置き場所を、線と文字がすべてそろってから決める（せまい角から）
+      if (pend.length) moveNames();
+      pend.sort((a, b) => Math.abs(a.d) - Math.abs(b.d)).forEach(placeAng);
+      if (pend.length) { pend.length = 0; items.splice(0, items.length, ...items.filter(i => i.k !== 'text'), ...items.filter(i => i.k === 'text')); }
+      return { W: 160, H: 120, items };
+    }
   };
+  const pend = [];
+  const segsOf = self => items.flatMap(i => {
+    if (i === self) return [];
+    if (i.k === 'circle') return Array.from({ length: 48 }, (_, n) => [n, n + 1].map(m => [i.x + i.r * Math.cos(m * Math.PI / 24), i.y + i.r * Math.sin(m * Math.PI / 24)])).map(s => ({ s, arc: false }));
+    if (i.k === 'line') return i.pts.slice(1).map((p, n) => ({ s: [i.pts[n], p], arc: i.st === 'arc' || i.st === 'lead', lead: i.st === 'lead' }));
+    return [];
+  });
+  // 点の名前が線や角の印に当たるときは、その点のまわりの空いている所へ動かす
+  const moveNames = () => {
+    const segs = segsOf(null), dots = items.filter(i => i.k === 'dot').map(i => [i.x - 3, i.y - 3, i.x + 3, i.y + 3]);
+    items.filter(i => i.k === 'text' && !i.halo && i.p).forEach(n => {
+      const rest = items.filter(i => i.k === 'text' && !i.halo && i !== n).map(textBox);
+      const hit = b => segs.some(x => segBox(x.s[0], x.s[1], b)) || dots.some(o => boxHit(b, o)) || rest.some(o => boxHit(b, o));
+      if (!hit(textBox(n))) return;
+      const b0 = textBox(n), hw = textW(n.s) / 2, a0 = Math.atan2((b0[1] + b0[3]) / 2 - n.p[1], (b0[0] + b0[2]) / 2 - n.p[0]);
+      let best = null, bc = Infinity;
+      for (const off of [8, 10, 12, 15, 18]) for (let i = 0; i < 24; i++) {
+        const th = i * Math.PI / 12, c = [n.p[0] + off * Math.cos(th), n.p[1] + off * Math.sin(th)];
+        let e = Math.abs(th - a0) % (2 * Math.PI); if (e > Math.PI) e = 2 * Math.PI - e;
+        const cost = off * 3 + e * 4;
+        if (cost >= bc || c[0] < 0 || c[0] > 160 || c[1] < 0 || c[1] > 120 || hit([c[0] - hw, c[1] - 4, c[0] + hw, c[1] + 4])) continue;
+        bc = cost; best = c;
+      }
+      if (best) { n.x = best[0]; n.y = best[1]; n.pos = 'center'; }
+    });
+  };
+  const placeAng = ({ t, arc, A, a1, d, r, ray }) => {
+    const segs = segsOf(arc), others = items.filter(i => i.k === 'text' && i !== t && !pend.some(p => p.t === i && !p.done)).map(textBox);
+    const dots = items.filter(i => i.k === 'dot').map(i => [i.x - 3, i.y - 3, i.x + 3, i.y + 3]);
+    const hw = textW(t.s) / 2, boxAt = c => [c[0] - hw, c[1] - 4, c[0] + hw, c[1] + 4], m = 1.2;
+    const free = c => {
+      const b = boxAt(c), g = [b[0] - m, b[1] - m, b[2] + m, b[3] + m];
+      return c[0] >= 0 && c[0] <= 160 && c[1] >= 0 && c[1] <= 120 && b[0] >= -13 && b[2] <= 173 && b[1] >= -11 && b[3] <= 131 && !others.some(o => boxHit(g, o)) && !dots.some(o => boxHit(g, o)) && !segs.some(x => segBox(x.s[0], x.s[1], g)) && !arcHit(arc, g);
+    };
+    let best = null, bc = Infinity, bestR = r;
+    // 文字が印から遠いときは、印（弧）のほうを文字のそばまで広げる
+    const arcAt = R => Array.from({ length: 13 }, (_, i) => [A[0] + R * Math.cos(a1 + d * i / 12), A[1] + R * Math.sin(a1 + d * i / 12)]);
+    const arcClear = R => { const a = arcAt(R), nr = (p, q) => Math.hypot(p[0] - q[0], p[1] - q[1]) < 0.5; return R < ray - 2 && a.slice(1).every((p, i) => !others.some(o => segBox(a[i], p, o)) && !segs.some(x => !x.arc && !nr(x.s[0], A) && !nr(x.s[1], A) && segCross(a[i], p, x.s[0], x.s[1]))); };
+    // 同じ頂点のもっとせまい角の領域には置かない（となりの角の場所を使わない）
+    const inner = pend.filter(q => q.t !== t && q.A === A && Math.abs(q.d) < Math.abs(d));
+    const taken = th => inner.some(q => { let e = th - q.a1; while (e > Math.PI) e -= 2 * Math.PI; while (e < -Math.PI) e += 2 * Math.PI; return e * q.d >= 0 && Math.abs(e) <= Math.abs(q.d); });
+    for (const f of [0.5, 0.4, 0.6, 0.3, 0.7, 0.2, 0.8]) for (let rho = r + 7; rho <= r + 40; rho += 2) {
+      const th = a1 + d * f, c = [A[0] + rho * Math.cos(th), A[1] + rho * Math.sin(th)], cost = rho + 30 * Math.abs(f - 0.5);
+      if (cost >= bc || taken(th) || !free(c)) continue;
+      // 文字と頂点のあいだに別の線をはさまない
+      const near = (p, q) => Math.hypot(p[0] - q[0], p[1] - q[1]) < 0.5;
+      if (segs.some(x => !x.arc && !near(x.s[0], A) && !near(x.s[1], A) && segCross([A[0] + 3 * Math.cos(th), A[1] + 3 * Math.sin(th)], c, x.s[0], x.s[1]))) continue;
+      const R = rho > r + 13 ? rho - Math.hypot(hw, 4) - 1.5 : r;
+      if (R > r && !arcClear(R)) continue;
+      bc = cost; best = c; bestR = Math.max(R, r);
+    }
+    if (best && bestR > r) arc.pts = arcAt(bestR);
+    if (!best) {
+      // 角の領域に入らないときは、線を引いて図の外の近い側に書く
+      const hull = convexHull(segs.filter(s => !s.arc).flatMap(s => s.s));
+      const inHull = p => hull.every((a, n) => { const b = hull[(n + 1) % hull.length]; return (b[0] - a[0]) * (p[1] - a[1]) - (b[1] - a[1]) * (p[0] - a[0]) >= 0; });
+      const outside = c => { const b = boxAt(c); return ![[b[0], b[1]], [b[2], b[1]], [b[0], b[3]], [b[2], b[3]], c].some(inHull); };
+      let from = null;
+      for (const ext of [true, false]) { if (best) break; bc = Infinity;
+      for (const f of [0.5, 0.35, 0.65, 0.2, 0.8]) {
+        if (taken(a1 + d * f)) continue;
+        const th = a1 + d * f, P = [A[0] + r * Math.cos(th), A[1] + r * Math.sin(th)];
+        for (let x = -7; x <= 167; x += 5) for (let y = -6; y <= 126; y += 5) {
+          const c = [x, y], len = Math.hypot(x - P[0], y - P[1]); if (len < 14 || len > 90) continue;
+          if (ext && !outside(c)) continue;
+          const cost = len + 60 * segs.filter(s => !s.arc && segCross(P, c, s.s[0], s.s[1])).length + 30 * Math.abs(f - 0.5);
+          if (cost >= bc || others.some(o => segBox(P, c, o)) || segs.some(s => s.lead && segCross(P, c, s.s[0], s.s[1])) || !free(c)) continue;
+          bc = cost; best = c; from = P;
+        }
+      }
+      }
+      if (best) { const h = segBox(from, best, boxAt(best)), e = lerp(from, best, h ? Math.max(0, h[0] - 0.03) : 1); items.push({ k: 'line', st: 'lead', pts: [from, e] }); t.lead = true; }
+    }
+    if (best) { t.x = best[0]; t.y = best[1]; }
+    pend.find(p => p.t === t).done = true;
+  };
+  const arcHit = (a, g) => a.pts.slice(1).some((p, i) => segBox(a.pts[i], p, g));
   return api;
 }
 
@@ -3081,7 +3195,7 @@ const A_GEN = {
           () => Math.abs(angAt(askC ? Q.B : Q.A, askC ? Q.C : Q.D, askC ? Q.D : Q.C) - x) + Math.abs(angAt(Q.B, Q.A, Q.D) - A) + Math.abs(angAt(Q.A, Q.B, Q.C) - B));
       }
       const E = lerp(Q.B, Q.C, 1.5), k = cyc(Q, { E }), fw = Math.random() < 0.5;
-      k.line('thin', 'C', 'E').dot('E').vtx('E', 'E', k.S.O);
+      k.line('thin', 'C', 'E').vtx('E', 'E', k.S.O);
       k.ang('A', 'B', 'D', fw ? `${A}°` : 'x').ang('C', 'D', 'E', fw ? 'x' : `${A}°`);
       return mk(`${A}${fw}`, `${inq}辺 BC の C の側の延長上に点 E をとる。${fw ? `$${AN('BAD')}=${dg(A)}$ のとき，$${AN('DCE')}=x$` : `$${AN('DCE')}=${dg(A)}$ のとき，$${AN('BAD')}=x$`} を求めよ。`, fw ? `$${AN('DCE')}=${dg(A)}$` : `$${AN('BAD')}=${dg(A)}$`,
         [txt('円に内接する四角形の外角は，それととなり合う内角の対角に等しい。'), txt(`よって，$${AN('DCE')}=${AN('BAD')}=${dg(A)}$。`)], k.done(), () => Math.abs(angAt(Q.D, Q.C, E) - A) + Math.abs(angAt(Q.B, Q.A, Q.D) - A));
