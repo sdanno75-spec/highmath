@@ -688,8 +688,9 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.48.1', UPDATED = '2026-11-09';
+const VERSION = '5.49.0', UPDATED = '2026-11-09';
 const CHANGES = [
+  ['5.49.0', '2026-11-09', '問題数を変えたときなどに軽くなるよう、問題のページを先に出し、解答のページはそのすぐあとに組み立てるようにした（印刷・.tex の保存・解答の表示のときは、解答の完成を待つ）。'],
   ['5.48.1', '2026-11-09', '「使い方・情報」のページを整理した。いちばん上に最新の版と変更点をいつも出し、使い方・問題のページ・参考タイム・問題の作り方・これまでの変更は、見出しを押すとひらく形にした（初めはたたんである）。'],
   ['5.48.0', '2026-11-09', '「印刷する」（Ctrl+P も）を押したあとに、全部・問題だけ・解答だけを選ぶ形にした（下のバーの「保存・印刷」はなくした）。「画像で PDF」と「LaTeX をコピー」をなくした（.tex は「.tex を保存」で出せる）。「元にもどす」「やり直す」は画面の左上にいつも出る小さな矢印にした。'],
   ['5.47.0', '2026-11-09', '「問題の量」に単元ごとの問題数の表を作った（札の小さい欄はなくした）。「まぜる」で発展の数も決められる（発展の問題がある単元だけ）。欄を押すと数が全部選ばれて、打った数に置きかわる。「まぜる」の並びは基本 → 標準 → 発展の順か、ランダム。'],
@@ -8244,7 +8245,12 @@ ${rows}
 `;
 }
 
+// 表示は2段階：問題のページを先に出し、解答のページはそのすぐあとに組み立てる（解答の文字の大きさを試す処理が重いので、問題数を変えたときの待ちを短くする）。
+// 解答まで完成していないと困る処理（印刷・全部の版・.tex の保存・解答の表示）は、先に flushRender() を呼ぶ
+let finishT = 0, finishFn = null;
+function flushRender(){ if (!finishFn) return; clearTimeout(finishT); const f = finishFn; finishFn = null; f(); }
 function render(){
+  clearTimeout(finishT); finishFn = null;   // 前の分の解答の組み立ては取りやめる
   const box = $('sheets');
   box.className = 'sheet-wrap';           // 計測のあいだは全ページを表示しておく
   box.innerHTML = '';
@@ -8254,17 +8260,27 @@ function render(){
   const A = arranged();
   renderWork(box, A);
   if (needZ()) box.insertAdjacentHTML('beforeend', zTableHTML());   // 正規分布表は問題と一緒に配れるよう、解答の前
-  layoutAnswers(box, A.map(answerBlock), `${ST.ans === 'only' ? '解答' : '解答・解説'}　${printTitle()}`);
-  const all = [...box.querySelectorAll('.sheet')];
-  all.forEach((s, i) => s.insertAdjacentHTML('beforeend', `<div class="pgno">${i + 1} / ${all.length}</div>`));
   setupAdjust(box);
   resetBtns();
-  const cnt = c => all.filter(s => s.matches(c)).length;
-  const qn = cnt(':not(.ans):not(.ztab):not(.fpage)'), zn = cnt('.ztab'), fn = cnt('.fpage'), an = cnt('.ans');
-  $('pageInfo').textContent = `全${all.length}ページ（${fn ? `公式・手順 ${fn}・` : ''}問題 ${qn}${zn ? `・正規分布表 ${zn}` : ''}・解答解説 ${an}）／${PROBS.length}問`;
   // 参考タイムの内訳（単元ごと）
   const by = UNITS.map(([u, nm]) => { const ps = PROBS.filter(p => p.unit === u); return ps.length ? `${nm} ${ps.length}問 ${fmt3(sumSec(ps))}` : ''; }).filter(Boolean);
   $('timeInfo').innerHTML = `<b>参考タイム ${timeText()}</b>（理想／標準／初心者：${by.join('、')}）`;
+  finishFn = () => finishRender(box, A);
+  if (ST.pv === 'a') { flushRender(); return; }   // 解答を見ているときは、待たずに最後まで作る
+  $('pageInfo').textContent = `解答のページを作っています…／${PROBS.length}問`;
+  applyPv(); renderVer();
+  finishT = setTimeout(flushRender, 40);   // 問題のページを先に画面に出してから
+}
+// 解答のページ・ページ番号・ページ数の知らせ・表示の点検
+function finishRender(box, A){
+  box.className = 'sheet-wrap';           // 計測のあいだは全ページを表示しておく（同じ処理の中で元にもどすので、画面にはちらつかない）
+  layoutAnswers(box, A.map(answerBlock), `${ST.ans === 'only' ? '解答' : '解答・解説'}　${printTitle()}`);
+  const all = [...box.querySelectorAll('.sheet')];
+  all.forEach((s, i) => s.insertAdjacentHTML('beforeend', `<div class="pgno">${i + 1} / ${all.length}</div>`));
+  placeAnsRe(box);
+  const cnt = c => all.filter(s => s.matches(c)).length;
+  const qn = cnt(':not(.ans):not(.ztab):not(.fpage)'), zn = cnt('.ztab'), fn = cnt('.fpage'), an = cnt('.ans');
+  $('pageInfo').textContent = `全${all.length}ページ（${fn ? `公式・手順 ${fn}・` : ''}問題 ${qn}${zn ? `・正規分布表 ${zn}` : ''}・解答解説 ${an}）／${PROBS.length}問`;
   // 式の折り返し・はみ出しの自動点検
   ISSUES = layoutCheck(box);
   $('layoutWarn').textContent = ISSUES.length ? `表示の点検：${ISSUES.length}か所で式の折り返し・はみ出し・縮小があります（${ISSUES.slice(0, 4).map(x => x.msg).join('、')}${ISSUES.length > 4 ? ' など' : ''}）` : '';
@@ -8653,6 +8669,7 @@ ${answers}
 function status(t, err){ $('status').textContent = t; $('status').classList.toggle('err', !!err); }
 const dateStamp = () => { const d = new Date(); return `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`; };
 function downloadTex(){
+  flushRender();
   const blob = new Blob([buildLatex()], { type: 'application/x-tex' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob); a.download = `${fileBase()}_${dateStamp()}${verTag()}.tex`;   // LaTeX はいつも全部なので、版の印だけ
@@ -8842,14 +8859,14 @@ function fitToPages(pool0){
 }
 // 単元のチェックを続けてつけはずしするときは，最後の操作から少し待って1回だけ作りなおす
 let regenTimer = 0;
-const regenSoon = () => { clearTimeout(regenTimer); regenTimer = setTimeout(regenerate, 350); };
+const regenSoon = () => { clearTimeout(finishT); clearTimeout(regenTimer); regenTimer = setTimeout(regenerate, 350); };
 document.querySelectorAll('.seg[data-set] button').forEach(b => b.addEventListener('click', () => {
   const name = b.closest('.seg').dataset.set;
   regenKeep = false;
   ST[name] = b.dataset.v; syncSeg(); save();
   if (lastSt && ['ans', 'zenkaOrder', 'baikaiOrder'].includes(name)) lastSt = { ...lastSt, [name]: ST[name] };   // 作りなおさない設定は、元にもどすときの設定にもすぐ入れる
   if (name === 'font') { applyFont(); (document.fonts ? document.fonts.ready : Promise.resolve()).then(ST.fit === 'page' ? () => { regenKeep = true; regenerate(); } : render); }   // ページに合わせるときも、問題は残して数えなおす
-  else if (name === 'pv') applyPv();
+  else if (name === 'pv') { flushRender(); applyPv(); }
 
   else if (ST.fit === 'page' && name === 'formula') regenerate();   // 紙面が変わると入る問題数も変わる
   else if (name === 'zenkaOrder' || name === 'baikaiOrder') { ADJ = {}; BRK = { work: new Set(), list: new Set() }; applyPickOrder(name === 'zenkaOrder' ? 'zenka' : 'baikaiShoukyo'); render(); }   // 同じ問題のまま並べかえる
@@ -9382,7 +9399,7 @@ function markOut(on){
   groups.forEach(g => g.forEach((sh, i) => { const pg = sh.querySelector('.pgno'); if (pg) { pg.dataset.orig = pg.textContent; pg.textContent = `${i + 1} / ${g.length}`; } }));
   if (vis.length) vis[vis.length - 1].classList.add('lastOut');
 }
-window.addEventListener('beforeprint', () => { buildAllVers(); markOut(true); });
+window.addEventListener('beforeprint', () => { flushRender(); buildAllVers(); markOut(true); });
 window.addEventListener('afterprint', () => { markOut(false); clearAllVers(); ST.outPart = 'all'; });
 // ファイル名につける印：別バージョンなら「_B版」、問題だけ・解答だけなら「_問題」「_解答」
 const verTag = () => verAllOn() ? `_${VER_NAMES.slice(0, VARS.list.length)}版` : verLetter() ? `_${verLetter()}版` : '';
@@ -9441,9 +9458,11 @@ function buildAllVers(){
   const cur = VARS.cur, y = window.scrollY;
   VARS.list.forEach((_, i) => {
     if (i !== VARS.cur) switchVer(i);
+    flushRender();
     $('sheets').querySelectorAll('.sheet').forEach(sh => { const c = sh.cloneNode(true); c.dataset.ver = i; c.querySelectorAll('.ctl').forEach(x => x.remove()); box.appendChild(c); });
   });
   if (VARS.cur !== cur) switchVer(cur);
+  flushRender();
   window.scrollTo(0, y);
   document.body.classList.add('print-all');
   return true;
