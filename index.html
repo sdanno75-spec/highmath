@@ -434,6 +434,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
           <label class="chk"><input type="checkbox" name="unit" value="junretsu">順列・組合せの計算</label>
           <label class="chk"><input type="checkbox" name="unit" value="enJunretsu">円順列・重複順列</label>
           <label class="chk"><input type="checkbox" name="unit" value="onaji">同じものを含む順列</label>
+          <label class="chk"><input type="checkbox" name="unit" value="chofuku">重複組合せ</label>
           <label class="chk"><input type="checkbox" name="unit" value="kumiwake">組分け</label>
           <label class="chk"><input type="checkbox" name="unit" value="hanpuku">反復試行の確率</label>
           <label class="chk"><input type="checkbox" name="unit" value="jokenTsuki">条件付き確率</label>
@@ -688,8 +689,9 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.49.0', UPDATED = '2026-11-09';
+const VERSION = '5.50.0', UPDATED = '2026-11-09';
 const CHANGES = [
+  ['5.50.0', '2026-11-09', '数A に単元「重複組合せ」を追加。基本は，種類から重複を許して選ぶ・同じものを分ける・方程式の 0 以上の整数解・展開式の項の種類・票の割れ方。標準は，x≧3 などの条件がある方程式・正の整数解・不等式・どれも少なくとも○個。答えは全部数え上げて検算する。'],
   ['5.49.0', '2026-11-09', '問題数を変えたときなどに軽くなるよう、問題のページを先に出し、解答のページはそのすぐあとに組み立てるようにした（印刷・.tex の保存・解答の表示のときは、解答の完成を待つ）。'],
   ['5.48.1', '2026-11-09', '「使い方・情報」のページを整理した。いちばん上に最新の版と変更点をいつも出し、使い方・問題のページ・参考タイム・問題の作り方・これまでの変更は、見出しを押すとひらく形にした（初めはたたんである）。'],
   ['5.48.0', '2026-11-09', '「印刷する」（Ctrl+P も）を押したあとに、全部・問題だけ・解答だけを選ぶ形にした（下のバーの「保存・印刷」はなくした）。「画像で PDF」と「LaTeX をコピー」をなくした（.tex は「.tex を保存」で出せる）。「元にもどす」「やり直す」は画面の左上にいつも出る小さな矢印にした。'],
@@ -909,7 +911,7 @@ const UNITS = [
   ['tasuki', 'たすき掛け', '1'], ['nijuu', '二重根号', '1'], ['taisho', '対称式', '1'], ['kaiKeisu1', '解と係数の関係', '1'],['heihou', '平方完成', '1'], ['heikouTaisho', '平行移動・対称移動', '1'], ['kanshu', '二次関数の最大・最小', '1'],
   ['sankakuhiChi', '三角比の値', '1'], ['sougoKankei', '三角比の相互関係', '1'], ['sankaku', '正弦・余弦定理', '1'], ['mensekiGaisetsu', '三角形の面積と外接円の半径', '1'],
   ['bunsan', '平均・分散・標準偏差', '1'], ['soukan', '相関係数', '1'],
-  ['junretsu', '順列・組合せの計算', 'A'], ['enJunretsu', '円順列・重複順列', 'A'], ['onaji', '同じものを含む順列', 'A'], ['kumiwake', '組分け', 'A'],
+  ['junretsu', '順列・組合せの計算', 'A'], ['enJunretsu', '円順列・重複順列', 'A'], ['onaji', '同じものを含む順列', 'A'], ['chofuku', '重複組合せ', 'A'], ['kumiwake', '組分け', 'A'],
   ['hanpuku', '反復試行の確率', 'A'], ['jokenTsuki', '条件付き確率', 'A'], ['kitaichi', '期待値', 'A'],
   ['gojohou', '互除法', 'A'], ['futeishiki', '不定方程式', 'A'], ['nshin', 'n進法', 'A'], ['yakusuu', '約数の個数・総和', 'A'], ['goudou', '合同式', 'A'],
   ['cheva', 'チェバの定理', 'A'], ['menelaus', 'メネラウスの定理', 'A'], ['houbeki', '方べきの定理', 'A'], ['kakunibun', '角の二等分線', 'A'],
@@ -990,6 +992,8 @@ const TIME_TABLE = [
   ['onaji1', '同じものを含む順列（文字・5〜6個）', [20, 45, 90]],
   ['onajiW', '同じものを含む順列（単語・7個以上）', [30, 70, 140]],
   ['onajiP', '最短経路の道順', [30, 70, 140]],
+  ['chofuku1', '重複組合せ（○と仕切りで数える）', [25, 60, 120]],
+  ['chofuku2', '重複組合せ（条件を置きかえて数える）', [45, 100, 200]],
   ['gojohou', '互除法で最大公約数', [30, 70, 140]],
   ['gojohouLcm', '互除法で最大公約数と最小公倍数', [45, 100, 200]],
   ['futei1', '不定方程式（代入でさがす）', [40, 90, 180]],
@@ -1202,6 +1206,7 @@ const UNIT_LEVEL = {
   junretsu: ['nPr・nCr の値', 'nC(n−k)・式の値・n を求める方程式'],
   hanpuku: ['3〜5回・ちょうど k 回', '4〜6回・少なくとも／k 回以上'],
   enJunretsu: ['円順列 (n−1)!・重複順列 nʳ', '隣り合う・向かい合う・じゅず順列・0 をふくむ数字など'],
+  chofuku: ['種類から重複を許して選ぶ・同じものを分ける・方程式の 0 以上の整数解・展開式の項・票の割れ方', 'x≧3 などの条件がある方程式・正の整数解・不等式・どれも少なくとも○個'],
   kumiwake: ['部屋（組）に区別がある', '区別のない組がある（÷ 階乗）'],
   jokenTsuki: ['表から P_A(B)・続けて取り出す', '原因の確率・2回目から1回目を考える'],
   kitaichi: ['さいころ・くじ・硬貨・玉・カード・的当て', '2個のさいころ・参加費・比較・逆に求める・回数'],
@@ -2373,6 +2378,94 @@ const A_GEN = {
         return Math.abs(js.reduce((t, j) => t + dist[j], 0) - ans.val());
       }
     };
+  },
+
+  // 【重複組合せ】○（選ぶもの）と仕切りの並べ方に直して数える。答えは全部数え上げて確かめる（p.chk）
+  chofuku(lv){
+    const kind = lv === 1 ? pick(['digit', 'color', 'apple0', 'apple1', 'eq0', 'term', 'vote']) : pick(['bound', 'bound', 'bound', 'pos', 'leq', 'fruit1', 'appleMin']);
+    const CNAME = ['赤', '青', '黄', '白', '黒'], FRUIT = ['りんご', 'みかん', 'かき', 'なし', 'もも'], THING = ['りんご', 'みかん', 'あめ', 'クッキー'], KIDS = ['A', 'B', 'C', 'D'], XV = ['x', 'y', 'z', 'w'];
+    // 組合せの計算：小さい方の数で計算する（分子と分母の項は2個以上になるように作っている）
+    const cRows = (n, r) => { const s = Math.min(r, n - r); return s === r ? [`${CTEX(n, r)} &= \\frac{${prodTex(n, r)}}{${downTex(r)}}`, `${nCr(n, r)}`] : [`${CTEX(n, r)} &= ${CTEX(n, s)}`, `\\frac{${prodTex(n, s)}}{${downTex(s)}}`, `${nCr(n, s)}`]; };
+    // 全部数える：mins[i] 以上の整数を k 個，和が tot（le なら tot 以下）になる組の数
+    const count = (mins, tot, le) => {
+      const k = mins.length, after = mins.map((_, i) => mins.slice(i + 1).reduce((t, m) => t + m, 0)); let c = 0;
+      const rec = (i, rem) => {
+        if (i === k - 1) { if (le) { if (rem >= mins[i]) c += rem - mins[i] + 1; } else if (rem >= mins[i]) c++; return; }
+        for (let v = mins[i]; v <= rem - after[i]; v++) rec(i + 1, rem - v);
+      };
+      rec(0, tot); return c;
+    };
+    const zeros = k => Array(k).fill(0);
+    const bars = (st, br) => `○${st}個と仕切り${br}本を1列に並べる方法の数に等しい。`;
+    const mk = (key, label, N, R, txts, chkV, sec, tani) => ({
+      unit: 'chofuku', lv, key: 'cf' + key, label, math: null, item: label.replace(/は何(通り|組|種類)あるか。$/, ''), head: label, short: '重複組合せ', wide: true,
+      ans: `$${nCr(N, R)}$ ${tani}`, vars: {}, sec,
+      steps: [...txts, { t: 'eq', rows: chain(...cRows(N, R)) }],
+      chk: () => Math.abs(chkV() - nCr(N, R))
+    });
+    if (kind === 'digit') {
+      const k = pick([10, 9]), r = ri(2, 4), rng = k === 10 ? '0 から 9 までの10種類' : '1 から 9 までの9種類';
+      return mk(`d${k}${r}`, `${rng}の数字から，重複を許して${r}個を選ぶ組合せは何通りあるか。`, k + r - 1, r,
+        [{ t: 'txt', s: `選ぶ${r}個を○で，${k}種類の数字の区切りを仕切り${k - 1}本で表すと，${bars(r, k - 1)}` }], () => count(zeros(k), r), T.chofuku1, '通り');
+    }
+    if (kind === 'color') {
+      const k = ri(3, 5), r = k === 3 ? ri(5, 9) : k === 4 ? ri(4, 7) : ri(3, 5), fruit = Math.random() < 0.5;
+      const list = (fruit ? FRUIT : CNAME).slice(0, k).join('，');
+      const label = fruit ? `${list}の${k}種類の果物から，合わせて${r}個を選ぶ。選ばない種類があってもよいとき，選び方は何通りあるか。` : `${list}の${k}色の玉がそれぞれたくさんある。この中から${r}個を選ぶとき，色の組合せは何通りあるか。`;
+      return mk(`c${fruit ? 'f' : 'b'}${k}${r}`, label, r + k - 1, k - 1,
+        [{ t: 'txt', s: `選ぶ${r}個を○で，${k}種類の区切りを仕切り${k - 1}本で表すと，${bars(r, k - 1)}` }], () => count(zeros(k), r), T.chofuku1, '通り');
+    }
+    if (kind === 'apple0' || kind === 'apple1' || kind === 'appleMin') {
+      const m = ri(3, 4), th = pick(THING), who = `${m}人の子ども ${KIDS.slice(0, m).join('，')}`;
+      if (kind === 'apple0') {
+        const n = m === 3 ? ri(5, 12) : ri(4, 8);
+        return mk(`a0${th}${n}${m}`, `同じ${th}${n}個を${who} に分ける。1個ももらわない子どもがあってもよいとき，分け方は何通りあるか。`, n + m - 1, m - 1,
+          [{ t: 'txt', s: `${th}を○で，子どもの区切りを仕切り${m - 1}本で表すと，${bars(n, m - 1)}` }], () => count(zeros(m), n), T.chofuku1, '通り');
+      }
+      if (kind === 'apple1') {
+        const n = m === 3 ? ri(5, 12) : ri(6, 10);
+        return mk(`a1${th}${n}${m}`, `同じ${th}${n}個を${who} に分ける。どの子どもも少なくとも1個はもらうとき，分け方は何通りあるか。`, n - 1, m - 1,
+          [{ t: 'txt', s: `${n}個の○を1列に並べ，○と○の間の${n - 1}か所から${m - 1}か所を選んで仕切りを入れればよい（どの子どもも1個以上になる）。` }], () => count(Array(m).fill(1), n), T.chofuku1, '通り');
+      }
+      const each = 2, rest = ri(2, m === 3 ? 7 : 5), n = each * m + rest;
+      return mk(`a2${th}${n}${m}`, `同じ${th}${n}個を${who} に分ける。どの子どもも少なくとも${each}個はもらうとき，分け方は何通りあるか。`, rest + m - 1, m - 1,
+        [{ t: 'txt', s: `先に${each}個ずつ配ると，残りは $${n}-${each * m}=${rest}$ 個。この${rest}個を，もらわない子どもがあってもよいとして${m}人に分ければよい。` }, { t: 'txt', s: `残りの分け方は，${bars(rest, m - 1)}` }], () => count(Array(m).fill(each), n), T.chofuku2, '通り');
+    }
+    if (kind === 'fruit1') {
+      const k = ri(3, 4), rest = ri(2, k === 3 ? 7 : 5), r = k + rest, list = FRUIT.slice(0, k).join('，');
+      return mk(`f1${k}${r}`, `${list}の${k}種類の果物から，合わせて${r}個を買う。どの果物も少なくとも1個は買うとき，買い方は何通りあるか。`, rest + k - 1, k - 1,
+        [{ t: 'txt', s: `先に各種類を1個ずつ選ぶと，残りは $${r}-${k}=${rest}$ 個。この${rest}個を，選ばない種類があってもよいとして${k}種類から選べばよい。` }, { t: 'txt', s: `残りの選び方は，${bars(rest, k - 1)}` }], () => count(Array(k).fill(1), r), T.chofuku2, '通り');
+    }
+    if (kind === 'eq0') {
+      const k = pick([3, 3, 4]), n = k === 3 ? ri(4, 10) : ri(4, 7), vs = XV.slice(0, k), lhs = vs.join('+');
+      const label = k === 3 ? `$${lhs}=${n}$，${vs.map(v => `$${v}\\geqq 0$`).join('，')} を満たす整数 ${vs.map(v => `$${v}$`).join('，')} の組は何組あるか。` : `$${lhs}=${n}$ を満たす 0 以上の整数 ${vs.map(v => `$${v}$`).join('，')} の組は何組あるか。`;
+      return mk(`e${k}${n}`, label, n + k - 1, k - 1,
+        [{ t: 'txt', s: `和の${n}を○${n}個で，${vs.map(v => `$${v}$`).join('，')} の区切りを仕切り${k - 1}本で表すと，${bars(n, k - 1)}` }], () => count(zeros(k), n), T.chofuku1, '組');
+    }
+    if (kind === 'term') {
+      const four = Math.random() < 0.4, vs = four ? ['a', 'b', 'c', 'd'] : ['x', 'y', 'z'], k = vs.length, n = four ? ri(3, 6) : ri(4, 9), ps = ['p', 'q', 'r', 's'].slice(0, k);
+      const label = `$(${vs.join('+')})^{${n}}$ の展開式の${four ? '異なる項' : '項'}は何種類あるか。`;
+      return mk(`t${k}${n}`, label, n + k - 1, k - 1,
+        [{ t: 'txt', s: `展開式の項は $${vs.map((v, i) => `${v}^{${ps[i]}}`).join('')}$（$${ps.join('+')}=${n}$，${ps.map(p => `$${p}$`).join('，')} は 0 以上の整数）の形をしている。` }, { t: 'txt', s: `よって，${k}種類の文字から重複を許して${n}個を選ぶ組合せの数に等しく，${bars(n, k - 1)}` }], () => count(zeros(k), n), T.chofuku1, '種類');
+    }
+    if (kind === 'vote') {
+      const k = ri(3, 4), n = k === 3 ? ri(6, 12) : ri(5, 8);
+      return mk(`v${k}${n}`, `${k}人の候補者に，${n}人の選挙人が無記名で1票ずつ投票するとき，票の割れ方は何通りあるか。`, n + k - 1, k - 1,
+        [{ t: 'txt', s: `だれが投票したかは区別しないので，票を○で，候補者の区切りを仕切り${k - 1}本で表すと，${bars(n, k - 1)}` }], () => count(zeros(k), n), T.chofuku1, '通り');
+    }
+    if (kind === 'leq') {
+      const three = Math.random() < 0.7, vs = three ? ['x', 'y', 'z'] : ['x', 'y'], k = vs.length, n = three ? ri(4, 10) : ri(4, 12), lhs = vs.join('+');
+      return mk(`l${k}${n}`, `${vs.map(v => `$${v}$`).join('，')} は 0 以上の整数とする。$${lhs}\\leqq ${n}$ を満たす ${vs.map(v => `$${v}$`).join('，')} の組は何組あるか。`, n + k, k,
+        [{ t: 'txt', s: `$w=${n}-(${lhs})$ とおくと，$w\\geqq 0$ で $${lhs}+w=${n}$ となる。` }, { t: 'txt', s: `この式を満たす 0 以上の整数の組の数は，${bars(n, k)}` }], () => count(zeros(k), n, true), T.chofuku2, '組');
+    }
+    // bound・pos：下限のある方程式。X=x-a などとおいて 0 以上の整数の問題に直す。残り M から逆算する
+    const pos = kind === 'pos', M = ri(3, 9), mins = pos ? [1, 1, 1] : shuffle([ri(1, 4), ri(0, 3), pick([-2, -1, 0, 1, 2])]);
+    const tot = M + mins[0] + mins[1] + mins[2], vs = ['x', 'y', 'z'], US = ['X', 'Y', 'Z'], sTerm = a => a > 0 ? `-${a}` : a < 0 ? `+${-a}` : '';
+    const label = pos ? `$x+y+z=${tot}$ を満たす正の整数 $x$，$y$，$z$ の組は何組あるか。` : `$x+y+z=${tot}$，${vs.map((v, i) => `$${v}\\geqq ${mins[i]}$`).join('，')} を満たす整数 $x$，$y$，$z$ の組は何組あるか。`;
+    const st = [{ t: 'txt', s: `${vs.map((v, i) => `$${US[i]}=${v}${sTerm(mins[i])}$`).join('，')} とおくと，$X\\geqq 0$，$Y\\geqq 0$，$Z\\geqq 0$ で，` },
+      { t: 'eq', rows: chain(`X+Y+Z &= ${tot}${mins.map(sTerm).join('')}`, `${M}`) },
+      { t: 'txt', s: `この式を満たす 0 以上の整数の組の数は，${bars(M, 2)}` }];
+    return mk(`b${tot}|${mins.join(',')}`, label, M + 2, 2, st, () => count(mins, tot), T.chofuku2, '組');
   },
 
   // 【同じものを含む順列】
@@ -8105,6 +8198,7 @@ const FORMULA = {
   junretsu: ['${}_{n}\\mathrm{P}_{r}=n(n-1)\\cdots(n-r+1)=\\frac{n!}{(n-r)!}$', '${}_{n}\\mathrm{C}_{r}=\\frac{n!}{r!\\,(n-r)!}$，${}_{n}\\mathrm{C}_{r}={}_{n}\\mathrm{C}_{n-r}$'],
   hanpuku: ['1回で起こる確率が $p$ の試行を $n$ 回くり返すとき，ちょうど $k$ 回起こる確率は ${}_{n}\\mathrm{C}_{k}\\,p^k(1-p)^{n-k}$', '「少なくとも」は余事象を使って，$1-$（1回も起こらない確率）で求める。'],
   enJunretsu: ['円順列 $(n-1)!$，じゅず順列 $\\frac{(n-1)!}{2}$，重複順列 $n^r$', '隣り合うものはひとまとめにする。向かい合う・交互に並ぶものは，1つを固定してから残りを並べる。'],
+  chofuku: ['$n$ 種類から重複を許して $r$ 個選ぶ組合せは，○ $r$ 個と仕切り $n-1$ 本の並べ方で ${}_{n+r-1}\\mathrm{C}_{r}$ 通り（${}_{n}\\mathrm{H}_{r}$ と書くこともある）', '$x\\geqq a$ の条件は $X=x-a$ とおいて $X\\geqq 0$ に直す。不等式 $x+y+z\\leqq N$ は $w=N-(x+y+z)$ を足して等式にする。'],
   kumiwake: ['組に区別があるときは ${}_{n}\\mathrm{C}_{a}\\times{}_{n-a}\\mathrm{C}_{b}\\times\\cdots$ と順に選ぶ。', '同じ人数の組が $m$ 組あって区別がないときは $m!$ でわる。'],
   jokenTsuki: ['$P_A(B)=\\frac{P(A\\cap B)}{P(A)}=\\frac{n(A\\cap B)}{n(A)}$', '乗法定理 $P(A\\cap B)=P(A)P_A(B)$'],
   kitaichi: ['値 $x_{1},\\ x_{2},\\ \\cdots,\\ x_{n}$ をとる確率が $p_{1},\\ p_{2},\\ \\cdots,\\ p_{n}$ のとき，期待値は $x_{1}p_{1}+x_{2}p_{2}+\\cdots+x_{n}p_{n}$', '値と確率の表をつくってから計算する。確率の和が $1$ になることを確かめる。'],
