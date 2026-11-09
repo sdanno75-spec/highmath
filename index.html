@@ -388,6 +388,15 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
               <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px"><button class="btn" id="baikaiAll" type="button">すべて選ぶ</button></div>
             </div>
           </div>
+          <div id="goshinOpt">
+            <div class="seg" data-set="goshinMode"><button data-v="level">難しさに合わせる</button><button data-v="pick">パターンを選ぶ</button></div>
+            <div id="goshinPatBox" style="margin-top:8px">
+              <div id="goshinPatList" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+              <div class="seg" data-set="goshinOrder" style="margin-top:8px"><button data-v="num">番号順</button><button data-v="shuffle">シャッフル</button></div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px"><button class="btn" id="goshinAll" type="button">すべて選ぶ</button></div>
+              <div class="gnote">傍心の問題は、チェックを入れたときだけ出ます（「難しさに合わせる」では出ません）。</div>
+            </div>
+          </div>
           <div id="zenkaOpt">
             <div class="seg" data-set="zenkaMode"><button data-v="level">難しさに合わせる</button><button data-v="pick">パターンを選ぶ</button></div>
             <div id="zenkaPatBox" style="margin-top:8px">
@@ -454,6 +463,8 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
           <label class="chk"><input type="checkbox" name="unit" value="menelaus">メネラウスの定理</label>
           <label class="chk"><input type="checkbox" name="unit" value="houbeki">方べきの定理</label>
           <label class="chk"><input type="checkbox" name="unit" value="kakunibun">角の二等分線</label>
+          <label class="chk"><input type="checkbox" name="unit" value="goshin">五心</label>
+          <label class="chk"><input type="checkbox" name="unit" value="kyoen">共円条件</label>
         </div>
         <div class="units" data-subj="2">
           <span class="ugrp">数II　式と証明</span>
@@ -650,7 +661,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
       <ul>
         <li>「単元」で教科を押し、分野を押してひらき、出したい単元にチェックを入れます。教科をまたいで選べます。選んだ単元は上に札で並び、× で外せます。チェックを変えると、すぐに新しいプリントになります。</li>
         <li><b>単元ごとの問題数</b>：「問題の量」の表で、単元ごとの問題数を決めます（難しさが「まぜる」のときは基本・標準・発展の数。発展は発展の問題がある単元だけ、「パターンを選ぶ」の単元は合計だけです）。数を直すと、全体の問題数はその合計になります。全体の問題数を変えると、単元に同じくらいずつ配りなおします（難しさの比率は単元ごとにそのまま）。「問題のページ数に合わせる」では、単元ごとの数の比率を保ったまま、ページに入るだけふやし・へらします。</li>
-        <li>漸化式・媒介変数の消去・加法定理・確率変数の和と積・約数の個数と総和は、選んだ単元の札の「設定」を押すと、その単元の設定が出ます。</li>
+        <li>漸化式・媒介変数の消去・五心・加法定理・確率変数の和と積・約数の個数と総和は、選んだ単元の札の「設定」を押すと、その単元の設定が出ます。</li>
         <li>よく使う単元のセットは、「よく使う組み合わせ」に名前をつけて保存できます（このブラウザに保存）。フォルダに分けられ、フォルダを開くと「名前を変える」「消す」が出ます。組み合わせの横のフォルダの印で、別のフォルダに移せます。「ファイルに書き出す」で保存しておくと、ほかのパソコンやブラウザで「ファイルから読みこむ」で使えます。題名・目安時間・解答ページなどは「その他の設定」の中にあります。</li>
         <li>下のバーの「＋別バージョン」を押すと、同じ単元・難しさ・並びで数だけちがう B 版ができます（F 版まで）。「A 版」「B 版」で切りかえ、題名には（A）（B）がつきます。「問題を作りなおす」や設定を変えると、別バージョンはなくなります。版が2つ以上あるときは「全部の版をまとめて印刷」を押しておくと、印刷に A 版から順に全部の版（それぞれ問題と解答）が入ります。ページ番号は版ごとに数えます。</li>
         <li>プリントの各問題の右上と、解答の各問題の番号の左にある丸いボタンを押すと、その1問だけを同じ単元・難しさの別の問題に入れかえます。このボタンは画面だけで、印刷・PDF には出ません。入れかえたあとは、画面の左上の矢印（左が元にもどす、右がやり直す。Ctrl+Z・Ctrl+Y）で前の問題にもどせます。欄の高さのドラッグ、改段・改ページ、「高さを自動にもどす」「改段・改ページをすべて取り消す」も、同じボタンでもどせます。</li>
@@ -689,8 +700,9 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.50.0', UPDATED = '2026-11-09';
+const VERSION = '5.51.0', UPDATED = '2026-11-09';
 const CHANGES = [
+  ['5.51.0', '2026-11-09', '数A の図形の性質に、単元「五心」と「共円条件」を追加（どちらも図つき）。五心は外心・内心・重心・垂心の性質を使う問題で、単元の「設定」でパターンをチェックして選べる。傍心はチェックしたときだけ出る。共円条件は、対角の和・外角・円周角の定理の逆・方べきの定理の逆・垂線の足。'],
   ['5.50.0', '2026-11-09', '数A に単元「重複組合せ」を追加。基本は，種類から重複を許して選ぶ・同じものを分ける・方程式の 0 以上の整数解・展開式の項の種類・票の割れ方。標準は，x≧3 などの条件がある方程式・正の整数解・不等式・どれも少なくとも○個。答えは全部数え上げて検算する。'],
   ['5.49.0', '2026-11-09', '問題数を変えたときなどに軽くなるよう、問題のページを先に出し、解答のページはそのすぐあとに組み立てるようにした（印刷・.tex の保存・解答の表示のときは、解答の完成を待つ）。'],
   ['5.48.1', '2026-11-09', '「使い方・情報」のページを整理した。いちばん上に最新の版と変更点をいつも出し、使い方・問題のページ・参考タイム・問題の作り方・これまでの変更は、見出しを押すとひらく形にした（初めはたたんである）。'],
@@ -914,7 +926,7 @@ const UNITS = [
   ['junretsu', '順列・組合せの計算', 'A'], ['enJunretsu', '円順列・重複順列', 'A'], ['onaji', '同じものを含む順列', 'A'], ['chofuku', '重複組合せ', 'A'], ['kumiwake', '組分け', 'A'],
   ['hanpuku', '反復試行の確率', 'A'], ['jokenTsuki', '条件付き確率', 'A'], ['kitaichi', '期待値', 'A'],
   ['gojohou', '互除法', 'A'], ['futeishiki', '不定方程式', 'A'], ['nshin', 'n進法', 'A'], ['yakusuu', '約数の個数・総和', 'A'], ['goudou', '合同式', 'A'],
-  ['cheva', 'チェバの定理', 'A'], ['menelaus', 'メネラウスの定理', 'A'], ['houbeki', '方べきの定理', 'A'], ['kakunibun', '角の二等分線', 'A'],
+  ['cheva', 'チェバの定理', 'A'], ['menelaus', 'メネラウスの定理', 'A'], ['houbeki', '方べきの定理', 'A'], ['kakunibun', '角の二等分線', 'A'], ['goshin', '五心', 'A'], ['kyoen', '共円条件', 'A'],
   ['nikou', '二項定理', '2'], ['warizan', '整式の割り算', '2'], ['soukaSoujo', '相加平均と相乗平均', '2'],
   ['fukuso', '複素数の計算', '2'], ['kaiKeisu2', '解と係数の関係（数II）', '2'], ['inshuTeiri', '因数定理による因数分解', '2'],
   ['en', '円の中心と半径', '2'], ['tenChokusen', '点と直線の距離', '2'],
@@ -1012,6 +1024,10 @@ const TIME_TABLE = [
   ['enCircle', '円順列', [15, 35, 70]],
   ['enChofuku', '重複順列', [15, 35, 70]],
   ['enCond', '円順列・重複順列（条件つき）', [30, 70, 140]],
+  ['gsKaku', '五心の角度', [25, 55, 110]],
+  ['gsCalc', '五心の長さ・比・面積', [45, 100, 200]],
+  ['kyoen1', '共円条件（対角・外角・判定）', [20, 45, 90]],
+  ['kyoen2', '共円条件（円を見つけて使う）', [45, 100, 200]],
   ['kumiNamed', '組分け（組に区別がある）', [30, 70, 140]],
   ['kumiUn', '組分け（区別のない組がある）', [45, 100, 200]],
   ['jkTable', '条件付き確率（表から）', [30, 70, 140]],
@@ -1220,6 +1236,8 @@ const UNIT_LEVEL = {
   menelaus: ['線分の比 AP:PD', 'BP:PE・延長との交点'],
   houbeki: ['長さが整数', '弦の交点が分数・接線が √'],
   kakunibun: ['長さが整数', '分数・外角の二等分線'],
+  goshin: ['外心の角度・内心の角度・重心と中線', '外心の角の和・AI:ID・内接円・重心の面積と平行線・垂心'],
+  kyoen: ['内接四角形の対角と外角・円周角の定理の逆・対角の和で判定', '円を見つけて角を求める・方べきの定理の逆・垂線の足'],
   nikou: ['(ax+b)ⁿ の xᵏ の係数', '(x²+c/x)ⁿ の定数項・2文字の係数'],
   warizan: ['1次式で割る', '2次式・2x±1 で割る', '余りの定理（2つの余りから・3次式で割る・定数 k）'],
   soukaSoujo: ['x+9/x・ax+b/x', 'x+4/(x−1)・(x+1/y)(y+4/x)'],
@@ -1326,6 +1344,19 @@ const BAIKAI_TYPES = [['lin', 'x が t の1次式', 1], ['sqrt', '√t', 2], ['s
   ['para', '放物線（t の2次と1次）', 2], ['ell', '中心がずれた楕円', 2], ['hypc', '双曲線（1/cos θ，tan θ）', 2], ['dbl', '2倍角を使う', 2], ['sc', 'sin θ+cos θ と積', 2],
   ['tinv', '双曲線（t+1/t，t−1/t）', 2], ['circ', '円（t の分数の表示）', 2], ['circ2', '円（1/(1+t²) の表示）', 2], ['ellt', '楕円（t の分数の表示）', 2], ['hypt', '双曲線（t の分数の表示）', 2]];
 // パターンを選んだときに、公式・手順の欄へ足す行
+// 五心のパターン：[キー, 名前, 紙の難しさ, チェックしたときだけ出す]
+const GOSHIN_TYPES = [['gaiKaku', '外心：中心角と円周角', 1], ['gaiIso', '外心：二等辺三角形', 1], ['gaiWa', '外心：角の和', 2],
+  ['naiKaku', '内心：∠BIC', 1], ['naiBun', '内心：角の二等分', 1], ['naiHi', '内心：AI:ID', 2], ['naiR', '内接円の半径', 2], ['naiSet', '内接円：接線の長さ', 2],
+  ['juChu', '重心：中線の 2:1', 1], ['juMen', '重心：面積', 2], ['juHei', '重心：平行線', 2],
+  ['suiKaku', '垂心：∠BHC', 2], ['suiHen', '垂心：垂線と角', 2],
+  ['bouKaku', '傍心：∠BJC', 2, true], ['bouSet', '傍心：接線の長さ', 2, true]];
+const GOSHIN_FORM = {
+  naiHi: '内心 I：$\\mathrm{AD}$ を $\\angle\\mathrm{A}$ の二等分線とすると $\\mathrm{AI}:\\mathrm{ID}=(b+c):a$',
+  naiR: '内接円の半径 $r$：$S=\\frac{1}{2}r(a+b+c)$',
+  naiSet: '円の外の点から引いた2本の接線の長さは等しい。',
+  bouKaku: '傍心 J（$\\angle\\mathrm{A}$ の内部）：$\\angle\\mathrm{BJC}=90^\\circ-\\frac{1}{2}\\angle\\mathrm{A}$',
+  bouSet: '傍接円の接点 P，Q（辺 AB，AC の延長上）：$\\mathrm{AP}=\\mathrm{AQ}=\\frac{a+b+c}{2}$'
+};
 const BAIKAI_FORM = {
   para: '放物線：一方の式から $t$ を出して，もう一方に代入する。',
   ell: '楕円：$\\cos^2\\theta+\\sin^2\\theta=1$ を使う。',
@@ -1341,7 +1372,8 @@ const BAIKAI_FORM = {
 // パターンを選べる単元。pats が null のときは、すべて選んだ状態（型を足しても初めから選ばれる）
 const PICK = {
   zenka: { types: ZENKA_TYPES, mode: 'zenkaMode', pats: 'zenkaPats', order: 'zenkaOrder', name: '漸化式', box: 'zpat', form: ZENKA_FORM },
-  baikaiShoukyo: { types: BAIKAI_TYPES, mode: 'baikaiMode', pats: 'baikaiPats', order: 'baikaiOrder', name: '媒介変数の消去', box: 'bpat', form: BAIKAI_FORM }
+  baikaiShoukyo: { types: BAIKAI_TYPES, mode: 'baikaiMode', pats: 'baikaiPats', order: 'baikaiOrder', name: '媒介変数の消去', box: 'bpat', form: BAIKAI_FORM },
+  goshin: { types: GOSHIN_TYPES, mode: 'goshinMode', pats: 'goshinPats', order: 'goshinOrder', name: '五心', box: 'gpat', form: GOSHIN_FORM }
 };
 const pickOn = u => ST[PICK[u].mode] === 'pick' && ST.units.includes(u);
 const pickPats = u => { const c = PICK[u], on = ST[c.pats]; return c.types.map(t => t[0]).filter(k => !on || on.includes(k)); };
@@ -1428,7 +1460,7 @@ function tikzOf(sh, u = 0.25, center = true){
     if (it.k === 'line') return `\\draw[${GSTYLE[it.st].tikz}] ${it.pts.map(([x, y]) => c(x, y)).join(' -- ')};`;
     if (it.k === 'circle') return `\\draw[${GSTYLE[it.st || 'thin'].tikz}] ${c(it.x, it.y)} circle (${it.r.toFixed(1)});`;
     if (it.k === 'dot') return `\\fill[${it.open ? 'white' : 'black'}] ${c(it.x, it.y)} circle (2.6);${it.open ? ` \\draw ${c(it.x, it.y)} circle (2.6);` : ''}`;
-    return `\\node[${it.pos === 'center' ? '' : it.pos + ','}font=\\tiny,inner sep=1pt] at ${c(it.x, it.y)} {${it.s.replace(/−/g, '$-$')}};`;
+    return `\\node[${it.pos === 'center' ? '' : it.pos + ','}font=\\tiny,inner sep=1pt] at ${c(it.x, it.y)} {${it.s.replace(/−/g, '$-$').replace(/°/g, '$^\\circ$')}};`;
   }).join('\n');
   const pic = `\\begin{tikzpicture}[x=${u}mm,y=${u}mm]\n${body}\n\\end{tikzpicture}`;
   return center ? `\\begin{center}${pic}\\end{center}` : pic;
@@ -2303,10 +2335,40 @@ function figKit(world){
       let d = a2 - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI;
       items.push({ k: 'line', st: 'arc', pts: Array.from({ length: 13 }, (_, i) => [A[0] + r * Math.cos(a1 + d * i / 12), A[1] + r * Math.sin(a1 + d * i / 12)]) }); return api;
     },
+    // 角の印（弧）と、角の内側の文字
+    ang(k, u, v, s, r = 9){
+      api.arc(k, u, v, r);
+      const A = S[k], U = pt(u), V = pt(v), L1 = Math.hypot(U[0] - A[0], U[1] - A[1]), L2 = Math.hypot(V[0] - A[0], V[1] - A[1]);
+      let dx = (U[0] - A[0]) / L1 + (V[0] - A[0]) / L2, dy = (U[1] - A[1]) / L1 + (V[1] - A[1]) / L2; const L = Math.hypot(dx, dy) || 1; dx /= L; dy /= L;
+      items.push({ k: 'text', x: A[0] + dx * (r + 10), y: A[1] + dy * (r + 10) - 1.5, s: String(s), pos: 'center' }); return api;
+    },
     done(){ return { W: 160, H: 120, items }; }
   };
   return api;
 }
+
+/* 三角形の五心・共円条件の図の道具（実際の角度・長さから座標を計算する。p.chk はこの座標で答えを確かめる） */
+const toRad = d => d * Math.PI / 180;
+const angAt = (P, Q, R) => { const u = [P[0] - Q[0], P[1] - Q[1]], v = [R[0] - Q[0], R[1] - Q[1]]; return Math.acos(Math.max(-1, Math.min(1, (u[0] * v[0] + u[1] * v[1]) / (Math.hypot(...u) * Math.hypot(...v))))) * 180 / Math.PI; };
+const triByAng = (A, B, C) => { const a = 10, b = a * Math.sin(toRad(B)) / Math.sin(toRad(A)), c = a * Math.sin(toRad(C)) / Math.sin(toRad(A)); return { A: [c * Math.cos(toRad(B)), c * Math.sin(toRad(B))], B: [0, 0], C: [a, 0], a, b, c }; };
+const triBySide = (a, b, c) => { const x = (c * c - b * b + a * a) / (2 * a); return { A: [x, Math.sqrt(c * c - x * x)], B: [0, 0], C: [a, 0], a, b, c }; };
+const wPt = (t, wa, wb, wc) => { const s = wa + wb + wc; return [(wa * t.A[0] + wb * t.B[0] + wc * t.C[0]) / s, (wa * t.A[1] + wb * t.B[1] + wc * t.C[1]) / s]; };
+const circumW = (A, B, C) => {
+  const d = 2 * (A[0] * (B[1] - C[1]) + B[0] * (C[1] - A[1]) + C[0] * (A[1] - B[1])), s = P => P[0] ** 2 + P[1] ** 2;
+  return [(s(A) * (B[1] - C[1]) + s(B) * (C[1] - A[1]) + s(C) * (A[1] - B[1])) / d, (s(A) * (C[0] - B[0]) + s(B) * (A[0] - C[0]) + s(C) * (B[0] - A[0])) / d];
+};
+const outerW = t => circumW(t.A, t.B, t.C), inW = t => wPt(t, t.a, t.b, t.c), juW = t => wPt(t, 1, 1, 1), exW = t => wPt(t, -t.a, t.b, t.c);
+const orthoW = t => { const O = outerW(t); return [t.A[0] + t.B[0] + t.C[0] - 2 * O[0], t.A[1] + t.B[1] + t.C[1] - 2 * O[1]]; };
+const footW = (P, Q, R) => { const d = [R[0] - Q[0], R[1] - Q[1]], s = ((P[0] - Q[0]) * d[0] + (P[1] - Q[1]) * d[1]) / (d[0] ** 2 + d[1] ** 2); return [Q[0] + d[0] * s, Q[1] + d[1] * s]; };
+const areaW = (P, Q, R) => Math.abs((Q[0] - P[0]) * (R[1] - P[1]) - (R[0] - P[0]) * (Q[1] - P[1])) / 2;
+// すべて鋭角で、3つの角がちがう三角形（角は偶数の度数）
+const acuteAng = () => { for (;;) { const A = ri(20, 40) * 2, B = ri(18, 42) * 2, C = 180 - A - B; if (C >= 36 && C <= 84 && A !== B && B !== C && A !== C) return [A, B, C]; } };
+// 底辺 PQ の片側（side＝1 か −1）に，P の角 aP，Q の角 aQ の頂点をとる
+const apexW = (P, Q, aP, aQ, side = 1) => { const L = dist(P, Q), R = L * Math.sin(toRad(aQ)) / Math.sin(toRad(180 - aP - aQ)), th = Math.atan2(Q[1] - P[1], Q[0] - P[0]) + side * toRad(aP); return [P[0] + R * Math.cos(th), P[1] + R * Math.sin(th)]; };
+// 円に内接する四角形 ABCD：弧 AB，BC，CD，DA（偶数の度数）
+const cyclicArcs = () => { for (;;) { const p = ri(14, 34) * 4, q = ri(14, 34) * 4, r = ri(14, 34) * 4, s = 360 - p - q - r; if (s >= 56 && s <= 136) return [p, q, r, s]; } };
+const cyclicW = ([p, q, r]) => { const st = 200, P = d => [10 * Math.cos(toRad(d)), 10 * Math.sin(toRad(d))]; return { A: P(st), B: P(st + p), C: P(st + p + q), D: P(st + p + q + r), O: [0, 0], r: 10 }; };
+const circExt = (O, r) => ({ _c1: [O[0] - r, O[1]], _c2: [O[0] + r, O[1]], _c3: [O[0], O[1] - r], _c4: [O[0], O[1] + r] });
 
 const A_GEN = {
   // 【順列・組合せの計算】
@@ -2851,6 +2913,256 @@ const A_GEN = {
   },
 
   // 【角の二等分線】
+  // 【五心】外心・内心・重心・垂心（傍心はチェックしたときだけ）の性質を使う問題。want：パターンを選ぶときの型
+  goshin(lv, want){
+    const pat = want || pick(GOSHIN_TYPES.filter(t => t[2] === lv && !t[3]).map(t => t[0]));
+    const tri = '$\\triangle\\mathrm{ABC}$', AN = n => `\\angle\\mathrm{${n}}`, dg = d => `${d}^\\circ`, half = '\\frac{1}{2}', L = n => `\\mathrm{${n}}`;
+    const askX = n => `$${AN(n)}=x$ を求めよ。`, ansA = (n, v) => `$${AN(n)}=${dg(v)}$`, eq = (...r) => ({ t: 'eq', rows: chain(...r) }), txt = s => ({ t: 'txt', s });
+    const mk = (key, label, ans, steps, fig, chk, sec = T.gsKaku, short = '五心') => ({ unit: 'goshin', lv, pat, key: 'gs' + pat + key, label, math: null, item: label, head: label, short, wide: true, fig, minSpace: 66, ans, vars: {}, sec, steps: [...steps, { t: 'fig', f: fig }], chk });
+    // 三角形と点を描く。nm：五心の点の名前
+    const kit = (t, P, nm, extra = {}) => { const k = figKit({ A: t.A, B: t.B, C: t.C, [nm]: P, ...extra }); k.line('thin', 'A', 'B', 'C', 'A').dot(nm); k.vtx('A').vtx('B').vtx('C'); return k; };
+    const flip = Math.random() < 0.5;
+    if (pat === 'gaiKaku' || pat === 'gaiIso' || pat === 'gaiWa') {
+      const [A, B, C] = acuteAng(), t = triByAng(A, B, C), O = outerW(t), k = kit(t, O, 'O'), ctx = `${tri} の外心を O とする。`;
+      const okO = () => Math.abs(dist(O, t.A) - dist(O, t.B)) + Math.abs(dist(O, t.A) - dist(O, t.C));
+      if (pat === 'gaiKaku') {
+        k.line('thin', 'B', 'O', 'C').free('O', 'O', ['B', 'C']);
+        if (flip) { k.ang('A', 'B', 'C', `${A}°`).ang('O', 'B', 'C', 'x', 7);
+          return mk(`f${A}`, `${ctx}$${AN('A')}=${dg(A)}$ のとき，${askX('BOC')}`, ansA('BOC', 2 * A), [txt(`O は外接円の中心であるから，円周角の定理より $${AN('BOC')}=2${AN('BAC')}$。`), eq(`${AN('BOC')} &= 2${AN('BAC')}`, `2\\times ${dg(A)}`, dg(2 * A))], k.done(), () => Math.abs(angAt(t.B, O, t.C) - 2 * A) + okO()); }
+        k.ang('O', 'B', 'C', `${2 * A}°`, 7).ang('A', 'B', 'C', 'x');
+        return mk(`r${A}`, `${ctx}$${AN('BOC')}=${dg(2 * A)}$ のとき，$${AN('A')}=x$ を求めよ。`, ansA('A', A), [txt(`O は外接円の中心であるから，円周角の定理より $${AN('BAC')}=${half}${AN('BOC')}$。`), eq(`${AN('BAC')} &= ${half}${AN('BOC')}`, `${half}\\times ${dg(2 * A)}`, dg(A))], k.done(), () => Math.abs(angAt(t.B, t.A, t.C) - A) + okO());
+      }
+      if (pat === 'gaiIso') {
+        const x = 90 - A; k.line('thin', 'B', 'O', 'C').free('O', 'O', ['B', 'C']);
+        if (flip) { k.ang('A', 'B', 'C', `${A}°`).ang('B', 'O', 'C', 'x', 14);
+          return mk(`f${A}`, `${ctx}$${AN('A')}=${dg(A)}$ のとき，${askX('OBC')}`, ansA('OBC', x), [txt(`円周角の定理より $${AN('BOC')}=2${AN('BAC')}=${dg(2 * A)}$。$\\mathrm{OB}=\\mathrm{OC}$ であるから，$\\triangle\\mathrm{OBC}$ は二等辺三角形である。`), eq(`${AN('OBC')} &= \\frac{${dg(180)}-${dg(2 * A)}}{2}`, dg(x))], k.done(), () => Math.abs(angAt(O, t.B, t.C) - x) + okO()); }
+        k.ang('B', 'O', 'C', `${x}°`, 14).ang('A', 'B', 'C', 'x');
+        return mk(`r${A}`, `${ctx}$${AN('OBC')}=${dg(x)}$ のとき，$${AN('A')}=x$ を求めよ。`, ansA('A', A), [txt(`$\\mathrm{OB}=\\mathrm{OC}$ であるから，$${AN('OCB')}=${AN('OBC')}=${dg(x)}$。`), eq(`${AN('BOC')} &= ${dg(180)}-2\\times ${dg(x)}`, dg(2 * A)), txt('円周角の定理より'), eq(`${AN('BAC')} &= ${half}${AN('BOC')}`, dg(A))], k.done(), () => Math.abs(angAt(t.B, t.A, t.C) - A) + Math.abs(angAt(O, t.B, t.C) - x) + okO());
+      }
+      const p = 90 - C, q = 90 - B, x = 90 - A; k.line('thin', 'A', 'O').line('thin', 'B', 'O', 'C').free('O', 'O', ['A', 'B', 'C']);
+      k.ang('A', 'B', 'O', `${p}°`, 12).ang('A', 'O', 'C', `${q}°`, 12).ang('B', 'O', 'C', 'x', 14);
+      return mk(`${p},${q}`, `${ctx}$${AN('OAB')}=${dg(p)}$，$${AN('OAC')}=${dg(q)}$ のとき，${askX('OBC')}`, ansA('OBC', x),
+        [txt(`$\\mathrm{OA}=\\mathrm{OB}=\\mathrm{OC}$ であるから，$${AN('OBA')}=${dg(p)}$，$${AN('OCA')}=${dg(q)}$，$${AN('OCB')}=${AN('OBC')}=x$。`), txt(`$\\triangle\\mathrm{ABC}$ の内角の和より`), { t: 'eq', rows: [`2(${dg(p)}+${dg(q)}+x) &= ${dg(180)}`] }, eq(`x &= ${dg(90)}-${dg(p)}-${dg(q)}`, dg(x))], k.done(),
+        () => Math.abs(angAt(t.B, t.A, O) - p) + Math.abs(angAt(t.C, t.A, O) - q) + Math.abs(angAt(O, t.B, t.C) - x) + okO());
+    }
+    if (pat === 'naiKaku' || pat === 'naiBun') {
+      const [A, B, C] = acuteAng(), t = triByAng(A, B, C), I = inW(t), k = kit(t, I, 'I'), ctx = `${tri} の内心を I とする。`, okI = () => Math.abs(angAt(t.A, t.B, I) - angAt(I, t.B, t.C)) + Math.abs(angAt(t.A, t.C, I) - angAt(I, t.C, t.B));
+      k.line('thin', 'B', 'I', 'C');
+      if (pat === 'naiKaku') {
+        const v = 90 + A / 2; k.free('I', 'I', ['B', 'C']);
+        if (flip) { k.ang('A', 'B', 'C', `${A}°`).ang('I', 'B', 'C', 'x', 6);
+          return mk(`f${A}`, `${ctx}$${AN('A')}=${dg(A)}$ のとき，${askX('BIC')}`, ansA('BIC', v), [txt(`BI，CI はそれぞれ $${AN('B')}$，$${AN('C')}$ の二等分線であるから，$${AN('IBC')}+${AN('ICB')}=${half}(${dg(180)}-${AN('A')})$。`), eq(`${AN('BIC')} &= ${dg(180)}-${half}(${dg(180)}-${dg(A)})`, `${dg(90)}+${half}\\times ${dg(A)}`, dg(v))], k.done(), () => Math.abs(angAt(t.B, I, t.C) - v) + okI()); }
+        k.ang('I', 'B', 'C', `${v}°`, 6).ang('A', 'B', 'C', 'x');
+        return mk(`r${A}`, `${ctx}$${AN('BIC')}=${dg(v)}$ のとき，$${AN('A')}=x$ を求めよ。`, ansA('A', A), [txt(`BI，CI はそれぞれ $${AN('B')}$，$${AN('C')}$ の二等分線であるから，$${AN('BIC')}=${dg(90)}+${half}${AN('A')}$。`), eq(`${AN('A')} &= 2(${AN('BIC')}-${dg(90)})`, `2\\times ${dg(v - 90)}`, dg(A))], k.done(), () => Math.abs(angAt(t.B, t.A, t.C) - A) + Math.abs(angAt(t.B, I, t.C) - v) + okI());
+      }
+      const p = B / 2, q = C / 2; k.line('thin', 'A', 'I').free('I', 'I', ['A', 'B', 'C']); k.ang('B', 'I', 'C', `${p}°`, 16).ang('C', 'B', 'I', `${q}°`, 16);
+      if (flip) { k.ang('A', 'B', 'C', 'x', 10);
+        return mk(`a${p},${q}`, `${ctx}$${AN('IBC')}=${dg(p)}$，$${AN('ICB')}=${dg(q)}$ のとき，$${AN('A')}=x$ を求めよ。`, ansA('A', A), [txt(`BI，CI はそれぞれ $${AN('B')}$，$${AN('C')}$ の二等分線であるから，$${AN('B')}=${dg(2 * p)}$，$${AN('C')}=${dg(2 * q)}$。`), eq(`${AN('A')} &= ${dg(180)}-(${dg(2 * p)}+${dg(2 * q)})`, dg(A))], k.done(), () => Math.abs(angAt(I, t.B, t.C) - p) + Math.abs(angAt(I, t.C, t.B) - q) + Math.abs(angAt(t.B, t.A, t.C) - A) + okI()); }
+      k.ang('A', 'B', 'I', 'x', 10);
+      return mk(`i${p},${q}`, `${ctx}$${AN('IBC')}=${dg(p)}$，$${AN('ICB')}=${dg(q)}$ のとき，${askX('IAB')}`, ansA('IAB', A / 2), [txt(`3本の角の二等分線より，$${AN('IAB')}+${AN('IBC')}+${AN('ICB')}=${dg(90)}$（内角の和の半分）。`), eq(`${AN('IAB')} &= ${dg(90)}-${dg(p)}-${dg(q)}`, dg(A / 2))], k.done(), () => Math.abs(angAt(t.B, t.A, I) - A / 2) + okI());
+    }
+    if (pat === 'naiHi') {
+      for (;;) {
+        const a = ri(4, 12), b = ri(3, 10), c = ri(3, 10);
+        if (!(a < b + c && b < a + c && c < a + b) || b === c) continue;
+        const t = triBySide(a, b, c), I = inW(t), BD = new F(a * c, b + c), D = [BD.val(), 0], r = ratioRed(b + c, a), k = kit(t, I, 'I', { D });
+        k.line('thin', 'A', 'D').line('thin', 'B', 'I').dot('D').vtx('D', 'D', k.S.A).free('I', 'I', ['A', 'B', 'D']).side('A', 'B', c, k.S.C).side('A', 'C', b, k.S.B).side('B', 'C', a, k.S.A, 17);
+        const given = `${lenTex('AB', c)}，${lenTex('BC', a)}，${lenTex('CA', b)}`;
+        return mk(`${a},${b},${c}`, `${tri} の内心を I とし，直線 AI と辺 BC の交点を D とする。${given} のとき，$\\mathrm{AI}:\\mathrm{ID}$ を求めよ。`, `$\\mathrm{AI}:\\mathrm{ID}=${r[0]}:${r[1]}$`,
+          [txt(`AD は $${AN('A')}$ の二等分線であるから，$\\mathrm{BD}:\\mathrm{DC}=\\mathrm{AB}:\\mathrm{AC}=${c}:${b}$。`), eq(`\\mathrm{BD} &= ${a}\\times\\frac{${c}}{${c + b}}`, numTex(BD)), txt(`$\\triangle\\mathrm{ABD}$ で BI は $${AN('B')}$ の二等分線であるから，$\\mathrm{AI}:\\mathrm{ID}=\\mathrm{AB}:\\mathrm{BD}=${c}:${numTex(BD)}=${r[0]}:${r[1]}$。`)], k.done(),
+          () => Math.abs(dist(t.A, I) / dist(I, D) - r[0] / r[1]) + Math.abs(angAt(t.B, t.A, D) - angAt(D, t.A, t.C)), T.gsCalc);
+      }
+    }
+    if (pat === 'naiR') {
+      const right = Math.random() < 0.6;
+      const [a, b, c, S0] = right ? (() => { const [p, q, h] = pick([[3, 4, 5], [5, 12, 13], [6, 8, 10], [8, 15, 17], [9, 12, 15]]); return flip ? [h, p, q, p * q / 2] : [h, q, p, p * q / 2]; })() : pick([[14, 13, 15, 84], [6, 5, 5, 12], [8, 5, 5, 12], [10, 13, 13, 60], [14, 15, 13, 84], [4, 13, 15, 24]]);
+      const t = triBySide(a, b, c), r = new F(2 * S0, a + b + c), I = inW(t), Dp = footW(I, t.B, t.C), k = kit(t, I, 'I', { Dp });
+      k.circle('I', r.val()).line('thin', 'I', 'Dp').free('I', 'I', ['Dp'], 9).side('A', 'B', c, k.S.C).side('A', 'C', b, k.S.B).side('B', 'C', a, k.S.A, 17);
+      const given = `${lenTex('AB', c)}，${lenTex('BC', a)}，${lenTex('CA', b)}`, sn = right ? `$${AN('A')}=${dg(90)}$，` : '';
+      const st = right ? [txt('直角三角形の面積は'), eq(`S &= ${half}\\times ${b}\\times ${c}`, `${S0}`)] : [];
+      return mk(`${a},${b},${c}`, right ? `${tri} で，${sn}${given} である。内接円の半径 $r$ を求めよ。` : `${tri} で，${given}，面積は $${S0}$ である。内接円の半径 $r$ を求めよ。`, `$r=${numTex(r)}$`,
+        [...st, txt(`I と各頂点を結んで3つの三角形に分けると，$S=${half}r(\\mathrm{AB}+\\mathrm{BC}+\\mathrm{CA})$。`), { t: 'eq', rows: [`${half}r(${c}+${a}+${b}) &= ${S0}`] }, eq(`r &= \\frac{2\\times ${S0}}{${a + b + c}}`, numTex(r))], k.done(),
+        () => Math.abs(dist(I, footW(I, t.B, t.C)) - r.val()) + Math.abs(dist(I, footW(I, t.A, t.B)) - r.val()) + Math.abs(areaW(t.A, t.B, t.C) - S0), T.gsCalc);
+    }
+    if (pat === 'naiSet' || pat === 'bouSet') {
+      for (;;) {
+        const a = ri(4, 12), b = ri(4, 12), c = ri(4, 12);
+        if (!(a < b + c && b < a + c && c < a + b) || (a + b + c) % 2 || (a === b && b === c)) continue;
+        const t = triBySide(a, b, c), given = `${lenTex('AB', c)}，${lenTex('BC', a)}，${lenTex('CA', b)}`;
+        if (pat === 'bouSet') {
+          const J = exW(t), P = footW(J, t.A, t.B), Q = footW(J, t.A, t.C), Dp = footW(J, t.B, t.C), ra = dist(J, Dp), s = (a + b + c) / 2;
+          if (ra > 0.9 * Math.max(a, b, c)) continue;   // 傍接円が大きいと三角形が小さくなる
+          const k = figKit({ A: t.A, B: t.B, C: t.C, J, P, Q, D: Dp, ...circExt(J, ra) });
+          k.circle('J', ra).line('thin', 'B', 'C').line('thin', 'A', 'P').line('thin', 'A', 'Q').dot('J', 'P', 'Q', 'D');
+          k.vtx('A').vtx('B', 'B', k.S.J).vtx('C', 'C', k.S.J).vtx('P', 'P', k.S.J).vtx('Q', 'Q', k.S.J).free('J', 'J', ['P', 'Q']).vtx('D', 'D', k.S.A);
+          return mk(`${a},${b},${c}`, `${tri} の $${AN('A')}$ の内部にある傍心を J とし，傍接円が辺 AB，AC の延長と接する点を P，Q，辺 BC と接する点を D とする。${given} のとき，$\\mathrm{AP}$ を求めよ。`, `$\\mathrm{AP}=${s}$`,
+            [txt('円の外の点から引いた接線の長さは等しいから，$\\mathrm{AP}=\\mathrm{AQ}$，$\\mathrm{BP}=\\mathrm{BD}$，$\\mathrm{CQ}=\\mathrm{CD}$。'), eq(`\\mathrm{AP}+\\mathrm{AQ} &= \\mathrm{AB}+\\mathrm{BD}+\\mathrm{AC}+\\mathrm{CD}`, `${c}+${b}+${a}`, `${a + b + c}`), eq(`\\mathrm{AP} &= \\frac{${a + b + c}}{2}`, `${s}`)], k.done(),
+            () => Math.abs(dist(t.A, P) - s) + Math.abs(dist(t.A, Q) - s) + Math.abs(dist(J, P) - ra) + Math.abs(dist(J, Q) - ra), T.gsCalc);
+        }
+        const I = inW(t), Dp = footW(I, t.B, t.C), E = footW(I, t.C, t.A), Fp = footW(I, t.A, t.B), r = dist(I, Dp), x = (b + c - a) / 2, kind = pick(['AF', 'BD', 'CE']);
+        const v = kind === 'AF' ? x : kind === 'BD' ? c - x : b - x;
+        const k = kit(t, I, 'I', { D: Dp, E, F: Fp });
+        k.circle('I', r).dot('D', 'E', 'F').vtx('D', 'D', k.S.A).vtx('E', 'E', k.S.B).vtx('F', 'F', k.S.C).free('I', 'I', ['D', 'E', 'F']);
+        const st = [txt('円の外の点から引いた接線の長さは等しい。$\\mathrm{AF}=\\mathrm{AE}=x$ とおくと，'), txt(`$\\mathrm{BD}=\\mathrm{BF}=${c}-x$，$\\mathrm{CD}=\\mathrm{CE}=${b}-x$。`), { t: 'eq', rows: [`(${c}-x)+(${b}-x) &= ${a}`] }, eq(`x &= \\frac{${c}+${b}-${a}}{2}`, `${x}`)];
+        if (kind !== 'AF') st.push(eq(`${L(kind)} &= ${kind === 'BD' ? c : b}-${x}`, `${v}`));
+        return mk(`${a},${b},${c}${kind}`, `${tri} の内接円が辺 BC，CA，AB と接する点をそれぞれ D，E，F とする。${given} のとき，$${L(kind)}$ を求めよ。`, `$${L(kind)}=${v}$`, st, k.done(),
+          () => Math.abs(dist(t.A, Fp) - x) + Math.abs(dist(t.B, Dp) - (c - x)) + Math.abs(dist(t.C, E) - (b - x)) + Math.abs(({ AF: dist(t.A, Fp), BD: dist(t.B, Dp), CE: dist(t.C, E) })[kind] - v), T.gsCalc);
+      }
+    }
+    if (pat === 'juChu' || pat === 'juMen' || pat === 'juHei') {
+      const [A, B, C] = acuteAng(), t = triByAng(A, B, C), G = juW(t), D = [t.a / 2, 0], ctx = `${tri} の重心を G とする。`, u = ri(2, 8);
+      if (pat === 'juChu') {
+        const form = pick(['AG', 'GD', 'AD', 'GD2']), k = kit(t, G, 'G', { D });
+        k.line('thin', 'A', 'D').line('thin', 'B', 'G').dot('D').vtx('D', 'D', k.S.A).free('G', 'G', ['A', 'D', 'B']);
+        const AD = 3 * u, AG = 2 * u, GD = u;
+        // [問い, 答え, 式, 与えた線分（両端と長さ）, x の線分（両端）]
+        const opt = { AG: [`$\\mathrm{AD}=${AD}$ のとき，$\\mathrm{AG}$`, `\\mathrm{AG}=${AG}`, [`\\mathrm{AG} &= ${AD}\\times\\frac{2}{3}`, `${AG}`], ['A', 'D', AD], ['A', 'G']], GD: [`$\\mathrm{AD}=${AD}$ のとき，$\\mathrm{GD}$`, `\\mathrm{GD}=${GD}`, [`\\mathrm{GD} &= ${AD}\\times\\frac{1}{3}`, `${GD}`], ['A', 'D', AD], ['G', 'D']], AD: [`$\\mathrm{GD}=${GD}$ のとき，$\\mathrm{AD}$`, `\\mathrm{AD}=${AD}`, [`\\mathrm{AD} &= 3\\times ${GD}`, `${AD}`], ['G', 'D', GD], ['A', 'D']], GD2: [`$\\mathrm{AG}=${AG}$ のとき，$\\mathrm{GD}$`, `\\mathrm{GD}=${GD}`, [`\\mathrm{GD} &= ${AG}\\times\\frac{1}{2}`, `${GD}`], ['A', 'G', AG], ['G', 'D']] }[form];
+        k.side(opt[3][0], opt[3][1], opt[3][2], k.S.B, 8).side(opt[4][0], opt[4][1], 'x', k.S.C, 8);
+        return mk(`${form}${u}`, `${ctx}辺 BC の中点を D とする。${opt[0]} を求めよ。`, `$${opt[1]}$`, [txt('重心は中線を $2:1$ に内分するから，$\\mathrm{AG}:\\mathrm{GD}=2:1$。'), eq(...opt[2])], k.done(), () => Math.abs(dist(t.A, G) / dist(t.A, D) - 2 / 3) + Math.abs(AG / AD - 2 / 3) + Math.abs(GD / AD - 1 / 3), T.gsKaku);
+      }
+      if (pat === 'juMen') {
+        const S0 = 6 * u, form = pick(['GBC', 'GBD', 'ABG']), v = form === 'GBD' ? S0 / 6 : S0 / 3, k = kit(t, G, 'G', { D });
+        k.line('thin', 'A', 'D').line('thin', 'B', 'G', 'C').dot('D').vtx('D', 'D', k.S.A).free('G', 'G', ['A', 'B', 'C']);
+        const nm = `\\triangle\\mathrm{${form}}`, S1 = '\\triangle\\mathrm{ABC}';
+        const steps = form === 'GBD' ? [txt('G は重心なので $\\mathrm{GD}:\\mathrm{AD}=1:3$，D は中点なので $\\mathrm{BD}:\\mathrm{BC}=1:2$。'), eq(`${nm} &= \\frac{1}{3}\\times\\frac{1}{2}\\times ${S1}`, `\\frac{1}{6}\\times ${S0}`, `${v}`)] : [txt('重心と各頂点を結ぶと，$\\triangle\\mathrm{GBC}=\\triangle\\mathrm{GCA}=\\triangle\\mathrm{GAB}$ となる。'), eq(`${nm} &= \\frac{1}{3}${S1}`, `\\frac{1}{3}\\times ${S0}`, `${v}`)];
+        const real = form === 'GBC' ? areaW(G, t.B, t.C) : form === 'GBD' ? areaW(G, t.B, D) : areaW(t.A, t.B, G);
+        return mk(`${form}${S0}`, `${ctx}辺 BC の中点を D とする。$${S1}$ の面積が $${S0}$ のとき，$${nm}$ の面積を求めよ。`, `$${v}$`, steps, k.done(), () => Math.abs(real / areaW(t.A, t.B, t.C) - v / S0), T.gsCalc);
+      }
+      const BC = 3 * u, PQ = 2 * u, fw = flip, P = lerp(t.A, t.B, 2 / 3), Q = lerp(t.A, t.C, 2 / 3), k = kit(t, G, 'G', { P, Q, D });
+      k.line('thin', 'P', 'Q').line('thin', 'A', 'D').dot('P', 'Q', 'D').vtx('P', 'P', k.S.C).vtx('Q', 'Q', k.S.B).vtx('D', 'D', k.S.A).free('G', 'G', ['A', 'D', 'P', 'Q']);
+      k.side('B', 'C', fw ? BC : 'x', k.S.A, 17).side('P', 'Q', fw ? 'x' : PQ, k.S.A, 8);
+      const st = [txt('辺 BC の中点を D とすると，G は重心なので $\\mathrm{AG}:\\mathrm{AD}=2:3$。'), txt('$\\mathrm{PQ}\\parallel\\mathrm{BC}$ より，$\\mathrm{PQ}:\\mathrm{BC}=\\mathrm{AG}:\\mathrm{AD}=2:3$。')];
+      return mk(`${fw ? 'f' : 'r'}${u}`, `${ctx}G を通り辺 BC に平行な直線が，辺 AB，AC と交わる点をそれぞれ P，Q とする。${fw ? `$\\mathrm{BC}=${BC}$ のとき，$\\mathrm{PQ}$` : `$\\mathrm{PQ}=${PQ}$ のとき，$\\mathrm{BC}$`} を求めよ。`, fw ? `$\\mathrm{PQ}=${PQ}$` : `$\\mathrm{BC}=${BC}$`,
+        [...st, fw ? eq(`\\mathrm{PQ} &= ${BC}\\times\\frac{2}{3}`, `${PQ}`) : eq(`\\mathrm{BC} &= ${PQ}\\times\\frac{3}{2}`, `${BC}`)], k.done(), () => Math.abs(dist(P, Q) / t.a - 2 / 3) + Math.abs(P[1] - G[1]) + Math.abs(Q[1] - G[1]), T.gsCalc);
+    }
+    if (pat === 'suiKaku' || pat === 'suiHen') {
+      const [A, B, C] = acuteAng(), t = triByAng(A, B, C), H = orthoW(t), E = footW(t.B, t.A, t.C), Fp = footW(t.C, t.A, t.B), k = kit(t, H, 'H', { E, F: Fp }), ctx = `${tri} の垂心を H とする。`;
+      k.line('thin', 'B', 'E').line('thin', 'C', 'F').dot('E', 'F').vtx('E', 'E', k.S.B).vtx('F', 'F', k.S.C);
+      const okH = () => Math.abs((H[0] - t.B[0]) * (t.C[0] - t.A[0]) + (H[1] - t.B[1]) * (t.C[1] - t.A[1])) + Math.abs((H[0] - t.C[0]) * (t.B[0] - t.A[0]) + (H[1] - t.C[1]) * (t.B[1] - t.A[1]));
+      if (pat === 'suiKaku') {
+        const v = 180 - A; k.free('H', 'H', ['A', 'B', 'C', 'E', 'F'], 7);
+        const pre = `辺 CA，AB への垂線の足を E，F とすると，四角形 AFHE で $${AN('AFH')}=${AN('AEH')}=${dg(90)}$ であるから，$${AN('FHE')}=${dg(180)}-${AN('A')}$。対頂角より $${AN('BHC')}=${AN('FHE')}$。`;
+        if (flip) { k.ang('A', 'B', 'C', `${A}°`).ang('H', 'B', 'C', 'x', 7);
+          return mk(`f${A}`, `${ctx}$${AN('A')}=${dg(A)}$ のとき，${askX('BHC')}`, ansA('BHC', v), [txt(pre), eq(`${AN('BHC')} &= ${dg(180)}-${dg(A)}`, dg(v))], k.done(), () => Math.abs(angAt(t.B, H, t.C) - v) + okH()); }
+        k.ang('H', 'B', 'C', `${v}°`, 7).ang('A', 'B', 'C', 'x');
+        return mk(`r${A}`, `${ctx}$${AN('BHC')}=${dg(v)}$ のとき，$${AN('A')}=x$ を求めよ。`, ansA('A', A), [txt(pre), eq(`${AN('A')} &= ${dg(180)}-${dg(v)}`, dg(A))], k.done(), () => Math.abs(angAt(t.B, t.A, t.C) - A) + okH());
+      }
+      const form = pick(['HBC', 'HCB', 'ABH']), give = form === 'HBC' ? C : form === 'HCB' ? B : A, gn = form === 'HBC' ? 'C' : form === 'HCB' ? 'B' : 'A', v = 90 - give, vx = form === 'HBC' ? 'B' : form === 'HCB' ? 'C' : 'B', ot = form === 'HBC' ? ['H', 'C'] : form === 'HCB' ? ['B', 'H'] : ['A', 'H'];
+      k.free('H', 'H', ['A', 'B', 'C', 'E', 'F'], 7).ang(gn, gn === 'A' ? 'B' : gn === 'B' ? 'A' : 'A', gn === 'A' ? 'C' : gn === 'B' ? 'C' : 'B', `${give}°`).ang(vx, ot[0], ot[1], 'x', 14);
+      const foot = form === 'HCB' ? 'F' : 'E', tn = form === 'HBC' ? `$\\triangle\\mathrm{BCE}$` : form === 'HCB' ? `$\\triangle\\mathrm{CBF}$` : `$\\triangle\\mathrm{ABE}$`;
+      const real = form === 'HBC' ? angAt(H, t.B, t.C) : form === 'HCB' ? angAt(H, t.C, t.B) : angAt(t.A, t.B, H);
+      return mk(`${form}${give}`, `${ctx}$${AN(gn)}=${dg(give)}$ のとき，${askX(form)}`, ansA(form, v), [txt(`H は垂心であるから，${form === 'HCB' ? 'CF' : 'BE'} は${form === 'HCB' ? '辺 AB' : '辺 CA'}に垂直である（足を ${foot} とする）。${tn} は直角三角形である。`), eq(`${AN(form)} &= ${dg(90)}-${dg(give)}`, dg(v))], k.done(), () => Math.abs(real - v) + okH());
+    }
+    // 傍心の角
+    const [A, B, C] = acuteAng(), t = triByAng(A, B, C), J = exW(t), v = 90 - A / 2, B2 = lerp(t.A, t.B, 1.3), C2 = lerp(t.A, t.C, 1.3), k = figKit({ A: t.A, B: t.B, C: t.C, J, B2, C2 });
+    k.line('thin', 'A', 'B2').line('thin', 'A', 'C2').line('thin', 'B', 'C').line('thin', 'B', 'J', 'C').line('thin', 'A', 'J').dot('J').vtx('A').vtx('B', 'B', k.S.J).vtx('C', 'C', k.S.J).free('J', 'J', ['B', 'C', 'A']);
+    const ctx = `${tri} の $${AN('A')}$ の内部にある傍心を J とする。`, pre = `BJ，CJ は $${AN('B')}$，$${AN('C')}$ の外角の二等分線であるから，$${AN('JBC')}=${half}(${dg(180)}-${AN('B')})$，$${AN('JCB')}=${half}(${dg(180)}-${AN('C')})$。これより $${AN('BJC')}=${dg(90)}-${half}${AN('A')}$。`;
+    if (flip) { k.ang('A', 'B', 'C', `${A}°`).ang('J', 'B', 'C', 'x', 8);
+      return mk(`f${A}`, `${ctx}$${AN('A')}=${dg(A)}$ のとき，${askX('BJC')}`, ansA('BJC', v), [txt(pre), eq(`${AN('BJC')} &= ${dg(90)}-${half}\\times ${dg(A)}`, dg(v))], k.done(), () => Math.abs(angAt(t.B, J, t.C) - v)); }
+    k.ang('J', 'B', 'C', `${v}°`, 8).ang('A', 'B', 'C', 'x');
+    return mk(`r${A}`, `${ctx}$${AN('BJC')}=${dg(v)}$ のとき，$${AN('A')}=x$ を求めよ。`, ansA('A', A), [txt(pre), eq(`${AN('A')} &= 2(${dg(90)}-${dg(v)})`, dg(A))], k.done(), () => Math.abs(angAt(t.B, J, t.C) - v) + Math.abs(angAt(t.B, t.A, t.C) - A));
+  },
+
+  // 【共円条件】4点が同じ円の上にある条件と，円を見つけて使う問題
+  kyoen(lv){
+    const kind = lv === 1 ? pick(['opp', 'ext', 'same', 'same', 'judge', 'judge']) : pick(['hide', 'hide2', 'powX', 'powJ', 'perp']);
+    const AN = n => `\\angle\\mathrm{${n}}`, dg = d => `${d}^\\circ`, L = n => `\\mathrm{${n}}`, txt = s => ({ t: 'txt', s }), eq = (...r) => ({ t: 'eq', rows: chain(...r) });
+    const mk = (key, label, ans, steps, fig, chk, sec) => ({ unit: 'kyoen', lv, key: 'ky' + kind + key, label, math: null, item: label, head: label, short: '共円条件', wide: true, fig, minSpace: 66, ans, vars: {}, sec: sec || (lv === 1 ? T.kyoen1 : T.kyoen2), steps: [...steps, { t: 'fig', f: fig }], chk });
+    const onC = (O, r, ...ps) => ps.reduce((s, P) => s + Math.abs(dist(O, P) - r), 0);
+    // 円に内接する四角形を描く
+    const cyc = (Q, more = {}) => { const k = figKit({ A: Q.A, B: Q.B, C: Q.C, D: Q.D, O: Q.O, ...more, ...circExt(Q.O, Q.r) }); k.circle('O', Q.r).line('thin', 'A', 'B', 'C', 'D', 'A'); ['A', 'B', 'C', 'D'].forEach(v => k.vtx(v, v, k.S.O)); return k; };
+    if (kind === 'opp' || kind === 'ext') {
+      const arcs = cyclicArcs(), [p, q, r, s] = arcs, Q = cyclicW(arcs), A = (q + r) / 2, B = (r + s) / 2, inq = '四角形 ABCD は円に内接している。';
+      if (kind === 'opp') {
+        const k = cyc(Q), askC = Math.random() < 0.5, x = askC ? 180 - A : 180 - B;
+        k.ang('A', 'B', 'D', `${A}°`).ang('B', 'A', 'C', `${B}°`).ang(askC ? 'C' : 'D', askC ? 'B' : 'A', askC ? 'D' : 'C', 'x');
+        const nm = askC ? 'C' : 'D', opp = askC ? 'A' : 'B', g = askC ? A : B;
+        return mk(`${A},${B}${nm}`, `${inq}$${AN('A')}=${dg(A)}$，$${AN('B')}=${dg(B)}$ のとき，$${AN(nm)}=x$ を求めよ。`, `$${AN(nm)}=${dg(x)}$`, [txt('円に内接する四角形の対角の和は $180^\\circ$ である。'), eq(`${AN(nm)} &= ${dg(180)}-${AN(opp)}`, `${dg(180)}-${dg(g)}`, dg(x))], k.done(),
+          () => Math.abs(angAt(askC ? Q.B : Q.A, askC ? Q.C : Q.D, askC ? Q.D : Q.C) - x) + Math.abs(angAt(Q.B, Q.A, Q.D) - A) + Math.abs(angAt(Q.A, Q.B, Q.C) - B));
+      }
+      const E = lerp(Q.B, Q.C, 1.5), k = cyc(Q, { E }), fw = Math.random() < 0.5;
+      k.line('thin', 'C', 'E').dot('E').vtx('E', 'E', k.S.O);
+      k.ang('A', 'B', 'D', fw ? `${A}°` : 'x').ang('C', 'D', 'E', fw ? 'x' : `${A}°`);
+      return mk(`${A}${fw}`, `${inq}辺 BC の C の側の延長上に点 E をとる。${fw ? `$${AN('BAD')}=${dg(A)}$ のとき，$${AN('DCE')}=x$` : `$${AN('DCE')}=${dg(A)}$ のとき，$${AN('BAD')}=x$`} を求めよ。`, fw ? `$${AN('DCE')}=${dg(A)}$` : `$${AN('BAD')}=${dg(A)}$`,
+        [txt('円に内接する四角形の外角は，それととなり合う内角の対角に等しい。'), txt(`よって，$${AN('DCE')}=${AN('BAD')}=${dg(A)}$。`)], k.done(), () => Math.abs(angAt(Q.D, Q.C, E) - A) + Math.abs(angAt(Q.B, Q.A, Q.D) - A));
+    }
+    if (kind === 'same') {
+      for (;;) {
+        const c = ri(12, 32) * 2, yes = Math.random() < 0.55, d = yes ? c : c + pick([-1, 1]) * pick([4, 6, 8, 10]), u1 = ri(25, 45), u2 = u1 + ri(22, 40), Pa = [0, 0], Pb = [10, 0];
+        if (180 - c - u1 < 20 || 180 - d - u2 < 15) continue;
+        const C = apexW(Pa, Pb, u1, 180 - c - u1), D = apexW(Pa, Pb, u2, 180 - d - u2), X = isect(Pa, C, Pb, D);
+        if (!(X[0] > Math.min(Pa[0], C[0]) && X[0] < Math.max(Pa[0], C[0]) && X[1] > 0 && X[1] < Math.min(C[1], D[1])) || D[0] >= C[0] || D[1] < 2 || C[1] < 2) continue;
+        const k = figKit({ A: Pa, B: Pb, C, D });
+        k.line('thin', 'A', 'B', 'C', 'D', 'A').line('thin', 'A', 'C').line('thin', 'B', 'D'); ['A', 'B', 'C', 'D'].forEach(v => k.vtx(v));
+        k.ang('C', 'A', 'B', `${c}°`, 12).ang('D', 'A', 'B', `${d}°`, 12);
+        const O = circumW(Pa, Pb, C), R = dist(O, Pa);
+        return mk(`${c},${d}`, `四角形 ABCD で，$${AN('ACB')}=${dg(c)}$，$${AN('ADB')}=${dg(d)}$ である。4点 A，B，C，D は同一円周上にあるか。`, yes ? '同一円周上にある' : '同一円周上にない',
+          yes ? [txt(`2点 C，D は直線 AB について同じ側にあり，$${AN('ACB')}=${AN('ADB')}$ である。`), txt('円周角の定理の逆より，4点 A，B，C，D は同一円周上にある。')] : [txt(`2点 C，D は直線 AB について同じ側にあるが，$${AN('ACB')}\\neq${AN('ADB')}$ である。`), txt('もし同一円周上にあれば，円周角の定理より2つの角は等しいはずである。よって，同一円周上にない。')], k.done(),
+          () => Math.abs(angAt(Pa, C, Pb) - c) + Math.abs(angAt(Pa, D, Pb) - d) + (yes ? Math.abs(dist(O, D) - R) : (Math.abs(dist(O, D) - R) > 1e-3 ? 0 : 1)));
+      }
+    }
+    if (kind === 'judge') {
+      for (;;) {
+        const a = ri(30, 60) * 2, yes = Math.random() < 0.55, c = yes ? 180 - a : 180 - a + pick([-1, 1]) * pick([4, 6, 10, 14]), ub = ri(25, 60), vb = ri(25, 60), Pb = [0, 0], Pd = [10, 0];
+        if (180 - a - ub < 20 || 180 - c - vb < 20 || c < 40 || c > 140) continue;
+        const A = apexW(Pb, Pd, ub, 180 - a - ub, 1), C = apexW(Pb, Pd, vb, 180 - c - vb, -1), k = figKit({ A, B: Pb, C, D: Pd });
+        k.line('thin', 'A', 'B', 'C', 'D', 'A'); ['A', 'B', 'C', 'D'].forEach(v => k.vtx(v)); k.ang('A', 'B', 'D', `${a}°`).ang('C', 'D', 'B', `${c}°`);
+        const sum = a + c, O = circumW(A, Pb, Pd), R = dist(O, A);
+        return mk(`${a},${c}`, `四角形 ABCD で，$${AN('A')}=${dg(a)}$，$${AN('C')}=${dg(c)}$ である。四角形 ABCD は円に内接するか。`, yes ? '円に内接する' : '円に内接しない',
+          [eq(`${AN('A')}+${AN('C')} &= ${dg(a)}+${dg(c)}`, dg(sum)), txt(yes ? '対角の和が $180^\\circ$ であるから，四角形 ABCD は円に内接する。' : '対角の和が $180^\\circ$ でないから，四角形 ABCD は円に内接しない。')], k.done(),
+          () => Math.abs(angAt(Pb, A, Pd) - a) + Math.abs(angAt(Pb, C, Pd) - c) + (yes ? Math.abs(dist(O, C) - R) : (Math.abs(dist(O, C) - R) > 1e-3 ? 0 : 1)));
+      }
+    }
+    if (kind === 'hide' || kind === 'hide2') {
+      const arcs = cyclicArcs(), [p, q, r, s] = arcs, Q = cyclicW(arcs), inACB = p / 2, x = q / 2, B = (r + s) / 2, D = (p + q) / 2;
+      const k = figKit({ A: Q.A, B: Q.B, C: Q.C, D: Q.D }); k.line('thin', 'A', 'B', 'C', 'D', 'A').line('thin', 'A', 'C').line('thin', 'B', 'D'); ['A', 'B', 'C', 'D'].forEach(v => k.vtx(v));
+      k.ang('A', 'B', 'C', `${x}°`, 13).ang('D', 'B', 'C', 'x', 20);
+      if (kind === 'hide') {
+        k.ang('C', 'A', 'B', `${inACB}°`, 12).ang('D', 'A', 'B', `${inACB}°`, 12);
+        return mk(`${p},${q}`, `四角形 ABCD で，$${AN('ACB')}=${AN('ADB')}=${dg(inACB)}$，$${AN('BAC')}=${dg(x)}$ のとき，$${AN('BDC')}=x$ を求めよ。`, `$${AN('BDC')}=${dg(x)}$`,
+          [txt(`2点 C，D は直線 AB について同じ側にあり，$${AN('ACB')}=${AN('ADB')}$ であるから，円周角の定理の逆より4点 A，B，C，D は同一円周上にある。`), txt(`弧 BC に対する円周角であるから，$${AN('BDC')}=${AN('BAC')}=${dg(x)}$。`)], k.done(),
+          () => Math.abs(angAt(Q.A, Q.C, Q.B) - inACB) + Math.abs(angAt(Q.A, Q.D, Q.B) - inACB) + Math.abs(angAt(Q.B, Q.A, Q.C) - x) + Math.abs(angAt(Q.B, Q.D, Q.C) - x));
+      }
+      k.ang('B', 'A', 'C', `${B}°`, 10).ang('D', 'C', 'A', `${D}°`, 8);
+      return mk(`${p},${q},${r}`, `四角形 ABCD で，$${AN('ABC')}=${dg(B)}$，$${AN('ADC')}=${dg(D)}$，$${AN('BAC')}=${dg(x)}$ のとき，$${AN('BDC')}=x$ を求めよ。`, `$${AN('BDC')}=${dg(x)}$`,
+        [txt(`$${AN('ABC')}+${AN('ADC')}=${dg(B)}+${dg(D)}=${dg(180)}$ であるから，四角形 ABCD は円に内接する。`), txt(`弧 BC に対する円周角であるから，$${AN('BDC')}=${AN('BAC')}=${dg(x)}$。`)], k.done(),
+        () => Math.abs(B + D - 180) + Math.abs(angAt(Q.A, Q.B, Q.C) - B) + Math.abs(angAt(Q.A, Q.D, Q.C) - D) + Math.abs(angAt(Q.B, Q.A, Q.C) - x) + Math.abs(angAt(Q.B, Q.D, Q.C) - x));
+    }
+    if (kind === 'perp') {
+      const [A, B, C] = acuteAng(), t = triByAng(A, B, C), E = footW(t.B, t.A, t.C), Fp = footW(t.C, t.A, t.B), k = figKit({ A: t.A, B: t.B, C: t.C, E, F: Fp }), askE = Math.random() < 0.5, x = askE ? B : C, nm = askE ? 'AEF' : 'AFE';
+      k.line('thin', 'A', 'B', 'C', 'A').line('thin', 'B', 'E').line('thin', 'C', 'F').line('thin', 'E', 'F').dot('E', 'F').vtx('A').vtx('B').vtx('C').vtx('E', 'E', k.S.B).vtx('F', 'F', k.S.C);
+      if (askE) k.ang('B', 'A', 'C', `${B}°`).ang('E', 'A', 'F', 'x', 8); else k.ang('C', 'B', 'A', `${C}°`).ang('F', 'E', 'A', 'x', 8);
+      const gv = askE ? 'ABC' : 'ACB';
+      return mk(`${A},${B}${askE}`, `鋭角三角形 ABC の頂点 B，C から，辺 CA，AB にそれぞれ垂線 BE，CF を引く。$${AN(gv)}=${dg(x)}$ のとき，$${AN(nm)}=x$ を求めよ。`, `$${AN(nm)}=${dg(x)}$`,
+        [txt(`$${AN('BEC')}=${AN('BFC')}=${dg(90)}$ であるから，円周角の定理の逆より4点 B，C，E，F は BC を直径とする円の周上にある。`), txt(`四角形 BCEF は円に内接するから，外角 $${AN(nm)}$ は対角 $${AN(gv)}$ に等しい。よって $${AN(nm)}=${dg(x)}$。`)], k.done(),
+        () => Math.abs(angAt(t.A, askE ? E : Fp, askE ? Fp : E) - x) + Math.abs(angAt(t.B, E, t.C) - 90) + Math.abs(angAt(t.B, Fp, t.C) - 90));
+    }
+    // 方べきの定理の逆（交わる2直線の4点）
+    for (;;) {
+      const inner = Math.random() < 0.5, a = ri(2, 8), b = ri(2, 12), c = ri(2, 8), P0 = a * b, x0 = P0 / c;
+      if (!Number.isInteger(x0) || x0 < 2 || x0 > 14 || c === a || c === b || (inner ? false : a >= b || c >= x0)) continue;
+      const yes = kind === 'powX' ? true : Math.random() < 0.55, xv = yes ? x0 : x0 + pick([-1, 1]);
+      if (xv < 2 || (!inner && xv <= c)) continue;
+      const th1 = toRad(inner ? ri(10, 40) : ri(-5, 12)), th2 = toRad(inner ? ri(100, 150) : ri(38, 60)), U = th => [Math.cos(th), Math.sin(th)], at = (th, d) => [U(th)[0] * d, U(th)[1] * d], Pz = [0, 0];
+      const A = at(th1, a), B = at(th1, inner ? -b : b), C = at(th2, c), D = at(th2, inner ? -xv : xv), O = circumW(A, B, C), R = dist(O, A);
+      if (R > 16) continue;
+      const pts = { P: Pz, A, B, C, D, ...(yes ? { O, ...circExt(O, R) } : {}) }, k = figKit(pts);
+      if (yes) k.circle('O', R);
+      k.line('thin', ...(inner ? ['A', 'B'] : ['P', 'B'])).line('thin', ...(inner ? ['C', 'D'] : ['P', 'D'])).dot('P', 'A', 'B', 'C', 'D');
+      k.free('P', 'P', ['A', 'B', 'C', 'D']).vtx('A', 'A', yes ? k.S.O : k.S.P).vtx('B', 'B', yes ? k.S.O : k.S.P).vtx('C', 'C', yes ? k.S.O : k.S.P).vtx('D', 'D', yes ? k.S.O : k.S.P);
+      const place = inner ? '線分 AB と線分 CD が点 P で交わる' : '点 P から引いた半直線の上に，P に近い順に A，B，別の半直線の上に C，D がある';
+      const given = `$\\mathrm{PA}=${a}$，$\\mathrm{PB}=${b}$，$\\mathrm{PC}=${c}$`;
+      if (kind === 'powX') {
+        return mk(`${inner}${a},${b},${c}`, `${place}。${given} のとき，4点 A，B，C，D が同一円周上にあるような $\\mathrm{PD}$ の長さを求めよ。`, `$\\mathrm{PD}=${x0}$`,
+          [txt('方べきの定理とその逆より，4点が同一円周上にある条件は $\\mathrm{PA}\\cdot\\mathrm{PB}=\\mathrm{PC}\\cdot\\mathrm{PD}$。'), { t: 'eq', rows: [`${a}\\times ${b} &= ${c}\\times\\mathrm{PD}`] }, eq(`\\mathrm{PD} &= \\frac{${P0}}{${c}}`, `${x0}`)], k.done(), () => onC(O, R, A, B, C, D));
+      }
+      const pR = c * xv;
+      return mk(`${inner}${a},${b},${c},${xv}`, `${place}。${given}，$\\mathrm{PD}=${xv}$ のとき，4点 A，B，C，D は同一円周上にあるか。`, yes ? '同一円周上にある' : '同一円周上にない',
+        [eq(`\\mathrm{PA}\\cdot\\mathrm{PB} &= ${a}\\times ${b}`, `${P0}`), eq(`\\mathrm{PC}\\cdot\\mathrm{PD} &= ${c}\\times ${xv}`, `${pR}`), txt(yes ? '等しいから，方べきの定理の逆より，4点は同一円周上にある。' : '等しくないから，方べきの定理より，4点は同一円周上にない。')], k.done(),
+        () => (yes ? onC(O, R, A, B, C, D) : (Math.abs(dist(O, D) - R) > 1e-3 ? 0 : 1)));
+    }
+  },
+
   kakunibun(lv){
     for (;;) {
       const kind = lv === 1 ? pick(['BD', 'BD', 'BC']) : pick(['BD', 'ext', 'ext', 'BC']);
@@ -7903,7 +8215,7 @@ const FONTS = {
   gothic: "'Zen Kaku Gothic New','Hiragino Sans','Yu Gothic',system-ui,sans-serif",
   mincho: "'Zen Old Mincho','Hiragino Mincho ProN','Yu Mincho',serif"
 };
-const ST = { hScore: 'count', scoreMax: 100, avoidRecent: false, presetWithSet: true, recent: [], outPart: 'all', presets: [], presetFolders: [], openFolder: '', openField: '', setOpen: '', more: false, uCnt: null, fit: 'count', fitPages: 2, defV: 1, baikaiMode: 'level', baikaiOrder: 'num', baikaiPats: null, zenkaOrder: 'num', zenkaMode: 'level', zenkaPats: ['ari', 'geo', 'diff', 'char'], waSekiBig: false, yakusuuBig: false, ans: 'full', units: ['tasuki', 'heihou'], count: '10', level: 'mix', order: 'unit', font: 'maru', tex: 'lua', title: '', pv: 'q', mode: 'work', subject: '1', kahouUnit: 'deg', formula: 'off', mixLv: 'seq', closedGrp: [], time: 'off' };
+const ST = { goshinMode: 'level', goshinOrder: 'num', goshinPats: GOSHIN_TYPES.filter(t => !t[3]).map(t => t[0]), hScore: 'count', scoreMax: 100, avoidRecent: false, presetWithSet: true, recent: [], outPart: 'all', presets: [], presetFolders: [], openFolder: '', openField: '', setOpen: '', more: false, uCnt: null, fit: 'count', fitPages: 2, defV: 1, baikaiMode: 'level', baikaiOrder: 'num', baikaiPats: null, zenkaOrder: 'num', zenkaMode: 'level', zenkaPats: ['ari', 'geo', 'diff', 'char'], waSekiBig: false, yakusuuBig: false, ans: 'full', units: ['tasuki', 'heihou'], count: '10', level: 'mix', order: 'unit', font: 'maru', tex: 'lua', title: '', pv: 'q', mode: 'work', subject: '1', kahouUnit: 'deg', formula: 'off', mixLv: 'seq', closedGrp: [], time: 'off' };
 let PROBS = [];
 let VARS = null;   // 別バージョン（addVariant）
 const SAVE_KEY = 'suu1print_settings';
@@ -8211,6 +8523,8 @@ const FORMULA = {
   goudou: ['$a\\equiv b\\pmod{m}$ のとき，$a+c\\equiv b+c$，$ac\\equiv bc$，$a^n\\equiv b^n\\pmod{m}$', '$a^k$ が $1$ や $-1$ と合同になる $k$ を見つけて，指数を小さくする。', '1次合同式は，法と互いに素な数を両辺にかけて $x$ の係数を $1$ にする。'],
   menelaus: ['直線が $\\triangle\\mathrm{ABC}$ の辺（またはその延長）と P，Q，R で交わるとき $\\frac{\\mathrm{AR}}{\\mathrm{RB}}\\cdot\\frac{\\mathrm{BP}}{\\mathrm{PC}}\\cdot\\frac{\\mathrm{CQ}}{\\mathrm{QA}}=1$', '頂点 → 分点 → 頂点 … と一筆書きでたどって比をかける。'],
   houbeki: ['2つの弦 AB，CD が点 P で交わるとき（延長上で交わるときも）$\\mathrm{PA}\\cdot\\mathrm{PB}=\\mathrm{PC}\\cdot\\mathrm{PD}$', '接線 PT のとき $\\mathrm{PA}\\cdot\\mathrm{PB}=\\mathrm{PT}^2$'],
+  goshin: ['外心 O：$\\mathrm{OA}=\\mathrm{OB}=\\mathrm{OC}$，$\\angle\\mathrm{BOC}=2\\angle\\mathrm{A}$（鋭角三角形）', '内心 I：$\\angle\\mathrm{BIC}=90^\\circ+\\frac{1}{2}\\angle\\mathrm{A}$，角の二等分線の交点', '重心 G：中線を $2:1$ に内分する', '垂心 H：$\\angle\\mathrm{BHC}=180^\\circ-\\angle\\mathrm{A}$（鋭角三角形）'],
+  kyoen: ['四角形が円に内接する条件：対角の和が $180^\\circ$，または外角がとなり合う内角の対角に等しい', '円周角の定理の逆：2点 C，D が直線 AB について同じ側にあり $\\angle\\mathrm{ACB}=\\angle\\mathrm{ADB}$ なら4点は同一円周上', '方べきの定理の逆：$\\mathrm{PA}\\cdot\\mathrm{PB}=\\mathrm{PC}\\cdot\\mathrm{PD}$ なら4点は同一円周上'],
   kakunibun: ['$\\angle\\mathrm{A}$ の二等分線と辺 BC の交点を D とすると $\\mathrm{BD}:\\mathrm{DC}=\\mathrm{AB}:\\mathrm{AC}$', '外角の二等分線と直線 BC の交点 E も $\\mathrm{BE}:\\mathrm{EC}=\\mathrm{AB}:\\mathrm{AC}$'],
   nikou: ['$(a+b)^n$ の一般項は ${}_{n}\\mathrm{C}_{r}\\,a^{n-r}b^r$', '求める項の $x$ の指数から $r$ を決めて，係数を計算する。'],
   warizan: ['$A=BQ+R$（$R$ の次数は $B$ の次数より小さい）', '最高次の項から順に商を立てて筆算する。'],
@@ -8809,7 +9123,7 @@ function applySubject(){
   document.title = '数学 基礎計算プリント';
 }
 // 単元ごとの設定がある単元（選んだ単元の札に「設定」を出す）と、そのときに見せる欄
-const UNIT_SET = { kahou: 'kahouOpt', waSeki: 'waSekiBigOpt', yakusuu: 'yakusuuBigOpt', zenka: 'zenkaOpt', baikaiShoukyo: 'baikaiOpt' };
+const UNIT_SET = { kahou: 'kahouOpt', waSeki: 'waSekiBigOpt', yakusuu: 'yakusuuBigOpt', zenka: 'zenkaOpt', baikaiShoukyo: 'baikaiOpt', goshin: 'goshinOpt' };
 const unitName = u => (UNITS.find(x => x[0] === u) || [u, u])[1];
 // 単元ごとの設定は、選んだ単元の「設定」を押したときだけ、その単元の分を見せる
 function showOpts(){
@@ -8821,6 +9135,7 @@ function showOpts(){
   $('fitOpt').style.display = ST.fit === 'page' ? '' : 'none';
   $('zenkaPatBox').style.display = ST.zenkaMode === 'pick' ? '' : 'none';
   $('baikaiPatBox').style.display = ST.baikaiMode === 'pick' ? '' : 'none';
+  $('goshinPatBox').style.display = ST.goshinMode === 'pick' ? '' : 'none';
 }
 function syncSeg(){
   applySubject();
@@ -8852,9 +9167,11 @@ document.querySelectorAll('#fields > .units[data-subj]').forEach(u => {
 // 漸化式のパターンのチェックボタン（ZENKA_TYPES から作る）
 $('zenkaPats').innerHTML = ZENKA_TYPES.map(([k, nm], i) => `<label class="chk"><input type="checkbox" name="zpat" value="${k}">${i + 1}　${nm}</label>`).join('');
 $('baikaiPatList').innerHTML = BAIKAI_TYPES.map(([k, nm], i) => `<label class="chk"><input type="checkbox" name="bpat" value="${k}">${i + 1}　${nm}</label>`).join('');
+$('goshinPatList').innerHTML = GOSHIN_TYPES.map(([k, nm], i) => `<label class="chk"><input type="checkbox" name="gpat" value="${k}">${i + 1}　${nm}</label>`).join('');
 const zenkaChanged = () => { save(); syncSeg(); regenSoon(); };
 Object.values(PICK).forEach(c => document.querySelectorAll(`input[name="${c.box}"]`).forEach(i => i.addEventListener('change', () => { ST[c.pats] = [...document.querySelectorAll(`input[name="${c.box}"]:checked`)].map(x => x.value); zenkaChanged(); })));
 $('baikaiAll').addEventListener('click', () => { ST.baikaiPats = null; zenkaChanged(); });
+$('goshinAll').addEventListener('click', () => { ST.goshinPats = null; zenkaChanged(); });
 $('zenkaAll').addEventListener('click', () => { ST.zenkaPats = ZENKA_TYPES.map(t => t[0]); zenkaChanged(); });
 [2, 3, 4].forEach(n => $(`zenkaStar${n}`).addEventListener('click', () => { ST.zenkaPats = ZENKA_TYPES.filter(t => t[3] <= n).map(t => t[0]); zenkaChanged(); }));
 // 下部のバーの高さ（幅や表示で変わる）だけ、ページの下をあける
@@ -8958,12 +9275,12 @@ document.querySelectorAll('.seg[data-set] button').forEach(b => b.addEventListen
   const name = b.closest('.seg').dataset.set;
   regenKeep = false;
   ST[name] = b.dataset.v; syncSeg(); save();
-  if (lastSt && ['ans', 'zenkaOrder', 'baikaiOrder'].includes(name)) lastSt = { ...lastSt, [name]: ST[name] };   // 作りなおさない設定は、元にもどすときの設定にもすぐ入れる
+  if (lastSt && ['ans', 'zenkaOrder', 'baikaiOrder', 'goshinOrder'].includes(name)) lastSt = { ...lastSt, [name]: ST[name] };   // 作りなおさない設定は、元にもどすときの設定にもすぐ入れる
   if (name === 'font') { applyFont(); (document.fonts ? document.fonts.ready : Promise.resolve()).then(ST.fit === 'page' ? () => { regenKeep = true; regenerate(); } : render); }   // ページに合わせるときも、問題は残して数えなおす
   else if (name === 'pv') { flushRender(); applyPv(); }
 
   else if (ST.fit === 'page' && name === 'formula') regenerate();   // 紙面が変わると入る問題数も変わる
-  else if (name === 'zenkaOrder' || name === 'baikaiOrder') { ADJ = {}; BRK = { work: new Set(), list: new Set() }; applyPickOrder(name === 'zenkaOrder' ? 'zenka' : 'baikaiShoukyo'); render(); }   // 同じ問題のまま並べかえる
+  else if (Object.values(PICK).some(c => c.order === name)) { ADJ = {}; BRK = { work: new Set(), list: new Set() }; applyPickOrder(Object.keys(PICK).find(u => PICK[u].order === name)); render(); }   // 同じ問題のまま並べかえる
   else if (name === 'hScore') { $('scoreMaxBox').style.display = ST.hScore === 'points' ? 'flex' : 'none'; render(); }
   else if (name === 'formula' || name === 'time' || name === 'ans') render();   // 配置だけ変えるときは、同じ問題のまま並べなおす
   else if (name === 'tex') status(ST.tex === 'lua' ? 'LaTeX は ltjsarticle（LuaLaTeX）で出力します' : 'LaTeX は jsarticle（pLaTeX）で出力します');
@@ -9376,7 +9693,7 @@ window.__engine = { regenP, keyHash, GEN, UNIT_SUBJ, sumFormTex, nTex, nPolyTex,
 
 /* ========== 設定の写し（組み合わせ・最近作ったプリント） ========== */
 // 組み合わせに「一緒に保存」する設定。その他の設定のうち、題名と解答ページは入れる（目安時間・公式・見た目・LaTeX は入れない）
-const PRESET_KEYS = ['title', 'count', 'fit', 'fitPages', 'level', 'uCnt', 'mixLv', 'order', 'ans', 'kahouUnit', 'waSekiBig', 'yakusuuBig', 'zenkaMode', 'zenkaPats', 'zenkaOrder', 'baikaiMode', 'baikaiPats', 'baikaiOrder'];
+const PRESET_KEYS = ['title', 'count', 'fit', 'fitPages', 'level', 'uCnt', 'mixLv', 'order', 'ans', 'kahouUnit', 'waSekiBig', 'yakusuuBig', 'zenkaMode', 'zenkaPats', 'zenkaOrder', 'baikaiMode', 'baikaiPats', 'baikaiOrder', 'goshinMode', 'goshinPats', 'goshinOrder'];
 const snapSettings = () => JSON.parse(JSON.stringify(Object.fromEntries(PRESET_KEYS.map(k => [k, ST[k]]))));
 // 読みこんだファイルの設定：決まった名前の、文字・数・true/false・文字の配列・null だけを残す
 function cleanSettings(s){
