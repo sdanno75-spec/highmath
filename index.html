@@ -66,9 +66,17 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 .pchip button.set{font-size:12px;color:var(--teal);font-weight:700;border-left:1px solid var(--line);padding:4px 10px}
 .pchip button.set.on{background:var(--teal-bg)}
 .pempty{color:var(--muted);font-size:13px}
-.pchip > span.ucnt{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-left:1px solid var(--line);font-size:12px;color:var(--muted);background:#fff;align-self:stretch}
-.ucnt input{width:2.8em;padding:2px 2px;border:1px solid var(--line);border-radius:6px;font:inherit;font-size:13px;text-align:center;color:var(--ink);background:#fff;font-variant-numeric:tabular-nums}
-.ucnt input:focus{outline:2px solid var(--teal);outline-offset:0;border-color:var(--teal)}
+.utblBox{margin-top:10px;overflow-x:auto}
+.utblBox:empty{display:none}
+.utbl{width:100%;max-width:480px;border-collapse:collapse;font-size:13px;background:#fff;border:1px solid var(--line)}
+.utbl th,.utbl td{padding:4px 6px;border-bottom:1px solid var(--line);text-align:center;font-variant-numeric:tabular-nums}
+.utbl thead th{font-size:12px;font-weight:500;color:var(--muted)}
+.utbl th:first-child{text-align:left;font-weight:500;color:var(--ink)}
+.utbl tfoot th,.utbl tfoot td{font-weight:700;border-bottom:0}
+.utbl tfoot th:first-child{font-weight:700}
+.utbl .no{color:var(--muted);font-size:12px}
+.utbl input{width:3em;height:34px;padding:0;border:1px solid #9aa7bb;border-radius:6px;font:inherit;font-size:16px;text-align:center;color:var(--ink);background:#fff}
+.utbl input:focus{outline:2px solid var(--teal);outline-offset:0;border-color:var(--teal)}
 .setbox{border:1px solid var(--teal);border-radius:12px;padding:12px;background:var(--teal-bg);display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
 .setbox h3{margin:0;font-size:14px}
 .setbox .chk{background:#fff;align-self:flex-start}
@@ -124,7 +132,23 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 .rc b{font-weight:500}
 .rc span{color:var(--muted);font-size:12px}
 #recentClear{align-self:flex-start;padding:3px 9px;font-size:12px;margin-top:2px}
-/* 下のバー：保存・印刷するページ、版の切りかえ */
+/* 左上にいつも出す「元にもどす」「やり直す」と、印刷のときに聞く画面 */
+#histBox{position:fixed;top:14px;left:10px;z-index:45;display:flex;gap:4px}
+#histBox button{width:32px;height:32px;padding:0;display:grid;place-items:center;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+#histBox button:hover:not(:disabled){border-color:var(--ink)}
+#histBox button:disabled{opacity:.35;cursor:default}
+#histBox svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+@media (max-width:1180px){header .brand{padding-left:68px}}
+#printAsk{border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);padding:20px;width:min(360px,calc(100vw - 32px));box-shadow:0 10px 40px rgba(0,0,0,.25)}
+#printAsk::backdrop{background:rgba(0,0,0,.35)}
+#printAsk h2{margin:0 0 12px;font-size:16px}
+.paList{display:flex;flex-direction:column;gap:8px}
+.paList button{display:flex;align-items:baseline;gap:10px;width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);text-align:left;font-size:15px}
+.paList button:hover,.paList button:focus{border-color:var(--ink);outline:none;background:#efebe0}
+.paList b{font-weight:700}
+.paList span{font-size:12px;color:var(--muted)}
+.paFoot{display:flex;justify-content:flex-end;margin-top:12px}
+/* 下のバー：版の切りかえ */
 .outLab{font-size:12px;color:var(--muted);margin-left:4px}
 #verBox button.add{border-style:dashed}
 /* 1問だけ作りなおすボタン（画面だけ。印刷・PDF には出さない） */
@@ -192,7 +216,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 .sheet{width:210mm;height:297mm;margin:0 auto 24px;background:#fff;color:#111;box-shadow:0 2px 14px rgba(0,0,0,.14);padding:12mm 12mm 14mm;font-family:var(--font);overflow:hidden;display:flex;flex-direction:column;position:relative}
 .sheet-wrap.show-q .sheet.ans{display:none}
 .sheet-wrap.show-a .sheet:not(.ans){display:none}
-.capturing .sheet{display:flex!important;box-shadow:none}
+
 .pgno{position:absolute;left:0;right:0;bottom:6mm;text-align:center;font-size:9pt;color:#555}
 .qz-head{border-bottom:1.5px solid #111;padding-bottom:2.5mm;margin-bottom:2.5mm}
 .qz-head h2{margin:0 0 2.5mm;font-size:15pt;font-weight:700}
@@ -264,9 +288,9 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 .brk{position:absolute;pointer-events:auto;transform:translateY(-50%);font:500 10px/1.2 system-ui,sans-serif;padding:3px 7px;border:1px solid #9aa7bb;border-radius:4px;background:#fff;color:#2b4a7a;cursor:pointer;opacity:.8;white-space:nowrap}
 .brk:hover{opacity:1;border-color:#2f6fdb}
 .brk.un{color:#a33;border-color:#d9a3a3;transform:none}
-.capturing .ctl{display:none}
+
 #allSheets{display:none}
-#allSheets.capturing{display:block}
+
 /* ページに合わせて作っているあいだは、前のプリントをうすくして押せなくする */
 .sheet-wrap.busy{opacity:.45;pointer-events:none}
 
@@ -280,7 +304,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 @media print{
   @page{size:A4 portrait;margin:0}
   body{background:#fff!important}
-  header,.panel,.dock,.pv-info,#view-help,.ctl{display:none!important}
+  header,.panel,.dock,.pv-info,#view-help,.ctl,#histBox,#printAsk{display:none!important}
   .wrap{padding:0!important;max-width:none!important}
   .sheet-wrap{overflow:visible;padding:0}
   .sheet{display:flex!important;box-shadow:none;margin:0;height:296mm;page-break-after:always;break-after:page}
@@ -295,6 +319,20 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </style>
 </head>
 <body>
+<div id="histBox">
+  <button id="bUndo" type="button" disabled title="1つ前にもどす（Ctrl+Z）" aria-label="元にもどす"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4L3 9l5 5"/><path d="M3 9h11a6 6 0 0 1 0 12h-3"/></svg></button>
+  <button id="bRedo" type="button" disabled title="もどした操作をやり直す（Ctrl+Y）" aria-label="やり直す"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 4l5 5-5 5"/><path d="M21 9H10a6 6 0 0 0 0 12h3"/></svg></button>
+</div>
+<dialog id="printAsk" aria-labelledby="printAskT">
+  <h2 id="printAskT">どのページを印刷しますか？</h2>
+  <div class="paList">
+    <button type="button" data-out="all" autofocus><b>全部</b><span>問題と解答・解説</span></button>
+    <button type="button" data-out="q"><b>問題だけ</b><span>解答・解説は入りません</span></button>
+    <button type="button" data-out="a"><b>解答だけ</b><span>解答・解説のページだけ</span></button>
+  </div>
+  <div class="gnote" id="printAskNote" style="margin-top:10px" hidden></div>
+  <div class="paFoot"><button class="btn" type="button" id="printAskNo">やめる</button></div>
+</dialog>
 <div class="wrap">
   <header>
     <div class="brand">
@@ -318,7 +356,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
       </div></div>
       <div class="grp"><div class="glab">最近作ったプリント</div><div>
         <div class="recent" id="recentList"></div>
-        <div class="gnote">印刷・画像で PDF・LaTeX の出力をしたときのプリントを、新しい順に10件まで残します（このブラウザに保存）。押すと、そのときと同じ問題（別バージョン・手で直した高さもふくむ）で開くので、解答だけをもう一度印刷することもできます。「新しい問題で」を押すと、同じ単元と設定で新しく作ります。</div>
+        <div class="gnote">印刷・LaTeX の出力をしたときのプリントを、新しい順に10件まで残します（このブラウザに保存）。押すと、そのときと同じ問題（別バージョン・手で直した高さもふくむ）で開くので、解答だけをもう一度印刷することもできます。「新しい問題で」を押すと、同じ単元と設定で新しく作ります。</div>
       </div></div>
       <div class="grp"><div class="glab">単元</div><div>
         <div class="pickHead"><b id="pickCnt">選んだ単元</b><button class="btn" id="unitClear" type="button">すべて外す</button></div>
@@ -512,23 +550,24 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
           <label class="chk"><input type="checkbox" name="unit" value="chokkouToKyoku">直交座標 → 極方程式</label>
         </div>
         </div>
-        <div class="gnote">教科を押してから分野を押すと、その分野の単元が出ます。教科をまたいで選べます。選んだ単元の札で、単元ごとの問題数を決められます（難しさが「まぜる」のときは基本と標準の数）。</div>
+        <div class="gnote">教科を押してから分野を押すと、その分野の単元が出ます。教科をまたいで選べます。単元ごとの問題数は「問題の量」の表で決められます。</div>
       </div></div>
       <div class="grp"><div class="glab">問題の量</div><div>
         <div class="stepper" id="cntBox"><button type="button" data-d="-5">−5</button><button type="button" data-d="-1">−1</button><input type="number" id="cnt" min="1" max="50" step="1" inputmode="numeric" aria-label="問題数"><span class="cu">問</span><button type="button" data-d="1">＋1</button><button type="button" data-d="5">＋5</button></div>
-        <div class="gnote">1〜50問（重くなるので50問まで）。全体の問題数を変えると、選んだ単元に同じくらいずつ配りなおします。単元ごとの数は「選んだ単元」の札で直せて、そのときはここが合計になります。</div>
+        <div class="gnote">1〜50問（重くなるので50問まで）。全体の問題数を変えると、選んだ単元に同じくらいずつ配りなおします。単元ごとの数は下の表で直せて（難しさが「まぜる」のときは基本・標準・発展の数）、そのときはここが合計になります。</div>
+        <div class="utblBox" id="uTable"></div>
         <div class="seg" data-set="fit" style="margin-top:10px"><button data-v="count">問題数を自分で決める</button><button data-v="page">問題のページ数に合わせる</button></div>
         <div id="fitOpt" style="margin-top:8px">
           <div class="stepper" id="fitBox"><button type="button" data-d="-1">−1</button><input type="number" id="fitPages" min="1" max="10" step="1" inputmode="numeric" aria-label="問題のページ数"><span class="cu">ページ</span><button type="button" data-d="1">＋1</button></div>
-          <div class="gnote">指定した問題ページに入るだけ，問題を入れます（1〜10ページ。解答は数えません）。単元ごとの問題数の比率は、札で決めた数のまま保ちます。上の問題数や札の数を変えると，そのあとは自分で決める状態になります。</div>
+          <div class="gnote">指定した問題ページに入るだけ，問題を入れます（1〜10ページ。解答は数えません）。単元ごとの問題数の比率は、表で決めた数のまま保ちます。上の問題数や表の数を変えると，そのあとは自分で決める状態になります。</div>
         </div>
         <label class="chk" style="margin-top:10px"><input type="checkbox" id="avoidRecent">最近作ったプリント（10件まで）に入っている問題は出さない</label>
         <div class="gnote">前に配った問題と同じ問題を出さないようにします。単元の問題を使い切ったときだけ、同じ問題が出ることがあります。</div>
       </div></div>
       <div class="grp"><div class="glab">難しさ</div><div>
         <div class="seg" data-set="level"><button data-v="basic">基本</button><button data-v="std">標準</button><button data-v="adv">発展</button><button data-v="mix">まぜる</button></div>
-        <div id="mixLvBox" style="margin-top:6px"><div class="seg" data-set="mixLv"><button data-v="seq">基本 → 標準の順</button><button data-v="rand">基本と標準をランダムに</button></div>
-          <div class="gnote" style="margin:8px 0 0">基本と標準の問題数は、上の「選んだ単元」の札で単元ごとに決めます。</div>
+        <div id="mixLvBox" style="margin-top:6px"><div class="seg" data-set="mixLv"><button data-v="seq">基本 → 標準 → 発展の順</button><button data-v="rand">難しさをランダムに</button></div>
+          <div class="gnote" style="margin:8px 0 0">基本・標準・発展の問題数は、「問題の量」の表で単元ごとに決めます。</div>
         </div>
         <div class="gnote" id="levelNote"></div>
       </div></div>
@@ -572,18 +611,14 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
     <div class="dock" id="dock"><div class="dock-in">
     <div class="actions">
       <button class="btn" id="bMake"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>問題を作りなおす</button>
-      <button class="btn primary" id="bPrint" title="印刷の画面で、紙に印刷するか「PDF に保存」を選びます"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/></svg>印刷する</button>
-      <button class="btn" id="bImgPdf" title="ページを画像にした PDF をそのままダウンロードします（拡大すると少しぼやけます）"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 9"/></svg>画像で PDF</button>
-      <button class="btn" id="bTexCopy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>LaTeX をコピー</button>
+      <button class="btn primary" id="bPrint" title="全部・問題だけ・解答だけを選んで印刷します（PDF にするときは印刷の画面で「PDF に保存」）"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/></svg>印刷する</button>
       <button class="btn" id="bTexDl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5"/><path d="M5 20h14"/></svg>.tex を保存</button>
       <span id="status"></span>
     </div>
 
     <div class="pv-bar">
       <div class="seg" data-set="pv"><button data-v="q">問題</button><button data-v="a">解答・解説</button></div>
-      <span class="outLab">保存・印刷</span><div class="seg" data-set="outPart" title="印刷（PDF に保存も）・画像で PDF に入れるページ"><button data-v="all">全部</button><button data-v="q">問題だけ</button><button data-v="a">解答だけ</button></div>
       <span class="outLab">版</span><div class="seg" id="verBox"></div>
-      <button class="btn" id="bUndo" type="button" style="display:none" title="問題の入れかえ・欄の高さ・改段と改ページを、1つ前にもどす（Ctrl+Z）">元にもどす</button><button class="btn" id="bRedo" type="button" style="display:none" title="もどした操作をやり直す（Ctrl+Y）">やり直す</button>
       <span id="pageInfo"></span>
       <button class="btn" id="bAdjAll" type="button" style="display:none">高さを自動にもどす</button>
       <button class="btn" id="bBrkAll" type="button" style="display:none">改ページをすべて取り消す</button>
@@ -602,18 +637,17 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
       <h2>使い方</h2>
       <ul>
         <li>「単元」で教科を押し、分野を押してひらき、出したい単元にチェックを入れます。教科をまたいで選べます。選んだ単元は上に札で並び、× で外せます。チェックを変えると、すぐに新しいプリントになります。</li>
-        <li><b>単元ごとの問題数</b>：選んだ単元の札に、その単元の問題数の欄があります（難しさが「まぜる」のときは基本と標準の2つ）。数を直すと、「問題の量」の全体の問題数はその合計になります。全体の問題数を変えると、単元に同じくらいずつ配りなおします（基本と標準の比率は単元ごとにそのまま）。「問題のページ数に合わせる」では、単元ごとの数の比率を保ったまま、ページに入るだけふやし・へらします。</li>
+        <li><b>単元ごとの問題数</b>：「問題の量」の表で、単元ごとの問題数を決めます（難しさが「まぜる」のときは基本・標準・発展の数。発展は発展の問題がある単元だけ、「パターンを選ぶ」の単元は合計だけです）。数を直すと、全体の問題数はその合計になります。全体の問題数を変えると、単元に同じくらいずつ配りなおします（難しさの比率は単元ごとにそのまま）。「問題のページ数に合わせる」では、単元ごとの数の比率を保ったまま、ページに入るだけふやし・へらします。</li>
         <li>漸化式・媒介変数の消去・加法定理・確率変数の和と積・約数の個数と総和は、選んだ単元の札の「設定」を押すと、その単元の設定が出ます。</li>
         <li>よく使う単元のセットは、「よく使う組み合わせ」に名前をつけて保存できます（このブラウザに保存）。フォルダに分けられ、フォルダを開くと「名前を変える」「消す」が出ます。組み合わせの横のフォルダの印で、別のフォルダに移せます。「ファイルに書き出す」で保存しておくと、ほかのパソコンやブラウザで「ファイルから読みこむ」で使えます。題名・目安時間・解答ページなどは「その他の設定」の中にあります。</li>
-        <li>下のバーの「＋別バージョン」を押すと、同じ単元・難しさ・並びで数だけちがう B 版ができます（F 版まで）。「A 版」「B 版」で切りかえ、題名には（A）（B）がつきます。「問題を作りなおす」や設定を変えると、別バージョンはなくなります。版が2つ以上あるときは「全部の版をまとめて印刷」を押しておくと、印刷・画像で PDF に A 版から順に全部の版（それぞれ問題と解答）が入ります。ページ番号は版ごとに数えます。</li>
-        <li>プリントの各問題の右上と、解答の各問題の番号の左にある丸いボタンを押すと、その1問だけを同じ単元・難しさの別の問題に入れかえます。このボタンは画面だけで、印刷・PDF には出ません。入れかえたあとは、下のバーの「元にもどす」「やり直す」（Ctrl+Z・Ctrl+Y）で前の問題にもどせます。欄の高さのドラッグ、改段・改ページ、「高さを自動にもどす」「改段・改ページをすべて取り消す」も、同じボタンでもどせます。</li>
+        <li>下のバーの「＋別バージョン」を押すと、同じ単元・難しさ・並びで数だけちがう B 版ができます（F 版まで）。「A 版」「B 版」で切りかえ、題名には（A）（B）がつきます。「問題を作りなおす」や設定を変えると、別バージョンはなくなります。版が2つ以上あるときは「全部の版をまとめて印刷」を押しておくと、印刷に A 版から順に全部の版（それぞれ問題と解答）が入ります。ページ番号は版ごとに数えます。</li>
+        <li>プリントの各問題の右上と、解答の各問題の番号の左にある丸いボタンを押すと、その1問だけを同じ単元・難しさの別の問題に入れかえます。このボタンは画面だけで、印刷・PDF には出ません。入れかえたあとは、画面の左上の矢印（左が元にもどす、右がやり直す。Ctrl+Z・Ctrl+Y）で前の問題にもどせます。欄の高さのドラッグ、改段・改ページ、「高さを自動にもどす」「改段・改ページをすべて取り消す」も、同じボタンでもどせます。</li>
         <li><b>問題の並べかえ</b>：問題のページの余白にある上・下のボタンで1つずつ、まん中のつまみ（点の印）をドラッグすると好きな場所へ移せます（画面の上・下の端まで持っていくと、ページをまたいで動きます）。別バージョンがあるときは、全部の版を同じように並べかえます。「元にもどす」でもどせます。入れかえボタンを右クリック（iPad は長押し）すると、「基本」「標準」「発展」を選んで、その難しさの問題に入れかえられます。</li>
-        <li>下のバーの「保存・印刷」で、印刷（PDF に保存も）・画像で PDF に入れるページを「全部／問題だけ／解答だけ」から選べます。生徒に配る問題と、先生用の解答を別のファイルにできます。</li>
-        <li>「最近作ったプリント」には、印刷・画像で PDF・LaTeX の出力をしたときのプリントが10件まで残ります。押すと同じ問題で開きます（アプリを直したあとは、少しちがう問題になることがあります）。「新しい問題で」を押すと、同じ単元と設定で新しく作ります。</li>
-        <li>「問題」「解答・解説」のボタンは、画面に見せるページを切りかえるだけです。印刷・PDF に入るページは「保存・印刷」の「全部／問題だけ／解答だけ」で決まります（初めは全部）。LaTeX にはいつも全部が入ります。</li>
-        <li><b>印刷する</b>：印刷の画面が開きます。紙に印刷するときはプリンターを、PDF にするときは送信先を「PDF に保存」にします。PDF は文字がフォントのまま入るので、拡大してもくっきりします。A4 縦で、「全部」なら問題のページのあとに解答・解説のページが続きます。</li>
-        <li><b>画像で PDF</b>：印刷の画面が使いにくい端末用の予備です。ページを画像にして貼るので、拡大すると少しぼやけます。</li>
-        <li><b>LaTeX をコピー</b>：そのままコンパイルできる .tex のソースをクリップボードにコピーします。コピーできないときは「.tex を保存」を使ってください。形式は「LaTeX の形式」で選べます（Overleaf なら ltjsarticle を選び、Compiler を LuaLaTeX に）。</li>
+
+        <li>「最近作ったプリント」には、印刷・LaTeX の出力をしたときのプリントが10件まで残ります。押すと同じ問題で開きます（アプリを直したあとは、少しちがう問題になることがあります）。「新しい問題で」を押すと、同じ単元と設定で新しく作ります。</li>
+        <li>「問題」「解答・解説」のボタンは、画面に見せるページを切りかえるだけです。印刷するページは「印刷する」を押したあとに選びます。LaTeX にはいつも全部が入ります。</li>
+        <li><b>印刷する</b>（Ctrl+P でも同じ）：「全部」「問題だけ」「解答だけ」を選ぶと、印刷の画面が開きます。生徒に配る問題と、先生用の解答を別のファイルにできます。紙に印刷するときはプリンターを、PDF にするときは送信先を「PDF に保存」にします。PDF は文字がフォントのまま入るので、拡大してもくっきりします。A4 縦で、「全部」なら問題のページのあとに解答・解説のページが続きます。</li>
+        <li><b>.tex を保存</b>：そのままコンパイルできる .tex のファイルを保存します。形式は「LaTeX の形式」で選べます（Overleaf なら ltjsarticle を選び、Compiler を LuaLaTeX に）。</li>
       </ul>
       <h2>問題のページ</h2>
       <ul>
@@ -639,8 +673,10 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.46.0', UPDATED = '2026-11-08';
+const VERSION = '5.48.0', UPDATED = '2026-11-09';
 const CHANGES = [
+  ['5.48.0', '2026-11-09', '「印刷する」（Ctrl+P も）を押したあとに、全部・問題だけ・解答だけを選ぶ形にした（下のバーの「保存・印刷」はなくした）。「画像で PDF」と「LaTeX をコピー」をなくした（.tex は「.tex を保存」で出せる）。「元にもどす」「やり直す」は画面の左上にいつも出る小さな矢印にした。'],
+  ['5.47.0', '2026-11-09', '「問題の量」に単元ごとの問題数の表を作った（札の小さい欄はなくした）。「まぜる」で発展の数も決められる（発展の問題がある単元だけ）。欄を押すと数が全部選ばれて、打った数に置きかわる。「まぜる」の並びは基本 → 標準 → 発展の順か、ランダム。'],
   ['5.46.0', '2026-11-08', '難しさの「まぜる」の基本の割合（％）をなくし、選んだ単元の札で単元ごとの問題数を決めるようにした（まぜるときは基本・標準の数を単元ごとに）。全体の問題数の欄は残し、変えると単元に同じくらいずつ配りなおす。単元ごとに直すと、全体はその合計になる。「問題のページ数に合わせる」は単元ごとの数の比率を保つ。組み合わせ・最近作ったプリント・元にもどすにも単元ごとの数が入る。'],
   ['5.45.0', '2026-11-08', '単元を足す・外す、問題数・ページ数を変えたときは、前の問題を残して足りない分だけ新しく作る（別バージョンも残す。「問題を作りなおす」は全部新しく）。作りなおしも「元にもどす」で前の問題と設定にもどせる。「最近作ったプリントの問題は出さない」のチェック。入れかえボタンの右クリック（長押し）で、基本・標準・発展を選んで入れかえ。問題の並べかえ（余白の上へ・下へのボタンとドラッグ、全部の版で同じ並び）。見出しの欄（月日・年組番・氏名・得点の欄、満点）を選べるようにした。'],
   ['5.44.2', '2026-11-08', '問題文に条件をすべて書いているのに、その下に同じ条件の式が出ていた8単元（等差数列・等比数列・整式の割り算・点と直線の距離・加法定理・三角関数の合成・接線の方程式・1/6公式の面積）で、下の式を出さないようにした（画面・印刷・LaTeX とも、利用者の指示）。'],
@@ -1290,10 +1326,10 @@ const pickPats = u => { const c = PICK[u], on = ST[c.pats]; return c.types.map(t
 const pickLv = (u, k) => PICK[u].types.find(t => t[0] === k)[2];
 function levelNoteHTML(){
   const us = UNITS.filter(u => ST.units.includes(u[0]));
-  const line = ([u, nm]) => { if (PICK[u] && pickOn(u)) return `${esc(nm)}：パターンを選ぶ（${pickPats(u).map(k => PICK[u].types.find(t => t[0] === k)[1]).join('・') || 'まだ選んでいません'}）`; const [b, s, a] = UNIT_LEVEL[u]; return `${esc(nm)}：${esc(ST.level === 'basic' ? b : ST.level === 'std' ? s : ST.level === 'adv' ? (a ? `発展 ${a}` : `（発展なし）標準 ${s}`) : `基本 ${b} → 標準 ${s}`)}`; };
+  const line = ([u, nm]) => { if (PICK[u] && pickOn(u)) return `${esc(nm)}：パターンを選ぶ（${pickPats(u).map(k => PICK[u].types.find(t => t[0] === k)[1]).join('・') || 'まだ選んでいません'}）`; const [b, s, a] = UNIT_LEVEL[u]; return `${esc(nm)}：${esc(ST.level === 'basic' ? b : ST.level === 'std' ? s : ST.level === 'adv' ? (a ? `発展 ${a}` : `（発展なし）標準 ${s}`) : `基本 ${b} → 標準 ${s}${a && ucOf(u)[2] > 0 ? ` → 発展 ${a}` : ''}`)}`; };
   if (ST.level === 'adv') return '発展：発展の問題がある単元（単元の欄に「発展あり」と出ている単元）だけ発展を出し、ほかの単元は標準を出します。<br>' + us.map(line).join('<br>');
-  const mixNote = ST.mixLv === 'rand' ? '基本と標準をランダムにまぜて並べます。' : '基本の問題を先に、標準の問題をあとに並べます（「単元ごとにまとめる」なら、各単元の中で基本から標準へ）。';
-  return (ST.level === 'mix' ? `まぜる：単元ごとの基本・標準の問題数は、選んだ単元の札で決めます。${mixNote}<br>` : '') + us.map(line).join('<br>');
+  const mixNote = ST.mixLv === 'rand' ? '基本・標準・発展をランダムにまぜて並べます。' : '基本、標準、発展の順に並べます（「単元ごとにまとめる」なら、各単元の中でこの順に）。';
+  return (ST.level === 'mix' ? `まぜる：単元ごとの基本・標準・発展の問題数は、「問題の量」の表で決めます。${mixNote}<br>` : '') + us.map(line).join('<br>');
 }
 
 // 最大・最小のグラフ：画面（SVG）と LaTeX（TikZ）で同じ図になるよう、図形を一度だけ計算する。
@@ -7797,15 +7833,19 @@ const regenP = g => GEN[g[0]] ? withSeed(g[3], () => g[2] === null ? GEN[g[0]](g
 // 問題の中身の短い印（作りなおした問題が前と同じかを確かめる）
 const keyHash = s => { let h = 2166136261; for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619); return (h >>> 0).toString(36); };
 /* ========== 単元ごとの問題数 ========== */
-// ST.uCnt[単元] = [問題数, そのうち基本の数]。基本の数は難しさが「まぜる」のときだけ使う（残りが標準）。全体の問題数 ST.count はその合計
+// ST.uCnt[単元] = [問題数, そのうち基本の数, そのうち発展の数]。基本と発展の数は難しさが「まぜる」のときだけ使う（残りが標準）。全体の問題数 ST.count はその合計
 const selUnits = () => UNITS.map(u => u[0]).filter(u => ST.units.includes(u));
-const ucOf = u => ((ST.uCnt || {})[u] || [0, 0]);
+const ucOf = u => { const x = (ST.uCnt || {})[u] || []; return [x[0] || 0, x[1] || 0, x[2] || 0]; };
 const cntSum = () => selUnits().reduce((t, u) => t + ucOf(u)[0], 0);
-// 基本の数：その単元の前の割合のまま（ないときは mix ％。初めは半分で、端数は基本へ）
-const basicFor = (c, old, mix = 50) => old && old[0] > 0 ? Math.min(c, Math.round(c * old[1] / old[0])) : Math.min(c, Math.round(c * mix / 100 + 1e-9));
+// c 問を難しさに分ける：その単元の前の比率のまま（ないときは基本 mix ％で残りが標準。初めは半分で、端数は基本へ）
+const splitFor = (c, old, mix = 50) => {
+  if (!(old && old[0] > 0)) return [c, Math.min(c, Math.round(c * mix / 100 + 1e-9)), 0];
+  const a = Math.min(c, Math.round(c * (old[2] || 0) / old[0]));
+  return [c, Math.min(c - a, Math.round(c * old[1] / old[0])), a];
+};
 // 全体の問題数を単元に同じくらいずつ配る（端数は教科書の順で前の単元から）
 const evenN = (total, n, i) => Math.floor(total / n) + (i < total % n ? 1 : 0);
-function evenCnt(units, total, mix){ const o = {}; units.forEach((u, i) => { const c = evenN(total, units.length, i); o[u] = [c, basicFor(c, (ST.uCnt || {})[u], mix)]; }); return o; }
+function evenCnt(units, total, mix){ const o = {}; units.forEach((u, i) => { const c = evenN(total, units.length, i); o[u] = splitFor(c, (ST.uCnt || {})[u], mix); }); return o; }
 // 均等に配ったままか（単元ごとに手で直していないか）
 function cntEven(units){
   const uc = ST.uCnt || {}, total = units.reduce((t, u) => t + (uc[u] || [0])[0], 0);
@@ -7821,17 +7861,21 @@ function normCnt(){
       if (cntEven(had)) ST.uCnt = evenCnt(units, +ST.count);
       else {
         const kept = units.filter(u => had.includes(u)), avg = kept.length ? Math.round(kept.reduce((t, u) => t + uc[u][0], 0) / kept.length) : +ST.count;
-        ST.uCnt = Object.fromEntries(units.map(u => [u, had.includes(u) ? uc[u] : [avg, basicFor(avg)]]));
+        ST.uCnt = Object.fromEntries(units.map(u => [u, had.includes(u) ? uc[u] : splitFor(avg)]));
       }
     }
   }
   delete ST._mix;
-  // 形を整える：0〜50 の整数、基本は問題数まで。合計は 1〜50（0 なら配りなおす。50 をこえたら多い単元からへらす）
+  // 形を整える：0〜50 の整数、発展は発展のある単元だけ、基本と発展の和は問題数まで。合計は 1〜50（0 なら配りなおす。50 をこえたら多い単元からへらす）
   Object.keys(ST.uCnt).forEach(u => { if (!units.includes(u)) delete ST.uCnt[u]; });
-  units.forEach(u => { const x = Array.isArray(ST.uCnt[u]) ? ST.uCnt[u] : [0, 0], n = Math.max(0, Math.min(CNT_MAX, Math.round(+x[0]) || 0)); ST.uCnt[u] = [n, Math.max(0, Math.min(n, Math.round(+x[1]) || 0))]; });
+  units.forEach(u => {
+    const x = Array.isArray(ST.uCnt[u]) ? ST.uCnt[u] : [0, 0, 0], n = Math.max(0, Math.min(CNT_MAX, Math.round(+x[0]) || 0));
+    const a = ADV_UNITS.has(u) ? Math.max(0, Math.min(n, Math.round(+x[2]) || 0)) : 0;
+    ST.uCnt[u] = [n, Math.max(0, Math.min(n - a, Math.round(+x[1]) || 0)), a];
+  });
   if (!units.length) return;
   if (!cntSum()) ST.uCnt = evenCnt(units, Math.max(1, +ST.count));
-  for (let s = cntSum(); s > CNT_MAX; s--) { const u = units.reduce((a, x) => ST.uCnt[x][0] > ST.uCnt[a][0] ? x : a); const [n, b] = ST.uCnt[u]; ST.uCnt[u] = [n - 1, Math.min(b, n - 1)]; }
+  for (let s = cntSum(); s > CNT_MAX; s--) { const u = units.reduce((a, x) => ST.uCnt[x][0] > ST.uCnt[a][0] ? x : a); const [n, b, a] = ST.uCnt[u]; ST.uCnt[u] = n - b - a > 0 ? [n - 1, b, a] : b > 0 ? [n - 1, b - 1, a] : [n - 1, b, a - 1]; }
   ST.count = String(cntSum());
 }
 // ページに合わせるとき：単元ごとの問題数の比率（w）を保ったまま、全体を n 問にする（端数は小数部分の大きい単元から）
@@ -7841,20 +7885,21 @@ function scaleCnt(w, n){
   const o = Object.fromEntries(units.map(u => [u, Math.floor(n * wn(u) / W + 1e-9)]));
   let left = n - units.reduce((t, u) => t + o[u], 0);
   units.map((u, i) => [u, n * wn(u) / W - o[u], i]).sort((a, b) => b[1] - a[1] || a[2] - b[2]).forEach(([u]) => { if (left > 0) { o[u]++; left--; } });
-  return Object.fromEntries(units.map(u => [u, [o[u], basicFor(o[u], w[u])]]));
+  return Object.fromEntries(units.map(u => [u, splitFor(o[u], w[u])]));
 }
 // いまの問題から単元ごとの数を数える（最近作ったプリントを同じ問題で開いたとき）
-const cntFrom = list => Object.fromEntries(selUnits().map(u => { const ps = list.filter(p => p.unit === u); return [u, [ps.length, ps.filter(p => p.lv === 1).length]]; }));
+const cntFrom = list => Object.fromEntries(selUnits().map(u => { const ps = list.filter(p => p.unit === u); return [u, [ps.length, ps.filter(p => p.lv === 1).length, ps.filter(p => p.lv === 3).length]]; }));
 normCnt();
 // pool（ページに合わせるときだけ）：作った問題を単元・難しさ（パターン）ごとに順に覚えておき、問題数を変えて作りなおすときも同じ順で使う。
 // 問題数を1つふやすと前の組に1問足した組になるので、ページ数が問題数とともにふえる（毎回ちがう組だと、背の高い問題が多い組に当たって早く止まった）
 function makeSet(pool){
-  // 単元ごとの問題数は ST.uCnt（札で決めた数）
+  // 単元ごとの問題数は ST.uCnt（「問題の量」の表で決めた数）
   const units = selUnits(), cnt = Object.fromEntries(units.map(u => [u, ucOf(u)[0]]));
   const keys = new Set(), out = [], avoid = avoidSet();
   const used0 = p => keys.has(p.key) || (avoid && avoid.has(keyHash(p.key)));   // このプリントにある・最近のプリントにあった問題
-  // まぜるときの基本の問題数：単元ごとに札で決めた数（残りが標準）
-  const basicOf = Object.fromEntries(units.map(u => [u, Math.min(cnt[u], ucOf(u)[1])]));
+  // まぜるときの基本・発展の問題数：単元ごとに表で決めた数（残りが標準）
+  const advOf = Object.fromEntries(units.map(u => [u, ADV_UNITS.has(u) ? Math.min(cnt[u], ucOf(u)[2]) : 0]));
+  const basicOf = Object.fromEntries(units.map(u => [u, Math.min(cnt[u] - advOf[u], ucOf(u)[1])]));
   units.forEach(u => {
     // 「パターンを選ぶ」ときは、難しさのかわりに選んだ型を同じくらいずつ出す
     const zp = PICK[u] && pickOn(u), zk = zp ? pickPats(u) : [];
@@ -7862,7 +7907,7 @@ function makeSet(pool){
     while (zp && zSeq.length < cnt[u]) zSeq.push(...shuffle(zk.slice()));
     const zOrder = zp ? (pool ? zSeq : Array.from({ length: Math.ceil(cnt[u] / zk.length) }, () => shuffle(zk.slice())).flat()).slice(0, cnt[u]) : [];
     const gen = lv => zp ? genP(u, pickLv(u, lv), lv) : genP(u, lv);
-    const lvs = zp ? zOrder : Array.from({ length: cnt[u] }, (_, i) => ST.level === 'basic' ? 1 : ST.level === 'std' ? 2 : ST.level === 'adv' ? (ADV_UNITS.has(u) ? 3 : 2) : (i < basicOf[u] ? 1 : 2));
+    const lvs = zp ? zOrder : Array.from({ length: cnt[u] }, (_, i) => ST.level === 'basic' ? 1 : ST.level === 'std' ? 2 : ST.level === 'adv' ? (ADV_UNITS.has(u) ? 3 : 2) : (i < basicOf[u] ? 1 : i < cnt[u] - advOf[u] ? 2 : 3));
     // 統計の文章題（p.sit が場面）は、単元の中で場面を使い切るまで同じ場面を出さない。使い切ったら、直前の場面だけ残してやり直す
     const used = new Set(), ptr = {}; let last = null;
     lvs.forEach(lv => {
@@ -7890,7 +7935,7 @@ function makeSet(pool){
   PROBS = ST.order === 'mix' ? spreadSit(out) : out;
   // まぜるときの難しさの並び：基本 → 標準の順（初期）か、ランダム。out は単元ごとに基本 → 標準の順になっている
   if (ST.level === 'mix') {
-    if (ST.mixLv !== 'rand') { if (ST.order === 'mix') PROBS = [...spreadSit(out.filter(p => p.lv === 1)), ...spreadSit(out.filter(p => p.lv === 2))]; }
+    if (ST.mixLv !== 'rand') { if (ST.order === 'mix') PROBS = [1, 2, 3].flatMap(l => spreadSit(out.filter(p => p.lv === l))); }
     else if (ST.order !== 'mix') PROBS = units.flatMap(u => shuffle(out.filter(p => p.unit === u)));
   }
   Object.keys(PICK).forEach(applyPickOrder);
@@ -8590,14 +8635,6 @@ ${answers}
 `;
 }
 function status(t, err){ $('status').textContent = t; $('status').classList.toggle('err', !!err); }
-async function copyTex(){
-  const text = buildLatex();
-  try { await navigator.clipboard.writeText(text); status('LaTeX をコピーしました（問題と解答・解説）'); return; } catch (e) { /* 下の方法でコピー */ }
-  const ta = document.createElement('textarea');
-  ta.value = text; document.body.appendChild(ta); ta.select();
-  try { document.execCommand('copy'); status('LaTeX をコピーしました（問題と解答・解説）'); } catch (e) { status('コピーできませんでした。「.tex を保存」を使ってください', true); }
-  ta.remove();
-}
 const dateStamp = () => { const d = new Date(); return `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`; };
 function downloadTex(){
   const blob = new Blob([buildLatex()], { type: 'application/x-tex' });
@@ -8608,50 +8645,29 @@ function downloadTex(){
   status('.tex ファイルを保存しました');
 }
 
-/* ========== PDF（html2canvas → jsPDF、ボタンを押したときだけ読み込む） ========== */
-function loadScript(src){
-  return new Promise((res, rej) => {
-    if (document.querySelector(`script[src="${src}"]`)) return res();
-    const s = document.createElement('script');
-    s.src = src; s.onload = res; s.onerror = () => rej(new Error('読み込みに失敗しました'));
-    document.head.appendChild(s);
-  });
-}
-// 印刷する：ブラウザの印刷画面。PDF にするときは送信先を「PDF に保存」にする（文字がフォントのまま入るので、拡大してもくっきりする）
+/* ========== 印刷 ========== */
+// 印刷する：どのページを出すかを聞いてから、ブラウザの印刷画面を開く。PDF にするときは送信先を「PDF に保存」にする（文字がフォントのまま入るので、拡大してもくっきりする）
 function printOut(){
+  const note = $('printAskNote'), all = verAllOn();
+  note.hidden = !all; note.textContent = all ? `${VER_NAMES[0]} 版から ${VER_NAMES[VARS.list.length - 1]} 版まで、どの版にも同じ選び方を使います。` : '';
+  $('printAsk').showModal();
+}
+$('printAsk').addEventListener('click', e => {
+  const d = $('printAsk'), b = e.target.closest('button[data-out]');
+  if (e.target === d) { d.close(); return; }   // 画面の外を押したらやめる
+  if (!b) return;
+  ST.outPart = b.dataset.out; d.close();
   status('印刷の画面で、紙に印刷するときはプリンターを、PDF にするときは送信先を「PDF に保存」にしてください。');
   window.print();
-}
+});
+$('printAskNo').addEventListener('click', () => $('printAsk').close());
+// Ctrl+P でも同じように聞く
+document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === 'p') { e.preventDefault(); if (!$('printAsk').open) printOut(); } });
 // 印刷の画面が開くあいだ（ボタンでも Ctrl+P でも）、ページの題名を PDF のファイル名の候補にする
 let titleBeforePrint = '';
 window.addEventListener('beforeprint', () => { titleBeforePrint = document.title; document.title = `${fileBase()}_${dateStamp()}${fileTag()}`; });
 window.addEventListener('afterprint', () => { if (titleBeforePrint) document.title = titleBeforePrint; titleBeforePrint = ''; });
-// 画像の PDF（予備）：ページを画像にして貼るので、印刷画面が使いにくい端末向け。拡大すると少しぼやける
-async function savePdf(){
-  const btn = $('bImgPdf'), wrap = $('sheets');
-  btn.disabled = true; status('画像の PDF を作成中…');
-  try {
-    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
-    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
-    if (document.fonts && document.fonts.ready) await document.fonts.ready;
-    wrap.classList.add('capturing');
-    const pdf = new window.jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-    if (buildAllVers()) $('allSheets').classList.add('capturing');
-    const sheets = outSheets(); markOut(true);
-    for (let i = 0; i < sheets.length; i++) {
-      // 文字のにじみを減らすため、解像度を上げて PNG（約290dpi）で貼る
-      const canvas = await window.html2canvas(sheets[i], { scale: 3, backgroundColor: '#ffffff', useCORS: true });
-      if (i) pdf.addPage();
-      pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, 210, 297, undefined, 'FAST');
-    }
-    pdf.save(`${fileBase()}_画像_${dateStamp()}${fileTag()}.pdf`);
-    status('画像の PDF を保存しました。拡大してもくっきりさせたいときは「印刷する」で PDF に保存してください');
-  } catch (e) {
-    status('PDF を作れませんでした：' + e.message + '（「印刷する」から PDF に保存することもできます）', true);
-  }
-  wrap.classList.remove('capturing'); markOut(false); $('allSheets').classList.remove('capturing'); clearAllVers();
-  btn.disabled = false;
-}
+
 
 /* ========== 操作 ========== */
 function applyFont(){ document.documentElement.style.setProperty('--font', FONTS[ST.font] || FONTS.maru); }
@@ -8784,7 +8800,7 @@ function qPageCount(){
 // 試すたびに問題を作りなおさず、pool の同じ問題を使う（問題数が多いほどページも多くなるので、指定のページの近くまで入る）
 function fitToPages(pool0){
   // 単元ごとの問題数は、いまの数の比率（w）を保ったまま n 問にふやす・へらす
-  // 比率のもと（ST.uBase）は、札や全体の問題数で決めた数。ページ数を何度変えても、端数のずれがたまらないように覚えておく
+  // 比率のもと（ST.uBase）は、表や全体の問題数で決めた数。ページ数を何度変えても、端数のずれがたまらないように覚えておく
   const us = selUnits(), sameU = o => o && Object.keys(o).length === us.length && us.every(u => Array.isArray(o[u]));
   if (!sameU(ST.uBase)) ST.uBase = JSON.parse(JSON.stringify(ST.uCnt || {}));
   const want = ST.fitPages, pool = pool0 || {}, w = ST.uBase; let best = null, lo = 0, hi = CNT_MAX + 1, pg = 0;
@@ -8818,7 +8834,7 @@ document.querySelectorAll('.seg[data-set] button').forEach(b => b.addEventListen
   if (lastSt && ['ans', 'zenkaOrder', 'baikaiOrder'].includes(name)) lastSt = { ...lastSt, [name]: ST[name] };   // 作りなおさない設定は、元にもどすときの設定にもすぐ入れる
   if (name === 'font') { applyFont(); (document.fonts ? document.fonts.ready : Promise.resolve()).then(ST.fit === 'page' ? () => { regenKeep = true; regenerate(); } : render); }   // ページに合わせるときも、問題は残して数えなおす
   else if (name === 'pv') applyPv();
-  else if (name === 'outPart') status(OUT_NOTE[ST.outPart]);
+
   else if (ST.fit === 'page' && name === 'formula') regenerate();   // 紙面が変わると入る問題数も変わる
   else if (name === 'zenkaOrder' || name === 'baikaiOrder') { ADJ = {}; BRK = { work: new Set(), list: new Set() }; applyPickOrder(name === 'zenkaOrder' ? 'zenka' : 'baikaiShoukyo'); render(); }   // 同じ問題のまま並べかえる
   else if (name === 'hScore') { $('scoreMaxBox').style.display = ST.hScore === 'points' ? 'flex' : 'none'; render(); }
@@ -8839,7 +8855,8 @@ function updateGroupCounts(){
   const sel = UNITS.filter(u => ST.units.includes(u[0]));
   $('pickCnt').textContent = '選んだ単元（' + sel.length + '）';
   $('unitClear').style.display = sel.length ? '' : 'none';
-  $('picked').innerHTML = sel.map(([u, nm]) => '<span class="pchip"><span>' + esc(nm) + '</span>' + cntHTML(u, nm)
+  renderUTable();
+  $('picked').innerHTML = sel.map(([u, nm]) => '<span class="pchip"><span>' + esc(nm) + '</span>'
     + (UNIT_SET[u] ? '<button type="button" class="set' + (ST.setOpen === u ? ' on' : '') + '" data-setopen="' + u + '" aria-pressed="' + (ST.setOpen === u) + '">設定</button>' : '')
     + '<button type="button" data-remove="' + u + '" aria-label="' + esc(nm) + ' を外す">' + XMARK + '</button></span>').join('')
     || '<span class="pempty">まだ選んでいません。下の教科と分野から選んでください。</span>';
@@ -8849,31 +8866,52 @@ function updateGroupCounts(){
   $('title').placeholder = 'プリントの題名（空らんなら「' + baseTitle() + '」）';
   updateGrpSums();
 }
-// 札の問題数の欄：「まぜる」なら基本・標準の2つ（パターンを選ぶ単元は合計だけ）、ほかは問題数だけ
-function cntHTML(u, nm){
-  const [n, b] = ucOf(u), inp = (k, v, lab) => `<input type="number" min="0" max="${CNT_MAX}" step="1" inputmode="numeric" data-uc="${u}" data-k="${k}" value="${v}" aria-label="${esc(nm + ' の' + lab)}">`;
-  if (ST.level === 'mix' && !(PICK[u] && pickOn(u))) return `<span class="ucnt">基本${inp('b', b, '基本の問題数')}標準${inp('s', n - b, '標準の問題数')}</span>`;
-  return `<span class="ucnt">${inp('n', n, '問題数')}問</span>`;
+// 「問題の量」の表：「まぜる」なら単元ごとに基本・標準・発展の数（発展は発展のある単元だけ、パターンを選ぶ単元は合計だけ）、ほかは問題数だけ
+function renderUTable(){
+  const sel = UNITS.filter(u => ST.units.includes(u[0]));
+  if (!sel.length) { $('uTable').innerHTML = ''; return; }
+  const inp = (u, nm, k, lab) => `<input type="text" inputmode="numeric" autocomplete="off" data-uc="${u}" data-k="${k}" aria-label="${esc(nm + ' の' + lab)}">`;
+  const isPick = u => PICK[u] && pickOn(u), mix = ST.level === 'mix', adv = mix && sel.some(([u]) => ADV_UNITS.has(u) && !isPick(u));
+  const head = mix ? `<th>単元</th><th>基本</th><th>標準</th>${adv ? '<th>発展</th>' : ''}<th>計</th>` : '<th>単元</th><th>問題数</th>';
+  const row = ([u, nm]) => {
+    if (!mix) return `<tr><th scope="row">${esc(nm)}</th><td>${inp(u, nm, 'n', '問題数')}</td></tr>`;
+    if (isPick(u)) return `<tr><th scope="row">${esc(nm)}</th><td colspan="${adv ? 3 : 2}" class="no">パターンで出す</td><td>${inp(u, nm, 'n', '問題数')}</td></tr>`;
+    return `<tr><th scope="row">${esc(nm)}</th><td>${inp(u, nm, 'b', '基本の問題数')}</td><td>${inp(u, nm, 's', '標準の問題数')}</td>${adv ? `<td>${ADV_UNITS.has(u) ? inp(u, nm, 'a', '発展の問題数') : '<span class="no">なし</span>'}</td>` : ''}<td data-sum="${u}"></td></tr>`;
+  };
+  const foot = mix ? `<th scope="row">全体</th><td data-foot="b"></td><td data-foot="s"></td>${adv ? '<td data-foot="a"></td>' : ''}<td data-foot="n"></td>` : '<th scope="row">全体</th><td data-foot="n"></td>';
+  $('uTable').innerHTML = `<table class="utbl"><thead><tr>${head}</tr></thead><tbody>${sel.map(row).join('')}</tbody><tfoot><tr>${foot}</tr></tfoot></table>`;
+  fillUTable();
 }
-// 単元ごとの問題数を直す：全体の問題数はその合計になり、「問題数を自分で決める」にもどる。
-// 打っている途中で札を作りなおすと次の欄に移れないので、その札の数だけ書きかえる
-$('picked').addEventListener('change', e => {
+// 表の数だけ書きかえる（打っている途中で表を作りなおすと次の欄に移れないので）
+function fillUTable(){
+  const box = $('uTable'), us = selUnits().filter(u => !(PICK[u] && pickOn(u)));
+  const tot = i => us.reduce((t, u) => t + ucOf(u)[i], 0);
+  const v = { n: cntSum(), b: tot(1), a: tot(2), s: tot(0) - tot(1) - tot(2) };
+  box.querySelectorAll('input[data-uc]').forEach(x => { const [n, b, a] = ucOf(x.dataset.uc); x.value = { n, b, a, s: n - b - a }[x.dataset.k]; });
+  box.querySelectorAll('[data-sum]').forEach(x => { x.textContent = ucOf(x.dataset.sum)[0]; });
+  box.querySelectorAll('[data-foot]').forEach(x => { x.textContent = v[x.dataset.foot]; });
+}
+// 単元ごとの問題数を直す：全体の問題数はその合計になり、「問題数を自分で決める」にもどる
+$('uTable').addEventListener('change', e => {
   const i = e.target.closest('input[data-uc]'); if (!i) return;
-  const u = i.dataset.uc, k = i.dataset.k, [n0, b0] = ucOf(u), v = Math.max(0, Math.round(+i.value) || 0);
-  let n = k === 'n' ? v : k === 'b' ? v + (n0 - b0) : b0 + v, b = k === 'b' ? v : b0, msg = '';
-  const room = CNT_MAX - (cntSum() - n0);
-  if (n > room) { if (k === 'b') b = Math.max(0, b - (n - room)); n = room; msg = `全体が${CNT_MAX}問（上限）をこえるので、${unitName(u)}は${n}問にしました。`; }
-  b = Math.min(b, n);
-  if (cntSum() - n0 + n < 1) { n = n0; b = b0; msg = '全体が0問になるので、もとの数にもどしました。'; }
-  i.closest('.pchip').querySelectorAll('input[data-uc]').forEach(x => { x.value = x.dataset.k === 'n' ? n : x.dataset.k === 'b' ? b : n - b; });
-  if (msg) status(msg, true);
-  if (n === n0 && b === b0) return;
-  ST.uCnt[u] = [n, b]; ST.uBase = null; ST.count = String(cntSum()); ST.fit = 'count'; regenKeep = true;
-  $('cnt').value = ST.count; save();
+  const u = i.dataset.uc, k = i.dataset.k, [n0, b0, a0] = ucOf(u), raw = i.value.normalize('NFKC').trim();   // 全角の数字も読む
+  if (!/^\d+$/.test(raw)) { fillUTable(); status('問題数は 0 以上の数字で入れてください。', true); return; }
+  // 直す欄のほかに残る数（others は別の単元、rest は同じ単元の別の難しさ）
+  const others = cntSum() - n0, rest = k === 'b' ? n0 - b0 : k === 'a' ? n0 - a0 : k === 's' ? b0 + a0 : 0, max = CNT_MAX - others - rest;
+  let v = Math.round(+raw), msg = '';
+  if (v > max) { v = max; msg = `全体が${CNT_MAX}問（上限）をこえるので、${v}問にしました。`; }
+  if (others + rest + v < 1) { fillUTable(); status('全体が0問になるので、もとの数にもどしました。', true); return; }
+  const next = k === 'n' ? splitFor(v, [n0, b0, a0]) : k === 'b' ? [rest + v, v, a0] : k === 'a' ? [rest + v, b0, v] : [rest + v, b0, a0];
+  if (msg) { status(msg, true); holdNote = true; }   // 作りなおしたあとも知らせを残す
+  if (next[0] === n0 && next[1] === b0 && next[2] === a0) { fillUTable(); return; }
+  ST.uCnt[u] = next; ST.uBase = null; ST.count = String(cntSum()); ST.fit = 'count'; regenKeep = true;
+  $('cnt').value = ST.count; save(); fillUTable();
   document.querySelectorAll('.seg[data-set="fit"] button').forEach(x => x.classList.toggle('on', x.dataset.v === ST.fit));
-  showOpts(); updateGrpSums(); regenSoon();
+  $('levelNote').innerHTML = levelNoteHTML(); showOpts(); updateGrpSums(); regenSoon();
 });
-$('picked').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches('input[data-uc]')) e.target.blur(); });
+$('uTable').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches('input[data-uc]')) e.target.blur(); });
+// 欄を押すと中の数が全部選ばれて、打った数に置きかわる（後ろに数がつかないように）
+['focusin', 'click'].forEach(t => $('uTable').addEventListener(t, e => { if (e.target.matches('input[data-uc]')) e.target.select(); }));
 $('picked').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
   if (b.dataset.remove) setUnits(ST.units.filter(u => u !== b.dataset.remove));
@@ -9054,7 +9092,7 @@ function updateGrpSums(){
     // 「まぜる」の並び順のように、いま隠している設定のボタンは入れない
     else s = [...g.querySelectorAll('.seg button.on')].filter(b => !b.closest('[style*="display: none"]')).map(b => b.textContent).join('・');
     // まぜるときは、基本・標準の問題数の合計（パターンを選ぶ単元はのぞく）
-    if (g.querySelector('#mixLvBox') && ST.level === 'mix') { const us = selUnits().filter(u => !(PICK[u] && pickOn(u))), b = us.reduce((t, u) => t + ucOf(u)[1], 0); s += `・基本 ${b}問・標準 ${us.reduce((t, u) => t + ucOf(u)[0], 0) - b}問`; }
+    if (g.querySelector('#mixLvBox') && ST.level === 'mix') { const us = selUnits().filter(u => !(PICK[u] && pickOn(u))), b = us.reduce((t, u) => t + ucOf(u)[1], 0), a = us.reduce((t, u) => t + ucOf(u)[2], 0); s += `・基本 ${b}問・標準 ${us.reduce((t, u) => t + ucOf(u)[0], 0) - b - a}問${a ? `・発展 ${a}問` : ''}`; }
     if (g.querySelector('#cnt')) s = ST.fit === 'page' ? `${ST.count}問（問題${ST.fitPages}ページに合わせる）` : `${ST.count}問`;
     if (g.querySelector('#presetList')) s = ST.presets.length || ST.presetFolders.length ? `${ST.presets.length}件` + (ST.presetFolders.length ? `（フォルダ ${ST.presetFolders.join('・')}）` : '') : 'まだありません';
     if (g.querySelector('#recentList')) s = ST.recent && ST.recent.length ? `${ST.recent.length}件` : 'まだありません';
@@ -9086,9 +9124,7 @@ document.querySelectorAll('#cntBox button').forEach(b => b.addEventListener('cli
 $('cnt').addEventListener('change', () => setCnt($('cnt').value));
 $('cnt').addEventListener('keydown', e => { if (e.key === 'Enter') setCnt($('cnt').value); });
 $('bMake').addEventListener('click', () => { regenKeep = false; regenerate(); });
-$('bImgPdf').addEventListener('click', savePdf);
 $('bPrint').addEventListener('click', printOut);
-$('bTexCopy').addEventListener('click', copyTex);
 $('bTexDl').addEventListener('click', downloadTex);
 document.querySelectorAll('#tabs button').forEach(b => b.addEventListener('click', () => {
   document.querySelectorAll('#tabs button').forEach(x => x.classList.toggle('on', x === b));
@@ -9218,8 +9254,8 @@ const snapSettings = () => JSON.parse(JSON.stringify(Object.fromEntries(PRESET_K
 function cleanSettings(s){
   if (!s || typeof s !== 'object' || Array.isArray(s)) return null;
   const ok = v => v === null || ['string', 'number', 'boolean'].includes(typeof v) || (Array.isArray(v) && v.every(x => typeof x === 'string'));
-  // 単元ごとの問題数は { 単元: [数, 基本の数] }。前の版のファイルの基本の割合（mixBasic）も読む
-  const okCnt = v => v && typeof v === 'object' && !Array.isArray(v) && Object.values(v).every(x => Array.isArray(x) && x.length === 2 && x.every(Number.isFinite));
+  // 単元ごとの問題数は { 単元: [数, 基本の数, 発展の数] }（発展の数がない前の版のファイルも読む）。前の版のファイルの基本の割合（mixBasic）も読む
+  const okCnt = v => v && typeof v === 'object' && !Array.isArray(v) && Object.values(v).every(x => Array.isArray(x) && (x.length === 2 || x.length === 3) && x.every(Number.isFinite));
   const o = Object.fromEntries(PRESET_KEYS.filter(k => k in s && (k === 'uCnt' ? okCnt(s[k]) : ok(s[k]))).map(k => [k, s[k]]));
   if (Number.isFinite(s.mixBasic)) o.mixBasic = s.mixBasic;
   return Object.keys(o).length ? o : null;
@@ -9245,7 +9281,7 @@ $('presetWithSet').checked = ST.presetWithSet !== false;
 $('presetWithSet').addEventListener('change', () => { ST.presetWithSet = $('presetWithSet').checked; save(); });
 
 /* ========== 最近作ったプリント ========== */
-// 印刷・画像で PDF・LaTeX の出力のときに、単元と設定（と題名）を残す。同じ内容は1件にまとめて先頭へ。10件まで
+// 印刷・LaTeX の出力のときに、単元と設定（と題名）を残す。同じ内容は1件にまとめて先頭へ。10件まで
 const RECENT_MAX = 10, LEVEL_NAME = { basic: '基本', std: '標準', adv: '発展', mix: 'まぜる' };
 function recordRecent(){
   if (!PROBS.length) return;
@@ -9309,16 +9345,12 @@ function openRecent(r, same){
   status(diff ? `前に作ったプリントを開きました。ただし${diff}問は、アプリを直したため前と少しちがう問題です。` : '前に作ったプリントを、同じ問題で開きました。', !!diff);
 }
 // 印刷（印刷する・Ctrl+P）は、印刷の画面が開くときに残す。ほかはボタンを押したとき
-['bImgPdf', 'bTexCopy', 'bTexDl'].forEach(id => $(id).addEventListener('click', recordRecent));
+$('bTexDl').addEventListener('click', recordRecent);
 window.addEventListener('beforeprint', recordRecent);
 
-/* ========== 保存・印刷するページ（全部／問題だけ／解答だけ） ========== */
-const OUT_NOTE = {
-  all: '印刷（PDF に保存も）・画像で PDF は、全部のページです。',
-  q: '印刷（PDF に保存も）・画像で PDF は、問題のページだけです（正規分布表・公式のページもふくみます）。LaTeX は全部のままです。',
-  a: '印刷（PDF に保存も）・画像で PDF は、解答のページだけです。LaTeX は全部のままです。'
-};
-if (!['all', 'q', 'a'].includes(ST.outPart)) ST.outPart = 'all';
+/* ========== 印刷するページ（全部／問題だけ／解答だけ） ========== */
+// 「印刷する」を押したあとに選ぶ。選ばずに印刷の画面を開いたとき（ブラウザのメニュー）は全部
+ST.outPart = 'all';
 const outSheets = () => [...(verAllOn() ? $('allSheets') : $('sheets')).querySelectorAll('.sheet')].filter(sh => ST.outPart === 'all' || (ST.outPart === 'a') === sh.classList.contains('ans'));
 // 出すページだけにして、ページ番号を「1 / n」から数えなおす。off で元にもどす
 function markOut(on){
@@ -9334,7 +9366,7 @@ function markOut(on){
   if (vis.length) vis[vis.length - 1].classList.add('lastOut');
 }
 window.addEventListener('beforeprint', () => { buildAllVers(); markOut(true); });
-window.addEventListener('afterprint', () => { markOut(false); clearAllVers(); });
+window.addEventListener('afterprint', () => { markOut(false); clearAllVers(); ST.outPart = 'all'; });
 // ファイル名につける印：別バージョンなら「_B版」、問題だけ・解答だけなら「_問題」「_解答」
 const verTag = () => verAllOn() ? `_${VER_NAMES.slice(0, VARS.list.length)}版` : verLetter() ? `_${verLetter()}版` : '';
 const fileTag = () => verTag() + ({ q: '_問題', a: '_解答' }[ST.outPart] || '');
@@ -9381,7 +9413,7 @@ function renderVer(){
   const n = VARS ? VARS.list.length : 1;
   box.innerHTML = (n > 1 ? Array.from({ length: n }, (_, i) => `<button type="button" data-ver="${i}" class="${VARS.cur === i ? 'on' : ''}" aria-pressed="${VARS.cur === i}">${VER_NAMES[i]} 版</button>`).join('') : '')
     + (n < VER_MAX ? '<button type="button" class="add" data-ver="add" title="同じ単元・難しさ・並びで、数だけちがうプリントを作ります">＋別バージョン</button>' : '')
-    + (n > 1 ? `<button type="button" class="all${ST.verAll ? ' on' : ''}" data-ver="all" aria-pressed="${!!ST.verAll}" title="印刷・画像で PDF に、A 版から順に全部の版を入れます">全部の版をまとめて印刷</button>` : '');
+    + (n > 1 ? `<button type="button" class="all${ST.verAll ? ' on' : ''}" data-ver="all" aria-pressed="${!!ST.verAll}" title="印刷に、A 版から順に全部の版を入れます">全部の版をまとめて印刷</button>` : '');
   updHist();
 }
 // 全部の版をまとめて印刷：印刷の直前に、版ごとに並べたページを写して #allSheets に入れる（A 版の問題・解答 → B 版の問題・解答 …）
@@ -9402,7 +9434,7 @@ function buildAllVers(){
 function clearAllVers(){ $('allSheets').innerHTML = ''; document.body.classList.remove('print-all'); }
 $('verBox').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
-  if (b.dataset.ver === 'all') { ST.verAll = !ST.verAll; save(); renderVer(); status(ST.verAll ? `印刷・画像で PDF に、${VER_NAMES[0]} 版から ${VER_NAMES[VARS.list.length - 1]} 版まで全部の版が入ります（「保存・印刷」の全部／問題だけ／解答だけは、どの版にも使います）。` : '印刷・画像で PDF は、いま見ている版だけです。'); }
+  if (b.dataset.ver === 'all') { ST.verAll = !ST.verAll; save(); renderVer(); status(ST.verAll ? `印刷に、${VER_NAMES[0]} 版から ${VER_NAMES[VARS.list.length - 1]} 版まで全部の版が入ります（印刷のときに選ぶ全部／問題だけ／解答だけは、どの版にも使います）。` : '印刷は、いま見ている版だけです。'); }
   else if (b.dataset.ver === 'add') addVariant(); else if (VARS && +b.dataset.ver !== VARS.cur) switchVer(+b.dataset.ver);
 });
 
@@ -9487,9 +9519,7 @@ window.addEventListener('scroll', closeReMenu, { passive: true });
 let HIST = { past: [], future: [] };
 function resetHist(){ HIST = { past: [], future: [] }; updHist(); }
 function updHist(){
-  const u = $('bUndo'), r = $('bRedo'), any = HIST.past.length || HIST.future.length;
-  u.style.display = r.style.display = any ? '' : 'none';
-  u.disabled = !HIST.past.length; r.disabled = !HIST.future.length;
+  $('bUndo').disabled = !HIST.past.length; $('bRedo').disabled = !HIST.future.length;
 }
 // 記録は操作の前と後の「問題の並び・手で直した高さ・改段と改ページ」の写し。もどすときは前の写しを、やり直すときは後の写しを当てる
 const HIST_NAME = { regen: '作りなおし', keep: '作りなおし', recent: '最近作ったプリントを開いたこと', move: '問題の並べかえ', swap: '問題の入れかえ', adj: '欄の高さの変更', brk: '改段・改ページ', adjAll: '「高さを自動にもどす」', brkAll: '「改段・改ページをすべて取り消す」' };
