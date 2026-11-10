@@ -742,8 +742,10 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.56.1', UPDATED = '2026-11-10';
+const VERSION = '5.57.1', UPDATED = '2026-11-10';
 const CHANGES = [
+  ['5.57.1', '2026-11-10', '全部の版をまとめて印刷するとき、ページ数が奇数の版のあとに白紙を1枚入れる（両面印刷で、次の版が前の版の裏に入らないように）。'],
+  ['5.57.0', '2026-11-10', '格子点の個数を Σ で計算する解説に変更。端が整数にならない向きを避けて数える問題と、n を含み答えを n の式で表す問題（難しさ2）を追加。'],
   ['5.56.1', '2026-11-10', '格子点の個数を数B（数列）の単元に移した（Σの計算の後ろ）。'],
   ['5.56.0', '2026-11-10', '数A に単元「格子点の個数」を追加。難しさ1は x≧0, y≧0 と直線1本、難しさ2は直線2本や放物線で囲まれた部分。直線 x=k（y=k）ごとに数えて足す解説つき。'],
   ['5.55.1', '2026-11-10', '小テストに切りかえたときは、「各問に配点を出す」と「答えの枠をつける」が選ばれた状態になるようにした（そのあと外せる）。'],
@@ -1070,8 +1072,8 @@ const TIME_TABLE = [
   ['nshinFrac', '2進法の小数', [40, 90, 180]],
   ['yaku1', '約数の個数（または総和）', [30, 70, 140]],
   ['yaku2', '約数の個数と総和', [50, 110, 220]],
-  ['koshi1', '格子点の個数（x≧0, y≧0 と直線1本）', [60, 150, 300]],
-  ['koshi2', '格子点の個数（直線2本・放物線）', [90, 210, 420]],
+  ['koshi1', '格子点の個数（数で・Σ で計算）', [90, 180, 360]],
+  ['koshi2', '格子点の個数（n の式で表す）', [120, 240, 480]],
   ['goudouPow', '合同式：べきを割った余り', [40, 90, 180]],
   ['goudouProd', '合同式：積・和を割った余り', [25, 60, 120]],
   ['goudouLin', '合同式：1次合同式', [40, 90, 180]],
@@ -1288,7 +1290,7 @@ const UNIT_LEVEL = {
   futeishiki: ['小さい係数・代入でさがす', '互除法で特殊解をさがす'],
   nshin: ['2進法の変換', '3〜7進法・2進法の計算と小数'],
   yakusuu: ['素因数が2種類（個数か総和）', '素因数が3種類・個数と総和'],
-  koshiten: ['x≧0, y≧0 と x+y≦n・x+2y≦n など', 'y≦2x などの直線2本・放物線 y≧x² で囲む'],
+  koshiten: ['数で求める（Σ で計算・端が整数にならない向きを避ける）', 'n を含む（答えを n の式で表す）'],
   goudou: ['小さい法', '大きい法（〜13）'],
   menelaus: ['線分の比 AP:PD', 'BP:PE・延長との交点'],
   houbeki: ['長さが整数', '弦の交点が分数・接線が √'],
@@ -2868,30 +2870,53 @@ const A_GEN = {
     }
   },
 
-  // 【格子点の個数】直線 x=k（または y=k）ごとに数えて足す。答えは全部の点を調べて確かめる
+  // 【格子点の個数】直線 x=k（または y=k）の上の個数を k の式で表し，Σ で足す。答えは全部の点を調べて確かめる
+  // 難しさ1：数で（端が整数にならない向きを避ける問題もふくむ）／難しさ2：n を含み，答えを n の式で表す
   koshiten(lv){
-    const t = lv === 1 ? pick(['x+y', 'x+2y', 'x+3y']) : pick(['2x', 'y<=x', 'para', '2x+3y']);
-    const range = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
-    let conds, ok, v, ks, cnt, how;   // ok(x,y)：条件を満たすか、v：数える直線の文字、cnt(k)：その直線上の個数
-    if (t === 'x+y') { const n = ri(6, 20); conds = ['x\\geqq 0', 'y\\geqq 0', `x+y\\leqq ${n}`]; ok = (x, y) => x >= 0 && y >= 0 && x + y <= n; v = 'x'; ks = range(0, n); cnt = k => n - k + 1; how = `$y$ は $0$ から $${n}-k$ までの $${n + 1}-k$ 個`; }
-    else if (t === 'x+2y' || t === 'x+3y') { const a = t === 'x+2y' ? 2 : 3, c = a === 2 ? ri(7, 20) : ri(9, 24); conds = ['x\\geqq 0', 'y\\geqq 0', `x+${a}y\\leqq ${c}`]; ok = (x, y) => x >= 0 && y >= 0 && x + a * y <= c; v = 'y'; ks = range(0, Math.floor(c / a)); cnt = k => c - a * k + 1; how = `$x$ は $0$ から $${c}-${a}k$ までの $${c + 1}-${a}k$ 個`; }
-    else if (t === '2x') { const c = 2 * ri(4, 10); conds = ['y\\geqq 0', 'y\\leqq 2x', `x+2y\\leqq ${c}`]; ok = (x, y) => y >= 0 && y <= 2 * x && x + 2 * y <= c; v = 'y'; ks = range(0, Math.floor(2 * c / 5)); cnt = k => c - 2 * k - Math.ceil(k / 2) + 1; how = `$\\frac{k}{2}\\leqq x\\leqq ${c}-2k$ をみたす整数 $x$ の個数`; }
-    else if (t === 'y<=x') { const c = ri(6, 20); conds = ['y\\geqq 0', 'y\\leqq x', `x+y\\leqq ${c}`]; ok = (x, y) => y >= 0 && y <= x && x + y <= c; v = 'y'; ks = range(0, Math.floor(c / 2)); cnt = k => c - 2 * k + 1; how = `$x$ は $k$ から $${c}-k$ までの $${c + 1}-2k$ 個`; }
-    else if (t === '2x+3y') { const c = ri(12, 24); conds = ['x\\geqq 0', 'y\\geqq 0', `2x+3y\\leqq ${c}`]; ok = (x, y) => x >= 0 && y >= 0 && 2 * x + 3 * y <= c; v = 'y'; ks = range(0, Math.floor(c / 3)); cnt = k => Math.floor((c - 3 * k) / 2) + 1; how = `$0\\leqq x\\leqq \\frac{${c}-3k}{2}$ をみたす整数 $x$ の個数`; }
-    else { const n = ri(4, 16), m = Math.floor(Math.sqrt(n)); conds = ['y\\geqq x^2', `y\\leqq ${n}`]; ok = (x, y) => y >= x * x && y <= n; v = 'x'; ks = range(-m, m); cnt = k => n - k * k + 1; how = `$y$ は $k^2$ から $${n}$ までの $${n + 1}-k^2$ 個`; }
-    const cs = ks.map(cnt), total = cs.reduce((s, x) => s + x, 0), cond = conds.join(',\\ ');
-    const kr = ks.length > 4 ? `${ks[0]},\\ ${ks[1]},\\ \\cdots,\\ ${ks[ks.length - 1]}` : ks.join(',\\ ');
-    const st = [{ t: 'txt', s: `直線 $${v}=k$（$k=${kr}$）の上の格子点を数える。$${v}=k$ のとき，${how}。` }];
-    const arith = cs.length > 2 && cs.every((x, i) => !i || x - cs[i - 1] === cs[1] - cs[0]);
-    if (cs.length > 7 && arith) st.push({ t: 'eq', noEval: true, rows: chain(`${cs[0]}+${cs[1]}+\\cdots+${cs[cs.length - 1]} &= \\frac{(${cs[0]}+${cs[cs.length - 1]})\\times${cs.length}}{2}`, `${total}`) });
-    else {
-      st.push({ t: 'txt', s: ks.map((k, i) => `$${v}=${k}$ のとき $${cs[i]}$ 個`).join('，') + '。' });
-      st.push({ t: 'eq', rows: [`${cs.join('+')} &= ${total}`] });
+    // x と y を入れかえた問題もつくる（文字列は x↔y を入れかえる）
+    const swapXY = t => t.replace(/[xy]/g, c => c === 'x' ? 'y' : 'x');
+    const frac = '直線 $x=k$ の上で数えると端が整数にならないので，直線 $y=k$ の上で数える。';
+    const lin = (A, B, m) => {   // Σ_{k=0}^{m}(A−Bk)（A, B, m は数）
+      const t = B === 1 ? 'k' : B + 'k', half = m * (m + 1) / 2;
+      return chain(`\\sum_{k=0}^{${m}}(${A}-${t}) &= ${A}\\times${m + 1}-${B === 1 ? '' : B + '\\times'}\\frac{${m}\\times${m + 1}}{2}`, `${A * (m + 1)}-${B * half}`, `${A * (m + 1) - B * half}`);
+    };
+    let conds, ok, v, kr, how, rows, ans, f = null, note = '', canSw = true;
+    if (lv === 1) {
+      const t = pick(['x+y', 'x+2y', 'x+3y', 'y<=x', 'y<=x/2', 'x^2']);
+      let m;
+      if (t === 'x+y') { const c = ri(8, 20); conds = ['x\\geqq 0', 'y\\geqq 0', `x+y\\leqq ${c}`]; ok = (x, y) => x >= 0 && y >= 0 && x + y <= c; v = 'x'; m = c; how = `$y=0,\\ 1,\\ \\cdots,\\ ${c}-k$ の $${c + 1}-k$ 個`; rows = lin(c + 1, 1, c); }
+      else if (t === 'x+2y' || t === 'x+3y') { const A = t === 'x+2y' ? 2 : 3, c = A === 2 ? ri(9, 21) : ri(10, 24); conds = ['x\\geqq 0', 'y\\geqq 0', `x+${A}y\\leqq ${c}`]; ok = (x, y) => x >= 0 && y >= 0 && x + A * y <= c; v = 'y'; m = Math.floor(c / A); how = `$x=0,\\ 1,\\ \\cdots,\\ ${c}-${A}k$ の $${c + 1}-${A}k$ 個`; rows = lin(c + 1, A, m); note = frac; }
+      else if (t === 'y<=x') { const c = ri(8, 20); conds = ['y\\geqq 0', 'y\\leqq x', `x+y\\leqq ${c}`]; ok = (x, y) => y >= 0 && y <= x && x + y <= c; v = 'y'; m = Math.floor(c / 2); how = `$x=k,\\ k+1,\\ \\cdots,\\ ${c}-k$ の $${c + 1}-2k$ 個`; rows = lin(c + 1, 2, m); }
+      else if (t === 'y<=x/2') { const c = ri(9, 21); conds = ['y\\geqq 0', 'y\\leqq\\frac{x}{2}', `x\\leqq ${c}`]; ok = (x, y) => y >= 0 && 2 * y <= x && x <= c; v = 'y'; m = Math.floor(c / 2); how = `$x=2k,\\ 2k+1,\\ \\cdots,\\ ${c}$ の $${c + 1}-2k$ 個`; rows = lin(c + 1, 2, m); note = frac; }
+      else { canSw = false; m = ri(3, 7); const q = m * (m + 1) * (2 * m + 1) / 6; conds = ['0\\leqq x\\leqq ' + m, '0\\leqq y\\leqq x^2']; ok = (x, y) => x >= 0 && x <= m && y >= 0 && y <= x * x; v = 'x'; how = '$y=0,\\ 1,\\ \\cdots,\\ k^2$ の $k^2+1$ 個'; rows = chain(`\\sum_{k=0}^{${m}}(k^2+1) &= \\frac{${m}\\times${m + 1}\\times${2 * m + 1}}{6}+${m + 1}`, `${q}+${m + 1}`, `${q + m + 1}`); }
+      kr = `0,\\ 1,\\ \\cdots,\\ ${m}`;
+      ans = rows[rows.length - 1].split('&=').pop().trim();
+    } else {
+      const t = pick(['x+2y', 'x+3y', 'y<=x', 'y<=x/2', 'x^2', 'para']), sq = '(n+1)^2';
+      const two = ['\\sum_{k=0}^{n}(2n+1-2k) &= (2n+1)(n+1)-2\\cdot\\frac{1}{2}n(n+1)', '&= (n+1)(2n+1-n)', '&= ' + sq];
+      kr = '0,\\ 1,\\ \\cdots,\\ n';
+      if (t === 'x+2y') { conds = ['x\\geqq 0', 'y\\geqq 0', 'x+2y\\leqq 2n']; ok = (x, y, n) => x >= 0 && y >= 0 && x + 2 * y <= 2 * n; v = 'y'; how = '$x=0,\\ 1,\\ \\cdots,\\ 2n-2k$ の $2n+1-2k$ 個'; rows = two; ans = sq; f = n => (n + 1) ** 2; note = '直線 $x=k$ の上で数えると端 $\\frac{2n-k}{2}$ が整数にならないことがあるので，直線 $y=k$ の上で数える。'; }
+      else if (t === 'x+3y') { conds = ['x\\geqq 0', 'y\\geqq 0', 'x+3y\\leqq 3n']; ok = (x, y, n) => x >= 0 && y >= 0 && x + 3 * y <= 3 * n; v = 'y'; how = '$x=0,\\ 1,\\ \\cdots,\\ 3n-3k$ の $3n+1-3k$ 個';
+        rows = ['\\sum_{k=0}^{n}(3n+1-3k) &= (3n+1)(n+1)-3\\cdot\\frac{1}{2}n(n+1)', '&= \\frac{1}{2}(n+1)(6n+2-3n)', '&= \\frac{1}{2}(n+1)(3n+2)']; ans = '\\frac{1}{2}(n+1)(3n+2)'; f = n => (n + 1) * (3 * n + 2) / 2; note = '直線 $x=k$ の上で数えると端 $\\frac{3n-k}{3}$ が整数にならないことがあるので，直線 $y=k$ の上で数える。'; }
+      else if (t === 'y<=x') { conds = ['y\\geqq 0', 'y\\leqq x', 'x+y\\leqq 2n']; ok = (x, y, n) => y >= 0 && y <= x && x + y <= 2 * n; v = 'y'; how = '$x=k,\\ k+1,\\ \\cdots,\\ 2n-k$ の $2n+1-2k$ 個'; rows = two; ans = sq; f = n => (n + 1) ** 2; }
+      else if (t === 'y<=x/2') { conds = ['y\\geqq 0', 'y\\leqq\\frac{x}{2}', 'x\\leqq 2n']; ok = (x, y, n) => y >= 0 && 2 * y <= x && x <= 2 * n; v = 'y'; how = '$x=2k,\\ 2k+1,\\ \\cdots,\\ 2n$ の $2n+1-2k$ 個'; rows = two; ans = sq; f = n => (n + 1) ** 2; note = '直線 $x=k$ の上で数えると端 $\\frac{k}{2}$ が整数にならないことがあるので，直線 $y=k$ の上で数える。'; }
+      else if (t === 'x^2') { canSw = false; conds = ['0\\leqq x\\leqq n', '0\\leqq y\\leqq x^2']; ok = (x, y, n) => x >= 0 && x <= n && y >= 0 && y <= x * x; v = 'x'; how = '$y=0,\\ 1,\\ \\cdots,\\ k^2$ の $k^2+1$ 個';
+        rows = ['\\sum_{k=0}^{n}(k^2+1) &= \\frac{1}{6}n(n+1)(2n+1)+(n+1)', '&= \\frac{1}{6}(n+1)(2n^2+n+6)']; ans = '\\frac{1}{6}(n+1)(2n^2+n+6)'; f = n => (n + 1) * (2 * n * n + n + 6) / 6; }
+      else { canSw = false; conds = ['y\\geqq x^2', 'y\\leqq n^2']; ok = (x, y, n) => y >= x * x && y <= n * n; v = 'x'; kr = '0,\\ \\pm1,\\ \\cdots,\\ \\pm n'; how = '$y=k^2,\\ k^2+1,\\ \\cdots,\\ n^2$ の $n^2+1-k^2$ 個。$k$ と $-k$ で個数が同じなので，$k=0$ の分に $k=1,\\ 2,\\ \\cdots,\\ n$ の分の2倍を足す';
+        rows = ['(n^2+1)+2\\sum_{k=1}^{n}(n^2+1-k^2) &= (n^2+1)+2n(n^2+1)-2\\cdot\\frac{1}{6}n(n+1)(2n+1)', '&= (2n+1)(n^2+1)-\\frac{1}{3}n(n+1)(2n+1)', '&= \\frac{1}{3}(2n+1)(3n^2+3-n^2-n)', '&= \\frac{1}{3}(2n+1)(2n^2-n+3)']; ans = '\\frac{1}{3}(2n+1)(2n^2-n+3)'; f = n => (2 * n + 1) * (2 * n * n - n + 3) / 3; }
     }
-    return {
-      unit: 'koshiten', lv, key: 'ks' + t + cond, label: '次の不等式を同時に満たす格子点 $(x,\\ y)$ の個数を求めよ。', math: cond, item: `$${cond}$ を同時に満たす格子点の個数`, head: `$${cond}$`,
-      ans: `$${total}$ 個`, vars: {}, steps: st, sec: lv === 1 ? T.koshi1 : T.koshi2,
-      chk: () => { let c = 0; for (let x = -30; x <= 30; x++) for (let y = -30; y <= 30; y++) if (ok(x, y)) c++; return Math.abs(c - total) + (cs.every(x => x > 0) ? 0 : 1); }
+    const sw = canSw && Math.random() < 0.5, S = x => sw ? swapXY(x) : x, okF = sw ? (x, y, n) => ok(y, x, n) : ok;
+    const cond = S(conds.join(',\\ ')), st = [];
+    if (note) st.push({ t: 'txt', s: S(note) });
+    st.push({ t: 'txt', s: S(`直線 $${v}=k$（$k=${kr}$）の上の格子点は，${how}。`) }, { t: 'eq', noEval: true, rows: rows.map(S) });
+    const count = n => { let c = 0; for (let x = -60; x <= 60; x++) for (let y = -60; y <= 60; y++) if (okF(x, y, n)) c++; return c; };
+    return lv === 1 ? {
+      unit: 'koshiten', lv, key: 'ks' + cond, label: '次の不等式を同時に満たす格子点 $(x,\\ y)$ の個数を求めよ。', math: cond, item: `$${cond}$ を同時に満たす格子点の個数`, head: `$${cond}$`,
+      ans: `$${ans}$ 個`, vars: {}, steps: st, sec: T.koshi1, chk: () => Math.abs(count(0) - +ans)
+    } : {
+      unit: 'koshiten', lv, key: 'ks2' + cond, label: '$n$ を自然数とする。次の不等式を同時に満たす格子点 $(x,\\ y)$ の個数を $n$ で表せ。', math: cond, item: `$${cond}$ を同時に満たす格子点の個数（$n$ で表す）`, head: `$${cond}$`,
+      ans: `$${ans}$ 個`, vars: { n: ri(2, 9) }, steps: st, sec: T.koshi2,
+      chk: () => { let e = 0; for (let n = 1; n <= 6; n++) e += Math.abs(count(n) - f(n)) + Math.abs(texEval(ans, { n }) - f(n)); return e; }
     };
   },
 
@@ -10054,11 +10079,22 @@ function markOut(on){
   document.body.classList.toggle('out-q', on && ST.outPart === 'q');
   document.body.classList.toggle('out-a', on && ST.outPart === 'a');
   all.forEach(sh => { sh.classList.remove('lastOut'); const g = sh.querySelector('.pgno'); if (g && g.dataset.orig) { g.textContent = g.dataset.orig; delete g.dataset.orig; } });
+  document.querySelectorAll('#allSheets .padPage').forEach(x => x.remove());
+  // 全部の版をまとめて両面印刷するとき、版のページ数が奇数だと次の版が前の版の裏に入るので、白紙を1枚足す（最後の版は足さない）
+  if (on && verAllOn()) {
+    const byVer = new Map();
+    outSheets().forEach(sh => { const k = sh.dataset.ver; if (!byVer.has(k)) byVer.set(k, []); byVer.get(k).push(sh); });
+    [...byVer.values()].slice(0, -1).filter(g => g.length % 2).forEach(g => {
+      const last = g[g.length - 1], pad = document.createElement('div');
+      pad.className = 'sheet padPage' + (last.classList.contains('ans') ? ' ans' : ''); pad.dataset.ver = last.dataset.ver;
+      last.after(pad);
+    });
+  }
   if (!on || ST.outPart === 'all') return;
   // ページ番号は版ごとに数えなおす（まとめて印刷のときも、1つの版が1 / n から）
   const vis = outSheets(), groups = new Map();
   vis.forEach(sh => { const k = sh.dataset.ver || '0'; if (!groups.has(k)) groups.set(k, []); groups.get(k).push(sh); });
-  groups.forEach(g => g.forEach((sh, i) => { const pg = sh.querySelector('.pgno'); if (pg) { pg.dataset.orig = pg.textContent; pg.textContent = `${i + 1} / ${g.length}`; } }));
+  groups.forEach(g => g.filter(sh => !sh.classList.contains('padPage')).forEach((sh, i, g) => { const pg = sh.querySelector('.pgno'); if (pg) { pg.dataset.orig = pg.textContent; pg.textContent = `${i + 1} / ${g.length}`; } }));
   if (vis.length) vis[vis.length - 1].classList.add('lastOut');
 }
 window.addEventListener('beforeprint', () => { flushRender(); buildAllVers(); markOut(true); });
