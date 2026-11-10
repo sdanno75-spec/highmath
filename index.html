@@ -526,6 +526,9 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
           <label class="chk"><input type="checkbox" name="unit" value="tenChokusen">点と直線の距離</label>
           <label class="chk"><input type="checkbox" name="unit" value="taba">交点を通る直線・円</label>
           <label class="chk"><input type="checkbox" name="unit" value="enSessen">円の接線・極線</label>
+          <label class="chk"><input type="checkbox" name="unit" value="teiten">定点を通る図形</label>
+          <label class="chk"><input type="checkbox" name="unit" value="senkei">線形計画法</label>
+          <label class="chk"><input type="checkbox" name="unit" value="tsuka">通過領域（逆像法）</label>
         </div>
         <div class="units" data-subj="2">
           <span class="ugrp">数II　三角関数</span>
@@ -743,8 +746,9 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.60.0', UPDATED = '2026-11-10';
+const VERSION = '5.61.0', UPDATED = '2026-11-10';
 const CHANGES = [
+  ['5.61.0', '2026-11-10', '数II 図形と方程式に「定点を通る図形」（直線・放物線・円の2定点）、「線形計画法」（四角形・三角形の領域で1次式、発展は x²+y²）、「通過領域（逆像法）」（判別式・点 (s+t, st)、発展は t≧0）を追加。解答に領域の図をつけた。交点を通る直線・円の発展から定点の問題をはずした（定点を通る図形へ）。'],
   ['5.60.0', '2026-11-10', '数II 図形と方程式に「交点を通る直線・円」（直線束・円束、発展は定点と円と直線の交点を通る円）と「円の接線・極線」（発展は中心が原点でない円）を追加。'],
   ['5.59.1', '2026-11-10', '難しさの説明（オンオフのしかた・まぜるときの説明）と、単元の下の説明を消した。'],
   ['5.59.0', '2026-11-10', '難しさを「基本」「標準」「発展」のオンオフにした（7通りの組み合わせ）。2つ以上オンでまぜて出し、「問題の量」の表はオンの難しさの列だけ出す。発展の問題がある単元を選んでいないときは、発展を押せない。'],
@@ -990,7 +994,7 @@ const UNITS = [
   ['cheva', 'チェバの定理', 'A'], ['menelaus', 'メネラウスの定理', 'A'], ['houbeki', '方べきの定理', 'A'], ['kakunibun', '角の二等分線', 'A'], ['goshin', '三角形の五心', 'A'], ['kyoen', '共円条件', 'A'],
   ['nikou', '二項定理', '2'], ['warizan', '整式の割り算', '2'], ['soukaSoujo', '相加平均と相乗平均', '2'],
   ['fukuso', '複素数の計算', '2'], ['kaiKeisu2', '解と係数の関係（数II）', '2'], ['inshuTeiri', '因数定理による因数分解', '2'],
-  ['en', '円の中心と半径', '2'], ['tenChokusen', '点と直線の距離', '2'], ['taba', '交点を通る直線・円', '2'], ['enSessen', '円の接線・極線', '2'],
+  ['en', '円の中心と半径', '2'], ['tenChokusen', '点と直線の距離', '2'], ['taba', '交点を通る直線・円', '2'], ['enSessen', '円の接線・極線', '2'], ['teiten', '定点を通る図形', '2'], ['senkei', '線形計画法', '2'], ['tsuka', '通過領域（逆像法）', '2'],
   ['kodo', '弧度法の値', '2'], ['kahou', '加法定理', '2'], ['gousei', '三角関数の合成', '2'], ['sankakuHouteishiki', '三角方程式', '2'],
   ['shisu', '指数の計算', '2'], ['taisuuChi', '対数の値', '2'], ['taisuuWa', '対数の和・差・係数', '2'], ['teiHenkan', '底の変換', '2'], ['taisuuHouteishiki', '対数方程式・指数方程式', '2'],
   ['sessen', '接線の方程式', '2'], ['kyokuchi', '3次関数の極値', '2'], ['teisekibun', '定積分の計算', '2'], ['rokubun', '1/6公式の面積', '2'],
@@ -1125,10 +1129,19 @@ const TIME_TABLE = [
   ['ten2', '点と直線の距離（y=mx+n・有理化）', [35, 80, 160]],
   ['taba1', '2直線の交点と1点を通る直線', [60, 120, 240]],
   ['taba2', '2円の交点を通る直線・円', [90, 180, 360]],
-  ['taba3', '定点・円と直線の交点を通る円（発展）', [90, 180, 360]],
+  ['taba3', '円と直線の交点を通る円（発展）', [90, 180, 360]],
   ['esen1', '円上の点における接線', [20, 45, 90]],
   ['esen2', '接点を通る直線（極線）', [45, 100, 200]],
   ['esen3', '中心が原点でない円の極線（発展）', [60, 150, 300]],
+  ['teiten1', '定点を通る直線', [40, 90, 180]],
+  ['teiten2', '定点を通る放物線', [40, 90, 180]],
+  ['teiten3', '2つの定点を通る円（発展）', [90, 180, 360]],
+  ['senkei1', '線形計画法（四角形の領域で1次式の最大）', [90, 180, 360]],
+  ['senkei2', '線形計画法（三角形の領域で1次式の最大・最小）', [90, 180, 360]],
+  ['senkei3', '領域と x²+y² の最大・最小（発展）', [150, 300, 600]],
+  ['tsuka1', '直線の通過領域（判別式）', [60, 150, 300]],
+  ['tsuka2', '逆像法：点 (s+t, st) などの動く領域', [90, 180, 360]],
+  ['tsuka3', 't に範囲がある通過領域（発展）', [150, 300, 600]],
   ['kodo1', '弧度法の値（0〜2π の角）', [10, 30, 60]],
   ['kodo2', '弧度法の値（負の角・2π をこえる角）', [20, 50, 100]],
   ['kahou1', '加法定理（sin75°・cos15°・tan105° など）', [30, 70, 140]],
@@ -1274,7 +1287,7 @@ const totalMins = () => sumSec(PROBS).map(s => Math.ceil(s / 60));
 const timeText = () => totalMins().map((m, k) => `${TIERS[k]} ${m}分`).join('・');
 // 難しさの説明：選んだ単元の分だけを出す（基本｜標準）
 // 発展（lv 3）がある単元。ほかの単元は「発展」を選ぶと標準を出す
-const ADV_UNITS = new Set(['kyokusenShiki', 'kahou', 'gousei', 'sankakuHouteishiki', 'taisuuHouteishiki', 'kyokuchi', 'teisekibun', 'kanshu', 'warizan', 'zenka', 'kyouyuuten', 'koshiten', 'taba', 'enSessen']);
+const ADV_UNITS = new Set(['kyokusenShiki', 'kahou', 'gousei', 'sankakuHouteishiki', 'taisuuHouteishiki', 'kyokuchi', 'teisekibun', 'kanshu', 'warizan', 'zenka', 'kyouyuuten', 'koshiten', 'taba', 'enSessen', 'teiten', 'senkei', 'tsuka']);
 const UNIT_LEVEL = {
   tasuki: ['x の係数の片方が1', '2文字（x, y）・係数がどちらも2以上'],
   nijuu: ['√(5+2√6) の形', '√(7+4√3)・√(4+√15) の形'],
@@ -1317,8 +1330,11 @@ const UNIT_LEVEL = {
   inshuTeiri: ['3次式・整数の解', '分数の解・4次式'],
   en: ['係数が偶数・半径が整数', '半径が √・x² の係数が 2'],
   tenChokusen: ['ax+by+c=0 の形', 'y=mx+n の形・有理化'],
-  taba: ['2直線の交点と1点を通る直線', '2円の交点を通る直線・円', '定点を通る直線・円と直線の交点を通る円'],
+  taba: ['2直線の交点と1点を通る直線', '2円の交点を通る直線・円', '円と直線の交点と1点を通る円'],
   enSessen: ['円上の点における接線', '接点を通る直線（極線）', '中心が原点でない円の極線'],
+  teiten: ['直線（k について整理して連立）', '放物線（a について整理）', '円（2つの定点・円と直線の連立）'],
+  senkei: ['四角形の領域で ax+by の最大（傾きを比べる）', '三角形の領域で ax+by の最大・最小', 'x²+y² の最大・最小（垂線の足）'],
+  tsuka: ['直線の通過領域（t がすべての実数・判別式）', '逆像法：点 (s+t, st) などの動く領域', 't≧0 の通過領域（x を固定して y の範囲）'],
   kodo: ['0〜2π の角', '負の角・2π をこえる角'],
   kahou: ['sin75°・cos15°・tan105° など（設定で弧度法も）', 'sin α, cos β から sin(α+β) など（弧度法）', 'sin α か cos α から sin 2α，cos 2α（2倍角）'],
   gousei: ['r sin(θ+α) の形に合成', '範囲つきの最大・最小（端点で最大・最小の型も）', '合成して方程式を解く'],
@@ -1405,7 +1421,10 @@ const FORMULA_ADV = {
   zenka: [ZENKA_FORM.exp, ZENKA_FORM.rev],
   kyouyuuten: ['弦：交点の $x$ 座標を $\\alpha$，$\\beta$ として解と係数の関係を使う。中点の $x$ 座標は $\\frac{\\alpha+\\beta}{2}$，傾き $m$ の直線上の長さは $\\sqrt{1+m^2}\\left|\\alpha-\\beta\\right|$。'],
   kyokuchi: ['最大・最小：区間の中の極値と，区間の両端の値を比べる。'],
-  taba: ['定点：式を $f+kg=0$ の形に整理し，$f=0$，$g=0$ を連立して解く。', '円 $f=0$ と直線 $g=0$ の交点を通る円は $f+kg=0$ と表せる。'],
+  taba: ['円 $f=0$ と直線 $g=0$ の交点を通る円は $f+kg=0$ と表せる。'],
+  teiten: ['円と直線の連立：直線の式を $y=mx+n$ の形にして円の式に代入し，2次方程式を解く。'],
+  senkei: ['$x^2+y^2$ は原点からの距離の2乗。最小は，原点から辺に下ろした垂線の足が辺の上にあれば，点と直線の距離 $\\frac{\\left|c\\right|}{\\sqrt{a^2+b^2}}$ の2乗。'],
+  tsuka: ['$t$ に範囲があるときは，$x$ を固定して $y$ を $t$ の関数とみて，$y$ のとりうる値の範囲を求める（順像法）。軸と区間の位置で場合分けする。'],
   enSessen: ['中心が $(a,\\ b)$ の円 $(x-a)^2+(y-b)^2=r^2$ では，接線は $(x_{1}-a)(x-a)+(y_{1}-b)(y-b)=r^2$，点 $(p,\\ q)$ の極線は $(p-a)(x-a)+(q-b)(y-b)=r^2$'],
   koshiten: ['偶奇で場合分け：$k$ の上限が $\\frac{n}{2}$ のときは，$n=2m$（偶数）と $n=2m+1$（奇数）に分けて Σ を計算し，最後に $n$ の式にもどす。'],
   teisekibun: ['絶対値：中の式が $0$ になる $x$ で区間を分け，$\\left|A\\right|=A$（$A\\geqq 0$），$\\left|A\\right|=-A$（$A\\leqq 0$）で絶対値を外す。'],
@@ -5160,24 +5179,7 @@ const B_GEN = {
           chk: () => PI.reduce((e, [x, y]) => e + Math.abs(atC(ans, x, y)), 0) + Math.abs(atC(ans, p, q)) + (ans[0] ** 2 / 4 + ans[1] ** 2 / 4 - ans[2] > 0 ? 0 : 1)
         };
       }
-      // 発展
-      if (Math.random() < 0.5) {
-        // k の値に関係なく通る定点：(L1)+k(L2)=0 を展開した形で出す
-        const x0 = ri(-4, 4), y0 = ri(-4, 4), A = lineThru(x0, y0), B = lineThru(x0, y0);
-        if (A[0] * B[1] - A[1] * B[0] === 0) continue;
-        const kc = (lo, hi, v) => !hi ? [lo, v] : !lo ? [hi, 'k' + v] : lo < 0 && hi < 0 ? [-1, `(${sumTex([[-hi, 'k'], [-lo, '']])})${v}`] : hi > 0 ? [1, `(${sumTex([[hi, 'k'], [lo, '']])})${v}`] : [1, `(${sumTex([[lo, ''], [hi, 'k']])})${v}`];
-        const eq = `${sumTex([kc(A[0], B[0], 'x'), kc(A[1], B[1], 'y'), [B[2], 'k'], [A[2], '']])}=0`;
-        const st = [{ t: 'txt', s: '与えられた方程式を $k$ について整理すると' }, { t: 'eq', noEval: true, rows: [`(${L3(A)})+k(${L3(B)}) &= 0`] },
-          { t: 'txt', s: 'これが $k$ の値に関係なく成り立つための条件は' }, { t: 'eq', noEval: true, rows: [`${L3(A)} &= 0`, `${L3(B)} &= 0`] },
-          { t: 'txt', s: `これを解いて $x=${x0}$，$y=${y0}$` }];
-        return {
-          unit: 'taba', lv, key: `tb3f|${eq}`, sec: T.taba3,
-          label: `直線 $${eq}$ は，定数 $k$ の値に関係なく定点を通る。その定点の座標を求めよ。`, math: '', item: `直線 $${eq}$ が通る定点`, head: `直線 $${eq}$`,
-          ans: `$${pt(x0, y0)}$`, vars: {}, steps: st,
-          chk: () => [-2, -1, 0, 1, 3].reduce((e, k) => e + Math.abs((A[0] + k * B[0]) * x0 + (A[1] + k * B[1]) * y0 + A[2] + k * B[2]), 0)
-        };
-      }
-      // 円と直線の交点と1点を通る円
+      // 発展：円と直線の交点と1点を通る円
       const cx = ri(-3, 3), cy = ri(-3, 3), s1 = ri(2, 20), C = [-2 * cx, -2 * cy, cx * cx + cy * cy - s1], L = nrm([ri(1, 3), nz(-3, 3), ri(-6, 6)]);
       if (big(C) || atL(L, cx, cy) ** 2 >= s1 * (L[0] ** 2 + L[1] ** 2) - 0.5) continue;
       const p = ri(-4, 4), q = ri(-4, 4), fv = atC(C, p, q), gv = atL(L, p, q);
@@ -5245,9 +5247,334 @@ const B_GEN = {
         chk: () => touch(a, b, r2, p, q).reduce((e, [x, y]) => e + onL(ans, x, y) + Math.abs((x - a) * (x - p) + (y - b) * (y - q)), 0)
       };
     }
+  },
+
+  // 【定点を通る図形】文字（k，a）について整理して f+kg=0 の形にし，f=0，g=0 を連立する
+  // 難しさ1：直線／2：放物線（a について整理）／3：円（2つの定点。円と直線の連立）
+  teiten(lv){
+    const L3 = v => sumTex([[v[0], 'x'], [v[1], 'y'], [v[2], '']]);
+    const C5 = v => sumTex([[1, 'x^2'], [1, 'y^2'], [v[0], 'x'], [v[1], 'y'], [v[2], '']]);
+    const g3 = v => v.reduce((g, x) => gcd(g, x), 0) || 1;
+    const nrm = v => { const g = g3(v), s = (v[0] || v[1]) < 0 ? -1 : 1; return v.map(x => x / g * s); };
+    const lineThru = (x0, y0) => { for (;;) { const a = ri(1, 3), b = nz(-3, 3); if (gcd(a, b) !== 1) continue; const c = -(a * x0 + b * y0); if (Math.abs(c) <= 12) return [a, b, c]; } };
+    // 係数が「lo + hi·k」の項（(k+2)x，-(k+1)y，kx，3x など）
+    const kc = (lo, hi, v, k) => !hi ? [lo, v] : !lo ? [hi, k + v] : lo < 0 && hi < 0 ? [-1, `(${sumTex([[-hi, k], [-lo, '']])})${v}`] : hi > 0 ? [1, `(${sumTex([[hi, k], [lo, '']])})${v}`] : [1, `(${sumTex([[lo, ''], [hi, k]])})${v}`];
+    const fx = (v, r) => r ? `(${sumTex([[1, v], [-r, '']])})` : v;   // (x−r)、r=0 なら x
+    const pt = (x, y) => `(${x},\\ ${y})`;
+    const cond = (k, rows) => [{ t: 'txt', s: `これが $${k}$ の値に関係なく成り立つための条件は` }, { t: 'eq', noEval: true, rows: rows.map(r => `${r} &= 0`) }];
+    for (;;) {
+      if (lv === 1) {
+        const x0 = ri(-4, 4), y0 = ri(-4, 4), A = lineThru(x0, y0), B = lineThru(x0, y0);
+        if (A[0] * B[1] - A[1] * B[0] === 0) continue;
+        const eq = `${sumTex([kc(A[0], B[0], 'x', 'k'), kc(A[1], B[1], 'y', 'k'), [B[2], 'k'], [A[2], '']])}=0`;
+        const st = [{ t: 'txt', s: '与えられた方程式を $k$ について整理すると' }, { t: 'eq', noEval: true, rows: [`(${L3(A)})+k(${L3(B)}) &= 0`] },
+          ...cond('k', [L3(A), L3(B)]), { t: 'txt', s: `これを解いて $x=${x0}$，$y=${y0}$` }];
+        return {
+          unit: 'teiten', lv, key: `tt1|${eq}`, sec: T.teiten1,
+          label: `直線 $${eq}$ は，定数 $k$ の値に関係なく定点を通る。その定点の座標を求めよ。`, math: '', item: `直線 $${eq}$ が通る定点`, head: `直線 $${eq}$`,
+          ans: `$${pt(x0, y0)}$`, vars: {}, steps: st,
+          chk: () => [-2, -1, 0, 1, 3].reduce((e, k) => e + Math.abs((A[0] + k * B[0]) * x0 + (A[1] + k * B[1]) * y0 + A[2] + k * B[2]), 0)
+        };
+      }
+      if (lv === 2) {
+        // y = x² + bx + c + a(mx − m·x0)
+        const x0 = nz(-3, 3), m = pick([1, 2, -1, -2]), b = ri(-4, 4), c = ri(-5, 5), y0 = x0 * x0 + b * x0 + c;
+        if (Math.abs(y0) > 20) continue;
+        const eq = `y=${sumTex([[1, 'x^2'], kc(b, m, 'x', 'a'), [-m * x0, 'a'], [c, '']])}`;
+        const P = sumTex([[1, 'x^2'], [b, 'x'], [c, ''], [-1, 'y']]), am = Math.abs(m), Lm = sumTex([[am, 'x'], [-am * x0, '']]);
+        const st = [{ t: 'txt', s: '与えられた式を $a$ について整理すると' }, { t: 'eq', noEval: true, rows: [`${sumTex([[1, `(${P})`], [Math.sign(m), `a(${Lm})`]])} &= 0`] },
+          ...cond('a', [Lm, P]), { t: 'txt', s: `第1式より $x=${x0}$。これを第2式に代入して $y=${y0}$` }];
+        return {
+          unit: 'teiten', lv, key: `tt2|${eq}`, sec: T.teiten2,
+          label: `放物線 $${eq}$ は，定数 $a$ の値に関係なく定点を通る。その定点の座標を求めよ。`, math: '', item: `放物線 $${eq}$ が通る定点`, head: `放物線 $${eq}$`,
+          ans: `$${pt(x0, y0)}$`, vars: {}, steps: st,
+          chk: () => [-2, -1, 0, 1, 3].reduce((e, a) => e + Math.abs(x0 * x0 + (b + m * a) * x0 - m * x0 * a + c - y0), 0)
+        };
+      }
+      // 円：中心 (cx, cy) の円の上の格子点を2つ選び，その2点を通る直線と組み合わせる
+      const r2 = pick([2, 5, 8, 10, 13, 17, 25]), cx = ri(-2, 2), cy = ri(-2, 2), vs = [];
+      for (let u = -5; u <= 5; u++) for (let v = -5; v <= 5; v++) if (u * u + v * v === r2) vs.push([u, v]);
+      const [u1, u2] = shuffle(vs.slice()).slice(0, 2), P1 = [cx + u1[0], cy + u1[1]], P2 = [cx + u2[0], cy + u2[1]];
+      const L = nrm([P2[1] - P1[1], P1[0] - P2[0], 0]); L[2] = -(L[0] * P1[0] + L[1] * P1[1]);
+      const C = [-2 * cx, -2 * cy, cx * cx + cy * cy - r2];
+      const byY = Math.abs(L[1]) === 1, byX = !byY && Math.abs(L[0]) === 1;
+      if (!byY && !byX) continue;
+      if ([...L, ...C].some(x => Math.abs(x) > 20)) continue;
+      // 直線を y=mx+n（または x=my+n）にして円に代入
+      const [v, w] = byY ? ['x', 'y'] : ['y', 'x'], [iv, iw] = byY ? [0, 1] : [1, 0];
+      const mm = -L[iv] / L[iw], nn = -L[2] / L[iw];
+      const q2 = 1 + mm * mm, q1 = 2 * mm * nn + C[iv] + C[iw] * mm, q0 = nn * nn + C[iw] * nn + C[2];
+      const roots = [P1[iv], P2[iv]].sort((a, b) => a - b);
+      if (roots[0] === roots[1] || q1 % q2 || q0 % q2) continue;
+      const pts = [P1, P2].sort((a, b) => a[iv] - b[iv]);
+      const eq = `${sumTex([[1, 'x^2'], [1, 'y^2'], kc(C[0], L[0], 'x', 'k'), kc(C[1], L[1], 'y', 'k'), [L[2], 'k'], [C[2], '']])}=0`;
+      const qrows = [`${sumTex([[q2, v + '^2'], [q1, v], [q0, '']])} &= 0`];
+      if (q2 !== 1) qrows.push(`${sumTex([[1, v + '^2'], [q1 / q2, v], [q0 / q2, '']])} &= 0`);
+      qrows.push(`${fx(v, roots[0])}${fx(v, roots[1])} &= 0`);
+      const st = [{ t: 'txt', s: '与えられた方程式を $k$ について整理すると' }, { t: 'eq', noEval: true, rows: [`(${C5(C)})+k(${L3(L)}) &= 0`] },
+        ...cond('k', [C5(C), L3(L)]),
+        { t: 'txt', s: `第2式より $${w}=${sumTex([[mm, v], [nn, '']])}$。これを第1式に代入して整理すると` }, { t: 'eq', noEval: true, rows: qrows },
+        { t: 'txt', s: `よって $${v}=${roots[0]},\\ ${roots[1]}$。$${w}=${sumTex([[mm, v], [nn, '']])}$ に代入して，2点は $${pt(...pts[0])}$，$${pt(...pts[1])}$` }];
+      return {
+        unit: 'teiten', lv, key: `tt3|${eq}`, sec: T.teiten3,
+        label: `円 $${eq}$ は，定数 $k$ の値に関係なく2つの定点を通る。その2点の座標を求めよ。`, math: '', item: `円 $${eq}$ が通る2つの定点`, head: `円 $${eq}$`,
+        ans: `$${pt(...pts[0])}$，$${pt(...pts[1])}$`, vars: {}, steps: st,
+        chk: () => [-2, -1, 0, 1, 3].reduce((e, k) => e + pts.reduce((s, [x, y]) => s + Math.abs(x * x + y * y + (C[0] + k * L[0]) * x + (C[1] + k * L[1]) * y + C[2] + k * L[2]), 0), 0) + (pts[0][0] === pts[1][0] && pts[0][1] === pts[1][1] ? 1 : 0)
+      };
+    }
+  },
+
+  // 【線形計画法】連立不等式の表す領域（頂点が整数の多角形）で，1次式・x²+y² の最大・最小
+  // 答えは，すべての境界線の交点のうち領域に入る点（頂点）を別に求めて確かめる
+  senkei(lv){
+    const g3 = v => v.reduce((g, x) => gcd(g, x), 0) || 1;
+    const pt = (x, y) => `(${numTex(x)},\\ ${numTex(y)})`, PT = (nm, x, y) => `$\\mathrm{${nm}}${pt(x, y)}$`;
+    const lin = (s, t) => sumTex([[s, 'x'], [t, 'y']]);
+    // 不等式 ax+by≦c を，x の係数（0 なら y の係数）が正の形で書く
+    const ineq = ([a, b, c]) => (a || b) < 0 ? `${lin(-a, -b)}\\geqq ${-c}` : `${lin(a, b)}\\leqq ${c}`;
+    // 制約 [a,b,c]（ax+by≦c）の頂点：2本ずつの交点のうち，すべての制約を満たす点
+    const verts = cons => { const out = []; cons.forEach((p, i) => cons.slice(i + 1).forEach(q => { const d = p[0] * q[1] - p[1] * q[0]; if (!d) return; const x = (p[2] * q[1] - p[1] * q[2]) / d, y = (p[0] * q[2] - p[2] * q[0]) / d; if (cons.every(r => r[0] * x + r[1] * y <= r[2] + 1e-9) && !out.some(o => Math.hypot(o[0] - x, o[1] - y) < 1e-9)) out.push([x, y]); })); return out; };
+    // 1次式の値の代入（係数1は書かない・負の数はかっこ）
+    const sub = (s, t, x, y) => { const v = n => n < 0 ? `(${n})` : n, tm = (c, n, first) => `${first ? (c < 0 ? '-' : '') : (c < 0 ? ' - ' : ' + ')}${Math.abs(c) === 1 ? '' : Math.abs(c) + '\\cdot '}${v(n)}`; const ts = [[s, x], [t, y]].filter(([c, n]) => n || Math.abs(c) !== 1); return ts.length ? ts.map(([c, n], i) => tm(c, n, !i)).join('') : '0'; };
+    const sqT = n => n < 0 ? `(${n})^2` : `${n}^2`;
+    const edge = (P, Q, R) => { let a = Q[1] - P[1], b = P[0] - Q[0]; const g = gcd(a, b); a /= g; b /= g; let c = a * P[0] + b * P[1]; if (a * R[0] + b * R[1] > c) { a = -a; b = -b; c = -c; } return [a, b, c]; };
+    const box = (V, eq) => { const xs = V.map(p => p[0]).concat(0), ys = V.map(p => p[1]).concat(0); return { x0: Math.min(...xs) - 1.2, x1: Math.max(...xs) + 1.5, y0: Math.min(...ys) - 1.2, y1: Math.max(...ys) + 1.5, eq }; };
+    for (;;) {
+      if (lv === 1) {
+        const p = ri(1, 5), q = ri(1, 5);
+        const [a1, b1] = pick([[1, 2], [1, 3], [2, 3], [1, 4], [3, 4]]), [b2, a2] = pick([[1, 2], [1, 3], [2, 3], [1, 4], [3, 4]]);
+        const c1 = a1 * p + b1 * q, c2 = a2 * p + b2 * q;
+        if (c1 % b1 || c2 % a2 || c1 > 24 || c2 > 24) continue;
+        const Yc = c1 / b1, Xa = c2 / a2, [s, t] = pick([[1, 1], [1, 2], [2, 1], [2, 3], [3, 2], [3, 1], [1, 3]]);
+        if (!(a1 * t < s * b1 && s * b2 < a2 * t)) continue;   // a1/b1 < s/t < a2/b2
+        const M = s * p + t * q, obj = lin(s, t);
+        const cons = [[-1, 0, 0], [0, -1, 0], [a1, b1, c1], [a2, b2, c2]];
+        const slope = (a, b) => numTex(new F(-a, b));
+        const fig = planeShapes({ ...box([[Xa, 0], [p, q], [0, Yc]], true), fills: [{ pts: [[0, 0], [Xa, 0], [p, q], [0, Yc]] }],
+          lines: [{ a: a1, b: b1, c: c1, st: 'faint' }, { a: a2, b: b2, c: c2, st: 'faint' }, { a: s, b: t, c: M, st: 'dash' }],
+          segs: [{ pts: [[0, 0], [Xa, 0], [p, q], [0, Yc], [0, 0]] }], dots: [{ x: p, y: q, label: ptLab('B', p, q) }] });
+        const st = [{ t: 'txt', s: `与えられた連立不等式の表す領域 $D$ は，4点 ${PT('O', 0, 0)}，${PT('A', Xa, 0)}，${PT('B', p, q)}，${PT('C', 0, Yc)} を頂点とする四角形の周および内部である（点 B は2直線 $${lin(a1, b1)}=${c1}$，$${lin(a2, b2)}=${c2}$ の交点）。` },
+          { t: 'txt', s: `$${obj}=k$ とおくと $y=${sumTex([[new F(-s, t), 'x'], [new F(1, t), 'k']])}$。これは傾き $${slope(s, t)}$ の直線で，$y$ 切片が大きいほど $k$ は大きい。` },
+          { t: 'txt', s: `この直線が領域 $D$ と共有点をもつように動かす。傾きを比べると $${slope(a2, b2)}<${slope(s, t)}<${slope(a1, b1)}$ なので，直線が点 B を通るとき $k$ は最大となる。` },
+          { t: 'eq', noEval: true, rows: [`k &= ${sub(s, t, p, q)}`, `&= ${M}`] }, { t: 'fig', f: fig }];
+        return {
+          unit: 'senkei', lv, key: `sk1|${a1},${b1},${c1}|${a2},${b2},${c2}|${s},${t}`, sec: T.senkei1,
+          label: `$x$，$y$ が4つの不等式 $x\\geqq 0$，$y\\geqq 0$，$${ineq([a1, b1, c1])}$，$${ineq([a2, b2, c2])}$ を同時に満たすとき，$${obj}$ の最大値を求めよ。また，そのときの $x$，$y$ の値を求めよ。`,
+          math: '', item: `$${ineq([a1, b1, c1])}$，$${ineq([a2, b2, c2])}$ で $${obj}$ の最大`, head: `$${obj}$ の最大値`,
+          ans: `$x=${p}$，$y=${q}$ のとき，最大値 $${M}$`, vars: {}, steps: st,
+          chk: () => { const V = verts(cons), vals = V.map(([x, y]) => s * x + t * y), mx = Math.max(...vals); return Math.abs(mx - M) + (vals.filter(v => Math.abs(v - mx) < 1e-9).length === 1 ? 0 : 1) + (V.some(([x, y]) => x === p && y === q) ? 0 : 1); }
+        };
+      }
+      // 三角形の領域（頂点は整数）
+      const V = Array.from({ length: 3 }, () => [ri(-2, 6), ri(-2, 6)]);
+      const area2 = Math.abs((V[1][0] - V[0][0]) * (V[2][1] - V[0][1]) - (V[2][0] - V[0][0]) * (V[1][1] - V[0][1]));
+      if (area2 < 8) continue;
+      const cons = [edge(V[0], V[1], V[2]), edge(V[1], V[2], V[0]), edge(V[2], V[0], V[1])];
+      if (cons.some(([a, b, c]) => Math.abs(a) > 5 || Math.abs(b) > 5 || Math.abs(c) > 19)) continue;
+      V.sort((P, Q) => P[0] - Q[0] || P[1] - Q[1]);
+      const names = ['A', 'B', 'C'], labT = cons.map(ineq).map(s => `$${s}$`).join('，');
+      const vtxT = V.map((P, i) => PT(names[i], ...P)).join('，');
+      const fills = [{ pts: V }], segs = [{ pts: [...V, V[0]] }];
+      if (lv === 2) {
+        const s = nz(-3, 3), t = nz(-3, 3);
+        if (gcd(s, t) !== 1) continue;
+        const vals = V.map(([x, y]) => s * x + t * y), mx = Math.max(...vals), mn = Math.min(...vals);
+        if (vals.filter(v => v === mx).length > 1 || vals.filter(v => v === mn).length > 1) continue;
+        const iM = vals.indexOf(mx), im = vals.indexOf(mn), obj = lin(s, t);
+        const fig = planeShapes({ ...box(V, true), fills, segs, lines: [{ a: s, b: t, c: mx, st: 'dash' }, { a: s, b: t, c: mn, st: 'dash' }],
+          dots: V.map((P, i) => ({ x: P[0], y: P[1], label: ptLab(names[i], ...P), pos: i === 0 ? 'above left' : 'above right' })) });
+        const st = [{ t: 'txt', s: `3本の境界線の交点を求めると，領域 $D$ は3点 ${vtxT} を頂点とする三角形の周および内部である。` },
+          { t: 'txt', s: `$${obj}=k$ とおくと，これは傾き $${numTex(new F(-s, t))}$ の直線を表す。この直線が領域 $D$ と共有点をもつように動かすと，$k$ が最大・最小になるのは直線が三角形の頂点を通るときである。` },
+          { t: 'txt', s: '各頂点での値は' }, { t: 'eq', noEval: true, rows: V.map(([x, y], i) => `\\mathrm{${names[i]}}:\\ ${sub(s, t, x, y)} &= ${vals[i]}`) }, { t: 'fig', f: fig }];
+        return {
+          unit: 'senkei', lv, key: `sk2|${labT}|${s},${t}`, sec: T.senkei2,
+          label: `$x$，$y$ が3つの不等式 ${labT} を同時に満たすとき，$${obj}$ の最大値と最小値を求めよ。`, math: '', item: `${labT} で $${obj}$ の最大・最小`, head: `$${obj}$ の最大・最小`,
+          ans: `最大値 $${mx}$（$x=${V[iM][0]}$，$y=${V[iM][1]}$ のとき），最小値 $${mn}$（$x=${V[im][0]}$，$y=${V[im][1]}$ のとき）`, vars: {}, steps: st,
+          chk: () => { const W2 = verts(cons), v2 = W2.map(([x, y]) => s * x + t * y); return (W2.length === 3 ? 0 : 1) + Math.abs(Math.max(...v2) - mx) + Math.abs(Math.min(...v2) - mn); }
+        };
+      }
+      // 発展：x²+y² の最大・最小（原点は領域の外）
+      if (cons.every(([a, b, c]) => 0 <= c)) continue;   // 原点が領域に入る
+      const d2 = V.map(([x, y]) => x * x + y * y), M = Math.max(...d2), iM = d2.indexOf(M);
+      if (d2.filter(v => v === M).length > 1) continue;
+      // いちばん近い点：辺に下ろした垂線の足が辺の内側にあればその足，なければ頂点
+      let best = null;
+      [[0, 1], [1, 2], [2, 0]].forEach(([i, j]) => {
+        const P = V[i], Q = V[j], dx = Q[0] - P[0], dy = Q[1] - P[1], u = -(P[0] * dx + P[1] * dy) / (dx * dx + dy * dy);
+        if (u > 1e-9 && u < 1 - 1e-9) { const [a, b, c] = edge(P, Q, V[3 - i - j]), n = a * a + b * b, h = { foot: true, a, b, c, i, j, x: new F(a * c, n), y: new F(b * c, n), v: new F(c * c, n) }; if (!best || h.v.val() < best.v.val() - 1e-12) best = h; }
+      });
+      V.forEach(([x, y], i) => { const v = new F(x * x + y * y); if (!best || v.val() < best.v.val() - 1e-12) best = { foot: false, i, x: new F(x), y: new F(y), v }; });
+      if (best.v.d > 30 || best.v.zero) continue;
+      const near = best, mn = near.v, perp = near.foot && (near.b || -near.a) < 0 ? [-near.b, near.a] : [near.b, -near.a];
+      // 0 の項は書かない（3^2+0^2 → 3^2）。辺が座標軸に平行なときは OH は |c| そのもの
+      const sq2 = (x, y) => [x, y].filter(v => v).map(sqT).join('+'), sg = near.foot && (near.a || near.b) < 0 ? -1 : 1;
+      const minSt = near.foot
+        ? [{ t: 'txt', s: `いちばん近い点は，原点から辺 ${names[near.i]}${names[near.j]}（直線 $${lin(sg * near.a, sg * near.b)}=${sg * near.c}$）に下ろした垂線の足 H で，H は辺の上にある。${near.a && near.b ? '点と直線の距離の公式より' : ''}` },
+          { t: 'eq', noEval: true, rows: near.a && near.b ? [`\\mathrm{OH}^2 &= \\frac{${sqT(sg * near.c)}}{${sq2(sg * near.a, sg * near.b)}}`, `&= ${numTex(mn)}`] : [`\\mathrm{OH}^2 &= ${Math.abs(near.c)}^2`, `&= ${numTex(mn)}`] },
+          { t: 'txt', s: `H は原点を通り直線に垂直な直線 $${lin(...perp)}=0$ との交点で，$\\mathrm{H}${pt(near.x, near.y)}$` }]
+        : [{ t: 'txt', s: `いちばん近い点は頂点 ${names[near.i]} で` }, { t: 'eq', rows: [`${sq2(...V[near.i])} &= ${numTex(mn)}`] }];
+      const fig = planeShapes({ ...box(V, true), fills, segs: [...segs, { pts: [[0, 0], V[iM]], st: 'dash' }, { pts: [[0, 0], [near.x.val(), near.y.val()]], st: 'dash' }],
+        dots: [...V.map((P, i) => ({ x: P[0], y: P[1], label: ptLab(names[i], ...P), pos: i === 0 ? 'above left' : 'above right' })), ...(near.foot ? [{ x: near.x.val(), y: near.y.val(), label: 'H', pos: 'below right' }] : [])] });
+      const st = [{ t: 'txt', s: `3本の境界線の交点を求めると，領域 $D$ は3点 ${vtxT} を頂点とする三角形の周および内部である。` },
+        { t: 'txt', s: '$x^2+y^2$ は，原点 O と点 $(x,\\ y)$ の距離の2乗である。領域 $D$ の点のうち，O からいちばん遠い点といちばん近い点を考える。' },
+        { t: 'txt', s: `いちばん遠い点は頂点 ${names[iM]} で` }, { t: 'eq', rows: [`${sq2(...V[iM])} &= ${M}`] }, ...minSt, { t: 'fig', f: fig }];
+      return {
+        unit: 'senkei', lv, key: `sk3|${labT}`, sec: T.senkei3,
+        label: `$x$，$y$ が3つの不等式 ${labT} を同時に満たすとき，$x^2+y^2$ の最大値と最小値を求めよ。`, math: '', item: `${labT} で $x^2+y^2$ の最大・最小`, head: '$x^2+y^2$ の最大・最小',
+        ans: `最大値 $${M}$（$x=${V[iM][0]}$，$y=${V[iM][1]}$ のとき），最小値 $${numTex(mn)}$（$x=${numTex(near.x)}$，$y=${numTex(near.y)}$ のとき）`, vars: {}, steps: st,
+        // 三角形の中の点を細かく調べて，最大・最小と答えの点を確かめる
+        chk: () => {
+          let hi = -1, lo = 1e9; const N = 120;
+          for (let i = 0; i <= N; i++) for (let j = 0; i + j <= N; j++) { const u = i / N, v = j / N, w = 1 - u - v, x = u * V[0][0] + v * V[1][0] + w * V[2][0], y = u * V[0][1] + v * V[1][1] + w * V[2][1], d = x * x + y * y; hi = Math.max(hi, d); lo = Math.min(lo, d); }
+          const hx = near.x.val(), hy = near.y.val(), inside = cons.every(([a, b, c]) => a * hx + b * hy <= c + 1e-9);
+          return Math.abs(hi - M) + (Math.abs(lo - mn.val()) < 0.05 && lo >= mn.val() - 1e-9 ? 0 : 1) + (inside ? 0 : 1) + Math.abs(hx * hx + hy * hy - mn.val());
+        }
+      };
+    }
+  },
+
+  // 【通過領域・逆像法】点 (x, y) を通る ⇔ 式を満たす実数 t（s, t）が存在する。答えは境界つきの不等式と図
+  // 難しさ1：t がすべての実数（判別式）／2：点 (s+t, st) などの動く範囲／3：t≧0 の通過領域（x を固定して y の範囲）
+  tsuka(lv){
+    const fx = h => h ? `(${sumTex([[1, 'x'], [h, '']])})` : 'x';   // x+h
+    const ptsMax = (f, a, b, n = 4000) => { let m = -Infinity; for (let i = 0; i <= n; i++) m = Math.max(m, f(a + (b - a) * i / n)); return m; };
+    for (;;) {
+      if (lv === 1) {
+        const e = pick([1, -1]), h = ri(-2, 2), g = ri(-3, 3), f = 2 * h;
+        const line = `y=${sumTex([[2, 'tx'], [e, 't^2'], [f, 't'], [g, '']])}`;
+        const tq = sumTex([[e, 't^2'], f ? [1, `(${sumTex([[2, 'x'], [f, '']])})t`] : [2, 'xt'], [g, ''], [-1, 'y']]);
+        const bound = e < 0 ? sumTex([[1, 'x^2'], [2 * h, 'x'], [h * h + g, '']]) : sumTex([[-1, 'x^2'], [-2 * h, 'x'], [g - h * h, '']]);
+        const bf = x => e < 0 ? (x + h) ** 2 + g : -((x + h) ** 2) + g, rel = e < 0 ? '\\leqq' : '\\geqq';
+        const D4 = `${fx(h)}^2${e < 0 ? (g ? ` + (${sumTex([[g, ''], [-1, 'y']])})` : ' - y') : (g ? ` - (${sumTex([[g, ''], [-1, 'y']])})` : ' + y')}`;
+        const D4e = sumTex([[1, 'x^2'], [2 * h, 'x'], [h * h - e * g, ''], [e, 'y']]);
+        const x0 = -h - 3, x1 = -h + 3, yv = [bf(-h), bf(x0)], ylo = Math.min(...yv, 0) - 1.5, yhi = Math.max(...yv, 0) + 1.5;
+        const fig = planeShapes({ x0, x1, y0: ylo, y1: yhi, fills: [e < 0 ? { lo: () => ylo, hi: bf, a: x0, b: x1 } : { lo: bf, hi: () => yhi, a: x0, b: x1 }], curves: [{ f: bf }], dots: [{ x: -h, y: bf(-h), label: ptLab('', -h, bf(-h)), pos: e < 0 ? 'below' : 'above' }] });
+        const st = [{ t: 'txt', s: '点 $(x,\\ y)$ がこの直線の通過する領域にある条件は，その $x$，$y$ に対して，直線の式を満たす実数 $t$ が存在することである。$t$ について整理すると' },
+          { t: 'eq', noEval: true, rows: [`${tq} &= 0`] },
+          { t: 'txt', s: 'この $t$ の2次方程式が実数解をもつ条件は，判別式を $D$ とすると $\\frac{D}{4}\\geqq 0$ である。' },
+          { t: 'eq', noEval: true, rows: [`\\frac{D}{4} &= ${D4}`, `&= ${D4e}`] },
+          { t: 'txt', s: `$\\frac{D}{4}\\geqq 0$ より $y${rel} ${bound}$。境界を含む（図の斜線部分）。` }, { t: 'fig', f: fig }];
+        return {
+          unit: 'tsuka', lv, key: `tk1|${line}`, sec: T.tsuka1,
+          label: `$t$ がすべての実数値をとって変化するとき，直線 $${line}$ が通過する領域を $x$，$y$ の不等式で表せ。`, math: '', item: `直線 $${line}$ の通過領域`, head: `直線 $${line}$`,
+          ans: `$y${rel} ${bound}$（境界を含む）`, vars: {}, steps: st,
+          // ある x で，t をいろいろ動かしたときの y の上限（下限）が境界と一致するか
+          chk: () => [-2.3, -1, 0, 0.7, 1.9].reduce((s, x) => { const yt = t => 2 * t * x + e * t * t + f * t + g, m = e < 0 ? ptsMax(yt, -30, 30, 20000) : -ptsMax(t => -yt(t), -30, 30, 20000); return s + (Math.abs(m - bf(x)) < 1e-3 ? 0 : 1); }, 0)
+        };
+      }
+      if (lv === 2) {
+        // 点 (s+t, st) など。type：all（s, t は実数）/ sq（(s+t, s²+t²)）/ circ（s²+t²≦r2）/ pos（s, t≧0）
+        const type = pick(['all', 'sq', 'circ', 'circ', 'pos']), r2 = pick([2, 4, 6, 8]);
+        const q4 = sumTex([[new F(1, 4), 'x^2']]), h2 = sumTex([[new F(1, 2), 'x^2']]), hc = sumTex([[new F(1, 2), 'x^2'], [new F(-r2, 2), '']]);
+        const P = type === 'sq' ? '(s+t,\\ s^2+t^2)' : '(s+t,\\ st)';
+        const cond = { all: '実数 $s$，$t$ が', sq: '実数 $s$，$t$ が', circ: `実数 $s$，$t$ が $s^2+t^2\\leqq ${r2}$ を満たして`, pos: '0 以上の実数 $s$，$t$ が' }[type];
+        const ans = { all: `$y\\leqq ${q4}$`, sq: `$y\\geqq ${h2}$`, circ: `$${hc}\\leqq y\\leqq ${q4}$`, pos: `$x\\geqq 0$，$0\\leqq y\\leqq ${q4}$` }[type];
+        const inA = (x, y) => type === 'all' ? y <= x * x / 4 : type === 'sq' ? y >= x * x / 2 : type === 'circ' ? x * x / 2 - r2 / 2 <= y && y <= x * x / 4 : x >= 0 && y >= 0 && y <= x * x / 4;
+        const st = [{ t: 'txt', s: type === 'sq' ? '$x=s+t$，$y=s^2+t^2$ とおくと，$st=\\frac{(s+t)^2-(s^2+t^2)}{2}=\\frac{x^2-y}{2}$。よって $s$，$t$ は $u$ の2次方程式 $u^2-xu+\\frac{x^2-y}{2}=0$ の2つの解である。' : '$x=s+t$，$y=st$ とおくと，$s$，$t$ は $u$ の2次方程式 $u^2-xu+y=0$ の2つの解である。' },
+          { t: 'txt', s: type === 'pos' ? '$s$，$t$ がともに 0 以上の実数であるための条件は，判別式 $D\\geqq 0$，2つの解の和 $\\geqq 0$，積 $\\geqq 0$ である。' : '$s$，$t$ が実数であるための条件は，判別式 $D\\geqq 0$ である。' }];
+        if (type === 'sq') st.push({ t: 'eq', noEval: true, rows: ['D &= x^2-4\\cdot\\frac{x^2-y}{2}', '&= -x^2+2y'] }, { t: 'txt', s: `$D\\geqq 0$ より $y\\geqq ${h2}$` });
+        else st.push({ t: 'eq', noEval: true, rows: ['D &= x^2-4y'] }, { t: 'txt', s: `$D\\geqq 0$ より $y\\leqq ${q4}$` });
+        if (type === 'circ') st.push({ t: 'txt', s: `また，$s^2+t^2=(s+t)^2-2st=x^2-2y$ なので，$s^2+t^2\\leqq ${r2}$ より $x^2-2y\\leqq ${r2}$，すなわち $y\\geqq ${hc}$` });
+        if (type === 'pos') st.push({ t: 'txt', s: '和 $x\\geqq 0$，積 $y\\geqq 0$' });
+        const R = Math.sqrt(2 * r2);
+        const sp = type === 'all' ? { x0: -4, x1: 4, y0: -3, y1: 4.5, fills: [{ lo: () => -3, hi: x => x * x / 4, a: -4, b: 4 }], curves: [{ f: x => x * x / 4 }] }
+          : type === 'sq' ? { x0: -3, x1: 3, y0: -1, y1: 5, fills: [{ lo: x => x * x / 2, hi: () => 5, a: -3, b: 3 }], curves: [{ f: x => x * x / 2 }] }
+          : type === 'circ' ? { x0: -R - 1, x1: R + 1, y0: -r2 / 2 - 1, y1: r2 / 2 + 1.5, fills: [{ lo: x => x * x / 2 - r2 / 2, hi: x => x * x / 4, a: -R, b: R }], curves: [{ f: x => x * x / 4, a: -R - 0.6, b: R + 0.6, st: 'faint' }, { f: x => x * x / 2 - r2 / 2, a: -R - 0.3, b: R + 0.3, st: 'faint' }, { f: x => x * x / 4, a: -R, b: R }, { f: x => x * x / 2 - r2 / 2, a: -R, b: R }] }
+          : { x0: -1.5, x1: 4, y0: -1, y1: 4.5, fills: [{ lo: () => 0, hi: x => x * x / 4, a: 0, b: 4 }], curves: [{ f: x => x * x / 4, a: 0, b: 4 }], segs: [{ pts: [[0, 0], [4, 0]] }] };
+        const fig = planeShapes(sp);
+        st.push({ t: 'txt', s: `よって ${ans}。境界を含む（図の斜線部分）。` }, { t: 'fig', f: fig });
+        return {
+          unit: 'tsuka', lv, key: `tk2|${type}|${type === 'circ' ? r2 : ''}`, sec: T.tsuka2,
+          label: `${cond}動くとき，点 $${P}$ の動く領域を $x$，$y$ の不等式で表せ。`, math: '', item: `点 $${P}$ の動く領域`, head: `点 $${P}$ の動く領域`,
+          ans: `${ans}（境界を含む）`, vars: {}, steps: st,
+          // s, t を条件の中で動かした点が答えの領域に入り，答えの領域の点からは条件を満たす s, t が求まるか
+          chk: () => {
+            let bad = 0;
+            for (let i = 0; i < 400; i++) {
+              const s = type === 'pos' ? Math.random() * 3 : Math.random() * 6 - 3, t = type === 'pos' ? Math.random() * 3 : Math.random() * 6 - 3;
+              if (type === 'circ' && s * s + t * t > r2) continue;
+              const x = s + t, y = type === 'sq' ? s * s + t * t : s * t;
+              if (!inA(x, y)) bad++;
+              const X = Math.random() * 6 - 3, Y = Math.random() * 6 - 3;
+              if (!inA(X, Y)) continue;
+              const pr = type === 'sq' ? (X * X - Y) / 2 : Y, D = X * X - 4 * pr;
+              if (D < -1e-9) { bad++; continue; }
+              const u1 = (X + Math.sqrt(Math.max(D, 0))) / 2, u2 = (X - Math.sqrt(Math.max(D, 0))) / 2;
+              if (type === 'circ' && u1 * u1 + u2 * u2 > r2 + 1e-9) bad++;
+              if (type === 'pos' && (u1 < -1e-9 || u2 < -1e-9)) bad++;
+            }
+            return bad;
+          }
+        };
+      }
+      // 発展：t≧0。y = e·t² + (2x+f)t + g を t の2次関数とみる
+      const e = pick([1, -1]), h = ri(-2, 2), g = ri(-3, 3), f = 2 * h;
+      const line = `y=${sumTex([[2, 'tx'], [e, 't^2'], [f, 't'], [g, '']])}`, XH = fx(h);
+      const top = sumTex([[1, 'x^2'], [2 * h, 'x'], [h * h + g, '']]), bot = sumTex([[-1, 'x^2'], [-2 * h, 'x'], [g - h * h, '']]);
+      const mh = numTex(-h), ge = e < 0 ? '\\geqq' : '\\leqq', lt = e < 0 ? '<' : '>', rel = e < 0 ? '\\leqq' : '\\geqq';
+      const bf = x => e < 0 ? (x + h >= 0 ? (x + h) ** 2 + g : g) : (x + h <= 0 ? -((x + h) ** 2) + g : g);
+      const tf = sumTex([[e, 't^2'], f ? [1, `(${sumTex([[2, 'x'], [f, '']])})t`] : [2, 'xt'], [g, '']]);
+      const sqF = h ? `\\left\\{t${e < 0 ? '-' : '+'}${XH}\\right\\}^2` : `(t${e < 0 ? '-' : '+'}x)^2`;
+      const cmp = joinPoly(`${e < 0 ? '-' : ''}${sqF}${e < 0 ? '+' : '-'}${XH}^2`, String(g));
+      const ax = e < 0 ? XH : `-${XH}`;
+      const ext = e < 0 ? '最大値' : '最小値';
+      const st = [{ t: 'txt', s: '$x$ を固定して，$t$ が $t\\geqq 0$ の範囲を動くときの $y$ のとりうる値の範囲を調べる。' },
+        { t: 'eq', noEval: true, rows: [`y &= ${tf}`, `&= ${cmp}`] },
+        { t: 'txt', s: `これは $t$ の2次関数で，グラフは${e < 0 ? '上に凸' : '下に凸'}，軸は $t=${ax}$ である。` },
+        { t: 'txt', s: `(i) $${ax}\\geqq 0$${h || e > 0 ? `，すなわち $x${ge} ${mh}$` : ''} のとき：$t=${ax}$ で${ext} $${e < 0 ? top : bot}$ をとるので $y${rel} ${e < 0 ? top : bot}$` },
+        { t: 'txt', s: `(ii) $${ax}<0$${h || e > 0 ? `，すなわち $x${lt} ${mh}$` : ''} のとき：$t\\geqq 0$ で $y$ は${e < 0 ? '減少' : '増加'}するので，$t=0$ で${ext} $${g}$ をとり $y${rel} ${g}$` }];
+      const x0 = -h - 3, x1 = -h + 3, yv = [bf(x0), bf(x1), g], ylo = Math.min(...yv, 0) - 1.5, yhi = Math.max(...yv, 0) + 1.5;
+      const fig = planeShapes({ x0, x1, y0: ylo, y1: yhi, fills: [e < 0 ? { lo: () => ylo, hi: bf, a: x0, b: x1 } : { lo: bf, hi: () => yhi, a: x0, b: x1 }], curves: [{ f: bf }], dots: [{ x: -h, y: bf(-h), label: ptLab('', -h, bf(-h)), pos: e < 0 ? 'below' : 'above' }] });
+      const ansT = e < 0 ? `$x\\geqq ${mh}$ のとき $y\\leqq ${top}$，$x<${mh}$ のとき $y\\leqq ${g}$` : `$x\\leqq ${mh}$ のとき $y\\geqq ${bot}$，$x>${mh}$ のとき $y\\geqq ${g}$`;
+      st.push({ t: 'txt', s: `よって，求める領域は ${ansT}。境界を含む（図の斜線部分）。` }, { t: 'fig', f: fig });
+      return {
+        unit: 'tsuka', lv, key: `tk3|${line}`, sec: T.tsuka3,
+        label: `$t$ が $t\\geqq 0$ の範囲で変化するとき，直線 $${line}$ が通過する領域を $x$，$y$ の不等式で表せ。`, math: '', item: `直線 $${line}$（$t\\geqq 0$）の通過領域`, head: `直線 $${line}$（$t\\geqq 0$）`,
+        ans: `${ansT}（境界を含む）`, vars: {}, steps: st,
+        // いくつかの x で，t≧0 を細かく動かした y の上限（下限）が答えの境界と一致するか
+        chk: () => [-4.2, -2.5, -1.5, -0.5, 0, 0.6, 1.4, 2.7].reduce((s, x) => { const yt = t => 2 * t * x + e * t * t + f * t + g, m = e < 0 ? ptsMax(yt, 0, 30, 20000) : -ptsMax(t => -yt(t), 0, 30, 20000); return s + (Math.abs(m - bf(x)) < 1e-3 ? 0 : 1); }, 0)
+      };
+    }
   }
 };
 Object.assign(GEN, B_GEN);
+// 座標平面の図（領域・線形計画法・通過領域）。graphShapes と同じ部品の形式。x0〜x1，y0〜y1 が見せる範囲（eq＝true なら縦横同じ縮尺）
+// fills：[{ pts }]（多角形）または [{ lo, hi, a, b }]（a〜b で lo(x) と hi(x) の間を塗る。範囲の外は切る）
+// curves：[{ f, a, b, st }]，lines：[{ a, b, c, st }]（直線 ax+by=c を範囲で切る），segs：[{ pts, st }]，dots：[{ x, y, label, pos, open }]
+function planeShapes(sp){
+  const W = 160, H = 120, { x0, x1, y0, y1, eq = false } = sp;
+  let sx = W / (x1 - x0), sy = H / (y1 - y0), ox = 0, oy = 0;
+  if (eq) { const s = Math.min(sx, sy); ox = (W - s * (x1 - x0)) / 2; oy = (H - s * (y1 - y0)) / 2; sx = sy = s; }
+  const X = x => ox + (x - x0) * sx, Y = y => oy + (y - y0) * sy, cy = y => Math.max(y0, Math.min(y1, y)), items = [];
+  (sp.fills || []).forEach(f => {
+    if (f.pts) { items.push({ k: 'fill', pts: f.pts.map(([x, y]) => [X(x), Y(y)]) }); return; }
+    const xs = Array.from({ length: 81 }, (_, i) => f.a + (f.b - f.a) * i / 80);
+    items.push({ k: 'fill', pts: xs.map(x => [X(x), Y(cy(f.hi(x)))]).concat(xs.slice().reverse().map(x => [X(x), Y(cy(f.lo(x)))])) });
+  });
+  // 座標軸（細い線）と x，y，O の文字
+  const hasX = y0 < 0 && y1 > 0, hasY = x0 < 0 && x1 > 0;
+  if (hasX) items.push({ k: 'line', st: 'thin', pts: [[X(x0), Y(0)], [X(x1), Y(0)]] }, { k: 'text', x: X(x1), y: Y(0), s: 'x', pos: 'above left' });
+  if (hasY) items.push({ k: 'line', st: 'thin', pts: [[X(0), Y(y0)], [X(0), Y(y1)]] }, { k: 'text', x: X(0), y: Y(y1), s: 'y', pos: 'below right' });
+  if (hasX && hasY) items.push({ k: 'text', x: X(0), y: Y(0), s: 'O', pos: 'below left' });
+  const curve = (f, a, b, st) => {
+    let seg = [];
+    for (let i = 0; i <= 160; i++) {
+      const x = a + (b - a) * i / 160, y = f(x);
+      if (y >= y0 - 1e-9 && y <= y1 + 1e-9) seg.push([X(x), Y(y)]); else { if (seg.length > 1) items.push({ k: 'line', st, pts: seg }); seg = []; }
+    }
+    if (seg.length > 1) items.push({ k: 'line', st, pts: seg });
+  };
+  (sp.curves || []).forEach(c => curve(c.f, c.a ?? x0, c.b ?? x1, c.st || 'thick'));
+  (sp.lines || []).forEach(l => {
+    if (l.b) curve(x => (l.c - l.a * x) / l.b, x0, x1, l.st || 'thick');
+    else { const x = l.c / l.a; if (x >= x0 && x <= x1) items.push({ k: 'line', st: l.st || 'thick', pts: [[X(x), Y(y0)], [X(x), Y(y1)]] }); }
+  });
+  (sp.segs || []).forEach(s => items.push({ k: 'line', st: s.st || 'thick', pts: s.pts.map(([x, y]) => [X(x), Y(y)]) }));
+  (sp.dots || []).forEach(d => { items.push({ k: 'dot', x: X(d.x), y: Y(d.y), open: !!d.open }); if (d.label) items.push({ k: 'text', x: X(d.x), y: Y(d.y), s: d.label, pos: d.pos || 'above right', halo: true }); });
+  return { W, H, items };
+}
+// 図の中の座標の文字（−，分数は 1/2）
+const ptLab = (nm, x, y) => `${nm}(${plainNum(F.of(x))}, ${plainNum(F.of(y))})`;
 
 /* ========== 数B の単元 ========== */
 // n の多項式（係数は F か整数、低い次数から）
@@ -9043,6 +9370,9 @@ const FORMULA = {
   kaiKeisu2: ['$\\alpha+\\beta=-\\frac{b}{a}$，$\\alpha\\beta=\\frac{c}{a}$（虚数解でも同じ）', '2数 $p$，$q$ を解とする2次方程式は $x^2-(p+q)x+pq=0$'],
   inshuTeiri: ['$P(a)=0$ ならば $P(x)$ は $x-a$ で割り切れる（因数定理）。', '$a$ の候補は $\\pm\\frac{\\text{定数項の約数}}{\\text{最高次の係数の約数}}$。見つけたら割り算して，残りを因数分解する。'],
   en: ['$x^2+y^2+lx+my+n=0$ は，$x$，$y$ それぞれ平方完成して $(x-a)^2+(y-b)^2=r^2$ にする（$x^2$ の係数が 2 なら先に 2 でわる）。', '中心 $(a,\\ b)$，半径 $r$'],
+  teiten: ['文字（$k$ など）について整理して $f+kg=0$ の形にする。', '$k$ の値に関係なく成り立つ条件は $f=0$ かつ $g=0$。これを連立して解く。'],
+  senkei: ['連立不等式の表す領域をかき，境界の直線の交点（頂点）を求める。', '$ax+by=k$ とおき，この直線が領域と共有点をもつように動かす。傾きを境界の直線の傾きと比べて，$k$ が最大・最小になる頂点を決める。'],
+  tsuka: ['点 $(x,\\ y)$ を直線が通る条件は，その $x$，$y$ に対して式を満たす実数 $t$ が存在すること（逆像法）。', '$t$ の2次方程式とみて，判別式 $D\\geqq 0$。', '$x=s+t$，$y=st$ のとき，$s$，$t$ は $u^2-xu+y=0$ の2つの解。'],
   taba: ['2直線 $f=0$，$g=0$ の交点を通る直線は $f+kg=0$（$k$ は定数）と表せる。', '2円 $f=0$，$g=0$ の交点を通る図形は $f+kg=0$。$k\\neq -1$ のとき円，$k=-1$ のとき交点を通る直線。', '通る点の座標を代入して $k$ を決める。'],
   enSessen: ['円 $x^2+y^2=r^2$ 上の点 $(x_{1},\\ y_{1})$ における接線は $x_{1}x+y_{1}y=r^2$', '円の外の点 $(p,\\ q)$ から引いた2本の接線の，接点を通る直線（極線）は $px+qy=r^2$'],
   tenChokusen: ['点 $(x_{0},\\ y_{0})$ と直線 $ax+by+c=0$ の距離 $d=\\frac{|ax_{0}+by_{0}+c|}{\\sqrt{a^2+b^2}}$', '$y=mx+n$ の形は，$ax+by+c=0$ の形に直してから使う。'],
