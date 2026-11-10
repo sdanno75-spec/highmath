@@ -496,6 +496,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
           <label class="chk"><input type="checkbox" name="unit" value="futeishiki">不定方程式</label>
           <label class="chk"><input type="checkbox" name="unit" value="nshin">n進法</label>
           <label class="chk"><input type="checkbox" name="unit" value="yakusuu">約数の個数・総和</label>
+          <label class="chk"><input type="checkbox" name="unit" value="koshiten">格子点の個数</label>
           <label class="chk"><input type="checkbox" name="unit" value="goudou">合同式</label>
         </div>
         <div class="units" data-subj="A">
@@ -741,8 +742,9 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.55.1', UPDATED = '2026-11-10';
+const VERSION = '5.56.0', UPDATED = '2026-11-10';
 const CHANGES = [
+  ['5.56.0', '2026-11-10', '数A に単元「格子点の個数」を追加。難しさ1は x≧0, y≧0 と直線1本、難しさ2は直線2本や放物線で囲まれた部分。直線 x=k（y=k）ごとに数えて足す解説つき。'],
   ['5.55.1', '2026-11-10', '小テストに切りかえたときは、「各問に配点を出す」と「答えの枠をつける」が選ばれた状態になるようにした（そのあと外せる）。'],
   ['5.55.0', '2026-11-10', '設定の順番を、種類・単元・難しさ・問題の量・ならび順・その他の設定に変更。よく使う組み合わせと最近作ったプリントは、上のボタンからウインドウで開くようにした。'],
   ['5.54.0', '2026-11-10', '小テストの答えの枠を列いっぱいに。長い答えは2段の高さにする。答えが複数の問題は「商」「余り」などの見出しつきで枠を分ける（見出しが答えをばらすときは1本の枠）。'],
@@ -976,7 +978,7 @@ const UNITS = [
   ['bunsan', '平均・分散・標準偏差', '1'], ['soukan', '相関係数', '1'],
   ['junretsu', '順列・組合せの計算', 'A'], ['enJunretsu', '円順列・重複順列', 'A'], ['onaji', '同じものを含む順列', 'A'], ['chofuku', '重複組合せ', 'A'], ['kumiwake', '組分け', 'A'],
   ['hanpuku', '反復試行の確率', 'A'], ['jokenTsuki', '条件付き確率', 'A'], ['kitaichi', '期待値', 'A'],
-  ['gojohou', '互除法', 'A'], ['futeishiki', '不定方程式', 'A'], ['nshin', 'n進法', 'A'], ['yakusuu', '約数の個数・総和', 'A'], ['goudou', '合同式', 'A'],
+  ['gojohou', '互除法', 'A'], ['futeishiki', '不定方程式', 'A'], ['nshin', 'n進法', 'A'], ['yakusuu', '約数の個数・総和', 'A'], ['koshiten', '格子点の個数', 'A'], ['goudou', '合同式', 'A'],
   ['cheva', 'チェバの定理', 'A'], ['menelaus', 'メネラウスの定理', 'A'], ['houbeki', '方べきの定理', 'A'], ['kakunibun', '角の二等分線', 'A'], ['goshin', '三角形の五心', 'A'], ['kyoen', '共円条件', 'A'],
   ['nikou', '二項定理', '2'], ['warizan', '整式の割り算', '2'], ['soukaSoujo', '相加平均と相乗平均', '2'],
   ['fukuso', '複素数の計算', '2'], ['kaiKeisu2', '解と係数の関係（数II）', '2'], ['inshuTeiri', '因数定理による因数分解', '2'],
@@ -1067,6 +1069,8 @@ const TIME_TABLE = [
   ['nshinFrac', '2進法の小数', [40, 90, 180]],
   ['yaku1', '約数の個数（または総和）', [30, 70, 140]],
   ['yaku2', '約数の個数と総和', [50, 110, 220]],
+  ['koshi1', '格子点の個数（x≧0, y≧0 と直線1本）', [60, 150, 300]],
+  ['koshi2', '格子点の個数（直線2本・放物線）', [90, 210, 420]],
   ['goudouPow', '合同式：べきを割った余り', [40, 90, 180]],
   ['goudouProd', '合同式：積・和を割った余り', [25, 60, 120]],
   ['goudouLin', '合同式：1次合同式', [40, 90, 180]],
@@ -1283,6 +1287,7 @@ const UNIT_LEVEL = {
   futeishiki: ['小さい係数・代入でさがす', '互除法で特殊解をさがす'],
   nshin: ['2進法の変換', '3〜7進法・2進法の計算と小数'],
   yakusuu: ['素因数が2種類（個数か総和）', '素因数が3種類・個数と総和'],
+  koshiten: ['x≧0, y≧0 と x+y≦n・x+2y≦n など', 'y≦2x などの直線2本・放物線 y≧x² で囲む'],
   goudou: ['小さい法', '大きい法（〜13）'],
   menelaus: ['線分の比 AP:PD', 'BP:PE・延長との交点'],
   houbeki: ['長さが整数', '弦の交点が分数・接線が √'],
@@ -2860,6 +2865,33 @@ const A_GEN = {
         chk: () => { let c = 0, s = 0; for (let d = 1; d <= N; d++) if (N % d === 0) { c++; s += d; } return Math.abs(c - cnt) + Math.abs(s - total); }
       };
     }
+  },
+
+  // 【格子点の個数】直線 x=k（または y=k）ごとに数えて足す。答えは全部の点を調べて確かめる
+  koshiten(lv){
+    const t = lv === 1 ? pick(['x+y', 'x+2y', 'x+3y']) : pick(['2x', 'y<=x', 'para', '2x+3y']);
+    const range = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
+    let conds, ok, v, ks, cnt, how;   // ok(x,y)：条件を満たすか、v：数える直線の文字、cnt(k)：その直線上の個数
+    if (t === 'x+y') { const n = ri(6, 20); conds = ['x\\geqq 0', 'y\\geqq 0', `x+y\\leqq ${n}`]; ok = (x, y) => x >= 0 && y >= 0 && x + y <= n; v = 'x'; ks = range(0, n); cnt = k => n - k + 1; how = `$y$ は $0$ から $${n}-k$ までの $${n + 1}-k$ 個`; }
+    else if (t === 'x+2y' || t === 'x+3y') { const a = t === 'x+2y' ? 2 : 3, c = a === 2 ? ri(7, 20) : ri(9, 24); conds = ['x\\geqq 0', 'y\\geqq 0', `x+${a}y\\leqq ${c}`]; ok = (x, y) => x >= 0 && y >= 0 && x + a * y <= c; v = 'y'; ks = range(0, Math.floor(c / a)); cnt = k => c - a * k + 1; how = `$x$ は $0$ から $${c}-${a}k$ までの $${c + 1}-${a}k$ 個`; }
+    else if (t === '2x') { const c = 2 * ri(4, 10); conds = ['y\\geqq 0', 'y\\leqq 2x', `x+2y\\leqq ${c}`]; ok = (x, y) => y >= 0 && y <= 2 * x && x + 2 * y <= c; v = 'y'; ks = range(0, Math.floor(2 * c / 5)); cnt = k => c - 2 * k - Math.ceil(k / 2) + 1; how = `$\\frac{k}{2}\\leqq x\\leqq ${c}-2k$ をみたす整数 $x$ の個数`; }
+    else if (t === 'y<=x') { const c = ri(6, 20); conds = ['y\\geqq 0', 'y\\leqq x', `x+y\\leqq ${c}`]; ok = (x, y) => y >= 0 && y <= x && x + y <= c; v = 'y'; ks = range(0, Math.floor(c / 2)); cnt = k => c - 2 * k + 1; how = `$x$ は $k$ から $${c}-k$ までの $${c + 1}-2k$ 個`; }
+    else if (t === '2x+3y') { const c = ri(12, 24); conds = ['x\\geqq 0', 'y\\geqq 0', `2x+3y\\leqq ${c}`]; ok = (x, y) => x >= 0 && y >= 0 && 2 * x + 3 * y <= c; v = 'y'; ks = range(0, Math.floor(c / 3)); cnt = k => Math.floor((c - 3 * k) / 2) + 1; how = `$0\\leqq x\\leqq \\frac{${c}-3k}{2}$ をみたす整数 $x$ の個数`; }
+    else { const n = ri(4, 16), m = Math.floor(Math.sqrt(n)); conds = ['y\\geqq x^2', `y\\leqq ${n}`]; ok = (x, y) => y >= x * x && y <= n; v = 'x'; ks = range(-m, m); cnt = k => n - k * k + 1; how = `$y$ は $k^2$ から $${n}$ までの $${n + 1}-k^2$ 個`; }
+    const cs = ks.map(cnt), total = cs.reduce((s, x) => s + x, 0), cond = conds.join(',\\ ');
+    const kr = ks.length > 4 ? `${ks[0]},\\ ${ks[1]},\\ \\cdots,\\ ${ks[ks.length - 1]}` : ks.join(',\\ ');
+    const st = [{ t: 'txt', s: `直線 $${v}=k$（$k=${kr}$）の上の格子点を数える。$${v}=k$ のとき，${how}。` }];
+    const arith = cs.length > 2 && cs.every((x, i) => !i || x - cs[i - 1] === cs[1] - cs[0]);
+    if (cs.length > 7 && arith) st.push({ t: 'eq', rows: chain(`${cs[0]}+${cs[1]}+\\cdots+${cs[cs.length - 1]} &= \\frac{(${cs[0]}+${cs[cs.length - 1]})\\times${cs.length}}{2}`, `${total}`) });
+    else {
+      st.push({ t: 'txt', s: ks.map((k, i) => `$${v}=${k}$ のとき $${cs[i]}$ 個`).join('，') + '。' });
+      st.push({ t: 'eq', rows: [`${cs.join('+')} &= ${total}`] });
+    }
+    return {
+      unit: 'koshiten', lv, key: 'ks' + t + cond, label: '次の不等式を同時に満たす格子点 $(x,\\ y)$ の個数を求めよ。', math: cond, item: `$${cond}$ を同時に満たす格子点の個数`, head: `$${cond}$`,
+      ans: `$${total}$ 個`, vars: {}, steps: st, sec: lv === 1 ? T.koshi1 : T.koshi2,
+      chk: () => { let c = 0; for (let x = -30; x <= 30; x++) for (let y = -30; y <= 30; y++) if (ok(x, y)) c++; return Math.abs(c - total) + (cs.every(x => x > 0) ? 0 : 1); }
+    };
   },
 
   // 【合同式】
@@ -8726,6 +8758,7 @@ const FORMULA = {
   gojohou: ['$a=bq+r$ のとき，$a$ と $b$ の最大公約数は，$b$ と $r$ の最大公約数に等しい。', '余りが 0 になるまで割り算をくり返し，最後に割った数が最大公約数 $g$。最小公倍数は $\\frac{ab}{g}$'],
   futeishiki: ['$ax+by=c$ の整数解：特殊解 $(x_{0},\\ y_{0})$ を1つ見つけて，$a(x-x_{0})=-b(y-y_{0})$ にする。', '$a$ と $b$ が互いに素なら $x=x_{0}+bk$，$y=y_{0}-ak$（$k$ は整数）'],
   nshin: ['$n$ 進法の数 $abc_{(n)}$（各位の数字が $a$，$b$，$c$）は $a\\cdot n^2+b\\cdot n+c$', '10進法から $n$ 進法へは，$n$ で割った余りを下から順に並べる。小数は $n$ をかけて整数部分を取り出す。', '2進法の小数：$0.101_{(2)}=\\frac{1}{2}+\\frac{1}{2^3}$'],
+  koshiten: ['$x$ 座標と $y$ 座標がいずれも整数である点を格子点という。', '直線 $x=k$（または $y=k$）の上にある格子点の個数を求めて，$k$ について足す。'],
   yakusuu: ['$N=p^a q^b r^c$（素因数分解）のとき，約数の個数は $(a+1)(b+1)(c+1)$ 個', '約数の総和は $(1+p+\\cdots+p^a)(1+q+\\cdots+q^b)(1+r+\\cdots+r^c)$'],
   goudou: ['$a\\equiv b\\pmod{m}$ のとき，$a+c\\equiv b+c$，$ac\\equiv bc$，$a^n\\equiv b^n\\pmod{m}$', '$a^k$ が $1$ や $-1$ と合同になる $k$ を見つけて，指数を小さくする。', '1次合同式は，法と互いに素な数を両辺にかけて $x$ の係数を $1$ にする。'],
   menelaus: ['直線が $\\triangle\\mathrm{ABC}$ の辺（またはその延長）と P，Q，R で交わるとき $\\frac{\\mathrm{AR}}{\\mathrm{RB}}\\cdot\\frac{\\mathrm{BP}}{\\mathrm{PC}}\\cdot\\frac{\\mathrm{CQ}}{\\mathrm{QA}}=1$', '頂点 → 分点 → 頂点 … と一筆書きでたどって比をかける。'],
