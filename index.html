@@ -31,6 +31,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 .seg{display:flex;gap:4px;flex-wrap:wrap}
 .seg button{border:1px solid var(--line);background:var(--card);padding:6px 12px;border-radius:999px;font-size:13px}
 .seg button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.seg button:disabled{opacity:.4;cursor:not-allowed}
 .btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--card);padding:8px 14px;border-radius:10px;font-size:14px;font-weight:500}
 .btn svg{width:18px;height:18px}
 .btn.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
@@ -617,7 +618,8 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
         <div class="gnote">教科を押してから分野を押すと、その分野の単元が出ます。教科をまたいで選べます。単元ごとの問題数は「問題の量」の表で決められます。</div>
       </div></div>
       <div class="grp"><div class="glab">難しさ</div><div>
-        <div class="seg" data-set="level"><button data-v="basic">基本</button><button data-v="std">標準</button><button data-v="adv">発展</button><button data-v="mix">まぜる</button></div>
+        <div class="seg" id="lvBox" role="group" aria-label="難しさ"><button type="button" data-lv="b">基本</button><button type="button" data-lv="s">標準</button><button type="button" data-lv="a">発展</button></div>
+        <div class="gnote" style="margin:6px 0 0">押すたびにオン・オフします。2つ以上オンにすると、その難しさをまぜて出します。発展は、発展の問題がある単元を選んだときだけ押せます。</div>
         <div id="mixLvBox" style="margin-top:6px"><div class="seg" data-set="mixLv"><button data-v="seq">基本 → 標準 → 発展の順</button><button data-v="rand">難しさをランダムに</button></div>
           <div class="gnote" style="margin:8px 0 0">基本・標準・発展の問題数は、「問題の量」の表で単元ごとに決めます。</div>
         </div>
@@ -702,7 +704,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
       <details class="hsec"><summary><h2>使い方</h2></summary>
       <ul>
         <li>「単元」で教科を押し、分野を押してひらき、出したい単元にチェックを入れます。教科をまたいで選べます。選んだ単元は上に札で並び、× で外せます。チェックを変えると、すぐに新しいプリントになります。</li>
-        <li><b>単元ごとの問題数</b>：「問題の量」の表で、単元ごとの問題数を決めます（難しさが「まぜる」のときは基本・標準・発展の数。発展は発展の問題がある単元だけ、「パターンを選ぶ」の単元は合計だけです）。数を直すと、全体の問題数はその合計になります。全体の問題数を変えると、単元に同じくらいずつ配りなおします（難しさの比率は単元ごとにそのまま）。「問題のページ数に合わせる」では、単元ごとの数の比率を保ったまま、ページに入るだけふやし・へらします。</li>
+        <li><b>単元ごとの問題数</b>：「問題の量」の表で、単元ごとの問題数を決めます（難しさを2つ以上オンにしたときは、オンにした難しさごとの数。発展は発展の問題がある単元だけ、「パターンを選ぶ」の単元は合計だけです）。数を直すと、全体の問題数はその合計になります。全体の問題数を変えると、単元に同じくらいずつ配りなおします（難しさの比率は単元ごとにそのまま）。「問題のページ数に合わせる」では、単元ごとの数の比率を保ったまま、ページに入るだけふやし・へらします。</li>
         <li>漸化式・媒介変数の消去・三角形の五心・加法定理・確率変数の和と積・約数の個数と総和は、選んだ単元の札の「設定」を押すと、その単元の設定が出ます。</li>
         <li>よく使う単元のセットは、「よく使う組み合わせ」に名前をつけて保存できます（このブラウザに保存）。フォルダに分けられ、フォルダを開くと「名前を変える」「消す」が出ます。組み合わせの横のフォルダの印で、別のフォルダに移せます。「ファイルに書き出す」で保存しておくと、ほかのパソコンやブラウザで「ファイルから読みこむ」で使えます。題名・目安時間・解答ページなどは「その他の設定」の中にあります。</li>
         <li>下のバーの「＋別バージョン」を押すと、同じ単元・難しさ・並びで数だけちがう B 版ができます（F 版まで）。「A 版」「B 版」で切りかえ、題名には（A）（B）がつきます。「問題を作りなおす」や設定を変えると、別バージョンはなくなります。版が2つ以上あるときは「全部の版をまとめて印刷」を押しておくと、印刷に A 版から順に全部の版（それぞれ問題と解答）が入ります。ページ番号は版ごとに数えます。</li>
@@ -742,8 +744,10 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.57.1', UPDATED = '2026-11-10';
+const VERSION = '5.59.0', UPDATED = '2026-11-10';
 const CHANGES = [
+  ['5.59.0', '2026-11-10', '難しさを「基本」「標準」「発展」のオンオフにした（7通りの組み合わせ）。2つ以上オンでまぜて出し、「問題の量」の表はオンの難しさの列だけ出す。発展の問題がある単元を選んでいないときは、発展を押せない。'],
+  ['5.58.0', '2026-11-10', '格子点の個数に発展を追加（x+2y≦n などで、直線の本数が n の偶奇で変わるので場合分けして Σ で計算する）。'],
   ['5.57.1', '2026-11-10', '全部の版をまとめて印刷するとき、ページ数が奇数の版のあとに白紙を1枚入れる（両面印刷で、次の版が前の版の裏に入らないように）。'],
   ['5.57.0', '2026-11-10', '格子点の個数を Σ で計算する解説に変更。端が整数にならない向きを避けて数える問題と、n を含み答えを n の式で表す問題（難しさ2）を追加。'],
   ['5.56.1', '2026-11-10', '格子点の個数を数B（数列）の単元に移した（Σの計算の後ろ）。'],
@@ -1074,6 +1078,7 @@ const TIME_TABLE = [
   ['yaku2', '約数の個数と総和', [50, 110, 220]],
   ['koshi1', '格子点の個数（数で・Σ で計算）', [90, 180, 360]],
   ['koshi2', '格子点の個数（n の式で表す）', [120, 240, 480]],
+  ['koshi3', '格子点の個数：n の偶奇で場合分け（発展）', [180, 360, 720]],
   ['goudouPow', '合同式：べきを割った余り', [40, 90, 180]],
   ['goudouProd', '合同式：積・和を割った余り', [25, 60, 120]],
   ['goudouLin', '合同式：1次合同式', [40, 90, 180]],
@@ -1262,7 +1267,7 @@ const totalMins = () => sumSec(PROBS).map(s => Math.ceil(s / 60));
 const timeText = () => totalMins().map((m, k) => `${TIERS[k]} ${m}分`).join('・');
 // 難しさの説明：選んだ単元の分だけを出す（基本｜標準）
 // 発展（lv 3）がある単元。ほかの単元は「発展」を選ぶと標準を出す
-const ADV_UNITS = new Set(['kyokusenShiki', 'kahou', 'gousei', 'sankakuHouteishiki', 'taisuuHouteishiki', 'kyokuchi', 'teisekibun', 'kanshu', 'warizan', 'zenka', 'kyouyuuten']);
+const ADV_UNITS = new Set(['kyokusenShiki', 'kahou', 'gousei', 'sankakuHouteishiki', 'taisuuHouteishiki', 'kyokuchi', 'teisekibun', 'kanshu', 'warizan', 'zenka', 'kyouyuuten', 'koshiten']);
 const UNIT_LEVEL = {
   tasuki: ['x の係数の片方が1', '2文字（x, y）・係数がどちらも2以上'],
   nijuu: ['√(5+2√6) の形', '√(7+4√3)・√(4+√15) の形'],
@@ -1290,7 +1295,7 @@ const UNIT_LEVEL = {
   futeishiki: ['小さい係数・代入でさがす', '互除法で特殊解をさがす'],
   nshin: ['2進法の変換', '3〜7進法・2進法の計算と小数'],
   yakusuu: ['素因数が2種類（個数か総和）', '素因数が3種類・個数と総和'],
-  koshiten: ['数で求める（Σ で計算・端が整数にならない向きを避ける）', 'n を含む（答えを n の式で表す）'],
+  koshiten: ['数で求める（Σ で計算・端が整数にならない向きを避ける）', 'n を含む（答えを n の式で表す）', 'n の偶奇で場合分け（x+2y≦n など）'],
   goudou: ['小さい法', '大きい法（〜13）'],
   menelaus: ['線分の比 AP:PD', 'BP:PE・延長との交点'],
   houbeki: ['長さが整数', '弦の交点が分数・接線が √'],
@@ -1391,6 +1396,7 @@ const FORMULA_ADV = {
   zenka: [ZENKA_FORM.exp, ZENKA_FORM.rev],
   kyouyuuten: ['弦：交点の $x$ 座標を $\\alpha$，$\\beta$ として解と係数の関係を使う。中点の $x$ 座標は $\\frac{\\alpha+\\beta}{2}$，傾き $m$ の直線上の長さは $\\sqrt{1+m^2}\\left|\\alpha-\\beta\\right|$。'],
   kyokuchi: ['最大・最小：区間の中の極値と，区間の両端の値を比べる。'],
+  koshiten: ['偶奇で場合分け：$k$ の上限が $\\frac{n}{2}$ のときは，$n=2m$（偶数）と $n=2m+1$（奇数）に分けて Σ を計算し，最後に $n$ の式にもどす。'],
   teisekibun: ['絶対値：中の式が $0$ になる $x$ で区間を分け，$\\left|A\\right|=A$（$A\\geqq 0$），$\\left|A\\right|=-A$（$A\\leqq 0$）で絶対値を外す。'],
   kahou: ['2倍角の公式：$\\sin 2\\alpha=2\\sin\\alpha\\cos\\alpha$，$\\cos 2\\alpha=1-2\\sin^2\\alpha=2\\cos^2\\alpha-1$'],
   gousei: ['方程式：合成して $\\sin(\\theta+\\alpha)$ の値を出す。$\\theta+\\alpha$ の範囲は，$\\theta$ の範囲に $\\alpha$ を足してずらす。'],
@@ -1442,7 +1448,8 @@ function levelNoteHTML(){
   const line = ([u, nm]) => { if (PICK[u] && pickOn(u)) return `${esc(nm)}：パターンを選ぶ（${pickPats(u).map(k => PICK[u].types.find(t => t[0] === k)[1]).join('・') || 'まだ選んでいません'}）`; const [b, s, a] = UNIT_LEVEL[u]; return `${esc(nm)}：${esc(ST.level === 'basic' ? b : ST.level === 'std' ? s : ST.level === 'adv' ? (a ? `発展 ${a}` : `（発展なし）標準 ${s}`) : `基本 ${b} → 標準 ${s}${a && ucOf(u)[2] > 0 ? ` → 発展 ${a}` : ''}`)}`; };
   if (ST.level === 'adv') return '発展：発展の問題がある単元（単元の欄に「発展あり」と出ている単元）だけ発展を出し、ほかの単元は標準を出します。<br>' + us.map(line).join('<br>');
   const mixNote = ST.mixLv === 'rand' ? '基本・標準・発展をランダムにまぜて並べます。' : '基本、標準、発展の順に並べます（「単元ごとにまとめる」なら、各単元の中でこの順に）。';
-  return (ST.level === 'mix' ? `まぜる：単元ごとの基本・標準・発展の問題数は、「問題の量」の表で決めます。${mixNote}<br>` : '') + us.map(line).join('<br>');
+  const mixNames = lvEff().map(c => LV_LABEL[c]).join('・');
+  return (ST.level === 'mix' ? `${mixNames}をまぜる：単元ごとの${mixNames}の問題数は、「問題の量」の表で決めます。${mixNote.replace('基本・標準・発展', mixNames).replace('基本、標準、発展の順', mixNames.replace(/・/g, '、') + 'の順')}<br>` : '') + us.map(line).join('<br>');
 }
 
 // 最大・最小のグラフ：画面（SVG）と LaTeX（TikZ）で同じ図になるよう、図形を一度だけ計算する。
@@ -2873,8 +2880,31 @@ const A_GEN = {
   // 【格子点の個数】直線 x=k（または y=k）の上の個数を k の式で表し，Σ で足す。答えは全部の点を調べて確かめる
   // 難しさ1：数で（端が整数にならない向きを避ける問題もふくむ）／難しさ2：n を含み，答えを n の式で表す
   koshiten(lv){
+    if (lv === 3) {
+      // 発展：直線 y=k の上の個数は n+1−2k 個。k の上限 [n/2] が n の偶奇で変わるので場合分けする
+      const t = pick(['x+2y', 'y<=x', 'y<=x/2']), sw = Math.random() < 0.5, S = x => sw ? x.replace(/[xy]/g, c => c === 'x' ? 'y' : 'x').replace(/y\+x/g, 'x+y') : x;
+      const D = {
+        'x+2y': [['x\\geqq 0', 'y\\geqq 0', 'x+2y\\leqq n'], (x, y, n) => x >= 0 && y >= 0 && x + 2 * y <= n, '$x=0,\\ 1,\\ \\cdots,\\ n-2k$'],
+        'y<=x': [['y\\geqq 0', 'y\\leqq x', 'x+y\\leqq n'], (x, y, n) => y >= 0 && y <= x && x + y <= n, '$x=k,\\ k+1,\\ \\cdots,\\ n-k$'],
+        'y<=x/2': [['y\\geqq 0', 'y\\leqq\\frac{x}{2}', 'x\\leqq n'], (x, y, n) => y >= 0 && 2 * y <= x && x <= n, '$x=2k,\\ 2k+1,\\ \\cdots,\\ n$']
+      }[t];
+      const ok = sw ? (x, y, n) => D[1](y, x, n) : D[1], cond = S(D[0].join(',\\ '));
+      const ev = '\\frac{(n+2)^2}{4}', od = '\\frac{(n+1)(n+3)}{4}';
+      const st = [
+        { t: 'txt', s: S(`直線 $y=k$ の上の格子点は，${D[2]} の $n+1-2k$ 個。$k$ は $0\\leqq k\\leqq\\frac{n}{2}$ をみたす整数なので，$k$ の最大が $n$ の偶奇で変わる。`) },
+        { t: 'txt', s: '(i) $n$ が偶数のとき：$n=2m$（$m$ は自然数）とおくと，$k=0,\\ 1,\\ \\cdots,\\ m$ で，個数は $2m+1-2k$。' },
+        { t: 'eq', noEval: true, rows: ['\\sum_{k=0}^{m}(2m+1-2k) &= (2m+1)(m+1)-2\\cdot\\frac{1}{2}m(m+1)', '&= (m+1)^2', `&= \\left(\\frac{n}{2}+1\\right)^2=${ev}`] },
+        { t: 'txt', s: '(ii) $n$ が奇数のとき：$n=2m+1$（$m$ は 0 以上の整数）とおくと，$k=0,\\ 1,\\ \\cdots,\\ m$ で，個数は $2m+2-2k$。' },
+        { t: 'eq', noEval: true, rows: ['\\sum_{k=0}^{m}(2m+2-2k) &= (2m+2)(m+1)-2\\cdot\\frac{1}{2}m(m+1)', '&= (m+1)(m+2)', `&= \\frac{n+1}{2}\\cdot\\frac{n+3}{2}=${od}`] }
+      ];
+      return {
+        unit: 'koshiten', lv, key: 'ks3' + cond, label: '$n$ を自然数とする。次の不等式を同時に満たす格子点 $(x,\\ y)$ の個数を $n$ で表せ。', math: cond, item: `$${cond}$ を同時に満たす格子点の個数（$n$ の偶奇で分ける）`, head: `$${cond}$`,
+        ans: `$n$ が偶数のとき $${ev}$ 個，$n$ が奇数のとき $${od}$ 個`, vars: {}, steps: st, sec: T.koshi3,
+        chk: () => { let e = 0; for (let n = 1; n <= 12; n++) { let c = 0; for (let x = -20; x <= 20; x++) for (let y = -20; y <= 20; y++) if (ok(x, y, n)) c++; e += Math.abs(c - texEval(n % 2 ? od : ev, { n })); } return e; }
+      };
+    }
     // x と y を入れかえた問題もつくる（文字列は x↔y を入れかえる）
-    const swapXY = t => t.replace(/[xy]/g, c => c === 'x' ? 'y' : 'x');
+    const swapXY = t => t.replace(/[xy]/g, c => c === 'x' ? 'y' : 'x').replace(/y\+x/g, 'x+y');
     const frac = '直線 $x=k$ の上で数えると端が整数にならないので，直線 $y=k$ の上で数える。';
     const lin = (A, B, m) => {   // Σ_{k=0}^{m}(A−Bk)（A, B, m は数）
       const t = B === 1 ? 'k' : B + 'k', half = m * (m + 1) / 2;
@@ -8449,6 +8479,9 @@ const clampMix = v => { if (v === '' || v === null) return null; v = Math.round(
 // v5.46.0 で基本の割合（mixBasic）をなくし、単元ごとの問題数（ST.uCnt）にした。前の保存の割合は、初めに配るときだけ使う
 if (!ST.uCnt) ST._mix = clampMix(ST.mixBasic) ?? 50;
 delete ST.mixBasic;
+// v5.59.0 で難しさをオンオフ（ST.lvOn）にした。前の保存は level から作る（まぜるは基本・標準、発展の数があれば発展も）
+const lvFromLevel = (lv, uc) => ({ basic: 'b', std: 's', adv: 'a' })[lv] || ('bs' + (uc && typeof uc === 'object' && Object.values(uc).some(x => Array.isArray(x) && x[2] > 0) ? 'a' : ''));
+if (typeof ST.lvOn !== 'string' || !/^[bsa]+$/.test(ST.lvOn)) ST.lvOn = lvFromLevel(ST.level, ST.uCnt);
 // 開いたときは公式・手順も目安時間ものせない（利用者の指定）。問題数は 1〜50 問（それ以外の保存は 10 問にする）
 ST.formula = 'off'; ST.time = 'off';
 // 配置は「しっかり解く」だけ（v5.43.0 で「問題を一覧」をなくした）
@@ -8475,7 +8508,41 @@ const keyHash = s => { let h = 2166136261; for (let i = 0; i < s.length; i++) h 
 /* ========== 単元ごとの問題数 ========== */
 // ST.uCnt[単元] = [問題数, そのうち基本の数, そのうち発展の数]。基本と発展の数は難しさが「まぜる」のときだけ使う（残りが標準）。全体の問題数 ST.count はその合計
 const selUnits = () => UNITS.map(u => u[0]).filter(u => ST.units.includes(u));
-const ucOf = u => { const x = (ST.uCnt || {})[u] || []; return [x[0] || 0, x[1] || 0, x[2] || 0]; };
+// 難しさ：ST.lvOn は 'b'（基本）'s'（標準）'a'（発展）のうちオンのもの。2つ以上なら ST.level = 'mix'、1つならその難しさ
+// 発展は、発展の問題がある単元（パターンを選ぶ単元は除く）を選んだときだけ使える。使えないときの「発展だけ」は標準で出す（前の「発展」と同じ）
+const LV_ORDER = ['b', 's', 'a'], LV_LEVEL = { b: 'basic', s: 'std', a: 'adv' }, LV_LABEL = { b: '基本', s: '標準', a: '発展' };
+const advAvail = () => selUnits().some(u => ADV_UNITS.has(u) && !(PICK[u] && pickOn(u)));
+const lvEffOf = on => LV_ORDER.filter(c => on.includes(c) && (c !== 'a' || advAvail()));
+const lvEff = () => { const e = lvEffOf(ST.lvOn || 's'); return e.length ? e : ['s']; };
+let lvKeyPrev = null;
+function lvSync(){
+  const e = lvEff(); ST.level = e.length > 1 ? 'mix' : LV_LEVEL[e[0]];
+  const box = $('lvBox'); if (!box) return;
+  box.querySelectorAll('button[data-lv]').forEach(b => {
+    const k = b.dataset.lv, dis = k === 'a' && !advAvail(), on = e.includes(k);   // 発展だけで発展が使えないときは、標準がオンに見える（実際に標準で出す）
+    b.disabled = dis; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on);
+    b.title = dis ? '選んだ単元に発展の問題がありません' : '';
+  });
+}
+const ucRaw = u => { const x = (ST.uCnt || {})[u] || []; return [x[0] || 0, x[1] || 0, x[2] || 0]; };
+// まぜるときは、オフの難しさを 0 にして読む（標準がオフなら、標準の分を基本・発展へ回す）
+const ucOf = u => {
+  const r = ucRaw(u); if (ST.level !== 'mix') return r;
+  const e = lvEff(), okB = e.includes('b'), okS = e.includes('s'), okA = e.includes('a') && ADV_UNITS.has(u);
+  let [n, b, a] = r; if (!okB) b = 0; if (!okA) a = 0;
+  const s = n - b - a;
+  if (!okS && s > 0) { if (okB && okA) { const h = Math.ceil(s / 2); b += h; a += s - h; } else if (okB) b += s; else if (okA) a += s; else return [n, 0, 0]; }
+  return [n, b, a];
+};
+// 難しさのオンオフを変えたとき：各単元の問題数を、使える難しさに同じくらいずつ配りなおす（端数は 基本 → 標準 → 発展 の順に）
+function lvResplit(){
+  if (ST.level !== 'mix') return;
+  const e = lvEff();
+  selUnits().forEach(u => {
+    const n = ucRaw(u)[0], al = e.filter(c => c !== 'a' || ADV_UNITS.has(u)), c = k => al.includes(k) ? evenN(n, al.length, al.indexOf(k)) : 0;
+    ST.uCnt[u] = al.length ? [n, c('b'), c('a')] : [n, 0, 0];
+  });
+}
 const cntSum = () => selUnits().reduce((t, u) => t + ucOf(u)[0], 0);
 // c 問を難しさに分ける：その単元の前の比率のまま（ないときは基本 mix ％で残りが標準。初めは半分で、端数は基本へ）
 const splitFor = (c, old, mix = 50) => {
@@ -8494,6 +8561,7 @@ function cntEven(units){
 // 単元が変わったとき：均等に配っていたら、全体の問題数のまま配りなおす。単元ごとに直していたら、その数は残し、足した単元には平均の数を入れる
 function normCnt(){
   const units = selUnits();
+  lvSync();
   if (!ST.uCnt || typeof ST.uCnt !== 'object' || Array.isArray(ST.uCnt)) ST.uCnt = evenCnt(units, +ST.count, ST._mix);
   else {
     const uc = ST.uCnt, had = UNITS.map(u => u[0]).filter(u => Array.isArray(uc[u]));
@@ -8515,6 +8583,8 @@ function normCnt(){
   });
   if (!units.length) return;
   if (!cntSum()) ST.uCnt = evenCnt(units, Math.max(1, +ST.count));
+  // 単元が変わって使える難しさが変わったとき（発展が使える・使えなくなった）も、数を配りなおす
+  const lk = lvEff().join('') + ST.level; if (lvKeyPrev !== null && lk !== lvKeyPrev) lvResplit(); lvKeyPrev = lk;
   for (let s = cntSum(); s > CNT_MAX; s--) { const u = units.reduce((a, x) => ST.uCnt[x][0] > ST.uCnt[a][0] ? x : a); const [n, b, a] = ST.uCnt[u]; ST.uCnt[u] = n - b - a > 0 ? [n - 1, b, a] : b > 0 ? [n - 1, b - 1, a] : [n - 1, b, a - 1]; }
   ST.count = String(cntSum());
 }
@@ -9407,7 +9477,7 @@ function showOpts(){
   $('goshinPatBox').style.display = ST.goshinMode === 'pick' ? '' : 'none';
 }
 function syncSeg(){
-  applySubject();
+  applySubject(); lvSync();
   document.querySelectorAll('.seg[data-set]').forEach(sg => sg.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.v === String(ST[sg.dataset.set]))));
   document.querySelectorAll('input[name="unit"]').forEach(i => { i.checked = ST.units.includes(i.value); });
   $('levelNote').innerHTML = levelNoteHTML(); showOpts(); applyClosed(); updateGroupCounts();
@@ -9559,6 +9629,14 @@ document.querySelectorAll('.seg[data-set] button').forEach(b => b.addEventListen
   else if (name === 'tex') status(ST.tex === 'lua' ? 'LaTeX は ltjsarticle（LuaLaTeX）で出力します' : 'LaTeX は jsarticle（pLaTeX）で出力します');
   else regenerate();
 }));
+// 難しさのオンオフ：1つは必ず残す。オンオフを変えたら、単元ごとの数を使える難しさに配りなおして作りなおす
+$('lvBox').addEventListener('click', e => {
+  const b = e.target.closest('button[data-lv]'); if (!b || b.disabled) return;
+  const k = b.dataset.lv, cur = lvEff(), next = cur.includes(k) ? cur.filter(c => c !== k) : LV_ORDER.filter(c => cur.includes(c) || c === k);
+  if (!next.length) { status('難しさは1つ以上オンにしてください。', true); return; }
+  ST.lvOn = next.join(''); lvSync(); lvResplit(); lvKeyPrev = lvEff().join('') + ST.level; regenKeep = false;
+  syncSeg(); renderUTable(); save(); regenerate();
+});
 // 単元をまとめて決める（分野をすべて選ぶ・札の×・すべて外す・よく使う組み合わせ）。並びは教科書の順
 function setUnits(list, keep = true){
   regenKeep = keep;
@@ -9589,14 +9667,16 @@ function renderUTable(){
   const sel = UNITS.filter(u => ST.units.includes(u[0]));
   if (!sel.length) { $('uTable').innerHTML = ''; return; }
   const inp = (u, nm, k, lab) => `<input type="text" inputmode="numeric" autocomplete="off" data-uc="${u}" data-k="${k}" aria-label="${esc(nm + ' の' + lab)}">`;
-  const isPick = u => PICK[u] && pickOn(u), mix = ST.level === 'mix', adv = mix && sel.some(([u]) => ADV_UNITS.has(u) && !isPick(u));
-  const head = mix ? `<th>単元</th><th>基本</th><th>標準</th>${adv ? '<th>発展</th>' : ''}<th>計</th>` : '<th>単元</th><th>問題数</th>';
+  // まぜるときは、オンにした難しさの列だけ出す
+  const isPick = u => PICK[u] && pickOn(u), mix = ST.level === 'mix', cols = mix ? lvEff() : [];
+  const head = mix ? `<th>単元</th>${cols.map(c => `<th>${LV_LABEL[c]}</th>`).join('')}<th>計</th>` : '<th>単元</th><th>問題数</th>';
+  const cell = (u, nm, c) => c === 'a' && !ADV_UNITS.has(u) ? '<td><span class="no">なし</span></td>' : `<td>${inp(u, nm, c, LV_LABEL[c] + 'の問題数')}</td>`;
   const row = ([u, nm]) => {
     if (!mix) return `<tr><th scope="row">${esc(nm)}</th><td>${inp(u, nm, 'n', '問題数')}</td></tr>`;
-    if (isPick(u)) return `<tr><th scope="row">${esc(nm)}</th><td colspan="${adv ? 3 : 2}" class="no">パターンで出す</td><td>${inp(u, nm, 'n', '問題数')}</td></tr>`;
-    return `<tr><th scope="row">${esc(nm)}</th><td>${inp(u, nm, 'b', '基本の問題数')}</td><td>${inp(u, nm, 's', '標準の問題数')}</td>${adv ? `<td>${ADV_UNITS.has(u) ? inp(u, nm, 'a', '発展の問題数') : '<span class="no">なし</span>'}</td>` : ''}<td data-sum="${u}"></td></tr>`;
+    if (isPick(u)) return `<tr><th scope="row">${esc(nm)}</th><td colspan="${cols.length}" class="no">パターンで出す</td><td>${inp(u, nm, 'n', '問題数')}</td></tr>`;
+    return `<tr><th scope="row">${esc(nm)}</th>${cols.map(c => cell(u, nm, c)).join('')}<td data-sum="${u}"></td></tr>`;
   };
-  const foot = mix ? `<th scope="row">全体</th><td data-foot="b"></td><td data-foot="s"></td>${adv ? '<td data-foot="a"></td>' : ''}<td data-foot="n"></td>` : '<th scope="row">全体</th><td data-foot="n"></td>';
+  const foot = mix ? `<th scope="row">全体</th>${cols.map(c => `<td data-foot="${c}"></td>`).join('')}<td data-foot="n"></td>` : '<th scope="row">全体</th><td data-foot="n"></td>';
   $('uTable').innerHTML = `<table class="utbl"><thead><tr>${head}</tr></thead><tbody>${sel.map(row).join('')}</tbody><tfoot><tr>${foot}</tr></tfoot></table>`;
   fillUTable();
 }
@@ -9965,7 +10045,7 @@ window.__engine = { regenP, keyHash, GEN, UNIT_SUBJ, sumFormTex, nTex, nPolyTex,
 
 /* ========== 設定の写し（組み合わせ・最近作ったプリント） ========== */
 // 組み合わせに「一緒に保存」する設定。その他の設定のうち、題名と解答ページは入れる（目安時間・公式・見た目・LaTeX は入れない）
-const PRESET_KEYS = ['kind', 'ptB', 'ptS', 'ptA', 'ptShow', 'ansBox', 'title', 'count', 'fit', 'fitPages', 'level', 'uCnt', 'mixLv', 'order', 'ans', 'kahouUnit', 'waSekiBig', 'yakusuuBig', 'zenkaMode', 'zenkaPats', 'zenkaOrder', 'baikaiMode', 'baikaiPats', 'baikaiOrder', 'goshinMode', 'goshinPats', 'goshinOrder'];
+const PRESET_KEYS = ['kind', 'ptB', 'ptS', 'ptA', 'ptShow', 'ansBox', 'title', 'count', 'fit', 'fitPages', 'level', 'lvOn', 'uCnt', 'mixLv', 'order', 'ans', 'kahouUnit', 'waSekiBig', 'yakusuuBig', 'zenkaMode', 'zenkaPats', 'zenkaOrder', 'baikaiMode', 'baikaiPats', 'baikaiOrder', 'goshinMode', 'goshinPats', 'goshinOrder'];
 const snapSettings = () => JSON.parse(JSON.stringify(Object.fromEntries(PRESET_KEYS.map(k => [k, ST[k]]))));
 // 読みこんだファイルの設定：決まった名前の、文字・数・true/false・文字の配列・null だけを残す
 function cleanSettings(s){
@@ -9982,6 +10062,7 @@ function applySettings(s){
   PRESET_KEYS.forEach(k => { if (k in s) ST[k] = s[k] && typeof s[k] === 'object' ? JSON.parse(JSON.stringify(s[k])) : s[k]; });
   // v5.46.0 より前の組み合わせ（単元ごとの数がない）は、問題数を単元に均等に配り、前の基本の割合で分ける（このあとの setUnits で）
   if (!s.uCnt || typeof s.uCnt !== 'object') { ST.uCnt = null; ST._mix = clampMix(s.mixBasic) ?? 50; }
+  if (typeof s.lvOn !== 'string' || !/^[bsa]+$/.test(s.lvOn)) ST.lvOn = lvFromLevel(s.level || ST.level, s.uCnt);   // 前の版の組み合わせ
   ST.uBase = null;
   ST.count = String(clampCnt(ST.count) || 10); ST.fitPages = clampFit(ST.fitPages) || 2;
   if (!['full', 'only'].includes(ST.ans)) ST.ans = 'full';
