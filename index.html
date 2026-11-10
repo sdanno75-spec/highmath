@@ -140,7 +140,17 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 #histBox svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 @media (max-width:1180px){header .brand{padding-left:68px}}
 #printAsk{border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);padding:20px;width:min(360px,calc(100vw - 32px));box-shadow:0 10px 40px rgba(0,0,0,.25)}
-#printAsk::backdrop{background:rgba(0,0,0,.35)}
+#printAsk::backdrop,.win::backdrop{background:rgba(0,0,0,.35)}
+.hright{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.hbtn{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:9px 14px;border-radius:10px;font-size:14px;font-weight:500;cursor:pointer}
+.hbtn:hover{background:#efebe0}
+.win{border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);padding:0;width:min(640px,calc(100vw - 32px));max-height:calc(100vh - 48px);box-shadow:0 10px 40px rgba(0,0,0,.25)}
+.win[open]{display:flex;flex-direction:column}
+.winHead{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line)}
+.winHead h2{margin:0;font-size:16px}
+.winX{border:0;background:transparent;color:var(--muted);width:32px;height:32px;border-radius:8px;display:grid;place-items:center;cursor:pointer}
+.winX:hover{background:#efebe0;color:var(--ink)}
+.winBody{padding:16px 18px;overflow:auto}
 #printAsk h2{margin:0 0 12px;font-size:16px}
 .paList{display:flex;flex-direction:column;gap:8px}
 .paList button{display:flex;align-items:baseline;gap:10px;width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);text-align:left;font-size:15px}
@@ -240,6 +250,17 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 .flow > .wcols + .wcols, .flow > .wfull + .wcols, .flow > .wcols + .wfull, .flow > .wfull + .wfull{margin-top:-1px}
 .cell{flex:none;padding:2mm 3mm;font-size:10pt;border-bottom:1px dashed #c8c8c8;overflow:hidden}
 .cell .lb{line-height:1.6}
+.cell .pt{white-space:nowrap;font-weight:600;font-size:.92em;margin-left:.5em}
+.cell.hasbox{position:relative}
+.aboxes{position:absolute;left:3mm;right:3mm;bottom:2mm;display:grid;gap:1mm}
+.abox{height:9mm;line-height:8.4mm;box-sizing:border-box;border:1.2px solid #111;padding:0 1.5mm;font-size:9pt;background:#fff;white-space:nowrap;overflow:hidden}
+.abox.tall{height:18mm}
+.qa-head .pt{white-space:nowrap;margin-left:.5em;font-weight:600}
+.ptw{position:absolute;pointer-events:auto;display:flex;align-items:center;gap:2px;font-size:11px;color:#2b4a7a;background:#fff;border-radius:4px;padding:0 2px;opacity:.75}
+.ptw:hover,.ptw:focus-within{opacity:1}
+.ptw input{width:26px;height:20px;box-sizing:border-box;border:1px solid #9aa7bb;border-radius:4px;text-align:center;font-size:12px;padding:0}
+.ptw.own input{border-color:#b45309;background:#fff7ed;font-weight:700}
+.ptin3{width:3.2em;text-align:center}
 .cell .mx{font-size:11.5pt;white-space:nowrap;padding:1mm 0 0 5mm;overflow:hidden}
 /* 参考タイム */
 .qz-head h2{display:flex;align-items:baseline;flex-wrap:wrap}
@@ -314,7 +335,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 @media print{
   @page{size:A4 portrait;margin:0}
   body{background:#fff!important}
-  header,.panel,.dock,.pv-info,#view-help,.ctl,#histBox,#printAsk{display:none!important}
+  header,.panel,.dock,.pv-info,#view-help,.ctl,#histBox,#printAsk,.win{display:none!important}
   .wrap{padding:0!important;max-width:none!important}
   .sheet-wrap{overflow:visible;padding:0}
   .sheet{display:flex!important;box-shadow:none;margin:0;height:296mm;page-break-after:always;break-after:page}
@@ -343,30 +364,50 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
   <div class="gnote" id="printAskNote" style="margin-top:10px" hidden></div>
   <div class="paFoot"><button class="btn" type="button" id="printAskNo">やめる</button></div>
 </dialog>
-<div class="wrap">
-  <header>
-    <div class="brand">
-      <h1>数学 基礎計算プリント</h1>
-    </div>
-    <nav class="tabs" id="tabs">
-      <button data-view="main" class="on">プリント作成</button>
-      <button data-view="help">使い方・情報</button>
-    </nav>
-  </header>
-
-  <section class="view show" id="view-main">
-    <div class="panel">
-      <div class="foldAll seg" id="grpFold"><button data-act="close">すべてたたむ</button><button data-act="open">すべてひらく</button></div>
-      <div class="grp"><div class="glab">よく使う組み合わせ</div><div>
+<dialog id="winPreset" class="win" aria-labelledby="winPresetT">
+  <div class="winHead"><h2 id="winPresetT">よく使う組み合わせ</h2><button type="button" class="winX" aria-label="閉じる"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></div>
+  <div class="winBody">
         <div class="pfolders" id="presetList"></div>
         <div class="presetSave"><input class="txt" id="presetName" maxlength="30" placeholder="名前をつけて保存（例：数列の復習）" aria-label="組み合わせの名前"><select class="sel" id="presetFolder" aria-label="保存するフォルダ"></select><button class="btn" id="presetAdd" type="button">今の単元を保存</button></div>
         <label class="chk" style="margin-top:8px"><input type="checkbox" id="presetWithSet">題名・問題数・難しさ・ならび順・解答ページ・単元ごとの設定も一緒に保存する</label>
         <div class="presetTools"><button class="btn" id="folderAdd" type="button">フォルダを作る</button><button class="btn" id="presetExport" type="button">ファイルに書き出す</button><button class="btn" id="presetImportBtn" type="button">ファイルから読みこむ</button><input type="file" id="presetImport" accept=".json,application/json" hidden></div>
         <div class="gnote">押すと、保存した単元に入れかわります。「一緒に保存する」にチェックして保存した組み合わせ（「設定つき」の印）は、題名・問題数・難しさなども保存したときの設定にもどります。</div>
-      </div></div>
-      <div class="grp"><div class="glab">最近作ったプリント</div><div>
+  </div>
+</dialog>
+<dialog id="winRecent" class="win" aria-labelledby="winRecentT">
+  <div class="winHead"><h2 id="winRecentT">最近作ったプリント</h2><button type="button" class="winX" aria-label="閉じる"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></div>
+  <div class="winBody">
         <div class="recent" id="recentList"></div>
         <div class="gnote">印刷・LaTeX の出力をしたときのプリントを、新しい順に10件まで残します（このブラウザに保存）。押すと、そのときと同じ問題（別バージョン・手で直した高さもふくむ）で開くので、解答だけをもう一度印刷することもできます。「新しい問題で」を押すと、同じ単元と設定で新しく作ります。</div>
+  </div>
+</dialog>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <h1>数学 基礎計算プリント</h1>
+    </div>
+    <div class="hright">
+    <nav class="tabs" id="tabs">
+      <button data-view="main" class="on">プリント作成</button>
+      <button data-view="help">使い方・情報</button>
+    </nav>
+    <button class="hbtn" id="bPreset" type="button" aria-haspopup="dialog">よく使う組み合わせ</button>
+    <button class="hbtn" id="bRecent" type="button" aria-haspopup="dialog">最近作ったプリント</button>
+    </div>
+  </header>
+
+  <section class="view show" id="view-main">
+    <div class="panel">
+      <div class="foldAll seg" id="grpFold"><button data-act="close">すべてたたむ</button><button data-act="open">すべてひらく</button></div>
+      <div class="grp"><div class="glab">種類</div><div>
+        <div class="seg" data-set="kind"><button data-v="print">確認プリント</button><button data-v="quiz">小テスト</button></div>
+        <div id="quizBox" style="margin-top:10px">
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px">配点　基本 <input class="txt ptin3" type="text" inputmode="numeric" id="ptB" aria-label="基本の配点"> 標準 <input class="txt ptin3" type="text" inputmode="numeric" id="ptS" aria-label="標準の配点"> 発展 <input class="txt ptin3" type="text" inputmode="numeric" id="ptA" aria-label="発展の配点"> 点</div>
+          <div id="ptTotal" style="margin-top:6px;font-weight:600"></div>
+          <div class="seg" data-set="ptShow" style="margin-top:8px"><button data-v="on">各問に配点を出す</button><button data-v="off">配点を出さない</button></div>
+          <div class="seg" data-set="ansBox" style="margin-top:8px"><button data-v="off">答えの枠なし</button><button data-v="on">答えの枠をつける</button></div>
+          <div class="gnote">問題ごとの配点は、紙面の各問の左下の欄で直せます（印刷には出ません）。色がついた欄は手で直した配点で、空らんにすると難しさの配点にもどります。得点欄の満点には配点の合計が入ります。</div>
+        </div>
       </div></div>
       <div class="grp"><div class="glab">単元</div><div>
         <div class="pickHead"><b id="pickCnt">選んだ単元</b><button class="btn" id="unitClear" type="button">すべて外す</button></div>
@@ -574,6 +615,13 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
         </div>
         <div class="gnote">教科を押してから分野を押すと、その分野の単元が出ます。教科をまたいで選べます。単元ごとの問題数は「問題の量」の表で決められます。</div>
       </div></div>
+      <div class="grp"><div class="glab">難しさ</div><div>
+        <div class="seg" data-set="level"><button data-v="basic">基本</button><button data-v="std">標準</button><button data-v="adv">発展</button><button data-v="mix">まぜる</button></div>
+        <div id="mixLvBox" style="margin-top:6px"><div class="seg" data-set="mixLv"><button data-v="seq">基本 → 標準 → 発展の順</button><button data-v="rand">難しさをランダムに</button></div>
+          <div class="gnote" style="margin:8px 0 0">基本・標準・発展の問題数は、「問題の量」の表で単元ごとに決めます。</div>
+        </div>
+        <div class="gnote" id="levelNote"></div>
+      </div></div>
       <div class="grp"><div class="glab">問題の量</div><div>
         <div class="stepper" id="cntBox"><button type="button" data-d="-5">−5</button><button type="button" data-d="-1">−1</button><input type="number" id="cnt" min="1" max="50" step="1" inputmode="numeric" aria-label="問題数"><span class="cu">問</span><button type="button" data-d="1">＋1</button><button type="button" data-d="5">＋5</button></div>
         <div class="gnote">1〜50問（重くなるので50問まで）。全体の問題数を変えると、選んだ単元に同じくらいずつ配りなおします。単元ごとの数は下の表で直せて（難しさが「まぜる」のときは基本・標準・発展の数）、そのときはここが合計になります。</div>
@@ -586,21 +634,14 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
         <label class="chk" style="margin-top:10px"><input type="checkbox" id="avoidRecent">最近作ったプリント（10件まで）に入っている問題は出さない</label>
         <div class="gnote">前に配った問題と同じ問題を出さないようにします。単元の問題を使い切ったときだけ、同じ問題が出ることがあります。</div>
       </div></div>
-      <div class="grp"><div class="glab">難しさ</div><div>
-        <div class="seg" data-set="level"><button data-v="basic">基本</button><button data-v="std">標準</button><button data-v="adv">発展</button><button data-v="mix">まぜる</button></div>
-        <div id="mixLvBox" style="margin-top:6px"><div class="seg" data-set="mixLv"><button data-v="seq">基本 → 標準 → 発展の順</button><button data-v="rand">難しさをランダムに</button></div>
-          <div class="gnote" style="margin:8px 0 0">基本・標準・発展の問題数は、「問題の量」の表で単元ごとに決めます。</div>
-        </div>
-        <div class="gnote" id="levelNote"></div>
-      </div></div>
       <div class="grp"><div class="glab">ならび順</div><div>
         <div class="seg" data-set="order"><button data-v="mix">単元をまぜる</button><button data-v="unit">単元ごとにまとめる</button></div>
       </div></div>
       <button class="more" id="moreBtn" type="button" aria-expanded="false" aria-controls="moreBox"><svg class="chev" viewBox="0 0 12 12" width="11" height="11" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>その他の設定<small id="moreSum"></small></button>
       <div id="moreBox">
       <div class="grp"><div class="glab">題名</div><div>
-        <input class="txt" id="title" placeholder="プリントの題名（空らんなら「数I 基礎計算プリント」）">
-        <div class="gnote">空らんのときは、選んだ単元の教科に合わせて「数I 基礎計算プリント」などになります。</div>
+        <input class="txt" id="title" placeholder="プリントの題名（空らんなら「数I 確認プリント」）">
+        <div class="gnote">空らんのときは、選んだ単元の教科に合わせて「数I 確認プリント」などになります。</div>
       </div></div>
       <div class="grp"><div class="glab">見出しの欄</div><div>
         <div style="display:flex;flex-wrap:wrap;gap:6px"><label class="chk"><input type="checkbox" id="hDate">月日</label><label class="chk"><input type="checkbox" id="hClass">年組番</label><label class="chk"><input type="checkbox" id="hName">氏名</label></div>
@@ -700,8 +741,13 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.52.3', UPDATED = '2026-11-09';
+const VERSION = '5.55.1', UPDATED = '2026-11-10';
 const CHANGES = [
+  ['5.55.1', '2026-11-10', '小テストに切りかえたときは、「各問に配点を出す」と「答えの枠をつける」が選ばれた状態になるようにした（そのあと外せる）。'],
+  ['5.55.0', '2026-11-10', '設定の順番を、種類・単元・難しさ・問題の量・ならび順・その他の設定に変更。よく使う組み合わせと最近作ったプリントは、上のボタンからウインドウで開くようにした。'],
+  ['5.54.0', '2026-11-10', '小テストの答えの枠を列いっぱいに。長い答えは2段の高さにする。答えが複数の問題は「商」「余り」などの見出しつきで枠を分ける（見出しが答えをばらすときは1本の枠）。'],
+  ['5.53.0', '2026-11-09', '小テストモードを追加。設定の「種類」で小テストを選ぶと、難しさごとの配点（問題ごとに手で直せる）、満点の自動計算、各問の配点の表示、答えの枠が使える。解答ページにも配点を表示。題名の空らんは「数I 小テスト」などになる。'],
+  ['5.52.4', '2026-11-09', '題名が空らんのときのプリント名を「数I 確認プリント」などに変更。'],
   ['5.52.3', '2026-11-09', '共円条件の図を修正。外角の問題の点 E の黒丸をなくした。円周上の頂点の角で、中に入る文字まで外へ引き出されていたのを直した。'],
   ['5.52.2', '2026-11-09', '図の改善。角度の文字が角の頂点から離れるときは、角の印を文字のそばまで広げる。点の名前が線や角の印に重なるときは、空いている所へ動かす。'],
   ['5.52.1', '2026-11-09', '図の角度の文字の置き方を改善。線で区切られたその角の領域に入るなら中に置き、入らないときだけ図の外の近い側に引き出す。となりの角の領域には置かない。'],
@@ -8329,7 +8375,7 @@ const FONTS = {
   gothic: "'Zen Kaku Gothic New','Hiragino Sans','Yu Gothic',system-ui,sans-serif",
   mincho: "'Zen Old Mincho','Hiragino Mincho ProN','Yu Mincho',serif"
 };
-const ST = { goshinMode: 'level', goshinOrder: 'num', goshinPats: GOSHIN_TYPES.filter(t => !t[3]).map(t => t[0]), hScore: 'count', scoreMax: 100, avoidRecent: false, presetWithSet: true, recent: [], outPart: 'all', presets: [], presetFolders: [], openFolder: '', openField: '', setOpen: '', more: false, uCnt: null, fit: 'count', fitPages: 2, defV: 1, baikaiMode: 'level', baikaiOrder: 'num', baikaiPats: null, zenkaOrder: 'num', zenkaMode: 'level', zenkaPats: ['ari', 'geo', 'diff', 'char'], waSekiBig: false, yakusuuBig: false, ans: 'full', units: ['tasuki', 'heihou'], count: '10', level: 'mix', order: 'unit', font: 'maru', tex: 'lua', title: '', pv: 'q', mode: 'work', subject: '1', kahouUnit: 'deg', formula: 'off', mixLv: 'seq', closedGrp: [], time: 'off' };
+const ST = { kind: 'print', ptB: 3, ptS: 5, ptA: 8, ptShow: 'on', ansBox: 'on', goshinMode: 'level', goshinOrder: 'num', goshinPats: GOSHIN_TYPES.filter(t => !t[3]).map(t => t[0]), hScore: 'count', scoreMax: 100, avoidRecent: false, presetWithSet: true, recent: [], outPart: 'all', presets: [], presetFolders: [], openFolder: '', openField: '', setOpen: '', more: false, uCnt: null, fit: 'count', fitPages: 2, defV: 1, baikaiMode: 'level', baikaiOrder: 'num', baikaiPats: null, zenkaOrder: 'num', zenkaMode: 'level', zenkaPats: ['ari', 'geo', 'diff', 'char'], waSekiBig: false, yakusuuBig: false, ans: 'full', units: ['tasuki', 'heihou'], count: '10', level: 'mix', order: 'unit', font: 'maru', tex: 'lua', title: '', pv: 'q', mode: 'work', subject: '1', kahouUnit: 'deg', formula: 'off', mixLv: 'seq', closedGrp: [], time: 'off' };
 let PROBS = [];
 let VARS = null;   // 別バージョン（addVariant）
 const SAVE_KEY = 'suu1print_settings';
@@ -8503,7 +8549,7 @@ const rich = s => s.split('$').map((x, i) => i % 2 ? K(x) : esc(x)).join('');
 const SUBJ_NAME = { 1: '数I', A: '数A', both: '数I・数A', 2: '数II', B: '数B', C: '数C', '2BC': '数II・数B・数C' };
 // 題名の初期値：選んだ単元の教科を並べる（数I・数A、数II・数B など。教科をまたいで選べるため）
 const subjLabel = () => { const ss = ['1', 'A', '2', 'B', 'C'].filter(s => ST.units.some(u => UNIT_SUBJ[u] === s)); return ss.length ? ss.map(s => SUBJ_NAME[s]).join('・') : '数学'; };
-const baseTitle = () => ST.title.trim() || `${subjLabel()} 基礎計算プリント`;
+const baseTitle = () => ST.title.trim() || `${subjLabel()} ${isQuiz() ? '小テスト' : '確認プリント'}`;
 // 別バージョンを作ったときは、題名のあとに（A）（B）…をつける（プリント・解答・LaTeX とも）
 const printTitle = () => baseTitle() + (verLetter() ? `（${verLetter()}）` : '');
 // LaTeX に書く題名：入力した題名の記号（\ { } # $ % & _ ^ ~）を LaTeX の書き方に直す
@@ -8555,9 +8601,56 @@ function arranged(){
   return PROBS.map((p, i) => ({ p, no: `(${i + 1})`, g: 0 }));
 }
 const noHTML = a => `${a.g ? `<span class="gno">${a.g}</span>` : ''}<span class="no">${a.no}</span>`;
+// 小テスト：配点は難しさごと（ST.ptB / ptS / ptA）。p.pt があれば、その問題だけ手で直した配点
+const isQuiz = () => ST.kind === 'quiz';
+const ptDefault = p => +(p.lv === 1 ? ST.ptB : p.lv === 3 ? ST.ptA : ST.ptS) || 0;
+const ptOf = p => p.pt != null ? p.pt : ptDefault(p);
+const ptTotal = () => PROBS.reduce((t, p) => t + ptOf(p), 0);
+const ptNum = v => { const n = parseInt(String(v).replace(/[０-９]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0)).trim(), 10); return n >= 1 && n <= 100 ? n : null; };
+const aBoxOn = () => isQuiz() && ST.ansBox === 'on';
+const ptSpan = p => isQuiz() && ST.ptShow !== 'off' ? `<span class="pt" data-pi="${PROBS.indexOf(p)}">【${ptOf(p)}点】</span>` : '';
+const ptAns = p => isQuiz() ? `<span class="pt" data-pi="${PROBS.indexOf(p)}">【${ptOf(p)}点】</span>` : '';
+const ptTex = p => isQuiz() && ST.ptShow !== 'off' ? `\\ {\\small【${ptOf(p)}点】}` : '';
+const ptAnsTex = p => isQuiz() ? `\\ {\\small【${ptOf(p)}点】}` : '';
+// 答えの枠：列いっぱいの枠。答えが複数で見出しを安全に取り出せるときは、見出しつきで枠を分ける
+// 分けられないとき（「$x=2$ のとき最大値 $5$」のように見出しが答えをばらすときなど）は null で1本の枠
+function ansParts(ans){
+  const parts = []; let cur = '', math = false;
+  for (const c of String(ans)) { if (c === '$') math = !math; if (!math && (c === '，' || c === '、')) { parts.push(cur); cur = ''; } else cur += c; }
+  parts.push(cur);
+  if (parts.length < 2 || parts.length > 4) return null;
+  const out = parts.map(x => {
+    const m = /^([^$]*)\$([^$]+)\$$/.exec(x.trim()); if (!m) return null;
+    const t = m[1].trim();
+    if (t) return t.length <= 8 && !/[0-9]|のとき|だけ|より|は$/.test(t) ? { label: t, val: x } : null;
+    const s = m[2].split('='), l = s[0].trim();
+    // 「$x+y-2=0$」「$y^2=4x$」のような式そのものが答えのときは、左辺が答えをばらすので分けない
+    return s.length === 2 && l && l.length <= 40 && !(/[xy]/.test(l.replace(/_\{[^}]*\}/g, '')) && /[+\-^]/.test(l)) ? { label: `$${l}=$`, val: x } : null;
+  });
+  if (out.some(x => !x) || new Set(out.map(x => x.label)).size < out.length) return null;
+  return out;
+}
+let aHost = null;
+const ansWidth = s => { if (!aHost) { aHost = document.createElement('div'); aHost.style.cssText = 'position:absolute;left:0;top:0;visibility:hidden;font-size:9pt;white-space:nowrap'; document.body.appendChild(aHost); } aHost.innerHTML = rich(s); return aHost.getBoundingClientRect().width / 3.7795; };
+// 手書きは活字より大きいので 1.3 倍で見積もる（問題ごとに1回だけ測る）
+function aInfo(p){
+  if (p._ab) return p._ab;
+  const parts = ansParts(p.ans), ws = parts ? parts.map(x => ansWidth(x.val) * 1.3) : [ansWidth(p.ans) * 1.3];
+  const cols = parts && !ws.some(w => w > 36) ? 2 : 1, tall = ws.some(w => w > 76), n = parts ? parts.length : 1, rows = Math.ceil(n / cols);
+  return p._ab = { parts, cols, rows, tall, h: rows * (tall ? 18 : 9) + rows - 1 };
+}
+const aNeed = p => aBoxOn() ? aInfo(p).h + 3 : 0;
+const aBoxHTML = p => { if (!aBoxOn()) return ''; const a = aInfo(p); return `<div class="aboxes" style="grid-template-columns:repeat(${a.cols},1fr)">${(a.parts ? a.parts.map(x => rich(x.label)) : ['答']).map(l => `<div class="abox${a.tall ? ' tall' : ''}">${l}</div>`).join('')}</div>`; };
+const aBoxTex = p => {
+  if (!aBoxOn()) return '';
+  const a = aInfo(p), W = a.cols === 1 ? '\\linewidth' : '0.49\\linewidth', box = l => `\\fbox{\\parbox[c][${a.tall ? 15 : 6}mm][t]{\\dimexpr${W}-2\\fboxsep-2\\fboxrule\\relax}{${l}}}`;
+  const ls = a.parts ? a.parts.map(x => x.label) : ['答'], rows = [];
+  for (let i = 0; i < ls.length; i += a.cols) rows.push(ls.slice(i, i + a.cols).map(box).join('\\hfill '));
+  return `\\par\\vfill\\noindent ${rows.join('\\par\\smallskip\\noindent ')}`;
+};
 const noTex = a => `${a.g ? `\\fbox{${a.g}}\\,` : ''}\\textbf{${a.no}}`;
 // 見出しの欄：月日・得点は1ページ目だけ、年組番・氏名は毎ページ（その他の設定「見出しの欄」で外せる）
-const scoreDen = () => ST.hScore === 'points' ? (clampScore(ST.scoreMax) || 100) : PROBS.length;
+const scoreDen = () => isQuiz() ? ptTotal() : ST.hScore === 'points' ? (clampScore(ST.scoreMax) || 100) : PROBS.length;
 const clampScore = v => { v = Math.round(+v); return Number.isFinite(v) && v >= 1 ? Math.min(1000, v) : null; };
 function headInfo(first){
   const h = (first && ST.hDate !== false ? '<span>　　月　　日</span>' : '') + (ST.hClass !== false ? '<span>　　年　　組　　番</span>' : '')
@@ -8582,7 +8675,7 @@ const joinEq = st => st.reduce((o, s) => {
   else o.push(s.t === 'cols' ? { ...s, cols: s.cols.map(joinEq) } : s);
   return o;
 }, []);
-const answerBlock = a => ST.ans === 'only' ? `<div class="qa"><div class="qa-head"><b>${a.g ? `<span class="gno">${a.g}</span>` : ''}${a.no}</b>　${rich(a.p.head)}</div><div class="qa-ans">答　${rich(a.p.ans)}</div></div>` : `<div class="qa${a.p.ansFull ? ' span' : ''}"><div class="qa-head"><b>${a.g ? `<span class="gno">${a.g}</span>` : ''}${a.no}</b>　${rich(a.p.head)}${ST.time !== 'off' ? `<span class="tm">目安 ${fmt3(a.p.sec)}</span>` : ''}</div>${joinEq(a.p.steps).map(stepHTML).join('')}<div class="qa-ans">答　${rich(a.p.ans)}</div></div>`;
+const answerBlock = a => ST.ans === 'only' ? `<div class="qa"><div class="qa-head"><b>${a.g ? `<span class="gno">${a.g}</span>` : ''}${a.no}</b>　${rich(a.p.head)}${ptAns(a.p)}</div><div class="qa-ans">答　${rich(a.p.ans)}</div></div>` : `<div class="qa${a.p.ansFull ? ' span' : ''}"><div class="qa-head"><b>${a.g ? `<span class="gno">${a.g}</span>` : ''}${a.no}</b>　${rich(a.p.head)}${ptAns(a.p)}${ST.time !== 'off' ? `<span class="tm">目安 ${fmt3(a.p.sec)}</span>` : ''}</div>${joinEq(a.p.steps).map(stepHTML).join('')}<div class="qa-ans">答　${rich(a.p.ans)}</div></div>`;
 
 const MM = 3.7795;
 let PACK = null, ISSUES = [];
@@ -8784,6 +8877,7 @@ function render(){
   if (needZ()) box.insertAdjacentHTML('beforeend', zTableHTML());   // 正規分布表は問題と一緒に配れるよう、解答の前
   setupAdjust(box);
   resetBtns();
+  quizSync();
   // 参考タイムの内訳（単元ごと）
   const by = UNITS.map(([u, nm]) => { const ps = PROBS.filter(p => p.unit === u); return ps.length ? `${nm} ${ps.length}問 ${fmt3(sumSec(ps))}` : ''; }).filter(Boolean);
   $('timeInfo').innerHTML = `<b>参考タイム ${timeText()}</b>（理想／標準／初心者：${by.join('、')}）`;
@@ -8844,7 +8938,7 @@ function packWork(A, h1, h2, maxF, brk = new Set()){
   const close = () => { if (band && band.cols[0].length) { segs.push(band); used += Math.max(...band.sum); } band = null; };
   const newPage = () => { close(); segs.brk = startBrk; pages.push(segs); segs = []; used = 0; startBrk = null; };
   A.forEach((a, i) => {
-    const x = { a, i, need: spaceOf(a.p) };
+    const x = { a, i, need: spaceOf(a.p) + aNeed(a.p) };
     if (brk.has(i)) {
       if (!a.p.full && band && band.c === 0 && band.cols[0].length) { band.c = 1; band.cut0 = true; }
       else if (segs.length || (band && band.cols[0].length)) { newPage(); pages[pages.length - 1].cut = true; startBrk = i; }
@@ -8890,7 +8984,7 @@ function renderWork(box, A){
   const pages = packWork(A, h1, h2, 1.35, BRK.work);
   // 図つきの問題は、文章のあと（右がわ）に図をおき、左がわを解くスペースにする
   // 問題文に同じ式がすでにあるときは、下の式の行は出さない
-  const cell = (x, cls = '') => `<div class="cell${cls}" data-i="${x.i}" style="height:${x.h.toFixed(1)}mm"><div class="lb">${noHTML(x.a)}${rich(x.a.p.label)}</div>${showMx(x.a.p) ?`<div class="mx">${K('\\displaystyle ' + x.a.p.math)}</div>` : ''}${x.a.p.fig ? `<div class="pf">${svgOf(x.a.p.fig)}</div>` : ''}</div>`;
+  const cell = (x, cls = '') => `<div class="cell${cls}${aBoxOn() ? ' hasbox' : ''}" data-i="${x.i}" style="height:${x.h.toFixed(1)}mm"><div class="lb">${noHTML(x.a)}${rich(x.a.p.label)}${ptSpan(x.a.p)}</div>${showMx(x.a.p) ?`<div class="mx">${K('\\displaystyle ' + x.a.p.math)}</div>` : ''}${x.a.p.fig ? `<div class="pf">${svgOf(x.a.p.fig)}</div>` : ''}${aBoxHTML(x.a.p)}</div>`;
   const two = (s, style = '') => `<div class="wcols"${style}><div class="wcol lcol">${s.cols[0].map(x => cell(x)).join('')}</div><div class="wcol">${s.cols[1].map(x => cell(x)).join('')}</div></div>`;
   pages.forEach((segs, k) => {
     const flow = k ? newSheet(box, false) : flow1;
@@ -8909,7 +9003,7 @@ function renderWork(box, A){
 const MIN_CELL = 20;
 const mmOf = el => el && /mm$/.test(el.style.height) ? parseFloat(el.style.height) : null;
 // 欄の中身（問題文・式・図）の下端までの高さ。これより低くはしない
-const contentMM = el => { const r = el.getBoundingClientRect(); let b = r.top; [...el.children].forEach(c => { b = Math.max(b, c.getBoundingClientRect().bottom); }); return (b - r.top) / MM + 2.5; };
+const contentMM = el => { const r = el.getBoundingClientRect(); let b = r.top; [...el.children].filter(c => !c.classList.contains('aboxes')).forEach(c => { b = Math.max(b, c.getBoundingClientRect().bottom); }); const q = el.querySelector('.aboxes'); return (b - r.top) / MM + 2.5 + (q ? q.getBoundingClientRect().height / MM + 2 : 0); };
 const kindOf = sh => sh.querySelector('.cell') ? 'work' : '';
 // ページの欄の並び（調整した高さを覚えるときのかぎ）
 const sigOf = sh => kindOf(sh) + [...sh.querySelectorAll('.cell')].map(c => c.dataset.i).join(',');
@@ -8957,7 +9051,7 @@ function planCtl(sh){
   const k = kindOf(sh); if (!k) return null;
   const S = sh.getBoundingClientRect(), out = { sh, adj: [], brk: [] };
   const line = (r, y, drag) => out.adj.push({ x: r.left - S.left, w: r.width, y: y - S.top, drag, l: false });
-  out.re = []; out.mv = [];
+  out.re = []; out.mv = []; out.pt = [];
   sh.querySelectorAll('.wcol').forEach(col => { const cs = [...col.children], c = col.getBoundingClientRect(); cs.slice(0, -1).forEach((x, j) => line(c, x.getBoundingClientRect().bottom, pairDrag(x, cs[j + 1]))); });
   const flow = sh.querySelector('.flow'), segs = [...flow.children];
   if (segs.length > 1) { const f = flow.getBoundingClientRect(); segs.slice(0, -1).forEach((x, j) => line(f, x.getBoundingClientRect().bottom, pairDrag(x, segs[j + 1]))); }
@@ -8966,6 +9060,7 @@ function planCtl(sh){
     cells.forEach(c => {
       const r = c.getBoundingClientRect(), i = +c.dataset.i, right = S.right - r.right + 4, left = !!c.closest('.lcol');
       out.re.push({ x: r.right - S.left - 28, y: r.top - S.top + 14, pi: i });
+      if (isQuiz()) { const ab = c.querySelector('.aboxes'); out.pt.push({ x: r.left - S.left + 8, y: (ab ? ab.getBoundingClientRect().top - 3 : r.bottom) - S.top - 27, pi: i }); }
       // 並べかえ（上へ・ドラッグ・下へ）は紙の余白に：左の列と横いっぱいは左の余白、右の列は右の余白
       const rcol = !!c.closest('.wcol') && !left;
       out.mv.push({ x: rcol ? r.right - S.left + 12 : r.left - S.left - 32, y: r.top - S.top + 6, pi: i });
@@ -8980,6 +9075,7 @@ function placeCtl(p){
   const ctl = document.createElement('div'); ctl.className = 'ctl';
   p.adj.forEach(a => { const d = document.createElement('div'); d.className = 'adj' + (a.l ? ' l' : ''); d.style.cssText = `left:${a.x}px;top:${a.y}px;width:${a.w}px`; d.innerHTML = '<i title="上下にドラッグして高さを変える"></i>'; d.firstChild._drag = a.drag; ctl.appendChild(d); });
   p.brk.forEach(b => { const e = document.createElement('button'); e.type = 'button'; e.className = 'brk' + (b.un ? ' un' : ''); e.style.cssText = `top:${b.y}px;right:${b.right}px`; e.textContent = b.lb || (b.un ? '改ページを取り消す' : 'ここで改ページ'); e.dataset.key = b.key; ctl.appendChild(e); });
+  (p.pt || []).forEach(r => { const q = PROBS[r.pi]; if (!q) return; const e = document.createElement('label'); e.className = 'ptw' + (q.pt != null ? ' own' : ''); e.style.cssText = `left:${r.x}px;top:${r.y}px`; e.title = 'この問題の配点（空らんで難しさの配点にもどる）'; e.innerHTML = `<input type="text" inputmode="numeric" class="ptin" data-pi="${r.pi}" value="${ptOf(q)}" aria-label="問題 ${r.pi + 1} の配点">点`; ctl.appendChild(e); });
   (p.re || []).forEach(r => { const e = document.createElement('button'); e.type = 'button'; e.className = 're'; e.style.cssText = `left:${r.x}px;top:${r.y}px`; e.dataset.pi = r.pi; e.title = 'この問題だけ作りなおす（右クリック・長押しで難しさを選べます）'; e.setAttribute('aria-label', '問題 ' + (r.pi + 1) + ' だけ作りなおす'); e.innerHTML = REROLL_ICON; ctl.appendChild(e); });
   const MV = { up: ['上へ移す', '<path d="M4 10l4-4 4 4"/>'], grip: ['ドラッグして好きな場所へ移す', '<circle cx="6" cy="4" r=".9"/><circle cx="10" cy="4" r=".9"/><circle cx="6" cy="8" r=".9"/><circle cx="10" cy="8" r=".9"/><circle cx="6" cy="12" r=".9"/><circle cx="10" cy="12" r=".9"/>'], down: ['下へ移す', '<path d="M4 6l4 4 4-4"/>'] };
   (p.mv || []).forEach(m => ['up', 'grip', 'down'].forEach((act, k) => {
@@ -9145,10 +9241,10 @@ ${r}
     pk.pages.forEach((segs, k) => {
       const H = k ? 238 : 212, f = H / (k ? pk.h2 : pk.h1);
       const cellTex = (x, w) => {
-        const a = A[x.i], p = a.p, body = `${noTex(a)}\\ ${p.label}${showMx(p) ? `\\par\\smallskip\\hspace*{1.5em}$\\displaystyle ${p.math}$` : ''}`;
+        const a = A[x.i], p = a.p, body = `${noTex(a)}\\ ${p.label}${ptTex(p)}${showMx(p) ? `\\par\\smallskip\\hspace*{1.5em}$\\displaystyle ${p.math}$` : ''}`;
         // 図つきの問題は、左に文章・右に図
-        return `\\begin{minipage}[t][${(x.h * f).toFixed(1)}mm][t]{${w}}
-${p.fig ? `\\begin{minipage}[t]{0.6\\linewidth}${body}\\end{minipage}\\hfill\\begin{minipage}[t]{0.36\\linewidth}${tikzOf(p.fig, 0.18, false)}\\end{minipage}` : body}
+        return `\\begin{minipage}[t][${(x.h * f).toFixed(1)}mm][${aBoxOn() ? 's' : 't'}]{${w}}
+${p.fig ? `\\begin{minipage}[t]{0.6\\linewidth}${body}\\end{minipage}\\hfill\\begin{minipage}[t]{0.36\\linewidth}${tikzOf(p.fig, 0.18, false)}\\end{minipage}` : body}${aBoxTex(p)}
 \\end{minipage}`; };
       const col = c => c.map(x => cellTex(x, '\\linewidth')).join('\n\\par\\nointerlineskip\n') || '\\mbox{}';
       const body = segs.length === 1 && segs[0].k === 'two' ? twoCols(col(segs[0].cols[0]), col(segs[0].cols[1]), H)
@@ -9159,8 +9255,8 @@ ${p.fig ? `\\begin{minipage}[t]{0.6\\linewidth}${body}\\end{minipage}\\hfill\\be
   // 左右に並べた途中式は minipage を2つ並べる
   const stepTex = s => s.t === 'cols' ? `\\noindent${s.cols.map(c => `\\begin{minipage}[t]{0.48\\linewidth}\\small\n${c.map(stepTex).join('\n')}\n\\end{minipage}`).join('\\hfill\n')}\\par` : s.t === 'txt' ? `${s.s}\\par` : s.t === 'disp' ? `\\[${s.tex}\\]` : s.t === 'graph' ? graphTikz(s.g) : s.t === 'fig' ? tikzOf(s.f) : `\\begin{align*}\n${s.rows.join('\\\\\n')}\n\\end{align*}`;
   // 横いっぱいの解答（p.ansFull）は2段組みをいったん閉じて出す
-  const answers = A.map(a => { if (ST.ans === 'only') return `\\noindent${noTex(a)}\\ ${a.p.head}\\par\\noindent\\textbf{答}\\ ${a.p.ans}\\par\\medskip\\hrule\\medskip`;
-    const body = `\\noindent${noTex(a)}\\ ${a.p.head}${ST.time !== 'off' ? `\\hfill{\\footnotesize 目安 ${fmt3(a.p.sec)}}` : ''}\\par
+  const answers = A.map(a => { if (ST.ans === 'only') return `\\noindent${noTex(a)}\\ ${a.p.head}${ptAnsTex(a.p)}\\par\\noindent\\textbf{答}\\ ${a.p.ans}\\par\\medskip\\hrule\\medskip`;
+    const body = `\\noindent${noTex(a)}\\ ${a.p.head}${ptAnsTex(a.p)}${ST.time !== 'off' ? `\\hfill{\\footnotesize 目安 ${fmt3(a.p.sec)}}` : ''}\\par
 ${joinEq(a.p.steps).map(stepTex).join('\n')}
 \\noindent\\textbf{答}\\ ${a.p.ans}\\par\\medskip\\hrule\\medskip`; return a.p.ansFull ? `\\end{multicols}\n${body}\n\\begin{multicols}{2}\n\\small` : body; }).join('\n\n');
   return `% ${texTitle()}${unitList() ? `（${unitList()}）` : ''}
@@ -9389,12 +9485,16 @@ document.querySelectorAll('.seg[data-set] button').forEach(b => b.addEventListen
   const name = b.closest('.seg').dataset.set;
   regenKeep = false;
   ST[name] = b.dataset.v; syncSeg(); save();
-  if (lastSt && ['ans', 'zenkaOrder', 'baikaiOrder', 'goshinOrder'].includes(name)) lastSt = { ...lastSt, [name]: ST[name] };   // 作りなおさない設定は、元にもどすときの設定にもすぐ入れる
+  if (lastSt && ['kind', 'ptShow', 'ansBox', 'ans', 'zenkaOrder', 'baikaiOrder', 'goshinOrder'].includes(name)) lastSt = { ...lastSt, [name]: ST[name] };   // 作りなおさない設定は、元にもどすときの設定にもすぐ入れる
   if (name === 'font') { applyFont(); (document.fonts ? document.fonts.ready : Promise.resolve()).then(ST.fit === 'page' ? () => { regenKeep = true; regenerate(); } : render); }   // ページに合わせるときも、問題は残して数えなおす
   else if (name === 'pv') { flushRender(); applyPv(); }
 
   else if (ST.fit === 'page' && name === 'formula') regenerate();   // 紙面が変わると入る問題数も変わる
   else if (Object.values(PICK).some(c => c.order === name)) { ADJ = {}; BRK = { work: new Set(), list: new Set() }; applyPickOrder(Object.keys(PICK).find(u => PICK[u].order === name)); render(); }   // 同じ問題のまま並べかえる
+  else if (['kind', 'ptShow', 'ansBox'].includes(name)) {
+    // 小テストに切りかえたときは、配点の表示と答えの枠をつけた形から始める（そのあと外せる）
+    if (name === 'kind' && isQuiz()) { ST.ptShow = 'on'; ST.ansBox = 'on'; if (lastSt) lastSt = { ...lastSt, ptShow: 'on', ansBox: 'on' }; syncSeg(); save(); }
+    quizSync(); if (ST.fit === 'page' && name !== 'ptShow') { regenKeep = true; regenerate(); } else { const y = window.scrollY; render(); window.scrollTo(0, y); } updateGrpSums(); }
   else if (name === 'hScore') { $('scoreMaxBox').style.display = ST.hScore === 'points' ? 'flex' : 'none'; render(); }
   else if (name === 'formula' || name === 'time' || name === 'ans') render();   // 配置だけ変えるときは、同じ問題のまま並べなおす
   else if (name === 'tex') status(ST.tex === 'lua' ? 'LaTeX は ltjsarticle（LuaLaTeX）で出力します' : 'LaTeX は jsarticle（pLaTeX）で出力します');
@@ -9421,6 +9521,7 @@ function updateGroupCounts(){
   document.querySelectorAll('#fields .field').forEach(f => { const n = f.querySelectorAll('input[name="unit"]:checked').length; f.querySelector('.n').textContent = n ? n + '個 選択中' : ''; });
   document.querySelectorAll('#fields .units').forEach(u => { const ids = [...u.querySelectorAll('input[name="unit"]')].map(i => i.value); u.querySelector('.fAll').textContent = ids.every(x => ST.units.includes(x)) ? 'この分野をすべて外す' : 'この分野をすべて選ぶ'; });
   document.querySelectorAll('#subjTabs button').forEach(b => { const n = sel.filter(u => u[2] === b.dataset.sj).length; b.innerHTML = SUBJ_NAME[b.dataset.sj] + (n ? '<b>' + n + '</b>' : ''); });
+  quizSync();
   $('title').placeholder = 'プリントの題名（空らんなら「' + baseTitle() + '」）';
   updateGrpSums();
 }
@@ -9652,8 +9753,6 @@ function updateGrpSums(){
     // まぜるときは、基本・標準の問題数の合計（パターンを選ぶ単元はのぞく）
     if (g.querySelector('#mixLvBox') && ST.level === 'mix') { const us = selUnits().filter(u => !(PICK[u] && pickOn(u))), b = us.reduce((t, u) => t + ucOf(u)[1], 0), a = us.reduce((t, u) => t + ucOf(u)[2], 0); s += `・基本 ${b}問・標準 ${us.reduce((t, u) => t + ucOf(u)[0], 0) - b - a}問${a ? `・発展 ${a}問` : ''}`; }
     if (g.querySelector('#cnt')) s = ST.fit === 'page' ? `${ST.count}問（問題${ST.fitPages}ページに合わせる）` : `${ST.count}問`;
-    if (g.querySelector('#presetList')) s = ST.presets.length || ST.presetFolders.length ? `${ST.presets.length}件` + (ST.presetFolders.length ? `（フォルダ ${ST.presetFolders.join('・')}）` : '') : 'まだありません';
-    if (g.querySelector('#recentList')) s = ST.recent && ST.recent.length ? `${ST.recent.length}件` : 'まだありません';
     if (g.querySelector('#title')) s = ST.title.trim() ? `「${ST.title.trim()}」` : `（空らん：${baseTitle()}）`;
     g.querySelector('.gsum').textContent = s || '（設定なし）';
   });
@@ -9807,7 +9906,7 @@ window.__engine = { regenP, keyHash, GEN, UNIT_SUBJ, sumFormTex, nTex, nPolyTex,
 
 /* ========== 設定の写し（組み合わせ・最近作ったプリント） ========== */
 // 組み合わせに「一緒に保存」する設定。その他の設定のうち、題名と解答ページは入れる（目安時間・公式・見た目・LaTeX は入れない）
-const PRESET_KEYS = ['title', 'count', 'fit', 'fitPages', 'level', 'uCnt', 'mixLv', 'order', 'ans', 'kahouUnit', 'waSekiBig', 'yakusuuBig', 'zenkaMode', 'zenkaPats', 'zenkaOrder', 'baikaiMode', 'baikaiPats', 'baikaiOrder', 'goshinMode', 'goshinPats', 'goshinOrder'];
+const PRESET_KEYS = ['kind', 'ptB', 'ptS', 'ptA', 'ptShow', 'ansBox', 'title', 'count', 'fit', 'fitPages', 'level', 'uCnt', 'mixLv', 'order', 'ans', 'kahouUnit', 'waSekiBig', 'yakusuuBig', 'zenkaMode', 'zenkaPats', 'zenkaOrder', 'baikaiMode', 'baikaiPats', 'baikaiOrder', 'goshinMode', 'goshinPats', 'goshinOrder'];
 const snapSettings = () => JSON.parse(JSON.stringify(Object.fromEntries(PRESET_KEYS.map(k => [k, ST[k]]))));
 // 読みこんだファイルの設定：決まった名前の、文字・数・true/false・文字の配列・null だけを残す
 function cleanSettings(s){
@@ -9832,6 +9931,10 @@ function applySettings(s){
 }
 // 見出しの欄
 if (!['count', 'points', 'off'].includes(ST.hScore)) ST.hScore = 'count';
+if (!['print', 'quiz'].includes(ST.kind)) ST.kind = 'print';
+[['ptB', 3], ['ptS', 5], ['ptA', 8]].forEach(([k, d]) => { if (!ptNum(ST[k])) ST[k] = d; });
+if (ST.ptShow !== 'off') ST.ptShow = 'on';
+if (ST.ansBox !== 'off') ST.ansBox = 'on';
 ST.scoreMax = clampScore(ST.scoreMax) || 100;
 ['hDate', 'hClass', 'hName'].forEach(id => { $(id).checked = ST[id] !== false; $(id).addEventListener('change', () => { ST[id] = $(id).checked; save(); render(); }); });
 $('scoreMax').value = ST.scoreMax; $('scoreMaxBox').style.display = ST.hScore === 'points' ? 'flex' : 'none';
@@ -9871,7 +9974,7 @@ function renderRecent(){
     const s = e.s || {}, st = [`${s.count}問`, LEVEL_NAME[s.level]].filter(Boolean).join('・');
     return `<div class="rcw"><button type="button" class="rc" data-recent="${i}" title="${e.v ? '同じ問題で開きます' : '同じ単元と設定で新しく作ります'}"><time>${d.getMonth() + 1}/${d.getDate()} ${two(d.getHours())}:${two(d.getMinutes())}</time><b>${esc(e.title || us)}</b><span>${esc(e.title ? us + '・' + st : st)}${e.v && e.v.length > 1 ? `・${e.v.length}版` : ''}</span></button>${e.v ? `<button type="button" class="btn rcNew" data-recentnew="${i}" title="同じ単元と設定で、新しい問題を作ります">新しい問題で</button>` : ''}</div>`;
   }).join('') + (ST.recent.length ? '<button type="button" class="btn" id="recentClear">すべて消す</button>' : '');
-  if (!ST.recent.length) $('recentList').innerHTML = '';
+  if (!ST.recent.length) $('recentList').innerHTML = '<div class="pempty">まだありません。印刷や LaTeX の出力をすると、ここに出ます。</div>';
   updateGrpSums();
 }
 $('recentList').addEventListener('click', e => {
@@ -9929,8 +10032,8 @@ window.addEventListener('afterprint', () => { markOut(false); clearAllVers(); ST
 // ファイル名につける印：別バージョンなら「_B版」、問題だけ・解答だけなら「_問題」「_解答」
 const verTag = () => verAllOn() ? `_${VER_NAMES.slice(0, VARS.list.length)}版` : verLetter() ? `_${verLetter()}版` : '';
 const fileTag = () => verTag() + ({ q: '_問題', a: '_解答' }[ST.outPart] || '');
-// ファイル名のもと：題名（空らんなら「数B 基礎計算プリント」など）。ファイル名に使えない記号と空白は「_」にする
-const fileBase = () => baseTitle().replace(/[\\/:*?"<>|\s]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 60) || '基礎計算プリント';
+// ファイル名のもと：題名（空らんなら「数B 確認プリント」など）。ファイル名に使えない記号と空白は「_」にする
+const fileBase = () => baseTitle().replace(/[\\/:*?"<>|\s]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 60) || '確認プリント';
 
 /* ========== 別バージョン（同じ形・ちがう数） ========== */
 // 同じ単元・同じ難しさ（パターンを選ぶ単元は同じパターン）で、ほかの版と同じ問題にならない1問を作る
@@ -9962,7 +10065,7 @@ function addVariant(){
   if (VARS.list.length >= VER_MAX) { status(`別バージョンは ${VER_NAMES[VER_MAX - 1]} 版までです。`, true); return; }
   const keys = new Set(VARS.list.flat().map(q => q.key)), out = [];
   let same = 0;
-  PROBS.forEach(p => { const q = sibling(p, keys); if (q) { keys.add(q.key); out.push(q); } else { out.push(p); same++; } });
+  PROBS.forEach(p => { const q = sibling(p, keys); if (q) { keys.add(q.key); if (p.pt != null) q.pt = p.pt; out.push(q); } else { out.push(p); same++; } });
   VARS.list.push(out); switchVer(VARS.list.length - 1);
   status(`${VER_NAMES[VARS.cur]} 版を作りました（${VER_NAMES[0]} 版と同じ単元・難しさ・並びで、数がちがう問題）。` + (same ? `${same}問は、ほかの問題が見つからず同じ問題です。` : '') + (ST.fit === 'page' ? '問題の高さがちがうので、ページ数が変わることがあります。' : ''));
 }
@@ -9999,6 +10102,45 @@ $('verBox').addEventListener('click', e => {
   else if (b.dataset.ver === 'add') addVariant(); else if (VARS && +b.dataset.ver !== VARS.cur) switchVer(+b.dataset.ver);
 });
 
+/* ========== よく使う組み合わせ・最近作ったプリントのウインドウ ========== */
+[['bPreset', 'winPreset', '[data-use]'], ['bRecent', 'winRecent', '[data-recent]']].forEach(([b, w, pick]) => {
+  const d = $(w);
+  $(b).addEventListener('click', () => d.showModal());
+  d.querySelector('.winX').addEventListener('click', () => d.close());
+  d.addEventListener('click', e => {
+    if (e.target === d) { d.close(); return; }   // ウインドウの外を押したら閉じる
+    if (e.target.closest(pick)) { d.close(); document.querySelector('#tabs [data-view="main"]').click(); }   // 選んだら閉じて、プリントを見せる
+  });
+});
+
+/* ========== 小テストの配点 ========== */
+// 設定の欄を今の値にそろえ、合計を出す
+function quizSync(){
+  $('quizBox').style.display = isQuiz() ? '' : 'none';
+  ['ptB', 'ptS', 'ptA'].forEach(k => { if (document.activeElement !== $(k)) $(k).value = ST[k]; });
+  const t = ptTotal(), goal = [10, 20, 30, 50, 100, 150, 200].find(g => g >= t);
+  $('ptTotal').textContent = !PROBS.length ? '' : `満点 ${t}点` + (goal === undefined ? '' : goal === t ? '（ちょうどです）' : `（${goal}点まで あと${goal - t}点）`);
+}
+// 配点を変えたら、紙面の表示と満点だけ書きかえる（作りなおさないので、続けて入力できる）
+function ptRefresh(){
+  document.querySelectorAll('#sheets .pt[data-pi]').forEach(e => { const p = PROBS[+e.dataset.pi]; if (p) e.textContent = `【${ptOf(p)}点】`; });
+  document.querySelectorAll('#sheets .ptin').forEach(e => { const p = PROBS[+e.dataset.pi]; if (!p) return; if (document.activeElement !== e) e.value = ptOf(p); e.parentElement.classList.toggle('own', p.pt != null); });
+  document.querySelectorAll('#sheets .qz-score').forEach(e => { e.innerHTML = `得点<b></b>／${scoreDen()}`; });
+  quizSync();
+}
+// 別バージョンも同じ番号の問題は同じ配点にする
+function setPt(i, v){
+  const n = ptNum(v);
+  (VARS ? VARS.list : [PROBS]).forEach(l => { const p = l[i]; if (!p) return; if (n === null || n === ptDefault(p)) delete p.pt; else p.pt = n; });
+  ptRefresh();
+}
+['ptB', 'ptS', 'ptA'].forEach(k => {
+  $(k).addEventListener('focus', () => $(k).select());
+  $(k).addEventListener('change', () => { const n = ptNum($(k).value); if (n) { ST[k] = n; if (lastSt) lastSt = { ...lastSt, [k]: n }; save(); } $(k).value = ST[k]; ptRefresh(); updateGrpSums(); });
+});
+$('sheets').addEventListener('focusin', e => { if (e.target.classList.contains('ptin')) e.target.select(); });
+$('sheets').addEventListener('change', e => { if (e.target.classList.contains('ptin')) { setPt(+e.target.dataset.pi, e.target.value); e.target.value = ptOf(PROBS[+e.target.dataset.pi]); } });
+
 /* ========== 1問だけ作りなおす ========== */
 const REROLL_ICON = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9"/><path d="M13.5 2.5v3.5H10"/></svg>';
 // 同じ単元・同じ難しさの別の問題に入れかえる。手で直した高さ・改段・改ページは、ページの並びが同じならそのまま
@@ -10007,6 +10149,7 @@ function rerollOne(i, lv){
   const keys = new Set((VARS ? VARS.list.flat() : PROBS).map(q => q.key)), q = sibling(p, keys, lv);
   if (!q) { status(lv ? `この単元の${LV_NAME[lv]}の、ほかの問題が見つかりませんでした。` : 'この問題と同じ形の、ほかの問題が見つかりませんでした。', true); return; }
   const before = snapLay();
+  if (p.pt != null && lv === undefined) q.pt = p.pt;   // 同じ難しさの入れかえなら、手で直した配点は残す
   PROBS[i] = q;
   const y = window.scrollY; render(); window.scrollTo(0, y);
   pushHist('swap', before, i);
