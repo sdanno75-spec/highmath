@@ -615,13 +615,10 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
           <label class="chk"><input type="checkbox" name="unit" value="chokkouToKyoku">直交座標 → 極方程式</label>
         </div>
         </div>
-        <div class="gnote">教科を押してから分野を押すと、その分野の単元が出ます。教科をまたいで選べます。単元ごとの問題数は「問題の量」の表で決められます。</div>
       </div></div>
       <div class="grp"><div class="glab">難しさ</div><div>
         <div class="seg" id="lvBox" role="group" aria-label="難しさ"><button type="button" data-lv="b">基本</button><button type="button" data-lv="s">標準</button><button type="button" data-lv="a">発展</button></div>
-        <div class="gnote" style="margin:6px 0 0">押すたびにオン・オフします。2つ以上オンにすると、その難しさをまぜて出します。発展は、発展の問題がある単元を選んだときだけ押せます。</div>
         <div id="mixLvBox" style="margin-top:6px"><div class="seg" data-set="mixLv"><button data-v="seq">基本 → 標準 → 発展の順</button><button data-v="rand">難しさをランダムに</button></div>
-          <div class="gnote" style="margin:8px 0 0">基本・標準・発展の問題数は、「問題の量」の表で単元ごとに決めます。</div>
         </div>
         <div class="gnote" id="levelNote"></div>
       </div></div>
@@ -744,8 +741,9 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.59.0', UPDATED = '2026-11-10';
+const VERSION = '5.59.1', UPDATED = '2026-11-10';
 const CHANGES = [
+  ['5.59.1', '2026-11-10', '難しさの説明（オンオフのしかた・まぜるときの説明）と、単元の下の説明を消した。'],
   ['5.59.0', '2026-11-10', '難しさを「基本」「標準」「発展」のオンオフにした（7通りの組み合わせ）。2つ以上オンでまぜて出し、「問題の量」の表はオンの難しさの列だけ出す。発展の問題がある単元を選んでいないときは、発展を押せない。'],
   ['5.58.0', '2026-11-10', '格子点の個数に発展を追加（x+2y≦n などで、直線の本数が n の偶奇で変わるので場合分けして Σ で計算する）。'],
   ['5.57.1', '2026-11-10', '全部の版をまとめて印刷するとき、ページ数が奇数の版のあとに白紙を1枚入れる（両面印刷で、次の版が前の版の裏に入らないように）。'],
@@ -1447,9 +1445,7 @@ function levelNoteHTML(){
   const us = UNITS.filter(u => ST.units.includes(u[0]));
   const line = ([u, nm]) => { if (PICK[u] && pickOn(u)) return `${esc(nm)}：パターンを選ぶ（${pickPats(u).map(k => PICK[u].types.find(t => t[0] === k)[1]).join('・') || 'まだ選んでいません'}）`; const [b, s, a] = UNIT_LEVEL[u]; return `${esc(nm)}：${esc(ST.level === 'basic' ? b : ST.level === 'std' ? s : ST.level === 'adv' ? (a ? `発展 ${a}` : `（発展なし）標準 ${s}`) : `基本 ${b} → 標準 ${s}${a && ucOf(u)[2] > 0 ? ` → 発展 ${a}` : ''}`)}`; };
   if (ST.level === 'adv') return '発展：発展の問題がある単元（単元の欄に「発展あり」と出ている単元）だけ発展を出し、ほかの単元は標準を出します。<br>' + us.map(line).join('<br>');
-  const mixNote = ST.mixLv === 'rand' ? '基本・標準・発展をランダムにまぜて並べます。' : '基本、標準、発展の順に並べます（「単元ごとにまとめる」なら、各単元の中でこの順に）。';
-  const mixNames = lvEff().map(c => LV_LABEL[c]).join('・');
-  return (ST.level === 'mix' ? `${mixNames}をまぜる：単元ごとの${mixNames}の問題数は、「問題の量」の表で決めます。${mixNote.replace('基本・標準・発展', mixNames).replace('基本、標準、発展の順', mixNames.replace(/・/g, '、') + 'の順')}<br>` : '') + us.map(line).join('<br>');
+  return us.map(line).join('<br>');
 }
 
 // 最大・最小のグラフ：画面（SVG）と LaTeX（TikZ）で同じ図になるよう、図形を一度だけ計算する。
