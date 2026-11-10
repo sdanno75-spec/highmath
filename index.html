@@ -496,7 +496,6 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
           <label class="chk"><input type="checkbox" name="unit" value="futeishiki">不定方程式</label>
           <label class="chk"><input type="checkbox" name="unit" value="nshin">n進法</label>
           <label class="chk"><input type="checkbox" name="unit" value="yakusuu">約数の個数・総和</label>
-          <label class="chk"><input type="checkbox" name="unit" value="koshiten">格子点の個数</label>
           <label class="chk"><input type="checkbox" name="unit" value="goudou">合同式</label>
         </div>
         <div class="units" data-subj="A">
@@ -552,6 +551,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
           <label class="chk"><input type="checkbox" name="unit" value="tousa">等差数列</label>
           <label class="chk"><input type="checkbox" name="unit" value="touhi">等比数列</label>
           <label class="chk"><input type="checkbox" name="unit" value="sigma">Σの計算</label>
+          <label class="chk"><input type="checkbox" name="unit" value="koshiten">格子点の個数</label>
           <label class="chk"><input type="checkbox" name="unit" value="kaisa">階差数列</label>
           <label class="chk"><input type="checkbox" name="unit" value="snAn">和 Sₙ から一般項</label>
           <label class="chk"><input type="checkbox" name="unit" value="bunsuWa">分数の数列の和</label>
@@ -742,8 +742,9 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.56.0', UPDATED = '2026-11-10';
+const VERSION = '5.56.1', UPDATED = '2026-11-10';
 const CHANGES = [
+  ['5.56.1', '2026-11-10', '格子点の個数を数B（数列）の単元に移した（Σの計算の後ろ）。'],
   ['5.56.0', '2026-11-10', '数A に単元「格子点の個数」を追加。難しさ1は x≧0, y≧0 と直線1本、難しさ2は直線2本や放物線で囲まれた部分。直線 x=k（y=k）ごとに数えて足す解説つき。'],
   ['5.55.1', '2026-11-10', '小テストに切りかえたときは、「各問に配点を出す」と「答えの枠をつける」が選ばれた状態になるようにした（そのあと外せる）。'],
   ['5.55.0', '2026-11-10', '設定の順番を、種類・単元・難しさ・問題の量・ならび順・その他の設定に変更。よく使う組み合わせと最近作ったプリントは、上のボタンからウインドウで開くようにした。'],
@@ -978,7 +979,7 @@ const UNITS = [
   ['bunsan', '平均・分散・標準偏差', '1'], ['soukan', '相関係数', '1'],
   ['junretsu', '順列・組合せの計算', 'A'], ['enJunretsu', '円順列・重複順列', 'A'], ['onaji', '同じものを含む順列', 'A'], ['chofuku', '重複組合せ', 'A'], ['kumiwake', '組分け', 'A'],
   ['hanpuku', '反復試行の確率', 'A'], ['jokenTsuki', '条件付き確率', 'A'], ['kitaichi', '期待値', 'A'],
-  ['gojohou', '互除法', 'A'], ['futeishiki', '不定方程式', 'A'], ['nshin', 'n進法', 'A'], ['yakusuu', '約数の個数・総和', 'A'], ['koshiten', '格子点の個数', 'A'], ['goudou', '合同式', 'A'],
+  ['gojohou', '互除法', 'A'], ['futeishiki', '不定方程式', 'A'], ['nshin', 'n進法', 'A'], ['yakusuu', '約数の個数・総和', 'A'], ['goudou', '合同式', 'A'],
   ['cheva', 'チェバの定理', 'A'], ['menelaus', 'メネラウスの定理', 'A'], ['houbeki', '方べきの定理', 'A'], ['kakunibun', '角の二等分線', 'A'], ['goshin', '三角形の五心', 'A'], ['kyoen', '共円条件', 'A'],
   ['nikou', '二項定理', '2'], ['warizan', '整式の割り算', '2'], ['soukaSoujo', '相加平均と相乗平均', '2'],
   ['fukuso', '複素数の計算', '2'], ['kaiKeisu2', '解と係数の関係（数II）', '2'], ['inshuTeiri', '因数定理による因数分解', '2'],
@@ -986,7 +987,7 @@ const UNITS = [
   ['kodo', '弧度法の値', '2'], ['kahou', '加法定理', '2'], ['gousei', '三角関数の合成', '2'], ['sankakuHouteishiki', '三角方程式', '2'],
   ['shisu', '指数の計算', '2'], ['taisuuChi', '対数の値', '2'], ['taisuuWa', '対数の和・差・係数', '2'], ['teiHenkan', '底の変換', '2'], ['taisuuHouteishiki', '対数方程式・指数方程式', '2'],
   ['sessen', '接線の方程式', '2'], ['kyokuchi', '3次関数の極値', '2'], ['teisekibun', '定積分の計算', '2'], ['rokubun', '1/6公式の面積', '2'],
-  ['tousa', '等差数列', 'B'], ['touhi', '等比数列', 'B'], ['sigma', 'Σの計算', 'B'], ['kaisa', '階差数列', 'B'], ['snAn', '和 Sₙ から一般項', 'B'], ['bunsuWa', '分数の数列の和', 'B'], ['sabunWa', '（等差）×（等比）の和', 'B'], ['zenka', '漸化式', 'B'],
+  ['tousa', '等差数列', 'B'], ['touhi', '等比数列', 'B'], ['sigma', 'Σの計算', 'B'], ['koshiten', '格子点の個数', 'B'], ['kaisa', '階差数列', 'B'], ['snAn', '和 Sₙ から一般項', 'B'], ['bunsuWa', '分数の数列の和', 'B'], ['sabunWa', '（等差）×（等比）の和', 'B'], ['zenka', '漸化式', 'B'],
   ['bunpu', '確率分布表から期待値・分散', 'B'], ['henkan', 'aX+b の期待値・分散', 'B'], ['waSeki', '確率変数の和と積', 'B'], ['nikouBunpu', '二項分布', 'B'], ['seiki', '正規分布', 'B'], ['seikiKinji', '二項分布の正規近似', 'B'], ['hyouhonHeikin', '標本平均の分布', 'B'], ['suitei', '母平均の推定', 'B'], ['kentei', '仮説検定', 'B'],
   ['naiseki', '内積の計算', 'C'], ['nasukaku', 'なす角', 'C'], ['menseki', '三角形の面積', 'C'], ['heikouSuichoku', '平行・垂直の条件', 'C'], ['ookisa', '大きさと内積', 'C'], ['saisyou', '|a+tb| の最小値', 'C'], ['ichiVec', '位置ベクトル', 'C'], ['kouten', '2直線の交点', 'C'], ['chokusenVec', '直線のベクトル方程式', 'C'], ['kuukanNaiseki', '空間ベクトルの内積となす角', 'C'], ['gaiseki', '2本に垂直なベクトル', 'C'], ['heimen', '平面の方程式', 'C'], ['kyuumen', '球面の方程式', 'C'], ['kyori', '点と平面の距離', 'C'], ['kyokkei', '絶対値と偏角・極形式', 'C'], ['kaiten', '点の回転', 'C'], ['deMoivre', 'ド・モアブルの定理', 'C'], ['nJouKon', 'n 乗根', 'C'], ['sanTenKaku', '3点がつくる角', 'C'], ['cxEn', '円 |z−α|=r', 'C'], ['suichoku', '垂直二等分線', 'C'], ['apollonius', 'アポロニウスの円', 'C'], ['kyokusenShiki', '条件から2次曲線の方程式', 'C'], ['heikouIdou', '平行移動した2次曲線', 'C'], ['kyouyuuten', '2次曲線と直線の共有点', 'C'], ['nijiSessen', '2次曲線の接線', 'C'], ['baikaiShoukyo', '媒介変数の消去', 'C'], ['baikaiEn', '円・楕円の媒介変数表示', 'C'], ['kyokuZahyou', '極座標と直交座標', 'C'], ['kyokuToChokkou', '極方程式 → 直交座標', 'C'], ['chokkouToKyoku', '直交座標 → 極方程式', 'C']
 ];
@@ -2882,7 +2883,7 @@ const A_GEN = {
     const kr = ks.length > 4 ? `${ks[0]},\\ ${ks[1]},\\ \\cdots,\\ ${ks[ks.length - 1]}` : ks.join(',\\ ');
     const st = [{ t: 'txt', s: `直線 $${v}=k$（$k=${kr}$）の上の格子点を数える。$${v}=k$ のとき，${how}。` }];
     const arith = cs.length > 2 && cs.every((x, i) => !i || x - cs[i - 1] === cs[1] - cs[0]);
-    if (cs.length > 7 && arith) st.push({ t: 'eq', rows: chain(`${cs[0]}+${cs[1]}+\\cdots+${cs[cs.length - 1]} &= \\frac{(${cs[0]}+${cs[cs.length - 1]})\\times${cs.length}}{2}`, `${total}`) });
+    if (cs.length > 7 && arith) st.push({ t: 'eq', noEval: true, rows: chain(`${cs[0]}+${cs[1]}+\\cdots+${cs[cs.length - 1]} &= \\frac{(${cs[0]}+${cs[cs.length - 1]})\\times${cs.length}}{2}`, `${total}`) });
     else {
       st.push({ t: 'txt', s: ks.map((k, i) => `$${v}=${k}$ のとき $${cs[i]}$ 個`).join('，') + '。' });
       st.push({ t: 'eq', rows: [`${cs.join('+')} &= ${total}`] });
