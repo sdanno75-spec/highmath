@@ -92,7 +92,10 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 .fhead em{font-style:normal;color:var(--muted);font-size:12px;font-weight:400}
 .fhead .n{margin-left:auto;font-size:12px;font-weight:700;color:var(--teal);font-variant-numeric:tabular-nums}
 .field .units{display:none;padding:2px 12px 12px;margin:0}
-.field.open .units{display:flex}
+.field.open .units{display:grid;grid-template-columns:repeat(auto-fill,minmax(15em,1fr));align-items:stretch}
+/* 単元・パターンの札は格子に並べて文頭をそろえる（狭いと1列、広いと2列以上） */
+.field .units .fAll{grid-column:1/-1;justify-self:start}
+.patList{display:grid;grid-template-columns:repeat(auto-fill,minmax(12em,1fr));gap:6px}
 .field .ugrp{display:none}
 .fAll{padding:4px 10px;font-size:12px}
 /* よく使う組み合わせ */
@@ -425,7 +428,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
           <div id="baikaiOpt">
             <div class="seg" data-set="baikaiMode"><button data-v="level">難しさに合わせる</button><button data-v="pick">パターンを選ぶ</button></div>
             <div id="baikaiPatBox" style="margin-top:8px">
-              <div id="baikaiPatList" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+              <div id="baikaiPatList" class="patList"></div>
               <div class="seg" data-set="baikaiOrder" style="margin-top:8px"><button data-v="num">番号順</button><button data-v="shuffle">シャッフル</button></div>
               <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px"><button class="btn" id="baikaiAll" type="button">すべて選ぶ</button></div>
             </div>
@@ -433,7 +436,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
           <div id="goshinOpt">
             <div class="seg" data-set="goshinMode"><button data-v="level">難しさに合わせる</button><button data-v="pick">パターンを選ぶ</button></div>
             <div id="goshinPatBox" style="margin-top:8px">
-              <div id="goshinPatList" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+              <div id="goshinPatList" class="patList"></div>
               <div class="seg" data-set="goshinOrder" style="margin-top:8px"><button data-v="num">番号順</button><button data-v="shuffle">シャッフル</button></div>
               <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px"><button class="btn" id="goshinAll" type="button">すべて選ぶ</button></div>
               <div class="gnote">傍心の問題は、チェックを入れたときだけ出ます（「難しさに合わせる」では出ません）。</div>
@@ -442,7 +445,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
           <div id="zenkaOpt">
             <div class="seg" data-set="zenkaMode"><button data-v="level">難しさに合わせる</button><button data-v="pick">パターンを選ぶ</button></div>
             <div id="zenkaPatBox" style="margin-top:8px">
-              <div id="zenkaPats" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+              <div id="zenkaPats" class="patList"></div>
               <div class="seg" data-set="zenkaOrder" style="margin-top:8px"><button data-v="num">番号順</button><button data-v="shuffle">シャッフル</button></div>
               <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">
                 <button class="btn" id="zenkaAll" type="button">すべて選ぶ</button>
@@ -746,8 +749,9 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.61.0', UPDATED = '2026-11-10';
+const VERSION = '5.61.1', UPDATED = '2026-11-11';
 const CHANGES = [
+  ['5.61.1', '2026-11-11', '単元の札と、漸化式・媒介変数の消去・五心のパターンの札を格子に並べ、文頭がそろって選びやすいようにした（狭い画面は縦1列、広い画面は2列以上）。'],
   ['5.61.0', '2026-11-10', '数II 図形と方程式に「定点を通る図形」（直線・放物線・円の2定点）、「線形計画法」（四角形・三角形の領域で1次式、発展は x²+y²）、「通過領域（逆像法）」（判別式・点 (s+t, st)、発展は t≧0）を追加。解答に領域の図をつけた。交点を通る直線・円の発展から定点の問題をはずした（定点を通る図形へ）。'],
   ['5.60.0', '2026-11-10', '数II 図形と方程式に「交点を通る直線・円」（直線束・円束、発展は定点と円と直線の交点を通る円）と「円の接線・極線」（発展は中心が原点でない円）を追加。'],
   ['5.59.1', '2026-11-10', '難しさの説明（オンオフのしかた・まぜるときの説明）と、単元の下の説明を消した。'],
