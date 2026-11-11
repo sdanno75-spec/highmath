@@ -197,8 +197,8 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 .chk:has(input:checked){border-color:var(--ink);background:#efebe0}
 .chk small{color:var(--muted);font-size:11.5px}
 .stepper{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.stepper button{min-width:40px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;font-size:14px;cursor:pointer;color:inherit}
-.stepper button:hover{border-color:var(--muted)}
+.stepper button{min-width:40px;padding:6px 10px;border:1px solid var(--teal);border-radius:8px;background:var(--teal-bg);font-size:14px;font-weight:700;cursor:pointer;color:var(--teal)}
+.stepper button:hover{background:var(--teal);color:#fff}
 .stepper input{width:64px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;font-size:15px;text-align:center;background:#fff;color:inherit}
 .stepper .cu{margin-right:4px}
 .txt{border:1px solid var(--line);border-radius:8px;padding:6px 10px;background:#fff;width:100%;max-width:520px;font-size:14px}
@@ -631,16 +631,17 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
         <div class="gnote" id="levelNote"></div>
       </div></div>
       <div class="grp"><div class="glab">問題の量</div><div>
+        <div class="seg" data-set="fit" style="margin-bottom:8px"><button data-v="count">問題数を自分で決める</button><button data-v="page">問題のページ数に合わせる</button></div>
+        <div id="cntOpt">
         <div class="stepper" id="cntBox"><button type="button" data-d="-5">−5</button><button type="button" data-d="-1">−1</button><input type="number" id="cnt" min="1" max="50" step="1" inputmode="numeric" aria-label="問題数"><span class="cu">問</span><button type="button" data-d="1">＋1</button><button type="button" data-d="5">＋5</button></div>
-        <div class="gnote">1〜50問（重くなるので50問まで）。全体の問題数を変えると、選んだ単元に同じくらいずつ配りなおします。単元ごとの数は下の表で直せて（難しさが「まぜる」のときは基本・標準・発展の数）、そのときはここが合計になります。</div>
-        <div class="utblBox" id="uTable"></div>
-        <div class="seg" data-set="fit" style="margin-top:10px"><button data-v="count">問題数を自分で決める</button><button data-v="page">問題のページ数に合わせる</button></div>
-        <div id="fitOpt" style="margin-top:8px">
-          <div class="stepper" id="fitBox"><button type="button" data-d="-1">−1</button><input type="number" id="fitPages" min="1" max="10" step="1" inputmode="numeric" aria-label="問題のページ数"><span class="cu">ページ</span><button type="button" data-d="1">＋1</button></div>
-          <div class="gnote">指定した問題ページに入るだけ，問題を入れます（1〜10ページ。解答は数えません）。単元ごとの問題数の比率は、表で決めた数のまま保ちます。上の問題数や表の数を変えると，そのあとは自分で決める状態になります。</div>
+        <div class="gnote">1〜50問（重くなるので50問まで）。全体の問題数を変えると、選んだ単元に同じくらいずつ配りなおします。</div>
         </div>
+        <div id="fitOpt">
+          <div class="stepper" id="fitBox"><button type="button" data-d="-1">−1</button><input type="number" id="fitPages" min="1" max="10" step="1" inputmode="numeric" aria-label="問題のページ数"><span class="cu">ページ</span><button type="button" data-d="1">＋1</button></div>
+          <div class="gnote">指定した問題ページに入るだけ，問題を入れます（1〜10ページ。解答は数えません）。</div>
+        </div>
+        <div class="utblBox" id="uTable"></div>
         <label class="chk" style="margin-top:10px"><input type="checkbox" id="avoidRecent">最近作ったプリント（10件まで）に入っている問題は出さない</label>
-        <div class="gnote">前に配った問題と同じ問題を出さないようにします。単元の問題を使い切ったときだけ、同じ問題が出ることがあります。</div>
       </div></div>
       <div class="grp"><div class="glab">ならび順</div><div>
         <div class="seg" data-set="order"><button data-v="mix">単元をまぜる</button><button data-v="unit">単元ごとにまとめる</button></div>
@@ -653,9 +654,10 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
       </div></div>
       <div class="grp"><div class="glab">見出しの欄</div><div>
         <div style="display:flex;flex-wrap:wrap;gap:6px"><label class="chk"><input type="checkbox" id="hDate">月日</label><label class="chk"><input type="checkbox" id="hClass">年組番</label><label class="chk"><input type="checkbox" id="hName">氏名</label></div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;align-items:center"><span style="font-size:13px;color:var(--muted)">2ページ目から</span><label class="chk"><input type="checkbox" id="hEveryTitle">毎ページに題名</label><label class="chk"><input type="checkbox" id="hEveryName">毎ページに年組番・氏名</label></div>
         <div class="seg" data-set="hScore" style="margin-top:8px"><button data-v="count">得点／問題数</button><button data-v="points">得点／満点を決める</button><button data-v="off">得点の欄なし</button></div>
         <div id="scoreMaxBox" style="margin-top:8px;display:flex;align-items:center;gap:6px">満点 <input class="txt" type="number" id="scoreMax" min="1" max="1000" step="1" inputmode="numeric" style="width:6em" aria-label="満点"> 点</div>
-        <div class="gnote">題名の下の欄です。月日と得点は1ページ目だけ、年組番と氏名は毎ページに入ります（画面・印刷・LaTeX とも）。</div>
+        <div class="gnote">題名の下の欄です。月日と得点は1ページ目だけです。2ページ目からは、チェックしたものだけ入れます（何も入れないと、そのぶん問題の欄が広くなります）。</div>
       </div></div>
       <div class="grp"><div class="glab">目安時間</div><div>
         <div class="seg" data-set="time"><button data-v="off">目安時間をのせない</button><button data-v="on">目安時間をのせる</button></div>
@@ -749,8 +751,11 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.61.1', UPDATED = '2026-11-11';
+const VERSION = '5.62.0', UPDATED = '2026-11-11';
 const CHANGES = [
+  ['5.62.0', '2026-11-11', '2ページ目からの見出しを初めはなしにした（そのぶん問題の欄が広くなる）。その他の設定「見出しの欄」の「毎ページに題名」「毎ページに年組番・氏名」で入れられる（画面・印刷・LaTeX とも）。'],
+  ['5.61.3', '2026-11-11', '「問題のページ数に合わせる」のときは、問題数のボタンと説明を隠すようにした（問題数は表の「全体」で見られる）。'],
+  ['5.61.2', '2026-11-11', '「問題の量」を整理：「問題数を自分で決める／ページ数に合わせる」を先頭に置き、表は下へ。＋1・−1 などのボタンに色をつけ、長い説明を短くした。'],
   ['5.61.1', '2026-11-11', '単元の札と、漸化式・媒介変数の消去・五心のパターンの札を格子に並べ、文頭がそろって選びやすいようにした（狭い画面は縦1列、広い画面は2列以上）。'],
   ['5.61.0', '2026-11-10', '数II 図形と方程式に「定点を通る図形」（直線・放物線・円の2定点）、「線形計画法」（四角形・三角形の領域で1次式、発展は x²+y²）、「通過領域（逆像法）」（判別式・点 (s+t, st)、発展は t≧0）を追加。解答に領域の図をつけた。交点を通る直線・円の発展から定点の問題をはずした（定点を通る図形へ）。'],
   ['5.60.0', '2026-11-10', '数II 図形と方程式に「交点を通る直線・円」（直線束・円束、発展は定点と円と直線の交点を通る円）と「円の接線・極線」（発展は中心が原点でない円）を追加。'],
@@ -9282,7 +9287,7 @@ const aBoxTex = p => {
   return `\\par\\vfill\\noindent ${rows.join('\\par\\smallskip\\noindent ')}`;
 };
 const noTex = a => `${a.g ? `\\fbox{${a.g}}\\,` : ''}\\textbf{${a.no}}`;
-// 見出しの欄：月日・得点は1ページ目だけ、年組番・氏名は毎ページ（その他の設定「見出しの欄」で外せる）
+// 見出しの欄：月日・得点は1ページ目だけ。2ページ目からは「毎ページに題名」「毎ページに年組番・氏名」をチェックしたときだけ（初めはどちらもなし）
 const scoreDen = () => isQuiz() ? ptTotal() : ST.hScore === 'points' ? (clampScore(ST.scoreMax) || 100) : PROBS.length;
 const clampScore = v => { v = Math.round(+v); return Number.isFinite(v) && v >= 1 ? Math.min(1000, v) : null; };
 function headInfo(first){
@@ -9291,6 +9296,11 @@ function headInfo(first){
   return h ? `<div class="qz-info">${h}</div>` : '';
 }
 function head(first){
+  if (!first) {
+    const t = ST.hEveryTitle === true, i = ST.hEveryName === true ? headInfo(false) : '';
+    if (!t && !i) return '';
+    return `<div class="qz-head">${t ? `<h2>${esc(printTitle())}<span class="sub">${esc(unitList())}</span></h2>` : ''}${i}</div>`;
+  }
   return `<div class="qz-head"><h2>${esc(printTitle())}<span class="sub">${esc(unitList())}</span>${first && ST.time !== 'off' ? `<span class="time">目安 ${timeText()}</span>` : ''}</h2>${headInfo(first)}</div>`;
 }
 function stepHTML(s){
@@ -9862,10 +9872,11 @@ function buildLatex(){
   const cls = ST.tex === 'lua'
     ? '% LuaLaTeX でコンパイルしてください（Overleaf：Menu → Compiler → LuaLaTeX）\n\\documentclass[a4paper,11pt]{ltjsarticle}'
     : '% pLaTeX + dvipdfmx でコンパイルしてください（platex → dvipdfmx）\n\\documentclass[a4paper,11pt,dvipdfmx]{jsarticle}';
-  // 見出しの欄（その他の設定「見出しの欄」で選ぶ）。2ページ目からは年組番・氏名だけ
+  // 見出しの欄（その他の設定「見出しの欄」で選ぶ）。2ページ目からは「毎ページに題名」「毎ページに年組番・氏名」のチェックしたものだけ
   const nameLine = [ST.hClass !== false ? `年\\hspace{6mm}組\\hspace{6mm}番` : '', ST.hName !== false ? `氏名\\underline{\\hspace{48mm}}` : ''].filter(Boolean).join('\\quad ');
   const firstInfo = [ST.hDate !== false ? `月\\hspace{8mm}日\\hspace{8mm}` : '', nameLine, ST.hScore !== 'off' ? `\\fbox{\\parbox[c][8mm]{28mm}{得点\\hfill ／${scoreDen()}}}` : ''].filter(Boolean).join('\\quad\n');
-  const pageHead = t => `{\\large\\bfseries ${t}}${nameLine ? `\\hfill ${nameLine}` : ''}\\par\\vspace{2mm}\\hrule\\vspace{3mm}\n`;
+  const eT = ST.hEveryTitle === true, eN = ST.hEveryName === true && !!nameLine, eHead = eT || eN;
+  const pageHead = t => eHead ? `${eT ? `{\\large\\bfseries ${t}}` : ''}${eN ? `\\hfill ${nameLine}` : ''}\\par\\vspace{2mm}\\hrule\\vspace{3mm}\n` : '';
   const texD = s => s.split('$').map((x, i) => i % 2 ? `$\\displaystyle ${x}$` : x).join('');
   const twoCols = (l, r, ht, np = true) => `\\begin{minipage}[t][${ht}mm][t]{0.48\\textwidth}
 ${l}
@@ -9878,7 +9889,7 @@ ${r}
     // しっかり解く：画面と同じページ割り・同じ高さの比率で（横いっぱいの問題は \textwidth の箱）
     const pk = PACK || { pages: [], h1: 1, h2: 1 };
     pk.pages.forEach((segs, k) => {
-      const H = k ? 238 : 212, f = H / (k ? pk.h2 : pk.h1);
+      const H = k ? (eHead ? 238 : 250) : 212, f = H / (k ? pk.h2 : pk.h1);
       const cellTex = (x, w) => {
         const a = A[x.i], p = a.p, body = `${noTex(a)}\\ ${p.label}${ptTex(p)}${showMx(p) ? `\\par\\smallskip\\hspace*{1.5em}$\\displaystyle ${p.math}$` : ''}`;
         // 図つきの問題は、左に文章・右に図
@@ -9982,6 +9993,7 @@ function showOpts(){
   $('unitSetTitle').textContent = ST.setOpen ? unitName(ST.setOpen) + ' の設定' : '';
   $('mixLvBox').style.display = ST.level === 'mix' ? '' : 'none';
   $('fitOpt').style.display = ST.fit === 'page' ? '' : 'none';
+  $('cntOpt').style.display = ST.fit === 'page' ? 'none' : '';
   $('zenkaPatBox').style.display = ST.zenkaMode === 'pick' ? '' : 'none';
   $('baikaiPatBox').style.display = ST.baikaiMode === 'pick' ? '' : 'none';
   $('goshinPatBox').style.display = ST.goshinMode === 'pick' ? '' : 'none';
@@ -10587,6 +10599,7 @@ if (ST.ptShow !== 'off') ST.ptShow = 'on';
 if (ST.ansBox !== 'off') ST.ansBox = 'on';
 ST.scoreMax = clampScore(ST.scoreMax) || 100;
 ['hDate', 'hClass', 'hName'].forEach(id => { $(id).checked = ST[id] !== false; $(id).addEventListener('change', () => { ST[id] = $(id).checked; save(); render(); }); });
+['hEveryTitle', 'hEveryName'].forEach(id => { $(id).checked = ST[id] === true; $(id).addEventListener('change', () => { ST[id] = $(id).checked; save(); render(); }); });
 $('scoreMax').value = ST.scoreMax; $('scoreMaxBox').style.display = ST.hScore === 'points' ? 'flex' : 'none';
 $('scoreMax').addEventListener('change', () => { ST.scoreMax = clampScore($('scoreMax').value) || ST.scoreMax; $('scoreMax').value = ST.scoreMax; save(); render(); });
 $('presetWithSet').checked = ST.presetWithSet !== false;
