@@ -77,6 +77,9 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 .utbl tfoot th:first-child{font-weight:700}
 .utbl .no{color:var(--muted);font-size:12px}
 .utbl input{width:3em;height:34px;padding:0;border:1px solid #9aa7bb;border-radius:6px;font:inherit;font-size:16px;text-align:center;color:var(--ink);background:#fff}
+.uStep{display:inline-flex;align-items:center;gap:3px}
+.uStep button{width:26px;height:26px;padding:0;border:1px solid var(--teal);border-radius:6px;background:var(--teal-bg);color:var(--teal);font-weight:700;font-size:14px;line-height:1;cursor:pointer}
+.uStep button:hover{background:var(--teal);color:#fff}
 .utbl input:focus{outline:2px solid var(--teal);outline-offset:0;border-color:var(--teal)}
 .setbox{border:1px solid var(--teal);border-radius:12px;padding:12px;background:var(--teal-bg);display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
 .setbox h3{margin:0;font-size:14px}
@@ -751,8 +754,9 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.62.0', UPDATED = '2026-11-11';
+const VERSION = '5.62.1', UPDATED = '2026-11-11';
 const CHANGES = [
+  ['5.62.1', '2026-11-11', '「問題の量」の表の欄（基本・標準・発展、問題数）の左右に小さな −・＋ のボタンをつけ、1問ずつ増やす・減らすようにした。'],
   ['5.62.0', '2026-11-11', '2ページ目からの見出しを初めはなしにした（そのぶん問題の欄が広くなる）。その他の設定「見出しの欄」の「毎ページに題名」「毎ページに年組番・氏名」で入れられる（画面・印刷・LaTeX とも）。'],
   ['5.61.3', '2026-11-11', '「問題のページ数に合わせる」のときは、問題数のボタンと説明を隠すようにした（問題数は表の「全体」で見られる）。'],
   ['5.61.2', '2026-11-11', '「問題の量」を整理：「問題数を自分で決める／ページ数に合わせる」を先頭に置き、表は下へ。＋1・−1 などのボタンに色をつけ、長い説明を短くした。'],
@@ -10188,7 +10192,8 @@ function updateGroupCounts(){
 function renderUTable(){
   const sel = UNITS.filter(u => ST.units.includes(u[0]));
   if (!sel.length) { $('uTable').innerHTML = ''; return; }
-  const inp = (u, nm, k, lab) => `<input type="text" inputmode="numeric" autocomplete="off" data-uc="${u}" data-k="${k}" aria-label="${esc(nm + ' の' + lab)}">`;
+  // 欄の左右に小さな −・＋ のボタン（押すと1つずつ増やす・減らす。打ちこんだときと同じ処理）
+  const inp = (u, nm, k, lab) => `<span class="uStep"><button type="button" data-step="-1" aria-label="${esc(nm + ' の' + lab + 'を1減らす')}">−</button><input type="text" inputmode="numeric" autocomplete="off" data-uc="${u}" data-k="${k}" aria-label="${esc(nm + ' の' + lab)}"><button type="button" data-step="1" aria-label="${esc(nm + ' の' + lab + 'を1増やす')}">＋</button></span>`;
   // まぜるときは、オンにした難しさの列だけ出す
   const isPick = u => PICK[u] && pickOn(u), mix = ST.level === 'mix', cols = mix ? lvEff() : [];
   const head = mix ? `<th>単元</th>${cols.map(c => `<th>${LV_LABEL[c]}</th>`).join('')}<th>計</th>` : '<th>単元</th><th>問題数</th>';
@@ -10228,6 +10233,12 @@ $('uTable').addEventListener('change', e => {
   $('cnt').value = ST.count; save(); fillUTable();
   document.querySelectorAll('.seg[data-set="fit"] button').forEach(x => x.classList.toggle('on', x.dataset.v === ST.fit));
   $('levelNote').innerHTML = levelNoteHTML(); showOpts(); updateGrpSums(); regenSoon();
+});
+$('uTable').addEventListener('click', e => {
+  const b = e.target.closest('button[data-step]'); if (!b) return;
+  const i = b.parentNode.querySelector('input[data-uc]'), v = Math.max(0, (parseInt(i.value, 10) || 0) + +b.dataset.step);
+  if (String(v) === i.value) return;
+  i.value = v; i.dispatchEvent(new Event('change', { bubbles: true }));
 });
 $('uTable').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches('input[data-uc]')) e.target.blur(); });
 // 欄を押すと中の数が全部選ばれて、打った数に置きかわる（後ろに数がつかないように）
