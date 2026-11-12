@@ -473,6 +473,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
           <label class="chk"><input type="checkbox" name="unit" value="heihou" checked>平方完成</label>
           <label class="chk"><input type="checkbox" name="unit" value="heikouTaisho">平行移動・対称移動</label>
           <label class="chk"><input type="checkbox" name="unit" value="kanshu">最大・最小（定義域つき）</label>
+          <label class="chk"><input type="checkbox" name="unit" value="kaiHaichi">解の配置</label>
         </div>
         <div class="units" data-subj="1">
           <span class="ugrp">数I　図形と計量</span>
@@ -754,8 +755,9 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.62.1', UPDATED = '2026-11-11';
+const VERSION = '5.63.0', UPDATED = '2026-11-12';
 const CHANGES = [
+  ['5.63.0', '2026-11-12', '数I 二次関数に「解の配置」を追加（基本：k をはさむ解、標準：ともに k より大きい・小さい、発展：区間に1つずつ・区間に2つ。解答にグラフの例）。通過領域（逆像法）の問題をふやした：放物線の通過領域、x²+y²=r² のときの ax+y の範囲、条件つきの点 (s+t, st)（s, t≧k、s≧k≧t、s²+t²=r² の描く図形）、x²±xy+y²=c のときの x+y の範囲、発展に s, t が区間にあるときの (s+t, st)。'],
   ['5.62.1', '2026-11-11', '「問題の量」の表の欄（基本・標準・発展、問題数）の左右に小さな −・＋ のボタンをつけ、1問ずつ増やす・減らすようにした。'],
   ['5.62.0', '2026-11-11', '2ページ目からの見出しを初めはなしにした（そのぶん問題の欄が広くなる）。その他の設定「見出しの欄」の「毎ページに題名」「毎ページに年組番・氏名」で入れられる（画面・印刷・LaTeX とも）。'],
   ['5.61.3', '2026-11-11', '「問題のページ数に合わせる」のときは、問題数のボタンと説明を隠すようにした（問題数は表の「全体」で見られる）。'],
@@ -998,7 +1000,7 @@ function chain(first, ...rest){
 /* ========== 問題の生成（すべて答えから逆算） ========== */
 const UNITS = [
   // 教科書の順。[単元, 名前, 教科]。数I：数と式 → 二次関数 → 図形と計量／数A：場合の数と確率 → 整数の性質 → 図形の性質／数II：式と証明 → 複素数と方程式
-  ['tasuki', 'たすき掛け', '1'], ['nijuu', '二重根号', '1'], ['taisho', '対称式', '1'], ['kaiKeisu1', '解と係数の関係', '1'],['heihou', '平方完成', '1'], ['heikouTaisho', '平行移動・対称移動', '1'], ['kanshu', '二次関数の最大・最小', '1'],
+  ['tasuki', 'たすき掛け', '1'], ['nijuu', '二重根号', '1'], ['taisho', '対称式', '1'], ['kaiKeisu1', '解と係数の関係', '1'],['heihou', '平方完成', '1'], ['heikouTaisho', '平行移動・対称移動', '1'], ['kanshu', '二次関数の最大・最小', '1'], ['kaiHaichi', '解の配置', '1'],
   ['sankakuhiChi', '三角比の値', '1'], ['sougoKankei', '三角比の相互関係', '1'], ['sankaku', '正弦・余弦定理', '1'], ['mensekiGaisetsu', '三角形の面積と外接円の半径', '1'],
   ['bunsan', '平均・分散・標準偏差', '1'], ['soukan', '相関係数', '1'],
   ['junretsu', '順列・組合せの計算', 'A'], ['enJunretsu', '円順列・重複順列', 'A'], ['onaji', '同じものを含む順列', 'A'], ['chofuku', '重複組合せ', 'A'], ['kumiwake', '組分け', 'A'],
@@ -1029,6 +1031,9 @@ const TIME_TABLE = [
   ['tasuki2', 'たすき掛け（係数がどちらも2以上）', [30, 60, 120]],
   ['tasuki2y', 'たすき掛け（x, y の2文字）', [40, 80, 150]],
   ['heihou1', '平方完成（x² の係数1・整数）', [15, 40, 80]],
+  ['haichi1', '解の配置（f(k)<0 だけ）', [45, 90, 180]],
+  ['haichi2', '解の配置（D・軸・f(k) の3つ）', [120, 240, 480]],
+  ['haichi3', '解の配置（区間に解がある・発展）', [150, 300, 600]],
   ['heihou1f', '平方完成（x² の係数1・分数が出る）', [30, 60, 120]],
   ['heihouA', '平方完成（x² の係数が1以外・整数）', [30, 60, 120]],
   ['heihouAf', '平方完成（x² の係数が1以外・分数が出る）', [45, 90, 180]],
@@ -1153,8 +1158,8 @@ const TIME_TABLE = [
   ['senkei2', '線形計画法（三角形の領域で1次式の最大・最小）', [90, 180, 360]],
   ['senkei3', '領域と x²+y² の最大・最小（発展）', [150, 300, 600]],
   ['tsuka1', '直線の通過領域（判別式）', [60, 150, 300]],
-  ['tsuka2', '逆像法：点 (s+t, st) などの動く領域', [90, 180, 360]],
-  ['tsuka3', 't に範囲がある通過領域（発展）', [150, 300, 600]],
+  ['tsuka2', '逆像法：条件つきの点 (s+t, st)・式の値の範囲', [90, 180, 360]],
+  ['tsuka3', 't≧0 の通過領域・s, t が区間にある (s+t, st)（発展）', [150, 300, 600]],
   ['kodo1', '弧度法の値（0〜2π の角）', [10, 30, 60]],
   ['kodo2', '弧度法の値（負の角・2π をこえる角）', [20, 50, 100]],
   ['kahou1', '加法定理（sin75°・cos15°・tan105° など）', [30, 70, 140]],
@@ -1300,7 +1305,7 @@ const totalMins = () => sumSec(PROBS).map(s => Math.ceil(s / 60));
 const timeText = () => totalMins().map((m, k) => `${TIERS[k]} ${m}分`).join('・');
 // 難しさの説明：選んだ単元の分だけを出す（基本｜標準）
 // 発展（lv 3）がある単元。ほかの単元は「発展」を選ぶと標準を出す
-const ADV_UNITS = new Set(['kyokusenShiki', 'kahou', 'gousei', 'sankakuHouteishiki', 'taisuuHouteishiki', 'kyokuchi', 'teisekibun', 'kanshu', 'warizan', 'zenka', 'kyouyuuten', 'koshiten', 'taba', 'enSessen', 'teiten', 'senkei', 'tsuka']);
+const ADV_UNITS = new Set(['kyokusenShiki', 'kahou', 'gousei', 'sankakuHouteishiki', 'taisuuHouteishiki', 'kyokuchi', 'teisekibun', 'kanshu', 'warizan', 'zenka', 'kyouyuuten', 'koshiten', 'taba', 'enSessen', 'teiten', 'senkei', 'tsuka', 'kaiHaichi']);
 const UNIT_LEVEL = {
   tasuki: ['x の係数の片方が1', '2文字（x, y）・係数がどちらも2以上'],
   nijuu: ['√(5+2√6) の形', '√(7+4√3)・√(4+√15) の形'],
@@ -1309,6 +1314,7 @@ const UNIT_LEVEL = {
   heihou: ['x² の係数が1で整数', '分数が出る・x² の係数が1以外'],
   heikouTaisho: ['平行移動した式', '対称移動・移動の量を求める'],
   kanshu: ['x² の係数が ±1, ±2・頂点が整数', '係数 ±3・頂点が分数', '文字定数 a で場合分け（軸・定義域に文字）'],
+  kaiHaichi: ['k をはさむ2つの解（f(k)<0 だけ）', 'ともに k より大きい・小さい（判別式・軸・f(k)）', '区間に1つずつ・区間に2つ（端の値の符号）'],
   sankakuhiChi: ['有名角の sin・cos・tan・2つの三角比の式', '3〜4つの三角比の式・180°−θ, 90°−θ を使う'],
   sougoKankei: ['鋭角・sin か cos から残り', '鈍角・tan から sin, cos'],
   sankaku: ['辺を求める', '角を求める・角の和を使う'],
@@ -1347,7 +1353,7 @@ const UNIT_LEVEL = {
   enSessen: ['円上の点における接線', '接点を通る直線（極線）', '中心が原点でない円の極線'],
   teiten: ['直線（k について整理して連立）', '放物線（a について整理）', '円（2つの定点・円と直線の連立）'],
   senkei: ['四角形の領域で ax+by の最大（傾きを比べる）', '三角形の領域で ax+by の最大・最小', 'x²+y² の最大・最小（垂線の足）'],
-  tsuka: ['直線の通過領域（t がすべての実数・判別式）', '逆像法：点 (s+t, st) などの動く領域', 't≧0 の通過領域（x を固定して y の範囲）'],
+  tsuka: ['直線・放物線の通過領域，x²+y²=r² のときの値の範囲（判別式）', '逆像法：条件つきの点 (s+t, st)，対称式の条件と x+y の範囲', 't≧0 の通過領域，s, t が区間にあるときの (s+t, st)'],
   kodo: ['0〜2π の角', '負の角・2π をこえる角'],
   kahou: ['sin75°・cos15°・tan105° など（設定で弧度法も）', 'sin α, cos β から sin(α+β) など（弧度法）', 'sin α か cos α から sin 2α，cos 2α（2倍角）'],
   gousei: ['r sin(θ+α) の形に合成', '範囲つきの最大・最小（端点で最大・最小の型も）', '合成して方程式を解く'],
@@ -1429,6 +1435,7 @@ const ZENKA_FORM = {
 };
 // 発展を選んだときに、公式・手順の欄へ足す行
 const FORMULA_ADV = {
+  kaiHaichi: ['区間 $p<x<q$ に異なる2つの解：$D>0$，$p<$ 軸 $<q$，$f(p)>0$，$f(q)>0$。', '$p<x<q$，$q<x<r$ に1つずつ解：$f(p)>0$，$f(q)<0$，$f(r)>0$。'],
   kanshu: ['場合分け：軸と定義域の位置で分ける。軸に近い側の値（下に凸なら最小）は，軸が定義域の左・中・右の3通り。遠い側の値（下に凸なら最大）は，軸が定義域の真ん中の左・上・右の3通り。'],
   warizan: ['余りの定理：$P(x)$ を $x-k$ で割った余りは $P(k)$。2次式で割った余りは $ax+b$，3次式で割った余りは2次以下とおく。'],
   zenka: [ZENKA_FORM.exp, ZENKA_FORM.rev],
@@ -5449,6 +5456,8 @@ const B_GEN = {
   // 【通過領域・逆像法】点 (x, y) を通る ⇔ 式を満たす実数 t（s, t）が存在する。答えは境界つきの不等式と図
   // 難しさ1：t がすべての実数（判別式）／2：点 (s+t, st) などの動く範囲／3：t≧0 の通過領域（x を固定して y の範囲）
   tsuka(lv){
+    // 新しい型（放物線・値の範囲・条件つきの (s+t, st) など）と半分ずつ
+    if (Math.random() < [0, 0.6, 0.65, 0.5][lv]) return tsukaMore(lv);
     const fx = h => h ? `(${sumTex([[1, 'x'], [h, '']])})` : 'x';   // x+h
     const ptsMax = (f, a, b, n = 4000) => { let m = -Infinity; for (let i = 0; i <= n; i++) m = Math.max(m, f(a + (b - a) * i / n)); return m; };
     for (;;) {
@@ -5548,9 +5557,266 @@ const B_GEN = {
         chk: () => [-4.2, -2.5, -1.5, -0.5, 0, 0.6, 1.4, 2.7].reduce((s, x) => { const yt = t => 2 * t * x + e * t * t + f * t + g, m = e < 0 ? ptsMax(yt, 0, 30, 20000) : -ptsMax(t => -yt(t), 0, 30, 20000); return s + (Math.abs(m - bf(x)) < 1e-3 ? 0 : 1); }, 0)
       };
     }
+  },
+  // 【解の配置】文字 m を含む2次方程式 f(x)=0（x² の係数は1）。条件を m の不等式にして共通範囲を求める
+  // lv1：f(x)=x²+(αm+β)x+γm+δ で f(k)<0 だけ／lv2：f(x)=x²−2(m+β)x+γm+δ で D>0・軸・f(k)>0
+  // lv3：区間に1つずつ（f の符号）／区間に2つ（D・軸・両端）。答えの境目は分母4以下・絶対値15以下。p.chk は m を細かく動かして解を数値で確かめる
+  kaiHaichi(lv){
+    const xT1 = (al, be) => al === 0 ? [be, 'x'] : be === 0 ? [al, 'mx'] : [1, `(${sumTex([[al, 'm'], [be, '']])})x`];
+    const xT2 = be => be ? [-2, `(${sumTex([[1, 'm'], [be, '']])})x`] : [-2, 'mx'];
+    const linT = (A, N) => sumTex([[A, 'm'], [N, '']]);
+    const solveTxt = (A, N, gt, nm) => { const iv = linIv(A, N, gt); return { iv, s: `$${nm}${gt ? '>' : '<'}0$ より $${linT(A, N)}${gt ? '>' : '<'}0$，よって $${ivTex(iv)[0]}$` }; };
+    // f(k) の式：lv1 の形は k²+k(αm+β)+γm+δ，lv2 の形は k²−2k(m+β)+γm+δ
+    const fk1 = (k, al, be, ga, de) => { const sim = linT(al * k + ga, k * k + be * k + de); if (!k) return [`f(0) &= ${sim}`];
+      const ex = sumTex([[k * k, ''], al && be ? [k, `(${sumTex([[al, 'm'], [be, '']])})`] : al ? [k * al, 'm'] : [k * be, ''], [ga, 'm'], [de, '']]);
+      return ex === sim ? [`f(${k}) &= ${sim}`] : [`f(${k}) &= ${ex}`, `&= ${sim}`]; };
+    const fk2 = (k, be, ga, de) => { const sim = linT(ga - 2 * k, k * k - 2 * k * be + de); if (!k) return [`f(0) &= ${sim}`];
+      const ex = sumTex([[k * k, ''], be ? [-2 * k, `(${sumTex([[1, 'm'], [be, '']])})`] : [-2 * k, 'm'], [ga, 'm'], [de, '']]);
+      return ex === sim ? [`f(${k}) &= ${sim}`] : [`f(${k}) &= ${ex}`, `&= ${sim}`]; };
+    // 判別式（lv2 の形）：D/4=(m+β)²−(γm+δ)=(m−r1)(m−r2)
+    const dRows = (be, ga, de, r1, r2) => {
+      const sq = be ? `(${sumTex([[1, 'm'], [be, '']])})^2` : 'm^2', c = sumTex([[ga, 'm'], [de, '']]);
+      const first = ga && de ? `${sq}-(${c})` : joinPoly(sq, sumTex([[-ga, 'm'], [-de, '']]));
+      const fac = r => `(${sumTex([[1, 'm'], [-r, '']])})`, prod = r1 === 0 ? `m${fac(r2)}` : r2 === 0 ? `m${fac(r1)}` : `${fac(r1)}${fac(r2)}`;
+      return [`\\frac{D}{4} &= ${first}`, `&= ${sumTex([[1, 'm^2'], [-(r1 + r2), 'm'], [r1 * r2, '']])}`, `&= ${prod}`];
+    };
+    const ansOf = iv => ivTex(iv).map(s => `$${s}$`).join('，');
+    for (;;) {
+      let fT, fx, cond, ans, st, desc, ks, key;
+      if (lv === 1) {
+        const k = Math.random() < 0.35 ? 0 : pick([1, 2, 3, -1, -2]);
+        const al = pick([0, 1, 1, 2]), be = ri(-4, 4), ga = nz(-3, 3);
+        if (!al && !be) continue;
+        const A = al * k + ga; if (!A || Math.abs(A) > 4) continue;
+        const N = ri(-8, 8), de = N - k * k - be * k; if (Math.abs(de) > 12) continue;
+        ans = linIv(A, N, false); if (!ivNice(ans)) continue;
+        fT = sumTex([[1, 'x^2'], xT1(al, be), [ga, 'm'], [de, '']]); fx = m => [al * m + be, ga * m + de]; cond = (r1, r2) => r1 < k && k < r2; ks = [k];
+        desc = k ? `$${k}$ より大きい解と $${k}$ より小さい解をもつ` : '正の解と負の解をもつ';
+        const sv = solveTxt(A, N, false, `f(${k})`);
+        st = [{ t: 'txt', s: `$f(x)=${fT}$ とおく。$y=f(x)$ のグラフは下に凸の放物線なので，$f(x)=0$ が${desc}条件は，$f(${k})<0$ である${k ? '' : '（グラフが $y$ 軸の負の部分と交わる）'}。` },
+          { t: 'eq', rows: fk1(k, al, be, ga, de) }, { t: 'txt', s: sv.s }];
+        key = `hc1|${fT}|${k}`;
+      } else if (lv === 2) {
+        const k = Math.random() < 0.35 ? 0 : pick([1, 2, 3, -1, -2, -3]), gt = Math.random() < 0.6;
+        const be = ri(-3, 3), r1 = ri(-4, 4), r2 = ri(-4, 5); if (r1 >= r2) continue;
+        const ga = 2 * be + r1 + r2, de = be * be - r1 * r2; if (Math.abs(de) > 15 || Math.abs(ga) > 8) continue;
+        const A = ga - 2 * k, N = k * k - 2 * k * be + de; if (!A || Math.abs(A) > 6) continue;
+        const Dv = [[-IV_INF, new F(r1)], [new F(r2), IV_INF]], Av = gt ? [[new F(k - be), IV_INF]] : [[-IV_INF, new F(k - be)]], fv = linIv(A, N, true);
+        ans = ivAnd(ivAnd(Dv, Av), fv); if (!ans.length || !ivNice(ans) || ivSame(ans, Dv)) continue;
+        fT = sumTex([[1, 'x^2'], xT2(be), [ga, 'm'], [de, '']]); fx = m => [-2 * (m + be), ga * m + de]; ks = [k];
+        cond = gt ? (u1, u2) => u1 > k : (u1, u2) => u2 < k;
+        desc = `異なる2つの解をもち，それらがともに${k ? `$${k}$ より${gt ? '大きい' : '小さい'}` : gt ? '正である' : '負である'}`;
+        const axT = sumTex([[1, 'm'], [be, '']]), sv = solveTxt(A, N, true, `f(${k})`);
+        st = [{ t: 'txt', s: `$f(x)=${fT}$ とおく。$y=f(x)$ のグラフは下に凸の放物線で，軸は直線 $x=${axT}$ である。$f(x)=0$ が${desc}条件は，次の (i)〜(iii) が同時に成り立つことである。` },
+          { t: 'txt', s: `(i) 判別式 $D>0$　(ii) 軸について $${axT}${gt ? '>' : '<'}${k}$　(iii) $f(${k})>0$` },
+          { t: 'txt', s: '(i)' }, { t: 'eq', rows: dRows(be, ga, de, r1, r2) }, { t: 'txt', s: `$\\frac{D}{4}>0$ より $m<${r1}$，$m>${r2}$` },
+          { t: 'txt', s: `(ii) $${axT}${gt ? '>' : '<'}${k}$ より $m${gt ? '>' : '<'}${k - be}$` },
+          { t: 'txt', s: '(iii)' }, { t: 'eq', rows: fk2(k, be, ga, de) }, { t: 'txt', s: sv.s }];
+        key = `hc2|${fT}|${k}|${gt}`;
+      } else if (Math.random() < 0.5) {
+        // 発展：k1<x<k2，k2<x<k3 に1つずつ
+        const k1 = ri(-2, 1), k2 = k1 + 1, k3 = k1 + 2;
+        const al = pick([0, 1, 1, 2]), be = ri(-4, 4), ga = nz(-4, 4), de = ri(-9, 9);
+        if (!al && !be) continue;
+        const AN = [k1, k2, k3].map(k => [al * k + ga, k * k + be * k + de]); if (AN.some(([A]) => !A || Math.abs(A) > 6)) continue;
+        const ivs = AN.map(([A, N], i) => linIv(A, N, i !== 1));
+        ans = ivAnd(ivAnd(ivs[0], ivs[1]), ivs[2]); if (!ans.length || !ivNice(ans) || ivs.some(v => ivSame(ans, v))) continue;
+        fT = sumTex([[1, 'x^2'], xT1(al, be), [ga, 'm'], [de, '']]); fx = m => [al * m + be, ga * m + de]; ks = [k1, k2, k3];
+        cond = (u1, u2) => k1 < u1 && u1 < k2 && k2 < u2 && u2 < k3;
+        desc = `$${k1}<x<${k2}$，$${k2}<x<${k3}$ の範囲にそれぞれ1つずつ解をもつ`;
+        st = [{ t: 'txt', s: `$f(x)=${fT}$ とおく。$y=f(x)$ のグラフは下に凸の放物線なので，$f(x)=0$ が${desc}条件は，$f(${k1})>0$，$f(${k2})<0$，$f(${k3})>0$ が同時に成り立つことである。` }];
+        [k1, k2, k3].forEach((k, i) => { st.push({ t: 'eq', rows: fk1(k, al, be, ga, de) }, { t: 'txt', s: solveTxt(AN[i][0], AN[i][1], i !== 1, `f(${k})`).s }); });
+        key = `hc3s|${fT}|${k1}`;
+      } else {
+        // 発展：k1<x<k2 に異なる2つの解
+        const k1 = ri(-3, 1), k2 = k1 + pick([2, 3, 4]);
+        const be = ri(-3, 3), r1 = ri(-4, 4), r2 = ri(-4, 5); if (r1 >= r2) continue;
+        const ga = 2 * be + r1 + r2, de = be * be - r1 * r2; if (Math.abs(de) > 15 || Math.abs(ga) > 8) continue;
+        const AN = [k1, k2].map(k => [ga - 2 * k, k * k - 2 * k * be + de]); if (AN.some(([A]) => !A || Math.abs(A) > 6)) continue;
+        const Dv = [[-IV_INF, new F(r1)], [new F(r2), IV_INF]], Av = [[new F(k1 - be), new F(k2 - be)]], f1 = linIv(...AN[0], true), f2 = linIv(...AN[1], true);
+        ans = ivAnd(ivAnd(ivAnd(Dv, Av), f1), f2); if (!ans.length || !ivNice(ans) || ivSame(ans, Dv) || ivSame(ans, ivAnd(Dv, Av))) continue;
+        fT = sumTex([[1, 'x^2'], xT2(be), [ga, 'm'], [de, '']]); fx = m => [-2 * (m + be), ga * m + de]; ks = [k1, k2];
+        cond = (u1, u2) => k1 < u1 && u2 < k2;
+        desc = `$${k1}<x<${k2}$ の範囲に異なる2つの解をもつ`;
+        const axT = sumTex([[1, 'm'], [be, '']]);
+        st = [{ t: 'txt', s: `$f(x)=${fT}$ とおく。$y=f(x)$ のグラフは下に凸の放物線で，軸は直線 $x=${axT}$ である。$f(x)=0$ が${desc}条件は，次の (i)〜(iv) が同時に成り立つことである。` },
+          { t: 'txt', s: `(i) 判別式 $D>0$　(ii) $${k1}<${axT}<${k2}$　(iii) $f(${k1})>0$　(iv) $f(${k2})>0$` },
+          { t: 'txt', s: '(i)' }, { t: 'eq', rows: dRows(be, ga, de, r1, r2) }, { t: 'txt', s: `$\\frac{D}{4}>0$ より $m<${r1}$，$m>${r2}$` },
+          { t: 'txt', s: `(ii) $${k1}<${axT}<${k2}$ より $${k1 - be}<m<${k2 - be}$` },
+          { t: 'txt', s: '(iii)' }, { t: 'eq', rows: fk2(k1, be, ga, de) }, { t: 'txt', s: solveTxt(...AN[0], true, `f(${k1})`).s },
+          { t: 'txt', s: '(iv)' }, { t: 'eq', rows: fk2(k2, be, ga, de) }, { t: 'txt', s: solveTxt(...AN[1], true, `f(${k2})`).s }];
+        key = `hc3i|${fT}|${k1}|${k2}`;
+      }
+      const eq = `${fT}=0`, ansT = ansOf(ans);
+      if (lv > 1) st.push({ t: 'txt', s: `これらの共通範囲を求めて ${ansT}` });
+      st.push({ t: 'txt', s: '（図は条件を満たす $m$ の一例のときのグラフ）' }, { t: 'fig', f: haichiFig(fx, ks, ans) });
+      return {
+        unit: 'kaiHaichi', lv, key, sec: T[`haichi${lv}`],
+        label: `2次方程式 $${eq}$ が${desc}ような定数 $m$ の値の範囲を求めよ。`, math: '', item: `$${eq}$`, head: `$${eq}$`,
+        ans: ansT, vars: { m: 1.37 }, steps: st,
+        chk: () => haichiChk(fx, cond, ans)
+      };
+    }
   }
 };
 Object.assign(GEN, B_GEN);
+// 解の配置の道具：m の範囲を開区間の和 [[下, 上], …] で持つ（端は F，はてしない側は ±Infinity）
+const IV_INF = Infinity, ivV = x => typeof x === 'number' ? x : x.val();
+function ivAnd(A, B){
+  const o = [];
+  A.forEach(([a1, b1]) => B.forEach(([a2, b2]) => { const lo = ivV(a1) >= ivV(a2) ? a1 : a2, hi = ivV(b1) <= ivV(b2) ? b1 : b2; if (ivV(lo) < ivV(hi)) o.push([lo, hi]); }));
+  return o.sort((p, q) => ivV(p[0]) - ivV(q[0]));
+}
+// Am+N>0（gt）または <0 を解く
+const linIv = (A, N, gt) => { const r = new F(-N, A); return (A > 0) === gt ? [[r, IV_INF]] : [[-IV_INF, r]]; };
+const ivTex = (A, v = 'm') => A.map(([lo, hi]) => lo === -IV_INF ? `${v}<${numTex(hi)}` : hi === IV_INF ? `${v}>${numTex(lo)}` : `${numTex(lo)}<${v}<${numTex(hi)}`);
+const ivIn = (A, m) => A.some(([lo, hi]) => ivV(lo) < m && m < ivV(hi));
+const ivSame = (A, B) => A.length === B.length && A.every((x, i) => ivV(x[0]) === ivV(B[i][0]) && ivV(x[1]) === ivV(B[i][1]));
+const ivNice = A => A.every(iv => iv.every(e => typeof e === 'number' || (e.d <= 4 && Math.abs(e.val()) <= 15)));
+// m を細かく動かし，f(x)=x²+bx+c の解が条件を満たすかと，答えの範囲に入るかが一致するか（境目のすぐそばはとばす）
+function haichiChk(fx, cond, ans){
+  let bad = 0;
+  for (let m = -20.0137; m < 20; m += 0.0731) {
+    if (ans.some(iv => iv.some(e => Math.abs(ivV(e) - m) < 1e-4))) continue;
+    const [b, c] = fx(m), D = b * b - 4 * c, ok = D > 1e-9 && cond((-b - Math.sqrt(D)) / 2, (-b + Math.sqrt(D)) / 2);
+    if (ok !== ivIn(ans, m)) bad++;
+  }
+  return bad;
+}
+// 条件を満たす m の一例でのグラフ（x 軸の上に k の点）
+function haichiFig(fx, ks, ans){
+  const [lo, hi] = ans[0], m = lo === -IV_INF ? ivV(hi) - 1 : hi === IV_INF ? ivV(lo) + 1 : (ivV(lo) + ivV(hi)) / 2;
+  const [b, c] = fx(m), f = x => x * x + b * x + c, D = Math.max(b * b - 4 * c, 0), u1 = (-b - Math.sqrt(D)) / 2, u2 = (-b + Math.sqrt(D)) / 2, vy = c - b * b / 4;
+  const x0 = Math.min(...ks, u1) - 1.2, x1 = Math.max(...ks, u2) + 1.2, y0 = Math.min(vy, 0) - 0.8;
+  const y1 = Math.max(1.5, Math.min(Math.max(f(x0), f(x1)), Math.abs(vy) * 2 + 2), ...ks.map(k => f(k) + 0.8));
+  return planeShapes({ x0, x1, y0, y1, curves: [{ f }], dots: ks.map(k => ({ x: k, y: 0, label: k ? String(k).replace('-', '−') : '', pos: 'below' })) });
+}
+// 逆像法の問題をふやす（通過領域の単元から呼ぶ）
+// lv1：放物線の通過領域／x²+y²=r² のときの ax+y の範囲。lv2：s, t に条件のある (s+t, st)・描く図形・対称式の条件から x+y の範囲。lv3：s, t が区間にあるときの (s+t, st)
+function tsukaMore(lv){
+  const ptsMax = (f, a, b, n = 20000) => { let m = -Infinity; for (let i = 0; i <= n; i++) m = Math.max(m, f(a + (b - a) * i / n)); return m; };
+  const q4 = sumTex([[new F(1, 4), 'x^2']]), uq = '$x=s+t$，$y=st$ とおくと，$s$，$t$ は $u$ の2次方程式 $u^2-xu+y=0$ の2つの解である。';
+  const P = '(s+t,\\ st)', lab = c => `${c}動くとき，点 $${P}$ の動く領域を $x$，$y$ の不等式で表せ。`;
+  // (s+t, st) の点検：条件の中の s, t からの点が答えの領域に入り，答えの領域の点からは条件を満たす s, t が求まるか
+  const stChk = (rs, inA, okST, box) => () => {
+    let bad = 0;
+    for (let i = 0; i < 600; i++) {
+      const [s, t] = rs(); if (!inA(s + t, s * t)) bad++;
+      const X = box[0] + Math.random() * (box[1] - box[0]), Y = box[2] + Math.random() * (box[3] - box[2]);
+      if (!inA(X, Y)) continue;
+      const D = X * X - 4 * Y; if (D < -1e-9) { bad++; continue; }
+      if (!okST((X - Math.sqrt(Math.max(D, 0))) / 2, (X + Math.sqrt(Math.max(D, 0))) / 2)) bad++;
+    }
+    return bad;
+  };
+  const E = 1e-9;
+  if (lv === 1 && Math.random() < 0.5) {
+    // 放物線 y=e(x−t)²+at+b の通過領域：t の2次方程式の判別式
+    const e = pick([1, -1]), a = pick([2, -2, 4, -4]), b = ri(-3, 3), c = b - e * a * a / 4;
+    const cur = `y=${sumTex([[e, 'x^2'], [-2 * e, 'tx'], [e, 't^2'], [a, 't'], [b, '']])}`;
+    const cx = sumTex([[-2 * e, 'x'], [a, '']]), c0 = sumTex([[e, 'x^2'], [b, ''], [-1, 'y']]);
+    const tq = sumTex([[e, 't^2'], [1, `(${cx})t`], [1, `(${c0})`]]), bound = sumTex([[a, 'x'], [c, '']]), rel = e > 0 ? '\\geqq' : '\\leqq', bf = x => a * x + c;
+    const yv = [bf(-3), bf(3)], y0 = Math.min(...yv, 0) - 1.5, y1 = Math.max(...yv, 0) + 1.5;
+    const fig = planeShapes({ x0: -3, x1: 3, y0, y1, fills: [e > 0 ? { lo: bf, hi: () => y1, a: -3, b: 3 } : { lo: () => y0, hi: bf, a: -3, b: 3 }], lines: [{ a: -a, b: 1, c }] });
+    const st = [{ t: 'txt', s: '点 $(x,\\ y)$ がこの放物線の通過する領域にある条件は，その $x$，$y$ に対して，放物線の式を満たす実数 $t$ が存在することである。$t$ について整理すると' },
+      { t: 'eq', noEval: true, rows: [`${tq} &= 0`] },
+      { t: 'txt', s: 'この $t$ の2次方程式が実数解をもつ条件は，判別式を $D$ とすると $D\\geqq 0$ である。' },
+      { t: 'eq', noEval: true, rows: [`D &= (${cx})^2${e > 0 ? '-4' : '+4'}(${c0})`, `&= ${sumTex([[4 * e, 'y'], [-4 * a * e, 'x'], [a * a - 4 * e * b, '']])}`] },
+      { t: 'txt', s: `$D\\geqq 0$ より $y${rel} ${bound}$。境界を含む（図の斜線部分）。` }, { t: 'fig', f: fig }];
+    return {
+      unit: 'tsuka', lv, key: `tk1p|${cur}`, sec: T.tsuka1,
+      label: `$t$ がすべての実数値をとって変化するとき，放物線 $${cur}$ が通過する領域を $x$，$y$ の不等式で表せ。`, math: '', item: `放物線 $${cur}$ の通過領域`, head: `放物線 $${cur}$`,
+      ans: `$y${rel} ${bound}$（境界を含む）`, vars: {}, steps: st,
+      chk: () => [-2.3, -1, 0, 0.7, 1.9].reduce((s, x) => { const yt = t => e * (x - t) ** 2 + a * t + b, m = e > 0 ? -ptsMax(t => -yt(t), -30, 30) : ptsMax(yt, -30, 30); return s + (Math.abs(m - bf(x)) < 1e-3 ? 0 : 1); }, 0)
+    };
+  }
+  if (lv === 1) {
+    // x²+y²=r² のとき ax+y の範囲：ax+y=k とおいて x の2次方程式の判別式
+    const [a, r2, K] = pick([[1, 2, 2], [1, 8, 4], [1, 18, 6], [-1, 2, 2], [-1, 8, 4], [2, 5, 5], [-2, 5, 5], [2, 20, 10], [3, 10, 10], [-3, 10, 10]]);
+    const ex = sumTex([[a, 'x'], [1, 'y']]), ky = sumTex([[1, 'k'], [-a, 'x']]);
+    const st = [{ t: 'txt', s: `$${ex}=k$ とおくと $y=${ky}$。これを $x^2+y^2=${r2}$ に代入すると` },
+      { t: 'eq', noEval: true, rows: [`x^2+(${ky})^2 &= ${r2}`] }, { t: 'eq', noEval: true, rows: [`${sumTex([[1 + a * a, 'x^2'], [-2 * a, 'kx'], [1, 'k^2'], [-r2, '']])} &= 0`] },
+      { t: 'txt', s: '$x$ は実数なので，この $x$ の2次方程式は実数解をもつ。判別式を $D$ とすると $\\frac{D}{4}\\geqq 0$ である。' },
+      { t: 'eq', noEval: true, rows: [`\\frac{D}{4} &= ${a * a === 1 ? '' : a * a}k^2-${1 + a * a}(k^2-${r2})`, `&= ${sumTex([[-1, 'k^2'], [(1 + a * a) * r2, '']])}`] },
+      { t: 'txt', s: `$\\frac{D}{4}\\geqq 0$ より $k^2\\leqq ${K * K}$，すなわち $-${K}\\leqq k\\leqq ${K}$` }];
+    return {
+      unit: 'tsuka', lv, key: `tk1v|${a}|${r2}`, sec: T.tsuka1,
+      label: `実数 $x$，$y$ が $x^2+y^2=${r2}$ を満たすとき，$${ex}$ のとりうる値の範囲を求めよ。`, math: '', item: `$x^2+y^2=${r2}$ のときの $${ex}$ の範囲`, head: `$x^2+y^2=${r2}$ のときの $${ex}$`,
+      ans: `$-${K}\\leqq ${ex}\\leqq ${K}$`, vars: {}, steps: st,
+      chk: () => { const R = Math.sqrt(r2); return Math.abs(ptsMax(th => a * R * Math.cos(th) + R * Math.sin(th), 0, 2 * Math.PI) - K) < 1e-4 ? 0 : 1; }
+    };
+  }
+  if (lv === 2) {
+    const type = pick(['ge', 'ge', 'sep', 'curve', 'sym', 'sym']);
+    if (type === 'ge') {
+      // s≧k，t≧k：解の配置（D≧0，軸≧k，f(k)≧0）
+      const k = pick([1, -1, 2, -2]), L = sumTex([[k, 'x'], [-k * k, '']]), Lf = x => k * x - k * k;
+      const ans = `$y\\leqq ${q4}$，$y\\geqq ${L}$，$x\\geqq ${2 * k}$`, inA = (x, y) => y <= x * x / 4 + E && y >= Lf(x) - E && x >= 2 * k - E;
+      const x0 = 2 * k - 2, x1 = 2 * k + 5, y0 = Math.min(Lf(x1), Lf(x0), 0) - 0.5, y1 = Math.max(x0 * x0, x1 * x1) / 4 + 0.5;
+      const fig = planeShapes({ x0, x1, y0, y1, fills: [{ lo: Lf, hi: x => x * x / 4, a: 2 * k, b: x1 }],
+        curves: [{ f: x => x * x / 4, st: 'faint' }, { f: Lf, st: 'faint' }, { f: x => x * x / 4, a: 2 * k, b: x1 }, { f: Lf, a: 2 * k, b: x1 }], segs: [{ pts: [[2 * k, k * k], [2 * k, y1]], st: 'faint' }],
+        dots: [{ x: 2 * k, y: k * k, label: ptLab('', 2 * k, k * k), pos: k > 0 ? 'left' : 'right' }] });
+      const st = [{ t: 'txt', s: uq }, { t: 'txt', s: `$f(u)=u^2-xu+y$ とおく。$s$，$t$ がともに $${k}$ 以上の実数であるための条件は，$f(u)=0$ の2つの解がともに $${k}$ 以上であること（解の配置）で，次の (i)〜(iii) が成り立つことである。` },
+        { t: 'txt', s: `(i) 判別式 $D=x^2-4y\\geqq 0$ より $y\\leqq ${q4}$` },
+        { t: 'txt', s: `(ii) 軸 $u=\\frac{x}{2}$ について $\\frac{x}{2}\\geqq ${k}$ より $x\\geqq ${2 * k}$` },
+        { t: 'txt', s: `(iii) $f(${k})=${sumTex([[k * k, ''], [-k, 'x'], [1, 'y']])}\\geqq 0$ より $y\\geqq ${L}$` },
+        { t: 'txt', s: `よって ${ans}。境界を含む（図の斜線部分）。` }, { t: 'fig', f: fig }];
+      return { unit: 'tsuka', lv, key: `tk2g|${k}`, sec: T.tsuka2, label: lab(`実数 $s$，$t$ が $s\\geqq ${k}$，$t\\geqq ${k}$ を満たして`), math: '', item: `点 $${P}$ の動く領域`, head: `点 $${P}$ の動く領域`,
+        ans: `${ans}（境界を含む）`, vars: {}, steps: st, chk: stChk(() => [k + Math.random() * 3, k + Math.random() * 3], inA, (u1, u2) => u1 >= k - 1e-7, [2 * k - 2, 2 * k + 6, k * k - 4, k * k + 9]) };
+    }
+    if (type === 'sep') {
+      // s≧k≧t：f(k)≦0 だけ
+      const k = pick([0, 0, 1, -1, 2, -2]), L = sumTex([[k, 'x'], [-k * k, '']]) || '0', Lf = x => k * x - k * k;
+      const inA = (x, y) => y <= Lf(x) + E, x0 = -3, x1 = 3, yv = [Lf(x0), Lf(x1)], y0 = Math.min(...yv, 0) - 1.5, y1 = Math.max(...yv, 0) + 1.5;
+      const fig = planeShapes({ x0, x1, y0, y1, fills: [{ lo: () => y0, hi: Lf, a: x0, b: x1 }], lines: [{ a: -k, b: 1, c: -k * k }] });
+      const st = [{ t: 'txt', s: uq }, { t: 'txt', s: `$f(u)=u^2-xu+y$ とおく。$f(u)=0$ が $${k}$ 以上の解と $${k}$ 以下の解をもつ条件は，$y=f(u)$ のグラフが下に凸なので $f(${k})\\leqq 0$ である（このとき判別式 $D\\geqq 0$ も成り立つ）。` },
+        { t: 'txt', s: `$f(${k})=${sumTex([[k * k, ''], [-k, 'x'], [1, 'y']])}\\leqq 0$ より $y\\leqq ${L}$。境界を含む（図の斜線部分）。` }, { t: 'fig', f: fig }];
+      return { unit: 'tsuka', lv, key: `tk2s|${k}`, sec: T.tsuka2, label: lab(`実数 $s$，$t$ が $s\\geqq ${k}$，$t\\leqq ${k}$ を満たして`), math: '', item: `点 $${P}$ の動く領域`, head: `点 $${P}$ の動く領域`,
+        ans: `$y\\leqq ${L}$（境界を含む）`, vars: {}, steps: st, chk: stChk(() => [k + Math.random() * 3, k - Math.random() * 3], inA, (u1, u2) => u1 <= k + 1e-7 && u2 >= k - 1e-7, [-3, 3, -6, 4]) };
+    }
+    if (type === 'curve') {
+      // s²+t²=r²：x²−2y=r² と D≧0 から，放物線の一部
+      const r2 = pick([2, 8]), R = Math.sqrt(2 * r2), hc = sumTex([[new F(1, 2), 'x^2'], [-r2 / 2, '']]), cf = x => x * x / 2 - r2 / 2;
+      const fig = planeShapes({ x0: -R - 1, x1: R + 1, y0: -r2 / 2 - 1, y1: cf(R) + 1.5, curves: [{ f: cf, st: 'faint' }, { f: cf, a: -R, b: R }], dots: [{ x: -R, y: cf(R), label: ptLab('', -R, cf(R)), pos: 'left' }, { x: R, y: cf(R), label: ptLab('', R, cf(R)), pos: 'right' }] });
+      const st = [{ t: 'txt', s: `$x=s+t$，$y=st$ とおくと，$s^2+t^2=(s+t)^2-2st$ より $x^2-2y=${r2}$，すなわち $y=${hc}$` },
+        { t: 'txt', s: '$s$，$t$ は $u$ の2次方程式 $u^2-xu+y=0$ の2つの解で，実数であるための条件は判別式 $D=x^2-4y\\geqq 0$ である。' },
+        { t: 'eq', noEval: true, rows: [`x^2-4y &= x^2-4\\left(${hc}\\right)`, `&= ${sumTex([[-1, 'x^2'], [2 * r2, '']])}`] },
+        { t: 'txt', s: `$D\\geqq 0$ より $x^2\\leqq ${2 * r2}$，すなわち $-${R}\\leqq x\\leqq ${R}$` }, { t: 'fig', f: fig }];
+      const ans = `放物線 $y=${hc}$ の $-${R}\\leqq x\\leqq ${R}$ の部分`;
+      return { unit: 'tsuka', lv, key: `tk2c|${r2}`, sec: T.tsuka2, label: `実数 $s$，$t$ が $s^2+t^2=${r2}$ を満たして動くとき，点 $${P}$ の描く図形を求めよ。`, math: '', item: `点 $${P}$ の描く図形`, head: `点 $${P}$ の描く図形`,
+        ans, vars: {}, steps: st,
+        chk: () => { let bad = 0, mx = 0; for (let i = 0; i < 2000; i++) { const th = i / 2000 * 2 * Math.PI, s = Math.sqrt(r2) * Math.cos(th), t = Math.sqrt(r2) * Math.sin(th), x = s + t, y = s * t; mx = Math.max(mx, x); if (Math.abs(y - cf(x)) > 1e-9 || Math.abs(x) > R + 1e-9) bad++; } return bad + (Math.abs(mx - R) < 1e-3 ? 0 : 1); } };
+    }
+    // 対称式の条件 x²±xy+y²=c のときの x+y の範囲
+    const [sg, c, Pm] = pick([[1, 3, 2], [1, 12, 4], [-1, 1, 2], [-1, 4, 4], [-1, 9, 6]]);
+    const eqT = `x^2${sg > 0 ? '+' : '-'}xy+y^2=${c}`;
+    const st = [{ t: 'txt', s: `$x+y=p$，$xy=q$ とおくと，$x^2${sg > 0 ? '+' : '-'}xy+y^2=(x+y)^2-${sg > 0 ? '' : '3'}xy=p^2-${sg > 0 ? '' : '3'}q$ なので，$p^2-${sg > 0 ? '' : '3'}q=${c}$ より $q=${sg > 0 ? `p^2-${c}` : `\\frac{p^2-${c}}{3}`}$` },
+      { t: 'txt', s: '$x$，$y$ は $u$ の2次方程式 $u^2-pu+q=0$ の2つの解で，実数であるための条件は判別式 $D=p^2-4q\\geqq 0$ である。' },
+      { t: 'eq', noEval: true, rows: sg > 0 ? [`D &= p^2-4(p^2-${c})`, `&= ${sumTex([[-3, 'p^2'], [4 * c, '']])}`] : [`D &= p^2-\\frac{4(p^2-${c})}{3}`, `&= \\frac{${sumTex([[-1, 'p^2'], [4 * c, '']])}}{3}`] },
+      { t: 'txt', s: `$D\\geqq 0$ より $p^2\\leqq ${Pm * Pm}$，すなわち $-${Pm}\\leqq p\\leqq ${Pm}$` }];
+    return { unit: 'tsuka', lv, key: `tk2y|${sg}|${c}`, sec: T.tsuka2, label: `実数 $x$，$y$ が $${eqT}$ を満たすとき，$x+y$ のとりうる値の範囲を求めよ。`, math: '', item: `$${eqT}$ のときの $x+y$ の範囲`, head: `$${eqT}$ のときの $x+y$`,
+      ans: `$-${Pm}\\leqq x+y\\leqq ${Pm}$`, vars: {}, steps: st,
+      chk: () => Math.abs(ptsMax(th => { const cs = Math.cos(th), sn = Math.sin(th); return Math.sqrt(c / (1 + sg * cs * sn)) * (cs + sn); }, 0, 2 * Math.PI) - Pm) < 1e-4 ? 0 : 1 };
+  }
+  // 発展：p≦s≦q，p≦t≦q（2つの解がともに区間に入る：D≧0，軸，両端の値）
+  const [p, q] = pick([[-1, 1], [0, 2], [-2, 0], [1, 3], [0, 1], [-1, 2], [-2, 1]]);
+  const Lp = sumTex([[p, 'x'], [-p * p, '']]) || '0', Lq = sumTex([[q, 'x'], [-q * q, '']]) || '0', fp = x => p * x - p * p, fq = x => q * x - q * q;
+  const ans = `$y\\leqq ${q4}$，$y\\geqq ${Lp}$，$y\\geqq ${Lq}$，$${2 * p}\\leqq x\\leqq ${2 * q}$`;
+  const inA = (x, y) => y <= x * x / 4 + E && y >= fp(x) - E && y >= fq(x) - E && x >= 2 * p - E && x <= 2 * q + E;
+  const x0 = 2 * p - 1, x1 = 2 * q + 1, y0 = Math.min(p * q, 0) - 1, y1 = Math.max(p * p, q * q) + 1;
+  const fig = planeShapes({ x0, x1, y0, y1, fills: [{ lo: x => Math.max(fp(x), fq(x)), hi: x => x * x / 4, a: 2 * p, b: 2 * q }],
+    curves: [{ f: x => x * x / 4, st: 'faint' }, { f: x => x * x / 4, a: 2 * p, b: 2 * q }, { f: fp, a: 2 * p, b: p + q }, { f: fq, a: p + q, b: 2 * q }],
+    dots: [{ x: 2 * p, y: p * p, label: ptLab('', 2 * p, p * p), pos: 'left' }, { x: 2 * q, y: q * q, label: ptLab('', 2 * q, q * q), pos: 'right' }, { x: p + q, y: p * q, label: ptLab('', p + q, p * q), pos: 'below' }] });
+  const fT = k => sumTex([[k * k, ''], [-k, 'x'], [1, 'y']]);
+  const st = [{ t: 'txt', s: uq }, { t: 'txt', s: `$f(u)=u^2-xu+y$ とおく。$s$，$t$ がともに $${p}\\leqq u\\leqq ${q}$ にある条件は，$f(u)=0$ の2つの解がともにこの範囲にあること（解の配置）で，次の (i)〜(iv) が成り立つことである。` },
+    { t: 'txt', s: `(i) 判別式 $D=x^2-4y\\geqq 0$ より $y\\leqq ${q4}$` },
+    { t: 'txt', s: `(ii) 軸 $u=\\frac{x}{2}$ について $${p}\\leqq\\frac{x}{2}\\leqq ${q}$ より $${2 * p}\\leqq x\\leqq ${2 * q}$` },
+    { t: 'txt', s: `(iii) $f(${p})=${fT(p)}\\geqq 0$ より $y\\geqq ${Lp}$` },
+    { t: 'txt', s: `(iv) $f(${q})=${fT(q)}\\geqq 0$ より $y\\geqq ${Lq}$` },
+    { t: 'txt', s: `よって ${ans}。境界を含む（図の斜線部分）。2本の直線は放物線 $y=${q4}$ に点 $${ptLab('', 2 * p, p * p).replace(/−/g, '-')}$，$${ptLab('', 2 * q, q * q).replace(/−/g, '-')}$ で接する。` }, { t: 'fig', f: fig }];
+  return { unit: 'tsuka', lv, key: `tk3i|${p}|${q}`, sec: T.tsuka3, label: lab(`実数 $s$，$t$ が $${p}\\leqq s\\leqq ${q}$，$${p}\\leqq t\\leqq ${q}$ を満たして`), math: '', item: `点 $${P}$ の動く領域`, head: `点 $${P}$ の動く領域`,
+    ans: `${ans}（境界を含む）`, vars: {}, steps: st, chk: stChk(() => [p + Math.random() * (q - p), p + Math.random() * (q - p)], inA, (u1, u2) => u1 >= p - 1e-7 && u2 <= q + 1e-7, [x0, x1, y0, y1]) };
+}
 // 座標平面の図（領域・線形計画法・通過領域）。graphShapes と同じ部品の形式。x0〜x1，y0〜y1 が見せる範囲（eq＝true なら縦横同じ縮尺）
 // fills：[{ pts }]（多角形）または [{ lo, hi, a, b }]（a〜b で lo(x) と hi(x) の間を塗る。範囲の外は切る）
 // curves：[{ f, a, b, st }]，lines：[{ a, b, c, st }]（直線 ax+by=c を範囲で切る），segs：[{ pts, st }]，dots：[{ x, y, label, pos, open }]
@@ -9353,6 +9619,7 @@ const FORMULA = {
   taisho: ['$x^2+y^2=(x+y)^2-2xy$', '$x^3+y^3=(x+y)^3-3xy(x+y)$', 'まず $x+y$ と $xy$ の値を求めてから代入する。'],
   kaiKeisu1: ['$ax^2+bx+c=0$ の2つの解 $\\alpha$，$\\beta$ について $\\alpha+\\beta=-\\frac{b}{a}$，$\\alpha\\beta=\\frac{c}{a}$', '式を $\\alpha+\\beta$ と $\\alpha\\beta$ で表してから代入する（$\\alpha^2+\\beta^2=(\\alpha+\\beta)^2-2\\alpha\\beta$ など）。'],
   heihou: ['$ax^2+bx+c=a\\left(x+\\frac{b}{2a}\\right)^2-\\frac{b^2-4ac}{4a}$', '$x^2$ の係数でくくる → $(x+p)^2$ をつくる → 定数を整理する。'],
+  kaiHaichi: ['$x^2$ の係数が正のとき，$f(x)=0$ が $k$ をはさむ2つの解をもつ条件は $f(k)<0$（$k=0$ なら正の解と負の解）。', '異なる2つの解がともに $k$ より大きい条件は，判別式 $D>0$，軸 $>k$，$f(k)>0$ の3つ。', 'それぞれの条件を $m$ の不等式にして，共通範囲を求める。'],
   kanshu: ['平方完成して $y=a(x-p)^2+q$ にし，頂点 $(p,\\ q)$ を求める。', '定義域があるときは，軸が定義域の中か外かで分け，頂点と端点の $y$ の値を比べる。'],
   sankaku: ['正弦定理 $\\frac{a}{\\sin A}=\\frac{b}{\\sin B}=\\frac{c}{\\sin C}=2R$', '余弦定理 $a^2=b^2+c^2-2bc\\cos A$，$\\cos A=\\frac{b^2+c^2-a^2}{2bc}$'],
   heikouTaisho: ['$x$ 軸方向に $p$，$y$ 軸方向に $q$ だけ平行移動：$x$ を $x-p$，$y$ を $y-q$ におきかえる。', '対称移動：$x$ 軸は $y$ を $-y$，$y$ 軸は $x$ を $-x$，原点は $x$ を $-x$，$y$ を $-y$ におきかえる。', '移動の量は，平方完成して頂点どうしを比べる。'],
@@ -9390,7 +9657,7 @@ const FORMULA = {
   en: ['$x^2+y^2+lx+my+n=0$ は，$x$，$y$ それぞれ平方完成して $(x-a)^2+(y-b)^2=r^2$ にする（$x^2$ の係数が 2 なら先に 2 でわる）。', '中心 $(a,\\ b)$，半径 $r$'],
   teiten: ['文字（$k$ など）について整理して $f+kg=0$ の形にする。', '$k$ の値に関係なく成り立つ条件は $f=0$ かつ $g=0$。これを連立して解く。'],
   senkei: ['連立不等式の表す領域をかき，境界の直線の交点（頂点）を求める。', '$ax+by=k$ とおき，この直線が領域と共有点をもつように動かす。傾きを境界の直線の傾きと比べて，$k$ が最大・最小になる頂点を決める。'],
-  tsuka: ['点 $(x,\\ y)$ を直線が通る条件は，その $x$，$y$ に対して式を満たす実数 $t$ が存在すること（逆像法）。', '$t$ の2次方程式とみて，判別式 $D\\geqq 0$。', '$x=s+t$，$y=st$ のとき，$s$，$t$ は $u^2-xu+y=0$ の2つの解。'],
+  tsuka: ['点 $(x,\\ y)$ を直線が通る条件は，その $x$，$y$ に対して式を満たす実数 $t$ が存在すること（逆像法）。', '$t$ の2次方程式とみて，判別式 $D\\geqq 0$。', '$x=s+t$，$y=st$ のとき，$s$，$t$ は $u^2-xu+y=0$ の2つの解。$s$，$t$ に条件があれば，解の配置（判別式・軸・端の値）で書く。', '$x$，$y$ の式の値の範囲は，値を $k$ とおいて1文字消去し，実数解をもつ条件（判別式）から求める。'],
   taba: ['2直線 $f=0$，$g=0$ の交点を通る直線は $f+kg=0$（$k$ は定数）と表せる。', '2円 $f=0$，$g=0$ の交点を通る図形は $f+kg=0$。$k\\neq -1$ のとき円，$k=-1$ のとき交点を通る直線。', '通る点の座標を代入して $k$ を決める。'],
   enSessen: ['円 $x^2+y^2=r^2$ 上の点 $(x_{1},\\ y_{1})$ における接線は $x_{1}x+y_{1}y=r^2$', '円の外の点 $(p,\\ q)$ から引いた2本の接線の，接点を通る直線（極線）は $px+qy=r^2$'],
   tenChokusen: ['点 $(x_{0},\\ y_{0})$ と直線 $ax+by+c=0$ の距離 $d=\\frac{|ax_{0}+by_{0}+c|}{\\sqrt{a^2+b^2}}$', '$y=mx+n$ の形は，$ax+by+c=0$ の形に直してから使う。'],
