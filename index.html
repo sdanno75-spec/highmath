@@ -363,7 +363,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 @media print{
   @page{size:A4 portrait;margin:0}
   body{background:#fff!important}
-  header,.panel,.dock,.pv-info,#view-help,.ctl,#histBox,#printAsk,.win{display:none!important}
+  header,.panel,.dock,.pv-info,#view-help,.ctl,#histBox,#printAsk,.win,#reMenu{display:none!important}
   .wrap{padding:0!important;max-width:none!important}
   .sheet-wrap{overflow:visible;padding:0}
   .sheet{display:flex!important;box-shadow:none;margin:0;height:296mm;page-break-after:always;break-after:page}
@@ -613,6 +613,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
           <label class="chk"><input type="checkbox" name="unit" value="kiguuWa">符号が交互の数列の和</label>
           <label class="chk"><input type="checkbox" name="unit" value="sekiWa">異なる2数の積の和</label>
           <label class="chk"><input type="checkbox" name="unit" value="gaussWa">ガウス記号の数列の和</label>
+          <label class="chk"><input type="checkbox" name="unit" value="bunkatsu">領域分割と漸化式</label>
         </div>
         <div class="units" data-subj="B">
           <span class="ugrp">数B　統計的な推測</span>
@@ -798,8 +799,11 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.70.1', UPDATED = '2026-11-12';
+const VERSION = '5.72.1', UPDATED = '2026-11-12';
 const CHANGES = [
+  ['5.72.1', '2026-11-12', '印刷するとページが縮小されることがあったのを直した。答えの幅を測るための見えない箱が、長い答えを測ったあとページの横幅を広げていた（ブラウザが全体を縮めて印刷していた）。'],
+  ['5.72.0', '2026-11-12', '数B に「領域分割と漸化式」を追加（受験基礎の印つき）。基本：n 本の直線で分ける部分・交点の個数、標準：n 個の円で分ける部分・直線で囲まれた部分、発展：m 本だけ平行な直線・n 枚の平面で空間を分ける。'],
+  ['5.71.0', '2026-11-12', '数学的帰納法に発展レベル「漸化式から推定」を追加。a_2，a_3，a_4 を求めて一般項を推定し、帰納法で証明する（a_{n+1}=a_n/(1+qa_n)、ca_n/(a_n+c)、1/(2−a_n)、2−1/a_n、a_n^2−(n+c−1)a_n+1 の5種類）。'],
   ['5.70.1', '2026-11-12', '文の中の Σ が横に添え字を出していたのを直した（Σ の上下に k=1，n が出るように）。数学的帰納法の和の不等式、空間の格子点・ガウス記号の和などの解答。'],
   ['5.70.0', '2026-11-12', '数B に入試発展の「数学的帰納法（発展）」を追加。基本：全段仮定（(Σa)²=Σa³、2cSₙ=aₙ²+caₙ、aₙ₊₁=(2/n)Sₙ から一般項）、標準：二段仮定（αⁿ+βⁿ が整数、3項間漸化式の一般項の証明）。数学的帰納法の標準に和の不等式を4つ追加（Σ1/√i と 2√n、Σ1/i と 2n/(n+1)、Σ1/i³）。'],
   ['5.69.0', '2026-11-12', '数B に「数学的帰納法」を追加（受験基礎の印つき）。基本：和の等式（13 種類＋等比の和）、標準：倍数であること（a^n−b^n、n^3+2n など）と不等式（2^n>n^2、n!>2^n、ベルヌーイの不等式など）。解答は (i)(ii) の形の証明。'],
@@ -1069,7 +1073,7 @@ const UNITS = [
   ['kodo', '弧度法の値', '2'], ['kahou', '加法定理', '2'], ['gousei', '三角関数の合成', '2'], ['sankakuHouteishiki', '三角方程式', '2'], ['okikae', '置きかえと最大・最小', '2'],
   ['shisu', '指数の計算', '2'], ['taisuuChi', '対数の値', '2'], ['taisuuWa', '対数の和・差・係数', '2'], ['teiHenkan', '底の変換', '2'], ['taisuuHouteishiki', '対数方程式・指数方程式', '2'], ['ketasuu', '桁数・最高位の数字', '2'],
   ['sessen', '接線の方程式', '2'], ['kyokuchi', '3次関数の極値', '2'], ['teisekibun', '定積分の計算', '2'], ['rokubun', '1/6公式の面積', '2'], ['menseki12', '1/12公式の面積', '2'], ['teisuBunri', '定数分離と解の個数', '2'], ['sessenHonsu', '接線の本数', '2'],
-  ['tousa', '等差数列', 'B'], ['touhi', '等比数列', 'B'], ['sigma', 'Σの計算', 'B'], ['koshiten', '格子点の個数', 'B'], ['kaisa', '階差数列', 'B'], ['snAn', '和 Sₙ から一般項', 'B'], ['bunsuWa', '分数の数列の和', 'B'], ['sabunWa', '（等差）×（等比）の和', 'B'], ['zenka', '漸化式', 'B'], ['kinou', '数学的帰納法', 'B'], ['kinouH', '数学的帰納法（発展）', 'B'], ['gunSuretsu', '群数列', 'B'], ['tousaMax', '等差数列の和の最大・最小', 'B'], ['kyoutsuukou', '共通項の数列', 'B'], ['baisuuWa', '倍数の和', 'B'], ['zettaiWa', '絶対値のついた数列の和', 'B'], ['bouenWa', '差の形にして和（望遠鏡和）', 'B'], ['sansuu', '3数の表し方', 'B'], ['kiguuWa', '符号が交互の数列の和', 'B'], ['sekiWa', '異なる2数の積の和', 'B'], ['gaussWa', 'ガウス記号の数列の和', 'B'], ['kuukanKoshi', '空間の格子点', 'B'],
+  ['tousa', '等差数列', 'B'], ['touhi', '等比数列', 'B'], ['sigma', 'Σの計算', 'B'], ['koshiten', '格子点の個数', 'B'], ['kaisa', '階差数列', 'B'], ['snAn', '和 Sₙ から一般項', 'B'], ['bunsuWa', '分数の数列の和', 'B'], ['sabunWa', '（等差）×（等比）の和', 'B'], ['zenka', '漸化式', 'B'], ['kinou', '数学的帰納法', 'B'], ['kinouH', '数学的帰納法（発展）', 'B'], ['gunSuretsu', '群数列', 'B'], ['tousaMax', '等差数列の和の最大・最小', 'B'], ['kyoutsuukou', '共通項の数列', 'B'], ['baisuuWa', '倍数の和', 'B'], ['zettaiWa', '絶対値のついた数列の和', 'B'], ['bouenWa', '差の形にして和（望遠鏡和）', 'B'], ['sansuu', '3数の表し方', 'B'], ['kiguuWa', '符号が交互の数列の和', 'B'], ['sekiWa', '異なる2数の積の和', 'B'], ['gaussWa', 'ガウス記号の数列の和', 'B'], ['bunkatsu', '領域分割と漸化式', 'B'], ['kuukanKoshi', '空間の格子点', 'B'],
   ['bunpu', '確率分布表から期待値・分散', 'B'], ['henkan', 'aX+b の期待値・分散', 'B'], ['waSeki', '確率変数の和と積', 'B'], ['nikouBunpu', '二項分布', 'B'], ['seiki', '正規分布', 'B'], ['seikiKinji', '二項分布の正規近似', 'B'], ['hyouhonHeikin', '標本平均の分布', 'B'], ['suitei', '母平均の推定', 'B'], ['kentei', '仮説検定', 'B'],
   ['naiseki', '内積の計算', 'C'], ['nasukaku', 'なす角', 'C'], ['menseki', '三角形の面積', 'C'], ['heikouSuichoku', '平行・垂直の条件', 'C'], ['ookisa', '大きさと内積', 'C'], ['saisyou', '|a+tb| の最小値', 'C'], ['ichiVec', '位置ベクトル', 'C'], ['kouten', '2直線の交点', 'C'], ['chokusenVec', '直線のベクトル方程式', 'C'], ['kuukanNaiseki', '空間ベクトルの内積となす角', 'C'], ['gaiseki', '2本に垂直なベクトル', 'C'], ['heimen', '平面の方程式', 'C'], ['kyuumen', '球面の方程式', 'C'], ['kyori', '点と平面の距離', 'C'], ['kyokkei', '絶対値と偏角・極形式', 'C'], ['kaiten', '点の回転', 'C'], ['deMoivre', 'ド・モアブルの定理', 'C'], ['nJouKon', 'n 乗根', 'C'], ['sanTenKaku', '3点がつくる角', 'C'], ['cxEn', '円 |z−α|=r', 'C'], ['suichoku', '垂直二等分線', 'C'], ['apollonius', 'アポロニウスの円', 'C'], ['kyokusenShiki', '条件から2次曲線の方程式', 'C'], ['heikouIdou', '平行移動した2次曲線', 'C'], ['kyouyuuten', '2次曲線と直線の共有点', 'C'], ['nijiSessen', '2次曲線の接線', 'C'], ['baikaiShoukyo', '媒介変数の消去', 'C'], ['baikaiEn', '円・楕円の媒介変数表示', 'C'], ['kyokuZahyou', '極座標と直交座標', 'C'], ['kyokuToChokkou', '極方程式 → 直交座標', 'C'], ['chokkouToKyoku', '直交座標 → 極方程式', 'C']
 ];
@@ -1156,6 +1160,10 @@ const TIME_TABLE = [
   ['kk2', '空間の格子点（発展）', [150, 300, 600]],
   ['kinou1', '数学的帰納法（等式）', [180, 300, 600]],
   ['kinou2', '数学的帰納法（倍数・不等式）', [240, 420, 780]],
+  ['kinou3', '数学的帰納法（漸化式から推定）', [240, 420, 780]],
+  ['bunk1', '領域分割（直線で分ける部分・交点）', [120, 240, 480]],
+  ['bunk2', '領域分割（円・囲まれた部分）', [150, 300, 600]],
+  ['bunk3', '領域分割（平行な直線をふくむ・平面で空間）', [180, 360, 720]],
   ['kinouH1', '数学的帰納法（全段仮定）', [240, 420, 780]],
   ['kinouH2', '数学的帰納法（二段仮定）', [240, 420, 780]],
   ['kanshu1', '二次関数の最大・最小（x² の係数が ±1・頂点が整数）', [40, 90, 180]],
@@ -1407,7 +1415,7 @@ const totalMins = () => sumSec(PROBS).map(s => Math.ceil(s / 60));
 const timeText = () => totalMins().map((m, k) => `${TIERS[k]} ${m}分`).join('・');
 // 難しさの説明：選んだ単元の分だけを出す（基本｜標準）
 // 発展（lv 3）がある単元。ほかの単元は「発展」を選ぶと標準を出す
-const ADV_UNITS = new Set(['kyokusenShiki', 'kahou', 'gousei', 'sankakuHouteishiki', 'taisuuHouteishiki', 'kyokuchi', 'teisekibun', 'kanshu', 'warizan', 'zenka', 'kyouyuuten', 'koshiten', 'taba', 'enSessen', 'teiten', 'senkei', 'tsuka', 'kaiHaichi', 'okikae', 'teisuBunri']);
+const ADV_UNITS = new Set(['bunkatsu', 'kinou', 'kyokusenShiki', 'kahou', 'gousei', 'sankakuHouteishiki', 'taisuuHouteishiki', 'kyokuchi', 'teisekibun', 'kanshu', 'warizan', 'zenka', 'kyouyuuten', 'koshiten', 'taba', 'enSessen', 'teiten', 'senkei', 'tsuka', 'kaiHaichi', 'okikae', 'teisuBunri']);
 const UNIT_LEVEL = {
   tasuki: ['x の係数の片方が1', '2文字（x, y）・係数がどちらも2以上'],
   nijuu: ['√(5+2√6) の形', '√(7+4√3)・√(4+√15) の形'],
@@ -1429,7 +1437,8 @@ const UNIT_LEVEL = {
   sekiWa: ['1〜n・奇数の2数の積の和', '展開式の係数として'],
   gaussWa: ['[√n] の和', '[log₂ n] の和'],
   kuukanKoshi: ['x+y+z（＝・≦，0 以上・1 以上）', 'x+y+2z≦2n，|x|+|y|+|z|≦n'],
-  kinou: ['和の等式', '倍数であること・不等式（和の不等式も）'],
+  kinou: ['和の等式', '倍数であること・不等式（和の不等式も）', '漸化式から一般項を推定して証明'],
+  bunkatsu: ['n 本の直線で分ける部分・交点の個数', 'n 個の円で分ける部分・直線で囲まれた部分', 'm 本だけ平行な直線・n 枚の平面で空間を分ける'],
   kinouH: ['全段仮定（a₁〜a_k をすべて仮定）', '二段仮定（n=k，k+1 を仮定）'],
   zettaichi: ['|ax+b| と正の数（±c ではずす）', '|x+p| と1次式，|x−p|+|x−q|（場合分け）'],
   seisuBubun: ['√m+p の整数部分・小数部分（有理化も）', '有理化して整数部分・小数部分，b²+2nb の値'],
@@ -6433,6 +6442,7 @@ const B_GEN = {
   },
   // 【数学的帰納法】lv1：和の等式。lv2：倍数であること・不等式。(i) n=1（または最初の n），(ii) n=k を仮定して n=k+1
   kinou(lv){
+    if (lv === 3) return kinouSuitei();
     const fin = n0 => ({ t: 'txt', s: `(i)，(ii) より，${n0 > 1 ? `$n\\geqq ${n0}$ を満たす` : 'すべての'}自然数 $n$ について成り立つ。` });
     const K2N = (t, m) => t.replace(/k/g, 'n').replace(/m/g, m === undefined ? 'm' : `(${m})`);
     const near = (a, b) => Math.abs(a - b) <= 1e-9 * Math.max(1, Math.abs(b));
@@ -6611,9 +6621,134 @@ const B_GEN = {
       ans: '（証明）', vars: {}, steps: st,
       chk: () => { if (kind === 'gen') return 0; const D = Math.sqrt(a * a - 4 * b), al = (a + D) / 2, be = (a - D) / 2; let bad = 0, u = 2, v = a;
         for (let n = 1; n <= 10; n++) { if (!near(al ** n + be ** n, v)) bad++; [u, v] = [v, a * v - b * u]; } return bad; } };
+  },
+  // 【領域分割】n 本目（n 個目）を加えたときに増える個数から漸化式を立てる。lv1：直線で分ける部分・交点。lv2：円で分ける部分・囲まれた部分。lv3：m 本だけ平行・平面で空間を分ける
+  bunkatsu(lv){
+    const kind = lv === 1 ? pick(['line', 'pt']) : lv === 2 ? pick(['circ', 'bnd']) : pick(['par', 'par', 'plane']);
+    const gen = 'どの2本も平行でなく，どの3本も1点で交わらない';
+    const lineSt = (a) => [{ t: 'txt', s: `$${a}_1=2$。$(n+1)$ 本目の直線は，それまでの $n$ 本の直線と $n$ 個の点で交わり，$n+1$ 個の部分（線分と半直線）に分けられる。そのそれぞれが，通る部分を2つに分けるので，部分は $n+1$ 個増える。` },
+      { t: 'txt', s: `よって $${a}_{n+1}=${a}_n+(n+1)$ で，$n\\geqq 2$ のとき $${a}_n=2+\\displaystyle\\sum_{k=1}^{n-1}(k+1)=2+\\frac{1}{2}n(n-1)+(n-1)=\\frac{n^2+n+2}{2}$。これは $n=1$ のときも成り立つ。` }];
+    let label, nf, f, st, item, m = 0;
+    if (kind === 'line') {
+      label = `平面上に，${gen} $n$ 本の直線がある。これらの直線によって平面はいくつの部分に分けられるか。`;
+      nf = '\\frac{n^2+n+2}{2}'; f = n => (n * n + n + 2) / 2; item = '$n$ 本の直線で分けられる部分'; st = lineSt('a');
+    } else if (kind === 'pt') {
+      label = `平面上に，${gen} $n$ 本の直線がある。これらの直線の交点の個数を求めよ。`;
+      nf = '\\frac{1}{2}n(n-1)'; f = n => n * (n - 1) / 2; item = '$n$ 本の直線の交点の個数';
+      st = [{ t: 'txt', s: '交点の個数を $b_n$ とする。$b_1=0$。$(n+1)$ 本目の直線は，それまでの $n$ 本の直線と，新しい $n$ 個の点で交わる（どの3本も1点で交わらないので，前の交点とは重ならない）。' },
+        { t: 'txt', s: 'よって $b_{n+1}=b_n+n$ で，$n\\geqq 2$ のとき $b_n=0+\\displaystyle\\sum_{k=1}^{n-1}k=\\frac{1}{2}n(n-1)$。これは $n=1$ のときも成り立つ。' }];
+    } else if (kind === 'circ') {
+      label = '平面上に，どの2つも2点で交わり，どの3つも1点で交わらない $n$ 個の円がある。これらの円によって平面はいくつの部分に分けられるか。';
+      nf = 'n^2-n+2'; f = n => n * n - n + 2; item = '$n$ 個の円で分けられる部分';
+      st = [{ t: 'txt', s: '分けられた部分の個数を $a_n$ とする。$a_1=2$。$(n+1)$ 個目の円は，それまでの $n$ 個の円と $2n$ 個の点で交わり，円周は $2n$ 個の弧に分けられる。そのそれぞれが，通る部分を2つに分けるので，部分は $2n$ 個増える。' },
+        { t: 'txt', s: 'よって $a_{n+1}=a_n+2n$ で，$n\\geqq 2$ のとき $a_n=2+\\displaystyle\\sum_{k=1}^{n-1}2k=2+n(n-1)=n^2-n+2$。これは $n=1$ のときも成り立つ。' }];
+    } else if (kind === 'bnd') {
+      label = `平面上に，${gen} $n$ 本の直線がある。これらの直線で分けられた部分のうち，有限の広さの部分（直線で囲まれた部分）の個数を求めよ。`;
+      nf = '\\frac{1}{2}(n-1)(n-2)'; f = n => (n - 1) * (n - 2) / 2; item = '$n$ 本の直線で囲まれた部分';
+      st = [{ t: 'txt', s: '分けられた部分の個数を $a_n$ とする。' }, ...lineSt('a'),
+        { t: 'txt', s: '限りなく広がる部分は，大きな円をかくと，$n$ 本の直線がその円周を $2n$ 個の弧に分けるので $2n$ 個。' },
+        { t: 'txt', s: 'よって囲まれた部分は $\\frac{n^2+n+2}{2}-2n=\\frac{n^2-3n+2}{2}=\\frac{1}{2}(n-1)(n-2)$ 個。' }];
+    } else if (kind === 'par') {
+      m = ri(2, 4); const c0 = 2 - m * (m - 1);
+      label = `平面上に $n$ 本（$n\\geqq ${m}$）の直線があり，そのうち $${m}$ 本だけが互いに平行で，ほかのどの2本も平行でなく，どの3本も1点で交わらない。これらの直線によって平面はいくつの部分に分けられるか。`;
+      nf = `\\frac{1}{2}(${sumTex([[1, 'n^2'], [1, 'n'], [c0, '']])})`; f = n => (n * n + n + c0) / 2; item = `$n$ 本の直線（$${m}$ 本平行）で分けられる部分`;
+      st = [{ t: 'txt', s: `まず平行な $${m}$ 本で，平面は $${m + 1}$ 個の部分に分けられる。` },
+        { t: 'txt', s: `残りの $n-${m}$ 本を1本ずつ加える。$j$ 本目に加える直線は，平行な $${m}$ 本と，それまでに加えた $j-1$ 本の，あわせて $j+${m - 1}$ 本と交わり，$j+${m}$ 個の部分に分けられるので，部分は $j+${m}$ 個増える。` },
+        { t: 'eq', noEval: true, rows: [`a_n &= ${m + 1}+\\sum_{j=1}^{n-${m}}(j+${m})`, `&= ${m + 1}+\\frac{1}{2}(n-${m})(n-${m - 1})+${m}(n-${m})`, `&= ${nf}`] }];
+    } else {
+      label = '空間に，どの2枚も平行でなく，どの3枚も1本の直線を共有せず，どの4枚も1点を共有しない $n$ 枚の平面がある。これらの平面によって空間はいくつの部分に分けられるか。';
+      nf = '\\frac{n^3+5n+6}{6}'; f = n => (n ** 3 + 5 * n + 6) / 6; item = '$n$ 枚の平面で分けられる空間';
+      st = [{ t: 'txt', s: '分けられた部分の個数を $d_n$ とする。$d_1=2$。' },
+        { t: 'txt', s: '$(n+1)$ 枚目の平面は，それまでの $n$ 枚と $n$ 本の直線で交わる。この $n$ 本は平面上で，どの2本も平行でなく，どの3本も1点で交わらないので，$(n+1)$ 枚目の平面を $\\frac{n^2+n+2}{2}$ 個の部分に分ける。そのそれぞれが，通る空間の部分を2つに分ける。' },
+        { t: 'eq', noEval: true, rows: ['d_{n+1} &= d_n+\\frac{n^2+n+2}{2}'] },
+        { t: 'eq', noEval: true, rows: ['d_n &= 2+\\frac{1}{2}\\sum_{k=1}^{n-1}(k^2+k+2)', '&= 2+\\frac{1}{2}\\left\\{\\frac{1}{6}(n-1)n(2n-1)+\\frac{1}{2}(n-1)n+2(n-1)\\right\\}', '&= \\frac{n^3+5n+6}{6}'] },
+        { t: 'txt', s: 'これは $n=1$ のときも成り立つ。' }];
+    }
+    const N = ri(Math.max(5, m + 2), 15), val = f(N);
+    st.push({ t: 'txt', s: `$n=${N}$ を代入して $${val}$ 個。` });
+    return { unit: 'bunkatsu', lv, key: `bk|${kind}|${m}|${N}`, sec: T[lv === 1 ? 'bunk1' : lv === 2 ? 'bunk2' : 'bunk3'], label: `${label}$n$ の式で答えよ。また，$n=${N}$ のときの個数を求めよ。`, math: '', item, head: item,
+      ans: `$${nf}$ 個；$n=${N}$ のとき $${val}$ 個`, vars: {}, steps: st,
+      chk: () => { let bad = 0; for (let n = Math.max(1, m); n <= 12; n++) if (Math.abs(texEval(nf, { n }) - f(n)) > 1e-9) bad++;
+        for (let n = Math.max(1, m); n <= 8; n++) { const g = bunkCount(kind, n, m); if (g !== null && g !== f(n)) bad++; }
+        return bad; } };
   }
 };
 Object.assign(GEN, B_GEN);
+// 領域分割の点検：実際に直線・円をおいて，交点を求め，オイラーの公式（F=E−V+1 または +2）で部分の個数を数える
+function bunkCount(kind, n, m){
+  if (kind === 'plane') { let d = 2; for (let k = 1; k < n; k++) d += (k * k + k + 2) / 2; const known = [2, 4, 8, 15, 26]; return n <= 5 && known[n - 1] !== d ? -1 : d; }
+  if (kind === 'circ') {
+    const C = Array.from({ length: n }, () => [Math.random() * 2 - 1, Math.random() * 2 - 1]), r = 3, P = Array.from({ length: n }, () => []), pts = [];
+    for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) {
+      const [x1, y1] = C[i], [x2, y2] = C[j], dx = x2 - x1, dy = y2 - y1, d = Math.hypot(dx, dy); if (d < 1e-6) return null;
+      const a = d / 2, h = Math.sqrt(r * r - a * a), mx = x1 + dx / 2, my = y1 + dy / 2;
+      for (const s of [1, -1]) { const p = [mx - s * h * dy / d, my + s * h * dx / d]; pts.push(p); P[i].push(p); P[j].push(p); }
+    }
+    for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) if (Math.hypot(pts[i][0] - pts[j][0], pts[i][1] - pts[j][1]) < 1e-9) return null;
+    const V = pts.length, E = n === 1 ? 1 : P.reduce((s, q) => s + q.length, 0);
+    return n === 1 ? 2 : E - V + 2;
+  }
+  // 直線：y=ax+b（m 本は同じ傾き）
+  const L = Array.from({ length: n }, (_, i) => [i < m ? 0.37 : 1 + i * 0.913 + Math.random() * 0.3, Math.random() * 10 - 5]), pts = [], cnt = Array(n).fill(0);
+  for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) { if (Math.abs(L[i][0] - L[j][0]) < 1e-12) continue; const x = (L[j][1] - L[i][1]) / (L[i][0] - L[j][0]); pts.push([x, L[i][0] * x + L[i][1]]); cnt[i]++; cnt[j]++; }
+  for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) if (Math.hypot(pts[i][0] - pts[j][0], pts[i][1] - pts[j][1]) < 1e-9) return null;
+  const V = pts.length, E = cnt.reduce((s, c) => s + c + 1, 0), F = E - V + 1;
+  if (kind === 'pt') return V;
+  if (kind === 'bnd') return F - 2 * n;
+  return F;
+}
+// 数学的帰納法（発展）：漸化式から a_2，a_3，a_4 を計算して一般項を推定し，帰納法で証明する
+function kinouSuitei(){
+  const w = t => /[+-]/.test(t) ? `(${t})` : t, cf = (c, s) => c === 1 ? s : `${c}${s}`, lin = (c) => v => sumTex([[1, v], [c, '']]);
+  const kind = pick(['inv', 'inv', 'cfr', 'two', 'twoB', 'sq']);
+  let a1, rec, g, recT, rows, gN;
+  if (kind === 'inv') {
+    const p = ri(1, 4), q = ri(1, 3); a1 = new F(1, p);
+    rec = x => x.div(F.of(1).add(x.mul(q))); g = n => new F(1, q * n + p - q);
+    recT = `a_{n+1}=\\frac{a_n}{1+${cf(q, 'a_n')}}`; gN = v => `\\frac{1}{${sumTex([[q, v], [p - q, '']])}}`;
+    const D = sumTex([[q, 'k'], [p - q, '']]);
+    rows = [`\\frac{\\frac{1}{${D}}}{1+\\frac{${q}}{${D}}}`, `\\frac{1}{${D}+${q}}`, `\\frac{1}{${sumTex([[q, 'k'], [p, '']])}}`];
+  } else if (kind === 'cfr') {
+    const c = ri(2, 4), p = ri(1, 3); a1 = new F(c, p);
+    rec = x => x.mul(c).div(x.add(c)); g = n => new F(c, n + p - 1);
+    recT = `a_{n+1}=\\frac{${c}a_n}{a_n+${c}}`; gN = v => `\\frac{${c}}{${lin(p - 1)(v)}}`;
+    const D = lin(p - 1)('k');
+    rows = [`\\frac{${c}\\cdot\\frac{${c}}{${D}}}{\\frac{${c}}{${D}}+${c}}`, `\\frac{${c}}{1+${w(D)}}`, `\\frac{${c}}{${lin(p)('k')}}`];
+  } else if (kind === 'two') {
+    const m = ri(0, 3); a1 = new F(m, m + 1);
+    rec = x => F.of(1).div(F.of(2).sub(x)); g = n => new F(n + m - 1, n + m);
+    recT = 'a_{n+1}=\\frac{1}{2-a_n}'; gN = v => `\\frac{${lin(m - 1)(v)}}{${lin(m)(v)}}`;
+    const N = lin(m - 1)('k'), D = lin(m)('k');
+    rows = [`\\frac{1}{2-\\frac{${N}}{${D}}}`, `\\frac{${D}}{2${w(D)}-${w(N)}}`, `\\frac{${D}}{${lin(m + 1)('k')}}`];
+  } else if (kind === 'twoB') {
+    const m = ri(1, 3); a1 = new F(m + 1, m);
+    rec = x => F.of(2).sub(F.of(1).div(x)); g = n => new F(n + m, n + m - 1);
+    recT = 'a_{n+1}=2-\\frac{1}{a_n}'; gN = v => `\\frac{${lin(m)(v)}}{${lin(m - 1)(v)}}`;
+    const N = lin(m)('k'), D = lin(m - 1)('k');
+    rows = [`2-\\frac{${D}}{${N}}`, `\\frac{2${w(N)}-${w(D)}}{${N}}`, `\\frac{${lin(m + 1)('k')}}{${N}}`];
+  } else {
+    const c = ri(0, 3); a1 = new F(1 + c);
+    rec = (x, n) => x.mul(x).sub(x.mul(n + c - 1)).add(1); g = n => new F(n + c);
+    const co = lin(c - 1)('n'); recT = `a_{n+1}=a_n^2-${w(co)}a_n+1`; gN = v => lin(c)(v);
+    const G = lin(c)('k'), K = lin(c - 1)('k');
+    rows = [`${w(G)}^2-${w(K)}${w(G)}+1`, `${w(G)}\\{${G}-${w(K)}\\}+1`, `${G}+1`, lin(c + 1)('k')];
+  }
+  const seq = [a1]; for (let n = 1; n < 4; n++) seq.push(rec(seq[n - 1], n));
+  const gT = gN('n'), gK = gN('k');
+  const st = [{ t: 'txt', s: `$a_2=${numTex(seq[1])}$，$a_3=${numTex(seq[2])}$，$a_4=${numTex(seq[3])}$ となるので，$a_n=${gT}$ と推定できる。` },
+    { t: 'txt', s: `(i) $n=1$ のとき，$a_1=${numTex(a1)}$ で，推定した式は成り立つ。` },
+    { t: 'txt', s: `(ii) $n=k$ のとき成り立つと仮定すると $a_k=${gK}$。` },
+    { t: 'eq', noEval: true, rows: [`a_{k+1} &= ${rows[0]}`, ...rows.slice(1).map(x => `&= ${x}`)] },
+    { t: 'txt', s: `これは推定した式の $n$ に $k+1$ を代入したものなので，$n=k+1$ のときも成り立つ。` },
+    { t: 'txt', s: `(i)，(ii) より，すべての自然数 $n$ について $a_n=${gT}$` }];
+  const def = `a_1=${numTex(a1)},\\ ${recT}`;
+  return { unit: 'kinou', lv: 3, key: `ki3|${kind}|${def}`, sec: T.kinou3, label: `数列 $\\{a_n\\}$ が $${def}$ で定められるとき，$a_2$，$a_3$，$a_4$ を求めて一般項 $a_n$ を推定し，それが正しいことを数学的帰納法で証明せよ。`, math: '', item: `$${def}$`, head: `$${def}$`,
+    ans: `$a_2=${numTex(seq[1])}$，$a_3=${numTex(seq[2])}$，$a_4=${numTex(seq[3])}$；$a_n=${gT}$`, vars: {}, steps: st,
+    chk: () => { let bad = 0, x = a1; for (let n = 1; n <= 10; n++) { const y = g(n); if (x.n !== y.n || x.d !== y.d) bad++; x = rec(x, n); }
+      if (Math.abs(texEval(gT, { n: 5 }) - g(5).val()) > 1e-9) bad++;
+      for (let v = 1; v <= 8; v++) rows.forEach(r => { if (Math.abs(texEval(r.replace(/k/g, 'n'), { n: v }) - g(v + 1).val()) > 1e-9) bad++; });
+      return bad; } };
+}
 // 群数列の点検：実際に群に分けて，最初の数・和の式と，N の位置（第何群の何番目）を確かめる
 function gunChk(g, N, n, pos, k, S){
   let bad = 0, idx = 1, found = null;
@@ -10706,7 +10841,8 @@ function ansParts(ans){
   return out;
 }
 let aHost = null;
-const ansWidth = s => { if (!aHost) { aHost = document.createElement('div'); aHost.style.cssText = 'position:absolute;left:0;top:0;visibility:hidden;font-size:9pt;white-space:nowrap'; document.body.appendChild(aHost); } aHost.innerHTML = rich(s); return aHost.getBoundingClientRect().width / 3.7795; };
+// 答えの幅を測る箱。外側を幅 0・はみ出し隠しにして、長い答えを測ってもページの幅が広がらないようにする（広がると印刷が縮小される）
+const ansWidth = s => { if (!aHost) { const box = document.createElement('div'); box.className = 'measureBox'; box.style.cssText = 'position:absolute;left:0;top:0;width:0;height:0;overflow:hidden;visibility:hidden'; aHost = document.createElement('div'); aHost.style.cssText = 'display:inline-block;font-size:9pt;white-space:nowrap'; box.appendChild(aHost); document.body.appendChild(box); } aHost.innerHTML = rich(s); return aHost.getBoundingClientRect().width / 3.7795; };
 // 手書きは活字より大きいので 1.3 倍で見積もる（問題ごとに1回だけ測る）
 function aInfo(p){
   if (p._ab) return p._ab;
@@ -10799,8 +10935,9 @@ const FORMULA = {
   sekiWa: ['$(a_1+a_2+\\cdots+a_n)^2=(a_1^2+\\cdots+a_n^2)+2S$ を使う。'],
   gaussWa: ['$[\\sqrt{n}]=k$ となる $n$ は $k^2\\leqq n\\leqq (k+1)^2-1$ の $2k+1$ 個。値が同じ項をまとめて足す。', '$[\\log_2 n]=k$ となる $n$ は $2^k$ 個。和は（等差）×（等比）の形。'],
   kuukanKoshi: ['$z=k$ で切って，平面の格子点の個数を求め，$k$ について足す。'],
+  bunkatsu: ['$n+1$ 本目（個目）を加えると，それまでのものと何個の点で交わるかを数える。$p$ 個の点で分けられた $p+1$ 個（円なら $p$ 個）の部分それぞれが，通る部分を2つに分けるので，その数だけ増える。', '漸化式 $a_{n+1}=a_n+$（増える数）を立てて，階差数列として解く。'],
   kinouH: ['全段仮定：$a_1,\\ \\cdots,\\ a_k$ がすべて成り立つと仮定して $a_{k+1}$ を求める。和 $a_1+\\cdots+a_k$ が使える。', '二段仮定：(i) $n=1,\\ 2$ で示す。(ii) $n=k,\\ k+1$ で成り立つと仮定して $n=k+2$ を示す。$\\alpha^{n+2}+\\beta^{n+2}=(\\alpha+\\beta)(\\alpha^{n+1}+\\beta^{n+1})-\\alpha\\beta(\\alpha^n+\\beta^n)$。'],
-  kinou: ['(i) 最初の $n$（ふつうは $n=1$）で成り立つことを示す。(ii) $n=k$ で成り立つと仮定して，$n=k+1$ でも成り立つことを示す。等式は，仮定の式に第 $k+1$ 項を足して右辺の形にする。', '倍数は，仮定を「（式）$=dm$」とおき，$n=k+1$ の式を $d\\times$（整数）の形にする。不等式は，仮定を使ったあと，（大きい方）$-$（小さい方）$>0$ を示す。'],
+  kinou: ['(i) 最初の $n$（ふつうは $n=1$）で成り立つことを示す。(ii) $n=k$ で成り立つと仮定して，$n=k+1$ でも成り立つことを示す。等式は，仮定の式に第 $k+1$ 項を足して右辺の形にする。', '倍数は，仮定を「（式）$=dm$」とおき，$n=k+1$ の式を $d\\times$（整数）の形にする。不等式は，仮定を使ったあと，（大きい方）$-$（小さい方）$>0$ を示す。', '推定：$a_2,\\ a_3,\\ a_4$ を計算して規則を見つける。(ii) では $a_k$ に推定した式を入れて $a_{k+1}$ を計算し，推定した式の $n$ に $k+1$ を入れたものになることを示す。'],
   zettaichi: ['$c>0$ のとき，$|X|=c \\iff X=\\pm c$，$|X|<c \\iff -c<X<c$，$|X|>c \\iff X<-c,\\ c<X$。', 'それ以外は，絶対値の中が 0 になる $x$ で区間を分け，$X\\geqq 0$ なら $|X|=X$，$X<0$ なら $|X|=-X$ としてはずす。求めた解が区間に入るか確かめる。'],
   seisuBubun: ['$n<\\sqrt{m}<n+1$ をみつけて，整数部分 $a$ を決める。小数部分は $b=($もとの数$)-a$。', '$b+n=\\sqrt{m}$ を使うと，$b$ の式の値が簡単に求まる。'],
   sessenHonsu: ['接点を $(t,\\ f(t))$ とおいて接線の方程式を作り，点の座標を代入した $t$ の方程式の実数解の個数を調べる。', '3次関数では，接点が異なれば接線も異なる。3次方程式が異なる3つの実数解をもつ条件は（極大値）×（極小値）$<0$。'],
@@ -11448,7 +11585,7 @@ function applyFont(){ document.documentElement.style.setProperty('--font', FONTS
 // 教科のタブ：その教科の分野だけを見せる（単元の選択は教科をまたいで残す）。分野の欄は1つだけひらく
 const SUBJ_TABS = ['1', 'A', '2', 'B', 'C'];
 // 受験基礎の印：入試の小問でよく出る典型処理の単元。新しい単元を足したら、ここに入れると受験基礎で表示される
-const JUKEN = new Set(['kinou', 'tousaMax', 'kyoutsuukou', 'baisuuWa', 'zettaiWa', 'bouenWa', 'sansuu', 'kiguuWa', 'heimen', 'kyori', 'gaiseki', 'kyuumen', 'tenChokusen', 'gunSuretsu', 'menseki12', 'amariBunrui', 'zettaichi', 'seisuBubun', 'sessenHonsu', 'okikae', 'teisuBunri', 'ketasuu', 'kakuMax', 'taisho', 'kaiKeisu1', 'kaiHaichi', 'kanshu', 'hanpuku', 'jokenTsuki', 'futeishiki', 'goudou', 'soukaSoujo', 'kaiKeisu2', 'teiten', 'senkei', 'tsuka', 'enSessen', 'gousei', 'taisuuHouteishiki', 'kyokuchi', 'rokubun', 'zenka', 'snAn', 'sabunWa', 'kouten', 'saisyou']);
+const JUKEN = new Set(['bunkatsu', 'kinou', 'tousaMax', 'kyoutsuukou', 'baisuuWa', 'zettaiWa', 'bouenWa', 'sansuu', 'kiguuWa', 'heimen', 'kyori', 'gaiseki', 'kyuumen', 'tenChokusen', 'gunSuretsu', 'menseki12', 'amariBunrui', 'zettaichi', 'seisuBubun', 'sessenHonsu', 'okikae', 'teisuBunri', 'ketasuu', 'kakuMax', 'taisho', 'kaiKeisu1', 'kaiHaichi', 'kanshu', 'hanpuku', 'jokenTsuki', 'futeishiki', 'goudou', 'soukaSoujo', 'kaiKeisu2', 'teiten', 'senkei', 'tsuka', 'enSessen', 'gousei', 'taisuuHouteishiki', 'kyokuchi', 'rokubun', 'zenka', 'snAn', 'sabunWa', 'kouten', 'saisyou']);
 // 入試発展の印：受験基礎より一歩進んだ、入試の典型問題
 const HATTEN = new Set(['kinouH', 'sekiWa', 'gaussWa', 'kuukanKoshi']);
 const unitShown = i => !ST.juken || (ST.juken === 'h' ? HATTEN : JUKEN).has(i.value);
