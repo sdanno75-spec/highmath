@@ -803,8 +803,10 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.76.0', UPDATED = '2026-11-12';
+const VERSION = '5.76.2', UPDATED = '2026-11-12';
 const CHANGES = [
+  ['5.76.2', '2026-11-12', '和の不等式6つの問題文は、Σ の形と和を書き並べた形を半々でまぜて出すようにした。'],
+  ['5.76.1', '2026-11-12', '帰納法（不等式の証明）の和の不等式6つは、問題文を Σ の形にもどした（Σ1/k²<2−1/n など）。証明では和を書き並べた形を①とする。'],
   ['5.76.0', '2026-11-12', '全段仮定と二段仮定をそれぞれ単元に分けた（入試発展の印つき）。帰納法（全段仮定）：基本 2cSₙ=aₙ²+caₙ・aₙ₊₁=(2/n)Sₙ、標準 c(a₁+⋯+aₙ)²=a₁³+⋯+aₙ³。帰納法（二段仮定）：基本 αⁿ+βⁿ が整数、標準 3項間漸化式。倍数・漸化式から推定は基本・標準の2つにした。'],
   ['5.75.0', '2026-11-12', '帰納法の等式・倍数・漸化式から推定・全段仮定・二段仮定の解答も、不等式と同じ書き方にそろえた（証明する式を①とおき、[1]、[2]、「①は成立する」で結ぶ。n=k+1 のとき示す式を先に書く）。'],
   ['5.74.0', '2026-11-12', '帰納法（不等式の証明）の解答の書き方を変えた。不等式を①とおき、[1] 最初の n で（左辺）（右辺）の値、[2] ①の成立を仮定して、n=k+1 のときの不等式を示すと書き、（大きい方）−（小さい方）の式を =，> で変形して >0 を示す形。和の不等式は Σ をやめて 1+1/2²+⋯ の形で書く。'],
@@ -6564,21 +6566,21 @@ const B_GEN = {
         rows: [['', '3^{k+1}-(k+1)^3'], ['=', '3\\cdot 3^k-(k+1)^3'], ['>', '3k^3-(k+1)^3'], ['=', '2k^3-3k^2-3k-1'], ['=', 'k^2(2k-3)-(3k+1)'], ['\\geqq', '5k^2-(3k+1)'], ['\\geqq', '20k-3k-1'], ['=', '17k-1']], why: 'k\\geqq 4' },
       { id: 'fac', n0: 4, s: 'n!>2^n', t1: '(k+1)!>2^{k+1}', bl: '4!=24', br: '2^4=16', L: fact, R: n => 2 ** n,
         rows: [['', '(k+1)!-2^{k+1}'], ['=', '(k+1)\\cdot k!-2\\cdot 2^k'], ['>', '(k+1)\\cdot 2^k-2\\cdot 2^k'], ['=', '(k-1)\\cdot 2^k']], why: 'k\\geqq 4' },
-      { id: 'inv2', lt: true, n0: 2, s: '1+\\frac{1}{2^2}+\\frac{1}{3^2}+\\cdots+\\frac{1}{n^2}<2-\\frac{1}{n}', t1: '1+\\frac{1}{2^2}+\\frac{1}{3^2}+\\cdots+\\frac{1}{k^2}+\\frac{1}{(k+1)^2}<2-\\frac{1}{k+1}', bl: '1+\\frac{1}{2^2}=\\frac{5}{4}', br: '2-\\frac{1}{2}=\\frac{3}{2}',
+      { id: 'inv2', lt: true, n0: 2, q: '\\displaystyle\\sum_{k=1}^{n}\\frac{1}{k^2}<2-\\frac{1}{n}', s: '1+\\frac{1}{2^2}+\\frac{1}{3^2}+\\cdots+\\frac{1}{n^2}<2-\\frac{1}{n}', t1: '1+\\frac{1}{2^2}+\\frac{1}{3^2}+\\cdots+\\frac{1}{k^2}+\\frac{1}{(k+1)^2}<2-\\frac{1}{k+1}', bl: '1+\\frac{1}{2^2}=\\frac{5}{4}', br: '2-\\frac{1}{2}=\\frac{3}{2}',
         L: n => { let t = 0; for (let i = 1; i <= n; i++) t += 1 / (i * i); return t; }, R: n => 2 - 1 / n,
         rows: [['', '\\left(2-\\frac{1}{k+1}\\right)-\\left\\{1+\\frac{1}{2^2}+\\frac{1}{3^2}+\\cdots+\\frac{1}{k^2}+\\frac{1}{(k+1)^2}\\right\\}'], ['=', '\\left(2-\\frac{1}{k+1}\\right)-\\left\\{\\left(1+\\frac{1}{2^2}+\\frac{1}{3^2}+\\cdots+\\frac{1}{k^2}\\right)+\\frac{1}{(k+1)^2}\\right\\}'], ['>', '\\left(2-\\frac{1}{k+1}\\right)-\\left\\{\\left(2-\\frac{1}{k}\\right)+\\frac{1}{(k+1)^2}\\right\\}'], ['=', '\\frac{1}{k(k+1)^2}']] },
-      { id: 'rt1', lt: true, n0: 1, s: '1+\\frac{1}{\\sqrt{2}}+\\frac{1}{\\sqrt{3}}+\\cdots+\\frac{1}{\\sqrt{n}}<2\\sqrt{n}', t1: '1+\\frac{1}{\\sqrt{2}}+\\cdots+\\frac{1}{\\sqrt{k}}+\\frac{1}{\\sqrt{k+1}}<2\\sqrt{k+1}', bl: '1', br: '2',
+      { id: 'rt1', lt: true, n0: 1, q: '\\displaystyle\\sum_{k=1}^{n}\\frac{1}{\\sqrt{k}}<2\\sqrt{n}', s: '1+\\frac{1}{\\sqrt{2}}+\\frac{1}{\\sqrt{3}}+\\cdots+\\frac{1}{\\sqrt{n}}<2\\sqrt{n}', t1: '1+\\frac{1}{\\sqrt{2}}+\\cdots+\\frac{1}{\\sqrt{k}}+\\frac{1}{\\sqrt{k+1}}<2\\sqrt{k+1}', bl: '1', br: '2',
         L: n => { let t = 0; for (let i = 1; i <= n; i++) t += 1 / Math.sqrt(i); return t; }, R: n => 2 * Math.sqrt(n),
         rows: [['', '2\\sqrt{k+1}-\\left\\{\\left(1+\\frac{1}{\\sqrt{2}}+\\cdots+\\frac{1}{\\sqrt{k}}\\right)+\\frac{1}{\\sqrt{k+1}}\\right\\}'], ['>', '2\\sqrt{k+1}-\\left(2\\sqrt{k}+\\frac{1}{\\sqrt{k+1}}\\right)'], ['=', '\\frac{2k+1-2\\sqrt{k(k+1)}}{\\sqrt{k+1}}']],
         after: '$(2k+1)^2-\\left\\{2\\sqrt{k(k+1)}\\right\\}^2=1>0$ より $2k+1>2\\sqrt{k(k+1)}$ なので，最後の式は正' },
-      { id: 'rt2', n0: 1, s: '1+\\frac{1}{\\sqrt{2}}+\\frac{1}{\\sqrt{3}}+\\cdots+\\frac{1}{\\sqrt{n}}>2\\sqrt{n+1}-2', t1: '1+\\frac{1}{\\sqrt{2}}+\\cdots+\\frac{1}{\\sqrt{k}}+\\frac{1}{\\sqrt{k+1}}>2\\sqrt{k+2}-2', bl: '1', br: '2\\sqrt{2}-2<3-2=1',
+      { id: 'rt2', n0: 1, q: '\\displaystyle\\sum_{k=1}^{n}\\frac{1}{\\sqrt{k}}>2\\sqrt{n+1}-2', s: '1+\\frac{1}{\\sqrt{2}}+\\frac{1}{\\sqrt{3}}+\\cdots+\\frac{1}{\\sqrt{n}}>2\\sqrt{n+1}-2', t1: '1+\\frac{1}{\\sqrt{2}}+\\cdots+\\frac{1}{\\sqrt{k}}+\\frac{1}{\\sqrt{k+1}}>2\\sqrt{k+2}-2', bl: '1', br: '2\\sqrt{2}-2<3-2=1',
         L: n => { let t = 0; for (let i = 1; i <= n; i++) t += 1 / Math.sqrt(i); return t; }, R: n => 2 * Math.sqrt(n + 1) - 2,
         rows: [['', '\\left\\{\\left(1+\\frac{1}{\\sqrt{2}}+\\cdots+\\frac{1}{\\sqrt{k}}\\right)+\\frac{1}{\\sqrt{k+1}}\\right\\}-(2\\sqrt{k+2}-2)'], ['>', '\\left(2\\sqrt{k+1}-2+\\frac{1}{\\sqrt{k+1}}\\right)-(2\\sqrt{k+2}-2)'], ['=', '\\frac{2k+3-2\\sqrt{(k+1)(k+2)}}{\\sqrt{k+1}}']],
         after: '$(2k+3)^2-\\left\\{2\\sqrt{(k+1)(k+2)}\\right\\}^2=1>0$ より $2k+3>2\\sqrt{(k+1)(k+2)}$ なので，最後の式は正' },
-      { id: 'hm', ge: true, n0: 1, s: '1+\\frac{1}{2}+\\frac{1}{3}+\\cdots+\\frac{1}{n}\\geqq \\frac{2n}{n+1}', t1: '1+\\frac{1}{2}+\\cdots+\\frac{1}{k}+\\frac{1}{k+1}\\geqq \\frac{2(k+1)}{k+2}', bl: '1', br: '\\frac{2}{2}=1',
+      { id: 'hm', ge: true, n0: 1, q: '\\displaystyle\\sum_{k=1}^{n}\\frac{1}{k}\\geqq \\frac{2n}{n+1}', s: '1+\\frac{1}{2}+\\frac{1}{3}+\\cdots+\\frac{1}{n}\\geqq \\frac{2n}{n+1}', t1: '1+\\frac{1}{2}+\\cdots+\\frac{1}{k}+\\frac{1}{k+1}\\geqq \\frac{2(k+1)}{k+2}', bl: '1', br: '\\frac{2}{2}=1',
         L: n => { let t = 0; for (let i = 1; i <= n; i++) t += 1 / i; return t; }, R: n => 2 * n / (n + 1),
         rows: [['', '\\left\\{\\left(1+\\frac{1}{2}+\\cdots+\\frac{1}{k}\\right)+\\frac{1}{k+1}\\right\\}-\\frac{2(k+1)}{k+2}'], ['\\geqq', '\\frac{2k}{k+1}+\\frac{1}{k+1}-\\frac{2(k+1)}{k+2}'], ['=', '\\frac{(2k+1)(k+2)-2(k+1)^2}{(k+1)(k+2)}'], ['=', '\\frac{k}{(k+1)(k+2)}']] },
-      { id: 'cb', lt: true, n0: 2, s: '1+\\frac{1}{2^3}+\\frac{1}{3^3}+\\cdots+\\frac{1}{n^3}<\\frac{3}{2}-\\frac{1}{2n^2}', t1: '1+\\frac{1}{2^3}+\\cdots+\\frac{1}{k^3}+\\frac{1}{(k+1)^3}<\\frac{3}{2}-\\frac{1}{2(k+1)^2}', bl: '1+\\frac{1}{8}=\\frac{9}{8}', br: '\\frac{3}{2}-\\frac{1}{8}=\\frac{11}{8}',
+      { id: 'cb', lt: true, n0: 2, q: '\\displaystyle\\sum_{k=1}^{n}\\frac{1}{k^3}<\\frac{3}{2}-\\frac{1}{2n^2}', s: '1+\\frac{1}{2^3}+\\frac{1}{3^3}+\\cdots+\\frac{1}{n^3}<\\frac{3}{2}-\\frac{1}{2n^2}', t1: '1+\\frac{1}{2^3}+\\cdots+\\frac{1}{k^3}+\\frac{1}{(k+1)^3}<\\frac{3}{2}-\\frac{1}{2(k+1)^2}', bl: '1+\\frac{1}{8}=\\frac{9}{8}', br: '\\frac{3}{2}-\\frac{1}{8}=\\frac{11}{8}',
         L: n => { let t = 0; for (let i = 1; i <= n; i++) t += 1 / i ** 3; return t; }, R: n => 1.5 - 1 / (2 * n * n),
         rows: [['', '\\left\\{\\frac{3}{2}-\\frac{1}{2(k+1)^2}\\right\\}-\\left\\{\\left(1+\\frac{1}{2^3}+\\cdots+\\frac{1}{k^3}\\right)+\\frac{1}{(k+1)^3}\\right\\}'], ['>', '\\left\\{\\frac{3}{2}-\\frac{1}{2(k+1)^2}\\right\\}-\\left\\{\\left(\\frac{3}{2}-\\frac{1}{2k^2}\\right)+\\frac{1}{(k+1)^3}\\right\\}'], ['=', '\\frac{2k+1}{2k^2(k+1)^2}-\\frac{1}{(k+1)^3}'], ['=', '\\frac{3k+1}{2k^2(k+1)^3}']] },
       pw(3), pw(4), pw(5), pw(6),
@@ -6590,7 +6592,7 @@ const B_GEN = {
         rows: [['', '2^{k+1}-\\{(k+1)+1\\}'], ['=', '2\\cdot 2^k-k-2'], ['\\geqq', '2(k+1)-k-2'], ['=', 'k']] },
       { id: 'p2c', n0: 10, s: '2^n>n^3', t1: '2^{k+1}>(k+1)^3', bl: '2^{10}=1024', br: '10^3=1000', L: n => 2 ** n, R: n => n ** 3,
         rows: [['', '2^{k+1}-(k+1)^3'], ['=', '2\\cdot 2^k-(k+1)^3'], ['>', '2k^3-(k+1)^3'], ['=', 'k^3-3k^2-3k-1'], ['=', 'k^2(k-3)-(3k+1)'], ['\\geqq', '7k^2-(3k+1)'], ['\\geqq', '70k-3k-1'], ['=', '67k-1']], why: 'k\\geqq 10' },
-      { id: 'half', ge: true, n0: 1, s: '\\frac{1}{n+1}+\\frac{1}{n+2}+\\cdots+\\frac{1}{2n}\\geqq \\frac{1}{2}', t1: '\\frac{1}{k+2}+\\frac{1}{k+3}+\\cdots+\\frac{1}{2k+2}\\geqq \\frac{1}{2}', bl: '\\frac{1}{2}', br: '\\frac{1}{2}',
+      { id: 'half', ge: true, n0: 1, q: '\\displaystyle\\sum_{k=1}^{n}\\frac{1}{n+k}\\geqq \\frac{1}{2}', s: '\\frac{1}{n+1}+\\frac{1}{n+2}+\\cdots+\\frac{1}{2n}\\geqq \\frac{1}{2}', t1: '\\frac{1}{k+2}+\\frac{1}{k+3}+\\cdots+\\frac{1}{2k+2}\\geqq \\frac{1}{2}', bl: '\\frac{1}{2}', br: '\\frac{1}{2}',
         L: n => { let t = 0; for (let i = 1; i <= n; i++) t += 1 / (n + i); return t; }, R: () => 0.5,
         pre2: '①の左辺を $S_n$ とおくと，$S_{k+1}$ は $S_k$ から $\\frac{1}{k+1}$ をひき，$\\frac{1}{2k+1}+\\frac{1}{2k+2}$ を加えたものなので',
         rows: [['', 'S_{k+1}-\\frac{1}{2}'], ['=', 'S_k-\\frac{1}{k+1}+\\frac{1}{2k+1}+\\frac{1}{2k+2}-\\frac{1}{2}'], ['\\geqq', '\\frac{1}{2}-\\frac{1}{k+1}+\\frac{1}{2k+1}+\\frac{1}{2k+2}-\\frac{1}{2}'], ['=', '\\frac{1}{2k+1}-\\frac{1}{2k+2}'], ['=', '\\frac{1}{(2k+1)(2k+2)}']] },
@@ -6602,7 +6604,8 @@ const B_GEN = {
     const asm = C.s.replace(/n/g, 'k'), rel = { '=': '=', '>': '>', '\\geqq': '\\geqq' };
     const disp = C.rows.map(([r, e], i) => (i ? `&${rel[r]} ` : '& ') + e + (i === C.rows.length - 1 ? ` ${C.zero ? '\\geqq' : '>'} 0${C.why ? `\\quad (\\because\\ ${C.why})` : ''}` : ''));
     const allN = C.n0 > 1 ? `$${C.n0}$ 以上のすべての自然数 $n$` : 'すべての自然数 $n$';
-    const st = [{ t: 'txt', s: `不等式 $${C.s}$ を①とする。` },
+    const useQ = !!C.q && Math.random() < 0.5, Qs = useQ ? C.q : C.s;
+    const st = [{ t: 'txt', s: useQ ? `左辺の和を書き並べた不等式 $${C.s}$ を①とする。` : `不等式 $${C.s}$ を①とする。` },
       { t: 'txt', s: `[1] $n=${C.n0}$ のとき，（左辺）$=${C.bl}$，（右辺）$=${C.br}$ より，①は成立する。` },
       { t: 'txt', s: `[2] $n=k$（$k\\geqq ${C.n0}$）のとき，①の成立を仮定すると $${asm}$` },
       { t: 'txt', s: `$n=k+1$ のとき，$${C.t1}$ が成立することを示す。` },
@@ -6610,7 +6613,7 @@ const B_GEN = {
     if (C.after) st.push({ t: 'txt', s: C.after + '。' });
     st.push({ t: 'txt', s: `よって，$n=k+1$ のときも①は成立する。` }, { t: 'txt', s: `[1]，[2] より，${allN} について①は成立する。` });
     const pre = C.h ? '$h>0$ とする。' : '';
-    return { unit: 'kinou', lv, key: `ki2|C|${C.id}`, sec: T.kinou2, label: `${pre}${C.n0 > 1 ? `$n\\geqq ${C.n0}$ を満たす` : 'すべての'}自然数 $n$ について，不等式 $${C.s}$ が成り立つことを，数学的帰納法で証明せよ。`, math: '', item: `$${C.s}$（$n\\geqq ${C.n0}$）`, head: `$${C.s}$`,
+    return { unit: 'kinou', lv, key: `ki2|C|${C.id}${useQ ? '|q' : ''}`, sec: T.kinou2, label: `${pre}${C.n0 > 1 ? `$n\\geqq ${C.n0}$ を満たす` : 'すべての'}自然数 $n$ について，不等式 $${Qs}$ が成り立つことを，数学的帰納法で証明せよ。`, math: '', item: `$${Qs}$（$n\\geqq ${C.n0}$）`, head: `$${Qs}$`,
       ans: '（証明）', vars: {}, steps: st,
       chk: () => { let bad = 0; const eq = (a, b) => Math.abs(a - b) <= 1e-9 * Math.max(1, Math.abs(a), Math.abs(b));
         for (let n = C.n0; n <= 25; n++) if (!(C.ge ? C.L(n) >= C.R(n) - 1e-12 : C.lt ? C.L(n) < C.R(n) : C.L(n) > C.R(n))) bad++;
