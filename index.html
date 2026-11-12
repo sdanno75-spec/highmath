@@ -480,7 +480,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
             </div>
           </div>
         </div>
-        <div class="subjRow"><div class="seg subjTabs" id="subjTabs" aria-label="教科"><button data-sj="1">数I</button><button data-sj="A">数A</button><button data-sj="2">数II</button><button data-sj="B">数B</button><button data-sj="C">数C</button></div><button type="button" class="jukenBtn" id="jukenBtn" aria-pressed="false" title="受験基礎の単元だけを表示する">受験基礎</button></div>
+        <div class="subjRow"><div class="seg subjTabs" id="subjTabs" aria-label="教科"><button data-sj="1">数I</button><button data-sj="A">数A</button><button data-sj="2">数II</button><button data-sj="B">数B</button><button data-sj="C">数C</button></div><button type="button" class="jukenBtn" id="jukenBtn" aria-pressed="false" title="受験基礎の単元だけを表示する">受験基礎</button><button type="button" class="jukenBtn" id="hattenBtn" aria-pressed="false" title="入試発展の単元だけを表示する">入試発展</button></div>
         <div class="fields" id="fields">
         <div class="units" data-subj="1">
           <span class="ugrp">数I　数と式</span>
@@ -595,12 +595,22 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
           <label class="chk"><input type="checkbox" name="unit" value="touhi">等比数列</label>
           <label class="chk"><input type="checkbox" name="unit" value="sigma">Σの計算</label>
           <label class="chk"><input type="checkbox" name="unit" value="koshiten">格子点の個数</label>
+          <label class="chk"><input type="checkbox" name="unit" value="kuukanKoshi">空間の格子点</label>
           <label class="chk"><input type="checkbox" name="unit" value="kaisa">階差数列</label>
           <label class="chk"><input type="checkbox" name="unit" value="snAn">和 Sₙ から一般項</label>
           <label class="chk"><input type="checkbox" name="unit" value="bunsuWa">分数の数列の和</label>
           <label class="chk"><input type="checkbox" name="unit" value="sabunWa">（等差）×（等比）の和</label>
           <label class="chk"><input type="checkbox" name="unit" value="zenka">漸化式</label>
           <label class="chk"><input type="checkbox" name="unit" value="gunSuretsu">群数列</label>
+          <label class="chk"><input type="checkbox" name="unit" value="tousaMax">等差数列の和の最大・最小</label>
+          <label class="chk"><input type="checkbox" name="unit" value="kyoutsuukou">共通項の数列</label>
+          <label class="chk"><input type="checkbox" name="unit" value="baisuuWa">倍数の和</label>
+          <label class="chk"><input type="checkbox" name="unit" value="zettaiWa">絶対値のついた数列の和</label>
+          <label class="chk"><input type="checkbox" name="unit" value="bouenWa">差の形にして和（望遠鏡和）</label>
+          <label class="chk"><input type="checkbox" name="unit" value="sansuu">3数の表し方</label>
+          <label class="chk"><input type="checkbox" name="unit" value="kiguuWa">符号が交互の数列の和</label>
+          <label class="chk"><input type="checkbox" name="unit" value="sekiWa">異なる2数の積の和</label>
+          <label class="chk"><input type="checkbox" name="unit" value="gaussWa">ガウス記号の数列の和</label>
         </div>
         <div class="units" data-subj="B">
           <span class="ugrp">数B　統計的な推測</span>
@@ -786,8 +796,9 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.67.2', UPDATED = '2026-11-12';
+const VERSION = '5.68.0', UPDATED = '2026-11-12';
 const CHANGES = [
+  ['5.68.0', '2026-11-12', '「入試発展」のボタンを追加（押すと入試発展の単元だけ表示）。数B に受験基礎の単元を7つ追加：等差数列の和の最大・最小、共通項の数列、倍数の和、絶対値のついた数列の和、差の形にして和（望遠鏡和）、3数の表し方、符号が交互の数列の和。入試発展の単元を3つ追加：異なる2数の積の和、ガウス記号の数列の和、空間の格子点。'],
   ['5.67.2', '2026-11-12', '受験基礎の印を既存の単元にも追加：数C「平面の方程式」「点と平面の距離」「2本に垂直なベクトル」「球面の方程式」、数II「点と直線の距離」。'],
   ['5.67.1', '2026-11-12', '公式・手順の枠に、1/6公式（放物線と x 軸で囲む部分）と1/12公式（放物線と2本の接線、3次関数と接線で囲む部分）の小さな図を入れた（画面・印刷・LaTeX とも）。'],
   ['5.67.0', '2026-11-12', '受験基礎の新しい単元を3つ追加（受験基礎の印つき）。数B「群数列」（第n群の最初の数・N は第何群の何番目・第n群の和）、数II「1/12公式の面積」（放物線と2本の接線、3次関数と接線）、数A「余りで分ける計算」（余りから式の余り、n の余りで場合分け）。'],
@@ -1053,7 +1064,7 @@ const UNITS = [
   ['kodo', '弧度法の値', '2'], ['kahou', '加法定理', '2'], ['gousei', '三角関数の合成', '2'], ['sankakuHouteishiki', '三角方程式', '2'], ['okikae', '置きかえと最大・最小', '2'],
   ['shisu', '指数の計算', '2'], ['taisuuChi', '対数の値', '2'], ['taisuuWa', '対数の和・差・係数', '2'], ['teiHenkan', '底の変換', '2'], ['taisuuHouteishiki', '対数方程式・指数方程式', '2'], ['ketasuu', '桁数・最高位の数字', '2'],
   ['sessen', '接線の方程式', '2'], ['kyokuchi', '3次関数の極値', '2'], ['teisekibun', '定積分の計算', '2'], ['rokubun', '1/6公式の面積', '2'], ['menseki12', '1/12公式の面積', '2'], ['teisuBunri', '定数分離と解の個数', '2'], ['sessenHonsu', '接線の本数', '2'],
-  ['tousa', '等差数列', 'B'], ['touhi', '等比数列', 'B'], ['sigma', 'Σの計算', 'B'], ['koshiten', '格子点の個数', 'B'], ['kaisa', '階差数列', 'B'], ['snAn', '和 Sₙ から一般項', 'B'], ['bunsuWa', '分数の数列の和', 'B'], ['sabunWa', '（等差）×（等比）の和', 'B'], ['zenka', '漸化式', 'B'], ['gunSuretsu', '群数列', 'B'],
+  ['tousa', '等差数列', 'B'], ['touhi', '等比数列', 'B'], ['sigma', 'Σの計算', 'B'], ['koshiten', '格子点の個数', 'B'], ['kaisa', '階差数列', 'B'], ['snAn', '和 Sₙ から一般項', 'B'], ['bunsuWa', '分数の数列の和', 'B'], ['sabunWa', '（等差）×（等比）の和', 'B'], ['zenka', '漸化式', 'B'], ['gunSuretsu', '群数列', 'B'], ['tousaMax', '等差数列の和の最大・最小', 'B'], ['kyoutsuukou', '共通項の数列', 'B'], ['baisuuWa', '倍数の和', 'B'], ['zettaiWa', '絶対値のついた数列の和', 'B'], ['bouenWa', '差の形にして和（望遠鏡和）', 'B'], ['sansuu', '3数の表し方', 'B'], ['kiguuWa', '符号が交互の数列の和', 'B'], ['sekiWa', '異なる2数の積の和', 'B'], ['gaussWa', 'ガウス記号の数列の和', 'B'], ['kuukanKoshi', '空間の格子点', 'B'],
   ['bunpu', '確率分布表から期待値・分散', 'B'], ['henkan', 'aX+b の期待値・分散', 'B'], ['waSeki', '確率変数の和と積', 'B'], ['nikouBunpu', '二項分布', 'B'], ['seiki', '正規分布', 'B'], ['seikiKinji', '二項分布の正規近似', 'B'], ['hyouhonHeikin', '標本平均の分布', 'B'], ['suitei', '母平均の推定', 'B'], ['kentei', '仮説検定', 'B'],
   ['naiseki', '内積の計算', 'C'], ['nasukaku', 'なす角', 'C'], ['menseki', '三角形の面積', 'C'], ['heikouSuichoku', '平行・垂直の条件', 'C'], ['ookisa', '大きさと内積', 'C'], ['saisyou', '|a+tb| の最小値', 'C'], ['ichiVec', '位置ベクトル', 'C'], ['kouten', '2直線の交点', 'C'], ['chokusenVec', '直線のベクトル方程式', 'C'], ['kuukanNaiseki', '空間ベクトルの内積となす角', 'C'], ['gaiseki', '2本に垂直なベクトル', 'C'], ['heimen', '平面の方程式', 'C'], ['kyuumen', '球面の方程式', 'C'], ['kyori', '点と平面の距離', 'C'], ['kyokkei', '絶対値と偏角・極形式', 'C'], ['kaiten', '点の回転', 'C'], ['deMoivre', 'ド・モアブルの定理', 'C'], ['nJouKon', 'n 乗根', 'C'], ['sanTenKaku', '3点がつくる角', 'C'], ['cxEn', '円 |z−α|=r', 'C'], ['suichoku', '垂直二等分線', 'C'], ['apollonius', 'アポロニウスの円', 'C'], ['kyokusenShiki', '条件から2次曲線の方程式', 'C'], ['heikouIdou', '平行移動した2次曲線', 'C'], ['kyouyuuten', '2次曲線と直線の共有点', 'C'], ['nijiSessen', '2次曲線の接線', 'C'], ['baikaiShoukyo', '媒介変数の消去', 'C'], ['baikaiEn', '円・楕円の媒介変数表示', 'C'], ['kyokuZahyou', '極座標と直交座標', 'C'], ['kyokuToChokkou', '極方程式 → 直交座標', 'C'], ['chokkouToKyoku', '直交座標 → 極方程式', 'C']
 ];
@@ -1118,6 +1129,26 @@ const TIME_TABLE = [
   ['m12b', '3次関数と接線で囲む面積', [120, 240, 480]],
   ['amari1', '余りから式を割った余り', [40, 90, 180]],
   ['amari2', '余りで場合分け', [120, 240, 480]],
+  ['tmax1', '等差数列の和の最大・最小（初項・公差）', [90, 180, 360]],
+  ['tmax2', '等差数列の和の最大・最小（2つの項から）', [120, 240, 480]],
+  ['kyo1', '共通項（等差数列どうし）', [90, 180, 360]],
+  ['kyo2', '共通項（等差数列と等比数列）', [120, 240, 480]],
+  ['bai1', '倍数の和', [60, 120, 240]],
+  ['bai2', '倍数の和（または・でも〜ない）', [120, 240, 480]],
+  ['zw1', '絶対値のついた数列の和', [90, 180, 360]],
+  ['zw2', '絶対値のついた数列の和（n の式）', [120, 240, 480]],
+  ['bou1', '望遠鏡和（根号）', [90, 180, 360]],
+  ['bou2', '望遠鏡和（連続整数の積）', [120, 240, 480]],
+  ['san1', '等差数列をなす3数', [90, 180, 360]],
+  ['san2', '等比数列をなす3数', [120, 240, 480]],
+  ['kg1', '符号が交互の数列の和', [90, 180, 360]],
+  ['kg2', '符号が交互の数列の和（偶奇で分ける）', [120, 240, 480]],
+  ['seki1', '異なる2数の積の和', [120, 240, 480]],
+  ['seki2', '展開式の係数（2数の積の和）', [150, 300, 600]],
+  ['gauss1', '[√n] の和', [120, 240, 480]],
+  ['gauss2', '[log₂ n] の和', [150, 300, 600]],
+  ['kk1', '空間の格子点', [120, 240, 480]],
+  ['kk2', '空間の格子点（発展）', [150, 300, 600]],
   ['kanshu1', '二次関数の最大・最小（x² の係数が ±1・頂点が整数）', [40, 90, 180]],
   ['kanshuA', '二次関数の最大・最小（x² の係数が ±1 以外）', [50, 110, 210]],
   ['kanshuF', '二次関数の最大・最小（頂点が分数）', [60, 120, 240]],
@@ -1379,6 +1410,16 @@ const UNIT_LEVEL = {
   gunSuretsu: ['第n群の最初の数，N は第何群の何番目か', '第n群の和'],
   menseki12: ['放物線と2本の接線で囲む面積', '3次関数と接線で囲む面積'],
   amariBunrui: ['a，b の余りから式の余り', 'n の余りで場合分け（考えられる余り）'],
+  tousaMax: ['初項・公差から', '2つの項から初項・公差を求めて'],
+  kyoutsuukou: ['等差数列どうし', '等差数列と等比数列'],
+  baisuuWa: ['区間の中の倍数の和', 'または・どちらでも割り切れない数の和'],
+  zettaiWa: ['数の上端', 'n の式'],
+  bouenWa: ['根号の分母を有理化', '連続整数の積・その逆数'],
+  sansuu: ['等差数列をなす3数', '等比数列をなす3数'],
+  kiguuWa: ['数の上端（2項ずつまとめる）', 'n の偶奇で分けて n の式'],
+  sekiWa: ['1〜n・奇数の2数の積の和', '展開式の係数として'],
+  gaussWa: ['[√n] の和', '[log₂ n] の和'],
+  kuukanKoshi: ['x+y+z（＝・≦，0 以上・1 以上）', 'x+y+2z≦2n，|x|+|y|+|z|≦n'],
   zettaichi: ['|ax+b| と正の数（±c ではずす）', '|x+p| と1次式，|x−p|+|x−q|（場合分け）'],
   seisuBubun: ['√m+p の整数部分・小数部分（有理化も）', '有理化して整数部分・小数部分，b²+2nb の値'],
   sessenHonsu: ['点から引ける接線の本数', '3本の接線が引ける条件'],
@@ -6123,6 +6164,261 @@ const B_GEN = {
         chk: () => { const got = new Set(); for (let n = -60; n <= 60; n++) got.add(((P(n) % m) + m) % m); const g = [...got].sort((x, y) => x - y); let bad = JSON.stringify(g) === JSON.stringify(set) ? 0 : 1;
           for (let r0 = 0; r0 < m; r0++) for (const k of [-3, 0, 2, 5]) { const n = m * k + r0, qR = Math.floor(P(r0) / m), rem = P(r0) - qR * m; if (P(n) !== m * (c2 * m * k * k + (2 * c2 * r0 + c1) * k + qR) + rem) bad++; } return bad; } };
     }
+  },
+  // 【等差数列の和の最大・最小】lv1：初項と公差から。lv2：2つの項から初項・公差を求めてから
+  tousaMax(lv){
+    for (;;) {
+      const mx = Math.random() < 0.7, d0 = ri(2, 7), d = mx ? -d0 : d0, a1 = (mx ? 1 : -1) * ri(15, 60);
+      const c = a1 - d, an = sumTex([[d, 'n'], [c, '']]), N = Math.floor(c / -d), zero = c % d === 0;   // a_n=dn+c の符号が変わる所
+      if (N < 3 || N > 25) continue;
+      const S = n => n * (2 * a1 + (n - 1) * d) / 2, sv = S(N), word = mx ? '最大' : '最小';
+      const nT = zero ? `$n=${N - 1},\\ ${N}$` : `$n=${N}$`;
+      const st = [];
+      let label, key, head;
+      if (lv === 1) {
+        label = `初項 $${a1}$，公差 $${d}$ の等差数列 $\\{a_n\\}$ について，初項から第 $n$ 項までの和 $S_n$ の${word}値と，そのときの $n$ を求めよ。`;
+        key = `tm1|${a1}|${d}`; head = `初項 $${a1}$，公差 $${d}$`;
+      } else {
+        const p = ri(2, 6), q = p + ri(3, 9), ap = a1 + (p - 1) * d, aq = a1 + (q - 1) * d;
+        label = `第 $${p}$ 項が $${ap}$，第 $${q}$ 項が $${aq}$ である等差数列 $\\{a_n\\}$ について，初項から第 $n$ 項までの和 $S_n$ の${word}値と，そのときの $n$ を求めよ。`;
+        key = `tm2|${p}|${ap}|${q}|${aq}`; head = `$a_{${p}}=${ap}$，$a_{${q}}=${aq}$`;
+        st.push({ t: 'txt', s: `初項を $a$，公差を $d$ とすると，$a+${p - 1}d=${ap}$，$a+${q - 1}d=${aq}$。ひいて $${q - p}d=${aq - ap}$ より $d=${d}$，$a=${a1}$。` });
+      }
+      st.push({ t: 'txt', s: `$a_n=${a1}+(n-1)\\times(${d})=${an}$。` },
+        { t: 'txt', s: `$a_n${mx ? '\\geqq' : '\\leqq'} 0$ とすると $n\\leqq ${numTex(new F(c, -d))}$。よって第 $${N}$ 項までは${mx ? '0 以上' : '0 以下'}で，第 $${N + 1}$ 項から${mx ? '負' : '正'}になる。${zero ? `$a_{${N}}=0$ なので $S_{${N - 1}}=S_{${N}}$。` : ''}` },
+        { t: 'eq', noEval: true, rows: [`S_{${N}} &= \\frac{1}{2}\\times ${N}\\times\\{2\\times ${a1 < 0 ? `(${a1})` : a1}+${N - 1}\\times(${d})\\}`, `&= ${sv}`] });
+      return { unit: 'tousaMax', lv, key, sec: T[lv === 1 ? "tmax1" : "tmax2"], label, math: '', item: `$S_n$ の${word}値`, head,
+        ans: `${nT} のとき${word}値 $${sv}$`, vars: {}, steps: st,
+        chk: () => { const v = Array.from({ length: 120 }, (_, i) => S(i + 1)), best = mx ? Math.max(...v) : Math.min(...v), at = v.map((x, i) => x === best ? i + 1 : 0).filter(Boolean);
+          return (best === sv ? 0 : 1) + (JSON.stringify(at) === JSON.stringify(zero ? [N - 1, N] : [N]) ? 0 : 1); } };
+    }
+  },
+  // 【共通項の数列】lv1：等差数列どうし。lv2：等差数列と等比数列（余りの周期）
+  kyoutsuukou(lv){
+    for (;;) {
+      if (lv === 1) {
+        const p = ri(2, 7), q = ri(2, 9); if (p === q || p % q === 0 || q % p === 0) continue;
+        const s = ri(1 - p, 6), t = ri(1 - q, 8), a1 = p + s, b1 = q + t; if (a1 < 1 || b1 < 1) continue;
+        const A = new Set(Array.from({ length: 400 }, (_, i) => a1 + p * i)), com = Array.from({ length: 400 }, (_, i) => b1 + q * i).filter(v => A.has(v));
+        if (com.length < 5) continue;
+        const L = p * q / gcd(p, q), c1 = com[0], cT = sumTex([[L, 'n'], [c1 - L, '']]);
+        const list = (f, d) => `${f},\\ ${f + d},\\ ${f + 2 * d},\\ ${f + 3 * d},\\ \\cdots`;
+        const st = [{ t: 'txt', s: `$\\{a_n\\}$：$${list(a1, p)}$，$\\{b_n\\}$：$${list(b1, q)}$ を書き出すと，最も小さい共通の項は $${c1}$。` },
+          { t: 'txt', s: `$\\{a_n\\}$ は $${p}$ ずつ，$\\{b_n\\}$ は $${q}$ ずつ増えるので，共通項は $${p}$ と $${q}$ の最小公倍数 $${L}$ ずつ増える。` },
+          { t: 'txt', s: `よって $\\{c_n\\}$ は初項 $${c1}$，公差 $${L}$ の等差数列で，$c_n=${c1}+(n-1)\\times ${L}=${cT}$` }];
+        return { unit: 'kyoutsuukou', lv, key: `ky1|${a1}|${p}|${b1}|${q}`, sec: T.kyo1,
+          label: `等差数列 $\\{a_n\\}$，$\\{b_n\\}$ の一般項が $a_n=${sumTex([[p, 'n'], [s, '']])}$，$b_n=${sumTex([[q, 'n'], [t, '']])}$ であるとき，両方に共通に含まれる数を小さい順に並べた数列 $\\{c_n\\}$ の一般項を求めよ。`,
+          math: '', item: `共通項（$${sumTex([[p, 'n'], [s, '']])}$ と $${sumTex([[q, 'n'], [t, '']])}$）`, head: `$a_n=${sumTex([[p, 'n'], [s, '']])}$，$b_n=${sumTex([[q, 'n'], [t, '']])}$`,
+          ans: `$c_n=${cT}$`, vars: {}, steps: st,
+          chk: () => { let bad = 0; for (let n = 1; n <= 5; n++) if (Math.abs(texEval(cT, { n }) - com[n - 1]) > 1e-9) bad++; return bad; } };
+      }
+      const b = pick([2, 2, 3, 3, 4, 5]), m = pick([3, 5, 7, 9]); if (gcd(b, m) !== 1) continue;
+      const rs = []; let v = 1; for (let i = 1; i <= 12; i++) { v = v * b % m; rs.push(v); if (v === 1) break; }
+      const P = rs.length; if (P < 2 || P > 4) continue;
+      const e = ri(1, P); if ((e + 3 * P) * Math.log10(b) > 14) continue;
+      const r = rs[e - 1], aT = sumTex([[m, 'n'], [r - m, '']]), ex = sumTex([[P, 'n'], [e - P, '']]), cT = `${b}^{${ex}}`;
+      const st = [{ t: 'txt', s: `$\\{a_n\\}$ の項は，$${m}$ で割ると $${r}$ 余る正の整数のすべて。` },
+        { t: 'txt', s: `$${b}^n$ を $${m}$ で割った余りは，$n=1,\\ 2,\\ \\cdots,\\ ${P}$ で $${rs.join(',\\ ')}$ となり，${P} 個ごとにくり返す。` },
+        { t: 'txt', s: `余りが $${r}$ になるのは $n=${e}$，$${e + P}$，$${e + 2 * P}$，$\\cdots$（$${P}$ ずつ）のとき。` },
+        { t: 'txt', s: `よって $c_n=${b}^{${e}+${P}(n-1)}=${cT}$` }];
+      return { unit: 'kyoutsuukou', lv, key: `ky2|${b}|${m}|${r}`, sec: T.kyo2,
+        label: `数列 $\\{a_n\\}$，$\\{b_n\\}$ の一般項が $a_n=${aT}$，$b_n=${b}^n$ であるとき，両方に共通に含まれる数を小さい順に並べた数列 $\\{c_n\\}$ の一般項を求めよ。`,
+        math: '', item: `共通項（$${aT}$ と $${b}^n$）`, head: `$a_n=${aT}$，$b_n=${b}^n$`,
+        ans: `$c_n=${cT}$`, vars: {}, steps: st,
+        chk: () => { const com = []; for (let n = 1; n <= 20 && com.length < 4; n++) { const w = b ** n; if (w >= r && (w - r) % m === 0) com.push(w); }
+          let bad = com.length === 4 ? 0 : 1; com.forEach((w, i) => { if (Math.abs(texEval(cT, { n: i + 1 }) - w) > 1e-6) bad++; }); return bad; } };
+    }
+  },
+  // 【倍数の和】lv1：区間の中の d の倍数の和。lv2：d または e の倍数・d でも e でも割り切れない数の和
+  baisuuWa(lv){
+    const msum = (d, N) => { const k = Math.floor(N / d); return d * k * (k + 1) / 2; };
+    for (;;) {
+      if (lv === 1) {
+        const d = pick([3, 4, 6, 7, 8, 9, 11, 12, 13]), lo = ri(10, 200), hi = lo + ri(100, 400);
+        const f = Math.ceil(lo / d) * d, l = Math.floor(hi / d) * d, k = (l - f) / d + 1, S = k * (f + l) / 2;
+        if (f === lo || l === hi) continue;
+        const st = [{ t: 'txt', s: `$${lo}$ 以上 $${hi}$ 以下の $${d}$ の倍数は $${f}=${d}\\times ${f / d}$ から $${l}=${d}\\times ${l / d}$ まで。` },
+          { t: 'txt', s: `これは初項 $${f}$，末項 $${l}$，項数 $${l / d}-${f / d}+1=${k}$ の等差数列。` },
+          { t: 'eq', noEval: true, rows: [`S &= \\frac{1}{2}\\times ${k}\\times(${f}+${l})`, `&= ${S}`] }];
+        return { unit: 'baisuuWa', lv, key: `bw1|${d}|${lo}|${hi}`, sec: T.bai1, label: `$${lo}$ 以上 $${hi}$ 以下の整数のうち，$${d}$ の倍数の和 $S$ を求めよ。`, math: '', item: `$${lo}$〜$${hi}$ の $${d}$ の倍数の和`, head: `$${lo}$ 以上 $${hi}$ 以下，$${d}$ の倍数`,
+          ans: `$S=${S}$`, vars: {}, steps: st,
+          chk: () => { let s = 0; for (let n = lo; n <= hi; n++) if (n % d === 0) s += n; return s === S ? 0 : 1; } };
+      }
+      const [d, e] = pick([[2, 3], [2, 5], [3, 5], [3, 4], [2, 7], [3, 7], [4, 5]]), N = ri(60, 300), L = d * e, kind = pick(['or', 'not']);
+      const Sd = msum(d, N), Se = msum(e, N), SL = msum(L, N), all = N * (N + 1) / 2, orS = Sd + Se - SL, S = kind === 'or' ? orS : all - orS;
+      const one = (q, s) => `$${q}$ の倍数の和は $${q}(1+2+\\cdots+${Math.floor(N / q)})=${s}$`;
+      const st = [{ t: 'txt', s: `${one(d, Sd)}，${one(e, Se)}，両方の倍数（$${L}$ の倍数）の和は $${SL}$。` },
+        { t: 'txt', s: `$${d}$ または $${e}$ の倍数の和は $${Sd}+${Se}-${SL}=${orS}$` }];
+      if (kind === 'not') st.push({ t: 'txt', s: `$1$ から $${N}$ までの和は $\\frac{1}{2}\\times ${N}\\times ${N + 1}=${all}$ なので，求める和は $${all}-${orS}=${S}$` });
+      const what = kind === 'or' ? `$${d}$ または $${e}$ の倍数` : `$${d}$ でも $${e}$ でも割り切れない数`;
+      return { unit: 'baisuuWa', lv, key: `bw2|${kind}|${d}|${e}|${N}`, sec: T.bai2, label: `$1$ 以上 $${N}$ 以下の整数のうち，${what}の和 $S$ を求めよ。`, math: '', item: `${what}の和（$${N}$ 以下）`, head: `$${N}$ 以下，${what}`,
+        ans: `$S=${S}$`, vars: {}, steps: st,
+        chk: () => { let s = 0; for (let n = 1; n <= N; n++) { const hit = n % d === 0 || n % e === 0; if (kind === 'or' ? hit : !hit) s += n; } return s === S ? 0 : 1; } };
+    }
+  },
+  // 【絶対値のついた数列の和】a_k=pk−q。lv1：数の上端。lv2：n の式（n が符号の変わる所より先）
+  zettaiWa(lv){
+    for (;;) {
+      const p = pick([1, 2, 2, 3]), K = ri(3, 8), q = p * K + ri(0, p - 1);   // a_k≦0 は k≦K
+      if (q === 0) continue;
+      const aT = sumTex([[p, 'k'], [-q, '']]), Sn = n => p * n * (n + 1) / 2 - q * n, SK = Sn(K);
+      const st = [{ t: 'txt', s: `$a_k=${aT}$ は $k\\leqq ${K}$ で $0$ 以下，$k\\geqq ${K + 1}$ で正。` },
+        { t: 'txt', s: `$k\\leqq ${K}$ では $|a_k|=-a_k$ だから，求める和は，$a_k$ をそのまま足した和から $2\\times(a_1+\\cdots+a_{${K}})$ をひいたもの。$a_1+\\cdots+a_{${K}}=${SK}$。` }];
+      if (lv === 1) {
+        const N = K + ri(3, 12), S = Sn(N) - 2 * SK;
+        st.push({ t: 'eq', noEval: true, rows: [`\\sum_{k=1}^{${N}}|a_k| &= ${Sn(N)}-2\\times(${SK})`, `&= ${S}`] });
+        return { unit: 'zettaiWa', lv, key: `zw1|${p}|${q}|${N}`, sec: T.zw1, label: `$a_k=${aT}$ のとき，$\\displaystyle\\sum_{k=1}^{${N}}|a_k|$ を求めよ。`, math: '', item: `$\\sum|${aT}|$（$k=1$〜$${N}$）`, head: `$\\displaystyle\\sum_{k=1}^{${N}}|${aT}|$`,
+          ans: `$${S}$`, vars: {}, steps: st,
+          chk: () => { let s = 0; for (let k = 1; k <= N; k++) s += Math.abs(p * k - q); return s === S ? 0 : 1; } };
+      }
+      // n の式：p/2 n² + (p/2−q) n − 2S_K
+      const nf = p % 2 === 0 ? sumTex([[p / 2, 'n^2'], [p / 2 - q, 'n'], [-2 * SK, '']]) : `\\frac{1}{2}(${sumTex([[p, 'n^2'], [p - 2 * q, 'n'], [-4 * SK, '']])})`;
+      st.push({ t: 'txt', s: `$\\displaystyle\\sum_{k=1}^{n}a_k=${p % 2 === 0 ? sumTex([[p / 2, 'n^2'], [p / 2 - q, 'n']]) : `\\frac{1}{2}(${sumTex([[p, 'n^2'], [p - 2 * q, 'n']])})`}$ より` },
+        { t: 'eq', noEval: true, rows: [`\\sum_{k=1}^{n}|a_k| &= ${nf}`] });
+      return { unit: 'zettaiWa', lv, key: `zw2|${p}|${q}`, sec: T.zw2, label: `$a_k=${aT}$ のとき，$n\\geqq ${K + 1}$ に対して $\\displaystyle\\sum_{k=1}^{n}|a_k|$ を $n$ の式で表せ。`, math: '', item: `$\\sum|${aT}|$（$n$ の式）`, head: `$\\displaystyle\\sum_{k=1}^{n}|${aT}|$`,
+        ans: `$${nf}$`, vars: {}, steps: st,
+        chk: () => { let bad = 0; for (let n = K + 1; n <= K + 15; n++) { let s = 0; for (let k = 1; k <= n; k++) s += Math.abs(p * k - q); if (Math.abs(texEval(nf, { n }) - s) > 1e-9) bad++; } return bad; } };
+    }
+  },
+  // 【望遠鏡和】lv1：根号型（有理化して差の形に）。lv2：連続整数の積の和・逆数の和（差の形に）
+  bouenWa(lv){
+    const K = lv === 1 ? pick(['A', 'B']) : pick(['D', 'E', 'G']);
+    const G = {
+      A: { t: '\\frac{1}{\\sqrt{k}+\\sqrt{k+1}}', f: k => 1 / (Math.sqrt(k) + Math.sqrt(k + 1)), nf: '\\sqrt{n+1}-1', ex: '\\sqrt{k+1}-\\sqrt{k}',
+        how: ['分母を有理化すると $\\frac{1}{\\sqrt{k}+\\sqrt{k+1}}=\\frac{\\sqrt{k+1}-\\sqrt{k}}{(k+1)-k}=\\sqrt{k+1}-\\sqrt{k}$。', '和は $(\\sqrt{2}-\\sqrt{1})+(\\sqrt{3}-\\sqrt{2})+\\cdots+(\\sqrt{n+1}-\\sqrt{n})$ で，途中が消えて $\\sqrt{n+1}-1$。'],
+        N: () => { const s = ri(4, 15); return [s * s - 1, `${s - 1}`]; } },
+      B: { t: '\\frac{1}{\\sqrt{2k-1}+\\sqrt{2k+1}}', f: k => 1 / (Math.sqrt(2 * k - 1) + Math.sqrt(2 * k + 1)), nf: '\\frac{\\sqrt{2n+1}-1}{2}', ex: '',
+        how: ['分母を有理化すると $\\frac{1}{\\sqrt{2k-1}+\\sqrt{2k+1}}=\\frac{\\sqrt{2k+1}-\\sqrt{2k-1}}{(2k+1)-(2k-1)}=\\frac{1}{2}(\\sqrt{2k+1}-\\sqrt{2k-1})$。', '和は $\\frac{1}{2}\\{(\\sqrt{3}-\\sqrt{1})+(\\sqrt{5}-\\sqrt{3})+\\cdots+(\\sqrt{2n+1}-\\sqrt{2n-1})\\}$ で，途中が消えて $\\frac{\\sqrt{2n+1}-1}{2}$。'],
+        N: () => { const s = 2 * ri(2, 9) + 1; return [(s * s - 1) / 2, `${(s - 1) / 2}`]; } },
+      D: { t: 'k(k+1)', f: k => k * (k + 1), nf: '\\frac{1}{3}n(n+1)(n+2)',
+        how: ['$k(k+1)=\\frac{1}{3}\\{k(k+1)(k+2)-(k-1)k(k+1)\\}$ と差の形に書ける。', '$k=1$ から $n$ まで足すと途中が消えて $\\frac{1}{3}n(n+1)(n+2)$（$k=1$ のときの引く方の項は $0$）。'],
+        N: () => { const n = ri(5, 15); return [n, `${n * (n + 1) * (n + 2) / 3}`]; } },
+      E: { t: 'k(k+1)(k+2)', f: k => k * (k + 1) * (k + 2), nf: '\\frac{1}{4}n(n+1)(n+2)(n+3)',
+        how: ['$k(k+1)(k+2)=\\frac{1}{4}\\{k(k+1)(k+2)(k+3)-(k-1)k(k+1)(k+2)\\}$ と差の形に書ける。', '$k=1$ から $n$ まで足すと途中が消えて，$\\frac{1}{4}n(n+1)(n+2)(n+3)$。'],
+        N: () => { const n = ri(4, 12); return [n, `${n * (n + 1) * (n + 2) * (n + 3) / 4}`]; } },
+      G: { t: '\\frac{1}{k(k+1)(k+2)}', f: k => 1 / (k * (k + 1) * (k + 2)), nf: '\\frac{n(n+3)}{4(n+1)(n+2)}',
+        how: ['$\\frac{1}{k(k+1)(k+2)}=\\frac{1}{2}\\left\\{\\frac{1}{k(k+1)}-\\frac{1}{(k+1)(k+2)}\\right\\}$ と差の形に書ける。', '$k=1$ から $n$ まで足すと途中が消えて，$\\frac{1}{2}\\left\\{\\frac{1}{2}-\\frac{1}{(n+1)(n+2)}\\right\\}=\\frac{n(n+3)}{4(n+1)(n+2)}$。'],
+        N: () => { const n = ri(3, 15); return [n, numTex(new F(n * (n + 3), 4 * (n + 1) * (n + 2)))]; } }
+    }[K];
+    const [N, val] = G.N(), sig = `\\sum_{k=1}^{n}${G.t}`;
+    const st = G.how.map(s => ({ t: 'txt', s })).concat([{ t: 'txt', s: `$n=${N}$ を代入して $${val}$` }]);
+    return { unit: 'bouenWa', lv, key: `bo|${K}|${N}`, sec: T[lv === 1 ? "bou1" : "bou2"], label: `$\\displaystyle ${sig}$ を $n$ の式で表せ。また，$n=${N}$ のときの値を求めよ。`, math: '', item: `$${sig}$（$n=${N}$）`, head: `$\\displaystyle ${sig}$`,
+      ans: `$${G.nf}$；$n=${N}$ のとき $${val}$`, vars: {}, steps: st,
+      chk: () => { let bad = 0, s = 0; for (let n = 1; n <= 30; n++) { s += G.f(n); if (Math.abs(texEval(G.nf, { n }) - s) > 1e-9 * Math.max(1, s)) bad++; if (n === N && Math.abs(texEval(val) - s) > 1e-9 * Math.max(1, s)) bad++; } return bad; } };
+  },
+  // 【3数の表し方】lv1：等差数列をなす3数（a−d，a，a+d）。lv2：等比数列をなす3数（a/r，a，ar）
+  sansuu(lv){
+    for (;;) {
+      if (lv === 1) {
+        const a = pick([-5, -4, -3, -2, 2, 3, 4, 5, 6, 7, 8]), d = ri(1, 6), kind = pick(['seki', 'jijou']);
+        const ns = [a - d, a, a + d], S = 3 * a, P = ns[0] * ns[1] * ns[2], Q = ns.reduce((s, v) => s + v * v, 0);
+        if (kind === 'seki' && P === 0) continue;
+        const st = [{ t: 'txt', s: `3数を $a-d$，$a$，$a+d$ とおく。和から $3a=${S}$ より $a=${a}$。` },
+          kind === 'seki' ? { t: 'txt', s: `積から $${a < 0 ? `(${a})` : a}\\{${a < 0 ? `(${a})` : a}^2-d^2\\}=${P}$ より $d^2=${d * d}$，$d=\\pm ${d}$。` }
+            : { t: 'txt', s: `2乗の和は $3a^2+2d^2=${Q}$ より $2d^2=${Q - 3 * a * a}$，$d^2=${d * d}$，$d=\\pm ${d}$。` },
+          { t: 'txt', s: `どちらの符号でも3数は同じで，$${ns.join(',\\ ')}$` }];
+        const cond = kind === 'seki' ? `積が $${P}$` : `2乗の和が $${Q}$`;
+        return { unit: 'sansuu', lv, key: `ss1|${kind}|${a}|${d}`, sec: T.san1, label: `等差数列をなす3数があり，その和が $${S}$，${cond}である。この3数を求めよ。`, math: '', item: `等差数列の3数（和 $${S}$，${cond}）`, head: `和 $${S}$，${cond}`,
+          ans: `$${ns.join(',\\ ')}$`, vars: {}, steps: st,
+          chk: () => { const got = []; for (let x = -40; x <= 40; x++) for (let e = 1; e <= 40; e++) { const v = [x - e, x, x + e]; if (v[0] + v[1] + v[2] === S && (kind === 'seki' ? v[0] * v[1] * v[2] === P : v.reduce((s, w) => s + w * w, 0) === Q)) got.push(v.join(',')); }
+            return got.length === 1 && got[0] === ns.join(',') ? 0 : 1; } };
+      }
+      const f = pick([1, 1, 2, 3, -1, -2, 4]), r = pick([2, 2, 3, -2, -3, 4]), ns = [f, f * r, f * r * r];
+      if (ns.some(v => Math.abs(v) > 150)) continue;
+      const m = f * r, S = ns[0] + ns[1] + ns[2], P = m ** 3, sorted = [...ns].sort((x, y) => x - y);
+      const g = gcd(gcd(m, m - S), m), qd = sumTex([[m / g, 'r^2'], [(m - S) / g, 'r'], [m / g, '']]);
+      const st = [{ t: 'txt', s: `3数を $\\frac{a}{r}$，$a$，$ar$ とおく。積から $a^3=${P}$ より $a=${m}$。` },
+        { t: 'txt', s: `和から $\\frac{${m}}{r}+${m < 0 ? `(${m})` : m}+${m < 0 ? `(${m})` : m}r=${S}$。両辺に $r$ をかけて整理すると $${qd}=0$` },
+        { t: 'txt', s: `これを解いて $r=${r}$，$${numTex(new F(1, r))}$。どちらでも3数は同じで，$${sorted.join(',\\ ')}$` }];
+      return { unit: 'sansuu', lv, key: `ss2|${sorted.join(',')}`, sec: T.san2, label: `等比数列をなす3数があり，その和が $${S}$，積が $${P}$ である。この3数を求めよ。`, math: '', item: `等比数列の3数（和 $${S}$，積 $${P}$）`, head: `和 $${S}$，積 $${P}$`,
+        ans: `$${sorted.join(',\\ ')}$`, vars: {}, steps: st,
+        chk: () => { const A = m / g, B = (m - S) / g; let bad = A * r * r + B * r + A === 0 ? 0 : 1; if (Math.abs(A / (r * r) + B / r + A) > 1e-9) bad++; if (ns[1] * ns[1] !== ns[0] * ns[2] || sorted.reduce((s, v) => s + v, 0) !== S || sorted.reduce((s, v) => s * v, 1) !== P) bad++; return bad; } };
+    }
+  },
+  // 【符号が交互の数列の和】(−1)^{k+1}f(k)。lv1：数の上端（2項ずつまとめる）。lv2：n の偶奇で分けて n の式
+  kiguuWa(lv){
+    const K = pick(['sq', 'sq', 'lin', 'odd']), G = {
+      sq: { t: 'k^2', f: k => k * k, pair: '(2j-1)^2-(2j)^2=-(4j-1)', ev: '-\\frac{1}{2}n(n+1)', od: '\\frac{1}{2}n(n+1)' },
+      lin: { t: 'k', f: k => k, pair: '(2j-1)-2j=-1', ev: '-\\frac{1}{2}n', od: '\\frac{1}{2}(n+1)' },
+      odd: { t: '(2k-1)', f: k => 2 * k - 1, pair: '(4j-3)-(4j-1)=-2', ev: '-n', od: 'n' }
+    }[K];
+    const sig = `\\sum_{k=1}^{${lv === 1 ? 'N' : 'n'}}(-1)^{k+1}${G.t}`, val = n => { let s = 0; for (let k = 1; k <= n; k++) s += (k % 2 ? 1 : -1) * G.f(k); return s; };
+    if (lv === 1) {
+      const N = ri(12, 50), m = Math.floor(N / 2), S = val(N), sgT = `\\sum_{k=1}^{${N}}(-1)^{k+1}${G.t}`;
+      const st = [{ t: 'txt', s: `2項ずつまとめると，第 $j$ 組は $${G.pair}$。` },
+        { t: 'txt', s: N % 2 ? `$${m}$ 組の和に，最後の項 $${G.f(N)}$ を足す。$${m}$ 組の和は $${val(2 * m)}$ なので，$S=${val(2 * m)}+${G.f(N)}=${S}$` : `$${m}$ 組の和を $j=1$ から $${m}$ まで計算して，$S=${S}$` }];
+      return { unit: 'kiguuWa', lv, key: `kg1|${K}|${N}`, sec: T.kg1, label: `$\\displaystyle S=${sgT}$ を求めよ。`, math: '', item: `$${sgT}$`, head: `$\\displaystyle ${sgT}$`,
+        ans: `$S=${S}$`, vars: {}, steps: st, chk: () => { let s = 0, n = 0; for (let k = 1; k <= N; k += 2) { s += G.f(k) - (k + 1 <= N ? G.f(k + 1) : 0); n++; } return s === S && n > 0 ? 0 : 1; } };
+    }
+    const N = ri(10, 40);
+    const st = [{ t: 'txt', s: `2項ずつまとめると，第 $j$ 組は $${G.pair}$。` },
+      { t: 'txt', s: `$n$ が偶数のとき，$\\frac{n}{2}$ 組の和を計算して $S_n=${G.ev}$。` },
+      { t: 'txt', s: `$n$ が奇数のとき，$S_n=S_{n-1}+${G.t.replace(/k/g, 'n')}$ を計算して $S_n=${G.od}$。` },
+      { t: 'txt', s: `$n=${N}$ は${N % 2 ? '奇数' : '偶数'}なので，$S_{${N}}=${val(N)}$` }];
+    return { unit: 'kiguuWa', lv, key: `kg2|${K}|${N}`, sec: T.kg2, label: `$\\displaystyle S_n=\\sum_{k=1}^{n}(-1)^{k+1}${G.t}$ を，$n$ が偶数のときと奇数のときに分けて求めよ。また，$S_{${N}}$ を求めよ。`, math: '', item: `$\\sum(-1)^{k+1}${G.t}$（偶奇で分ける）`, head: `$\\displaystyle ${sig}$`,
+      ans: `$n$ が偶数のとき $S_n=${G.ev}$，奇数のとき $S_n=${G.od}$；$S_{${N}}=${val(N)}$`, vars: {}, steps: st,
+      chk: () => { let bad = 0; for (let n = 1; n <= 30; n++) if (Math.abs(texEval(n % 2 ? G.od : G.ev, { n }) - val(n)) > 1e-9) bad++; return bad; } };
+  },
+  // 【異なる2数の積の和】（入試発展）(Σa)²=Σa²+2S。lv1：1〜n・奇数。lv2：展開式の係数として
+  sekiWa(lv){
+    const K = pick(['nat', 'odd']), G = {
+      nat: { set: '1,\\ 2,\\ \\cdots,\\ n', a: k => k, s1: '\\frac{1}{2}n(n+1)', s2: '\\frac{1}{6}n(n+1)(2n+1)', nf: '\\frac{1}{24}(n-1)n(n+1)(3n+2)', poly: '(x+1)(x+2)\\cdots(x+n)' },
+      odd: { set: '1,\\ 3,\\ \\cdots,\\ 2n-1', a: k => 2 * k - 1, s1: 'n^2', s2: '\\frac{1}{3}n(2n-1)(2n+1)', nf: '\\frac{1}{6}(n-1)n(3n^2-n-1)', poly: '(x+1)(x+3)\\cdots(x+2n-1)' }
+    }[K];
+    const N = ri(4, 12), Sv = n => { let a = 0, b = 0; for (let k = 1; k <= n; k++) { a += G.a(k); b += G.a(k) ** 2; } return (a * a - b) / 2; }, val = Sv(N);
+    const st = [{ t: 'txt', s: `$(${G.set.replace(/\\ /g, '').replace(/,/g, '+')})^2$ を展開すると，各数の2乗の和と，異なる2数の積の和 $S$ の2倍になる。` },
+      { t: 'txt', s: `数の和は $${G.s1}$，2乗の和は $${G.s2}$。` },
+      { t: 'eq', noEval: true, rows: [`S &= \\frac{1}{2}\\left\\{\\left(${G.s1}\\right)^2-${G.s2}\\right\\}`, `&= ${G.nf}`] },
+      { t: 'txt', s: `$n=${N}$ を代入して $${val}$` }];
+    const label = lv === 1 ? `$n\\geqq 2$ とする。$n$ 個の数 $${G.set}$ の中から異なる2個を取り出して作った積の総和 $S$ を $n$ の式で表せ。また，$n=${N}$ のときの値を求めよ。`
+      : `$n\\geqq 2$ とする。$${G.poly}$ を展開したときの $x^{n-2}$ の係数を $n$ の式で表せ。また，$n=${N}$ のときの値を求めよ。`;
+    if (lv === 2) st.unshift({ t: 'txt', s: `$x^{n-2}$ の係数は，定数 $${G.set}$ から異なる2個を取り出した積の総和 $S$ に等しい。` });
+    return { unit: 'sekiWa', lv, key: `sw${lv}|${K}|${N}`, sec: T[lv === 1 ? "seki1" : "seki2"], label, math: '', item: lv === 1 ? `$${G.set}$ の2数の積の和` : `$${G.poly}$ の $x^{n-2}$ の係数`, head: lv === 1 ? `$${G.set}$` : `$${G.poly}$`,
+      ans: `$${G.nf}$；$n=${N}$ のとき $${val}$`, vars: {}, steps: st,
+      chk: () => { let bad = 0; for (let n = 2; n <= 20; n++) { let s = 0; for (let i = 1; i <= n; i++) for (let j = i + 1; j <= n; j++) s += G.a(i) * G.a(j); if (Math.abs(texEval(G.nf, { n }) - s) > 1e-9) bad++;
+        if (lv === 2) { let c = [1]; for (let i = 1; i <= n; i++) { const t = new Array(c.length + 1).fill(0); c.forEach((v, d) => { t[d + 1] += v; t[d] += v * G.a(i); }); c = t; } if (c[n - 2] !== s) bad++; } }
+        return bad; } };
+  },
+  // 【ガウス記号の数列の和】（入試発展）lv1：a_n=[√n]。lv2：a_n=[log₂ n]（等差×等比の和になる）
+  gaussWa(lv){
+    if (lv === 1) {
+      const N = ri(15, 200), M = Math.floor(Math.sqrt(N)), last = N - M * M + 1, A = (M - 1) * M * (4 * M + 1) / 6, S = A + M * last;
+      const st = [{ t: 'txt', s: `$[\\sqrt{n}]=k$ となるのは $k^2\\leqq n\\leqq (k+1)^2-1$ のときで，その個数は $2k+1$。` },
+        { t: 'txt', s: `$${M}^2=${M * M}\\leqq ${N}<${(M + 1) ** 2}$ だから，$k=1$ 〜 $${M - 1}$ はすべてそろい，$k=${M}$ は $n=${M * M}$ 〜 $${N}$ の $${last}$ 個。` },
+        { t: 'eq', noEval: true, rows: [`S &= \\sum_{k=1}^{${M - 1}}k(2k+1)+${M}\\times ${last}`, `&= ${A}+${M * last}`, `&= ${S}`] }];
+      return { unit: 'gaussWa', lv, key: `gw1|${N}`, sec: T.gauss1, label: `$x$ を超えない最大の整数を $[x]$ と表す。数列 $\\{a_n\\}$ が $a_n=\\left[\\sqrt{n}\\right]$ で定められるとき，$S=a_1+a_2+\\cdots+a_{${N}}$ を求めよ。`, math: '', item: `$[\\sqrt{n}]$ の和（$${N}$ 項）`, head: `$a_n=[\\sqrt{n}]$，$${N}$ 項`,
+        ans: `$S=${S}$`, vars: {}, steps: st, chk: () => { let s = 0; for (let n = 1; n <= N; n++) s += Math.floor(Math.sqrt(n) + 1e-12); return s === S ? 0 : 1; } };
+    }
+    const N = ri(20, 300), M = Math.floor(Math.log2(N)), last = N - 2 ** M + 1, A = (M - 2) * 2 ** M + 2, S = A + M * last;
+    const st = [{ t: 'txt', s: `$[\\log_2 n]=k$ となるのは $2^k\\leqq n\\leqq 2^{k+1}-1$ のときで，その個数は $2^k$。` },
+      { t: 'txt', s: `$2^{${M}}=${2 ** M}\\leqq ${N}<${2 ** (M + 1)}$ だから，$k=0$ 〜 $${M - 1}$ はすべてそろい，$k=${M}$ は $n=${2 ** M}$ 〜 $${N}$ の $${last}$ 個。` },
+      { t: 'txt', s: `$T=\\sum_{k=1}^{${M - 1}}k\\cdot 2^k$ は，$T-2T$ を計算して $T=(${M}-2)\\cdot 2^{${M}}+2=${A}$。` },
+      { t: 'eq', noEval: true, rows: [`S &= ${A}+${M}\\times ${last}`, `&= ${S}`] }];
+    return { unit: 'gaussWa', lv, key: `gw2|${N}`, sec: T.gauss2, label: `$x$ を超えない最大の整数を $[x]$ と表す。数列 $\\{a_n\\}$ が $a_n=\\left[\\log_2 n\\right]$ で定められるとき，$S=a_1+a_2+\\cdots+a_{${N}}$ を求めよ。`, math: '', item: `$[\\log_2 n]$ の和（$${N}$ 項）`, head: `$a_n=[\\log_2 n]$，$${N}$ 項`,
+      ans: `$S=${S}$`, vars: {}, steps: st, chk: () => { let s = 0; for (let n = 1; n <= N; n++) { let k = 0; while (2 ** (k + 1) <= n) k++; s += k; } return s === S ? 0 : 1; } };
+  },
+  // 【空間の格子点】（入試発展）z=k で切って平面の個数を足す。lv1：x+y+z（=，≦，0 以上・1 以上）。lv2：x+y+2z≦2n，|x|+|y|+|z|≦n
+  kuukanKoshi(lv){
+    const K = lv === 1 ? pick(['eq0', 'le0', 'eq1', 'le1']) : pick(['two', 'abs']);
+    const G = {
+      eq0: { c: 'x+y+z=n,\\ x\\geqq 0,\\ y\\geqq 0,\\ z\\geqq 0', ok: (x, y, z, n) => x + y + z === n && x >= 0 && y >= 0 && z >= 0, nf: '\\frac{1}{2}(n+1)(n+2)', n0: 1,
+        how: ['$z=k$（$0\\leqq k\\leqq n$）のとき $x+y=n-k$ を満たす $(x,\\ y)$ は $n-k+1$ 個。', '$\\sum_{k=0}^{n}(n-k+1)=1+2+\\cdots+(n+1)=\\frac{1}{2}(n+1)(n+2)$'] },
+      le0: { c: 'x+y+z\\leqq n,\\ x\\geqq 0,\\ y\\geqq 0,\\ z\\geqq 0', ok: (x, y, z, n) => x + y + z <= n && x >= 0 && y >= 0 && z >= 0, nf: '\\frac{1}{6}(n+1)(n+2)(n+3)', n0: 1,
+        how: ['$z=k$（$0\\leqq k\\leqq n$）のとき $x+y\\leqq n-k$ を満たす $(x,\\ y)$ は $\\frac{1}{2}(n-k+1)(n-k+2)$ 個。', '$j=n-k+1$ とおくと $\\sum_{j=1}^{n+1}\\frac{1}{2}j(j+1)=\\frac{1}{6}(n+1)(n+2)(n+3)$'] },
+      eq1: { c: 'x+y+z=n,\\ x\\geqq 1,\\ y\\geqq 1,\\ z\\geqq 1', ok: (x, y, z, n) => x + y + z === n && x >= 1 && y >= 1 && z >= 1, nf: '\\frac{1}{2}(n-1)(n-2)', n0: 3,
+        how: ['$z=k$（$1\\leqq k\\leqq n-2$）のとき $x+y=n-k$，$x\\geqq 1$，$y\\geqq 1$ を満たす $(x,\\ y)$ は $n-k-1$ 個。', '$\\sum_{k=1}^{n-2}(n-k-1)=1+2+\\cdots+(n-2)=\\frac{1}{2}(n-1)(n-2)$'] },
+      le1: { c: 'x+y+z\\leqq n,\\ x\\geqq 1,\\ y\\geqq 1,\\ z\\geqq 1', ok: (x, y, z, n) => x + y + z <= n && x >= 1 && y >= 1 && z >= 1, nf: '\\frac{1}{6}n(n-1)(n-2)', n0: 3,
+        how: ['$x+y+z=m$（$3\\leqq m\\leqq n$）を満たす組は $\\frac{1}{2}(m-1)(m-2)$ 個。', '$\\sum_{m=3}^{n}\\frac{1}{2}(m-1)(m-2)=\\frac{1}{6}n(n-1)(n-2)$'] },
+      two: { c: 'x+y+2z\\leqq 2n,\\ x\\geqq 0,\\ y\\geqq 0,\\ z\\geqq 0', ok: (x, y, z, n) => x + y + 2 * z <= 2 * n && x >= 0 && y >= 0 && z >= 0, nf: '\\frac{1}{6}(n+1)(n+2)(4n+3)', n0: 1,
+        how: ['$z=k$（$0\\leqq k\\leqq n$）のとき $x+y\\leqq 2(n-k)$ を満たす $(x,\\ y)$ は，$j=n-k$ として $\\frac{1}{2}(2j+1)(2j+2)=(2j+1)(j+1)$ 個。', '$\\sum_{j=0}^{n}(2j^2+3j+1)=\\frac{1}{3}n(n+1)(2n+1)+\\frac{3}{2}n(n+1)+(n+1)=\\frac{1}{6}(n+1)(n+2)(4n+3)$'] },
+      abs: { c: '|x|+|y|+|z|\\leqq n', ok: (x, y, z, n) => Math.abs(x) + Math.abs(y) + Math.abs(z) <= n, nf: '\\frac{1}{3}(2n+1)(2n^2+2n+3)', n0: 1,
+        how: ['$|x|+|y|\\leqq m$ を満たす $(x,\\ y)$ は $2m^2+2m+1$ 個（$m\\geqq 0$）。', '$z=\\pm k$ で同じ個数なので，$m=n$ の分と，$m=0$ 〜 $n-1$ の分の2倍を足して $(2n^2+2n+1)+2\\sum_{m=0}^{n-1}(2m^2+2m+1)=\\frac{1}{3}(2n+1)(2n^2+2n+3)$'] }
+    }[K];
+    const N = ri(Math.max(G.n0, 4), 12), cnt = n => { let c = 0; const R = 2 * n + 1; for (let x = -R; x <= R; x++) for (let y = -R; y <= R; y++) for (let z = -R; z <= R; z++) if (G.ok(x, y, z, n)) c++; return c; }, val = Math.round(texEval(G.nf, { n: N }));
+    const st = G.how.map(s => ({ t: 'txt', s })).concat([{ t: 'txt', s: `$n=${N}$ を代入して $${val}$ 個。` }]);
+    return { unit: 'kuukanKoshi', lv, key: `kk|${K}|${N}`, sec: T[lv === 1 ? "kk1" : "kk2"], label: `$n$ を自然数${G.n0 > 1 ? `（$n\\geqq ${G.n0}$）` : ''}とする。$${G.c}$ を満たす整数の組 $(x,\\ y,\\ z)$ の個数を $n$ の式で表せ。また，$n=${N}$ のときの個数を求めよ。`, math: '', item: `$${G.c.split(',')[0]}$ の格子点`, head: `$${G.c}$`,
+      ans: `$${G.nf}$ 個；$n=${N}$ のとき $${val}$ 個`, vars: {}, steps: st,
+      chk: () => { let bad = 0; for (let n = G.n0; n <= 8; n++) if (Math.abs(texEval(G.nf, { n }) - cnt(n)) > 1e-9) bad++; if (val !== cnt(N)) bad++; return bad; } };
   }
 };
 Object.assign(GEN, B_GEN);
@@ -10301,6 +10597,16 @@ const FORMULA = {
   gunSuretsu: ['第 $(n-1)$ 群までの項の個数を数えて，第 $n$ 群の最初の項が，もとの数列の第何項かを求める。', '第 $n$ 群の和は，初項・末項・項数がわかれば $\\frac{1}{2}\\times$ 項数 $\\times$（初項＋末項）。'],
   menseki12: ['放物線 $y=ax^2+\\cdots$ と $x=\\alpha$，$\\beta$ での2本の接線で囲む面積は $\\frac{|a|}{12}(\\beta-\\alpha)^3$。接線の交点の $x$ 座標は $\\frac{\\alpha+\\beta}{2}$。', '3次関数（$x^3$ の係数 $a$）と $x=\\alpha$ での接線が $x=\\beta$ で交わるとき，囲む面積は $\\frac{|a|}{12}(\\beta-\\alpha)^4$。'],
   amariBunrui: ['$a$ を $m$ で割った余りが $r$ なら $a=mk+r$。和・差・積の余りは，余りどうしの和・差・積を $m$ で割った余り。', '$n$ の式の余りは，$n=mk,\\ mk+1,\\ \\cdots,\\ mk+(m-1)$ に分けて調べる。'],
+  tousaMax: ['$a_n$ の符号が変わる所を調べる。正の項をすべて足したとき最大（負の項をすべて足したとき最小）。$a_n=0$ の項があれば，その前後で同じ値。'],
+  kyoutsuukou: ['等差数列どうし：最初の共通項を見つけ，公差の最小公倍数ずつ増える。', '等比数列 $b^n$ は割った余りが周期的にくり返すので，余りが合う $n$ を調べる。'],
+  baisuuWa: ['$d$ の倍数の和は，最初と最後の倍数を求めて等差数列の和。', '（$d$ または $e$ の倍数の和）＝（$d$ の倍数）＋（$e$ の倍数）−（両方の倍数）。'],
+  zettaiWa: ['$a_k$ の符号が変わる所で分ける。$a_k\\leqq 0$ の部分は $|a_k|=-a_k$。'],
+  bouenWa: ['$\\frac{1}{\\sqrt{k}+\\sqrt{k+1}}=\\sqrt{k+1}-\\sqrt{k}$ のように差の形にすると，途中が消える。', '$k(k+1)=\\frac{1}{3}\\{k(k+1)(k+2)-(k-1)k(k+1)\\}$ のように，次数を1つ上げた差の形にする。'],
+  sansuu: ['等差数列をなす3数は $a-d$，$a$，$a+d$ とおく。', '等比数列をなす3数は $\\frac{a}{r}$，$a$，$ar$ とおく（積が $a^3$）。'],
+  kiguuWa: ['2項ずつまとめる。$n$ が奇数のときは $S_n=S_{n-1}+$（最後の項）。'],
+  sekiWa: ['$(a_1+a_2+\\cdots+a_n)^2=(a_1^2+\\cdots+a_n^2)+2S$ を使う。'],
+  gaussWa: ['$[\\sqrt{n}]=k$ となる $n$ は $k^2\\leqq n\\leqq (k+1)^2-1$ の $2k+1$ 個。値が同じ項をまとめて足す。', '$[\\log_2 n]=k$ となる $n$ は $2^k$ 個。和は（等差）×（等比）の形。'],
+  kuukanKoshi: ['$z=k$ で切って，平面の格子点の個数を求め，$k$ について足す。'],
   zettaichi: ['$c>0$ のとき，$|X|=c \\iff X=\\pm c$，$|X|<c \\iff -c<X<c$，$|X|>c \\iff X<-c,\\ c<X$。', 'それ以外は，絶対値の中が 0 になる $x$ で区間を分け，$X\\geqq 0$ なら $|X|=X$，$X<0$ なら $|X|=-X$ としてはずす。求めた解が区間に入るか確かめる。'],
   seisuBubun: ['$n<\\sqrt{m}<n+1$ をみつけて，整数部分 $a$ を決める。小数部分は $b=($もとの数$)-a$。', '$b+n=\\sqrt{m}$ を使うと，$b$ の式の値が簡単に求まる。'],
   sessenHonsu: ['接点を $(t,\\ f(t))$ とおいて接線の方程式を作り，点の座標を代入した $t$ の方程式の実数解の個数を調べる。', '3次関数では，接点が異なれば接線も異なる。3次方程式が異なる3つの実数解をもつ条件は（極大値）×（極小値）$<0$。'],
@@ -10948,8 +11254,10 @@ function applyFont(){ document.documentElement.style.setProperty('--font', FONTS
 // 教科のタブ：その教科の分野だけを見せる（単元の選択は教科をまたいで残す）。分野の欄は1つだけひらく
 const SUBJ_TABS = ['1', 'A', '2', 'B', 'C'];
 // 受験基礎の印：入試の小問でよく出る典型処理の単元。新しい単元を足したら、ここに入れると受験基礎で表示される
-const JUKEN = new Set(['heimen', 'kyori', 'gaiseki', 'kyuumen', 'tenChokusen', 'gunSuretsu', 'menseki12', 'amariBunrui', 'zettaichi', 'seisuBubun', 'sessenHonsu', 'okikae', 'teisuBunri', 'ketasuu', 'kakuMax', 'taisho', 'kaiKeisu1', 'kaiHaichi', 'kanshu', 'hanpuku', 'jokenTsuki', 'futeishiki', 'goudou', 'soukaSoujo', 'kaiKeisu2', 'teiten', 'senkei', 'tsuka', 'enSessen', 'gousei', 'taisuuHouteishiki', 'kyokuchi', 'rokubun', 'zenka', 'snAn', 'sabunWa', 'kouten', 'saisyou']);
-const unitShown = i => !ST.juken || JUKEN.has(i.value);
+const JUKEN = new Set(['tousaMax', 'kyoutsuukou', 'baisuuWa', 'zettaiWa', 'bouenWa', 'sansuu', 'kiguuWa', 'heimen', 'kyori', 'gaiseki', 'kyuumen', 'tenChokusen', 'gunSuretsu', 'menseki12', 'amariBunrui', 'zettaichi', 'seisuBubun', 'sessenHonsu', 'okikae', 'teisuBunri', 'ketasuu', 'kakuMax', 'taisho', 'kaiKeisu1', 'kaiHaichi', 'kanshu', 'hanpuku', 'jokenTsuki', 'futeishiki', 'goudou', 'soukaSoujo', 'kaiKeisu2', 'teiten', 'senkei', 'tsuka', 'enSessen', 'gousei', 'taisuuHouteishiki', 'kyokuchi', 'rokubun', 'zenka', 'snAn', 'sabunWa', 'kouten', 'saisyou']);
+// 入試発展の印：受験基礎より一歩進んだ、入試の典型問題
+const HATTEN = new Set(['sekiWa', 'gaussWa', 'kuukanKoshi']);
+const unitShown = i => !ST.juken || (ST.juken === 'h' ? HATTEN : JUKEN).has(i.value);
 // 分野の中で、いま表示している単元
 const shownIds = u => [...u.querySelectorAll('input[name="unit"]')].filter(unitShown).map(i => i.value);
 function applySubject(){
@@ -10958,7 +11266,8 @@ function applySubject(){
   if (!SUBJ_TABS.includes(ST.subject)) ST.subject = '1';
   document.querySelectorAll('#fields input[name="unit"]').forEach(i => { i.closest('.chk').hidden = !unitShown(i); });
   document.querySelectorAll('#fields .field').forEach(f => { const n = shownIds(f.querySelector('.units')).length; f.querySelector('.fhead em').textContent = n + '単元'; });
-  $('jukenBtn').classList.toggle('on', !!ST.juken); $('jukenBtn').setAttribute('aria-pressed', !!ST.juken);
+  $('jukenBtn').classList.toggle('on', ST.juken === true); $('jukenBtn').setAttribute('aria-pressed', ST.juken === true);
+  $('hattenBtn').classList.toggle('on', ST.juken === 'h'); $('hattenBtn').setAttribute('aria-pressed', ST.juken === 'h');
   $('subjTabs').hidden = !!ST.juken; $('fields').classList.toggle('jk', !!ST.juken);
   document.querySelectorAll('#fields .jsubj').forEach(h => { h.hidden = !ST.juken; });
   if (ST.juken) { document.querySelectorAll('#fields .field').forEach(f => { f.hidden = !shownIds(f.querySelector('.units')).length; f.classList.add('open'); f.querySelector('.fhead').setAttribute('aria-expanded', true); }); return; }
@@ -11231,7 +11540,8 @@ $('picked').addEventListener('click', e => {
   else if (b.dataset.setopen) { ST.setOpen = ST.setOpen === b.dataset.setopen ? '' : b.dataset.setopen; save(); showOpts(); updateGroupCounts(); }
 });
 $('unitClear').addEventListener('click', () => setUnits([]));
-$('jukenBtn').addEventListener('click', () => { ST.juken = !ST.juken; save(); applySubject(); updateGroupCounts(); });
+$('jukenBtn').addEventListener('click', () => { ST.juken = ST.juken === true ? false : true; save(); applySubject(); updateGroupCounts(); });
+$('hattenBtn').addEventListener('click', () => { ST.juken = ST.juken === 'h' ? false : 'h'; save(); applySubject(); updateGroupCounts(); });
 $('subjTabs').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; ST.subject = b.dataset.sj; save(); applySubject(); });
 // よく使う組み合わせ：単元のセットに名前をつけて、フォルダ（1段）に分けて保存する。押すとその単元に入れかわる
 // ST.presets = [{ n: 名前, u: [単元], f: フォルダ名（'' は未分類） }]、ST.presetFolders = [フォルダ名]（空のフォルダも残すため）
