@@ -601,6 +601,8 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
           <label class="chk"><input type="checkbox" name="unit" value="bunsuWa">分数の数列の和</label>
           <label class="chk"><input type="checkbox" name="unit" value="sabunWa">（等差）×（等比）の和</label>
           <label class="chk"><input type="checkbox" name="unit" value="zenka">漸化式</label>
+          <label class="chk"><input type="checkbox" name="unit" value="kinou">数学的帰納法</label>
+          <label class="chk"><input type="checkbox" name="unit" value="kinouH">数学的帰納法（発展）</label>
           <label class="chk"><input type="checkbox" name="unit" value="gunSuretsu">群数列</label>
           <label class="chk"><input type="checkbox" name="unit" value="tousaMax">等差数列の和の最大・最小</label>
           <label class="chk"><input type="checkbox" name="unit" value="kyoutsuukou">共通項の数列</label>
@@ -796,8 +798,10 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.68.0', UPDATED = '2026-11-12';
+const VERSION = '5.70.0', UPDATED = '2026-11-12';
 const CHANGES = [
+  ['5.70.0', '2026-11-12', '数B に入試発展の「数学的帰納法（発展）」を追加。基本：全段仮定（(Σa)²=Σa³、2cSₙ=aₙ²+caₙ、aₙ₊₁=(2/n)Sₙ から一般項）、標準：二段仮定（αⁿ+βⁿ が整数、3項間漸化式の一般項の証明）。数学的帰納法の標準に和の不等式を4つ追加（Σ1/√i と 2√n、Σ1/i と 2n/(n+1)、Σ1/i³）。'],
+  ['5.69.0', '2026-11-12', '数B に「数学的帰納法」を追加（受験基礎の印つき）。基本：和の等式（13 種類＋等比の和）、標準：倍数であること（a^n−b^n、n^3+2n など）と不等式（2^n>n^2、n!>2^n、ベルヌーイの不等式など）。解答は (i)(ii) の形の証明。'],
   ['5.68.0', '2026-11-12', '「入試発展」のボタンを追加（押すと入試発展の単元だけ表示）。数B に受験基礎の単元を7つ追加：等差数列の和の最大・最小、共通項の数列、倍数の和、絶対値のついた数列の和、差の形にして和（望遠鏡和）、3数の表し方、符号が交互の数列の和。入試発展の単元を3つ追加：異なる2数の積の和、ガウス記号の数列の和、空間の格子点。'],
   ['5.67.2', '2026-11-12', '受験基礎の印を既存の単元にも追加：数C「平面の方程式」「点と平面の距離」「2本に垂直なベクトル」「球面の方程式」、数II「点と直線の距離」。'],
   ['5.67.1', '2026-11-12', '公式・手順の枠に、1/6公式（放物線と x 軸で囲む部分）と1/12公式（放物線と2本の接線、3次関数と接線で囲む部分）の小さな図を入れた（画面・印刷・LaTeX とも）。'],
@@ -1064,7 +1068,7 @@ const UNITS = [
   ['kodo', '弧度法の値', '2'], ['kahou', '加法定理', '2'], ['gousei', '三角関数の合成', '2'], ['sankakuHouteishiki', '三角方程式', '2'], ['okikae', '置きかえと最大・最小', '2'],
   ['shisu', '指数の計算', '2'], ['taisuuChi', '対数の値', '2'], ['taisuuWa', '対数の和・差・係数', '2'], ['teiHenkan', '底の変換', '2'], ['taisuuHouteishiki', '対数方程式・指数方程式', '2'], ['ketasuu', '桁数・最高位の数字', '2'],
   ['sessen', '接線の方程式', '2'], ['kyokuchi', '3次関数の極値', '2'], ['teisekibun', '定積分の計算', '2'], ['rokubun', '1/6公式の面積', '2'], ['menseki12', '1/12公式の面積', '2'], ['teisuBunri', '定数分離と解の個数', '2'], ['sessenHonsu', '接線の本数', '2'],
-  ['tousa', '等差数列', 'B'], ['touhi', '等比数列', 'B'], ['sigma', 'Σの計算', 'B'], ['koshiten', '格子点の個数', 'B'], ['kaisa', '階差数列', 'B'], ['snAn', '和 Sₙ から一般項', 'B'], ['bunsuWa', '分数の数列の和', 'B'], ['sabunWa', '（等差）×（等比）の和', 'B'], ['zenka', '漸化式', 'B'], ['gunSuretsu', '群数列', 'B'], ['tousaMax', '等差数列の和の最大・最小', 'B'], ['kyoutsuukou', '共通項の数列', 'B'], ['baisuuWa', '倍数の和', 'B'], ['zettaiWa', '絶対値のついた数列の和', 'B'], ['bouenWa', '差の形にして和（望遠鏡和）', 'B'], ['sansuu', '3数の表し方', 'B'], ['kiguuWa', '符号が交互の数列の和', 'B'], ['sekiWa', '異なる2数の積の和', 'B'], ['gaussWa', 'ガウス記号の数列の和', 'B'], ['kuukanKoshi', '空間の格子点', 'B'],
+  ['tousa', '等差数列', 'B'], ['touhi', '等比数列', 'B'], ['sigma', 'Σの計算', 'B'], ['koshiten', '格子点の個数', 'B'], ['kaisa', '階差数列', 'B'], ['snAn', '和 Sₙ から一般項', 'B'], ['bunsuWa', '分数の数列の和', 'B'], ['sabunWa', '（等差）×（等比）の和', 'B'], ['zenka', '漸化式', 'B'], ['kinou', '数学的帰納法', 'B'], ['kinouH', '数学的帰納法（発展）', 'B'], ['gunSuretsu', '群数列', 'B'], ['tousaMax', '等差数列の和の最大・最小', 'B'], ['kyoutsuukou', '共通項の数列', 'B'], ['baisuuWa', '倍数の和', 'B'], ['zettaiWa', '絶対値のついた数列の和', 'B'], ['bouenWa', '差の形にして和（望遠鏡和）', 'B'], ['sansuu', '3数の表し方', 'B'], ['kiguuWa', '符号が交互の数列の和', 'B'], ['sekiWa', '異なる2数の積の和', 'B'], ['gaussWa', 'ガウス記号の数列の和', 'B'], ['kuukanKoshi', '空間の格子点', 'B'],
   ['bunpu', '確率分布表から期待値・分散', 'B'], ['henkan', 'aX+b の期待値・分散', 'B'], ['waSeki', '確率変数の和と積', 'B'], ['nikouBunpu', '二項分布', 'B'], ['seiki', '正規分布', 'B'], ['seikiKinji', '二項分布の正規近似', 'B'], ['hyouhonHeikin', '標本平均の分布', 'B'], ['suitei', '母平均の推定', 'B'], ['kentei', '仮説検定', 'B'],
   ['naiseki', '内積の計算', 'C'], ['nasukaku', 'なす角', 'C'], ['menseki', '三角形の面積', 'C'], ['heikouSuichoku', '平行・垂直の条件', 'C'], ['ookisa', '大きさと内積', 'C'], ['saisyou', '|a+tb| の最小値', 'C'], ['ichiVec', '位置ベクトル', 'C'], ['kouten', '2直線の交点', 'C'], ['chokusenVec', '直線のベクトル方程式', 'C'], ['kuukanNaiseki', '空間ベクトルの内積となす角', 'C'], ['gaiseki', '2本に垂直なベクトル', 'C'], ['heimen', '平面の方程式', 'C'], ['kyuumen', '球面の方程式', 'C'], ['kyori', '点と平面の距離', 'C'], ['kyokkei', '絶対値と偏角・極形式', 'C'], ['kaiten', '点の回転', 'C'], ['deMoivre', 'ド・モアブルの定理', 'C'], ['nJouKon', 'n 乗根', 'C'], ['sanTenKaku', '3点がつくる角', 'C'], ['cxEn', '円 |z−α|=r', 'C'], ['suichoku', '垂直二等分線', 'C'], ['apollonius', 'アポロニウスの円', 'C'], ['kyokusenShiki', '条件から2次曲線の方程式', 'C'], ['heikouIdou', '平行移動した2次曲線', 'C'], ['kyouyuuten', '2次曲線と直線の共有点', 'C'], ['nijiSessen', '2次曲線の接線', 'C'], ['baikaiShoukyo', '媒介変数の消去', 'C'], ['baikaiEn', '円・楕円の媒介変数表示', 'C'], ['kyokuZahyou', '極座標と直交座標', 'C'], ['kyokuToChokkou', '極方程式 → 直交座標', 'C'], ['chokkouToKyoku', '直交座標 → 極方程式', 'C']
 ];
@@ -1149,6 +1153,10 @@ const TIME_TABLE = [
   ['gauss2', '[log₂ n] の和', [150, 300, 600]],
   ['kk1', '空間の格子点', [120, 240, 480]],
   ['kk2', '空間の格子点（発展）', [150, 300, 600]],
+  ['kinou1', '数学的帰納法（等式）', [180, 300, 600]],
+  ['kinou2', '数学的帰納法（倍数・不等式）', [240, 420, 780]],
+  ['kinouH1', '数学的帰納法（全段仮定）', [240, 420, 780]],
+  ['kinouH2', '数学的帰納法（二段仮定）', [240, 420, 780]],
   ['kanshu1', '二次関数の最大・最小（x² の係数が ±1・頂点が整数）', [40, 90, 180]],
   ['kanshuA', '二次関数の最大・最小（x² の係数が ±1 以外）', [50, 110, 210]],
   ['kanshuF', '二次関数の最大・最小（頂点が分数）', [60, 120, 240]],
@@ -1420,6 +1428,8 @@ const UNIT_LEVEL = {
   sekiWa: ['1〜n・奇数の2数の積の和', '展開式の係数として'],
   gaussWa: ['[√n] の和', '[log₂ n] の和'],
   kuukanKoshi: ['x+y+z（＝・≦，0 以上・1 以上）', 'x+y+2z≦2n，|x|+|y|+|z|≦n'],
+  kinou: ['和の等式', '倍数であること・不等式（和の不等式も）'],
+  kinouH: ['全段仮定（a₁〜a_k をすべて仮定）', '二段仮定（n=k，k+1 を仮定）'],
   zettaichi: ['|ax+b| と正の数（±c ではずす）', '|x+p| と1次式，|x−p|+|x−q|（場合分け）'],
   seisuBubun: ['√m+p の整数部分・小数部分（有理化も）', '有理化して整数部分・小数部分，b²+2nb の値'],
   sessenHonsu: ['点から引ける接線の本数', '3本の接線が引ける条件'],
@@ -6419,6 +6429,187 @@ const B_GEN = {
     return { unit: 'kuukanKoshi', lv, key: `kk|${K}|${N}`, sec: T[lv === 1 ? "kk1" : "kk2"], label: `$n$ を自然数${G.n0 > 1 ? `（$n\\geqq ${G.n0}$）` : ''}とする。$${G.c}$ を満たす整数の組 $(x,\\ y,\\ z)$ の個数を $n$ の式で表せ。また，$n=${N}$ のときの個数を求めよ。`, math: '', item: `$${G.c.split(',')[0]}$ の格子点`, head: `$${G.c}$`,
       ans: `$${G.nf}$ 個；$n=${N}$ のとき $${val}$ 個`, vars: {}, steps: st,
       chk: () => { let bad = 0; for (let n = G.n0; n <= 8; n++) if (Math.abs(texEval(G.nf, { n }) - cnt(n)) > 1e-9) bad++; if (val !== cnt(N)) bad++; return bad; } };
+  },
+  // 【数学的帰納法】lv1：和の等式。lv2：倍数であること・不等式。(i) n=1（または最初の n），(ii) n=k を仮定して n=k+1
+  kinou(lv){
+    const fin = n0 => ({ t: 'txt', s: `(i)，(ii) より，${n0 > 1 ? `$n\\geqq ${n0}$ を満たす` : 'すべての'}自然数 $n$ について成り立つ。` });
+    const K2N = (t, m) => t.replace(/k/g, 'n').replace(/m/g, m === undefined ? 'm' : `(${m})`);
+    const near = (a, b) => Math.abs(a - b) <= 1e-9 * Math.max(1, Math.abs(b));
+    if (lv === 1) {
+      const r = ri(2, 9);
+      const L = [
+        { id: 'odd', lhs: '1+3+5+\\cdots+(2n-1)', rhs: 'n^2', f: k => 2 * k - 1, t1: '\\{2(k+1)-1\\}', rows: ['k^2+2k+1', '(k+1)^2'] },
+        { id: 'k', lhs: '1+2+3+\\cdots+n', rhs: '\\frac{1}{2}n(n+1)', f: k => k, t1: '(k+1)', rows: ['\\frac{1}{2}(k+1)(k+2)'] },
+        { id: 'k2', lhs: '1^2+2^2+3^2+\\cdots+n^2', rhs: '\\frac{1}{6}n(n+1)(2n+1)', f: k => k * k, t1: '(k+1)^2', rows: ['\\frac{1}{6}(k+1)\\{k(2k+1)+6(k+1)\\}', '\\frac{1}{6}(k+1)(2k^2+7k+6)', '\\frac{1}{6}(k+1)(k+2)(2k+3)'] },
+        { id: 'k3', lhs: '1^3+2^3+3^3+\\cdots+n^3', rhs: '\\frac{1}{4}n^2(n+1)^2', f: k => k ** 3, t1: '(k+1)^3', rows: ['\\frac{1}{4}(k+1)^2\\{k^2+4(k+1)\\}', '\\frac{1}{4}(k+1)^2(k+2)^2'] },
+        { id: 'kk1', lhs: '1\\cdot 2+2\\cdot 3+\\cdots+n(n+1)', rhs: '\\frac{1}{3}n(n+1)(n+2)', f: k => k * (k + 1), t1: '(k+1)(k+2)', rows: ['\\frac{1}{3}(k+1)(k+2)(k+3)'] },
+        { id: 'fr1', lhs: '\\frac{1}{1\\cdot 2}+\\frac{1}{2\\cdot 3}+\\cdots+\\frac{1}{n(n+1)}', rhs: '\\frac{n}{n+1}', f: k => 1 / (k * (k + 1)), t1: '\\frac{1}{(k+1)(k+2)}', rows: ['\\frac{k(k+2)+1}{(k+1)(k+2)}', '\\frac{(k+1)^2}{(k+1)(k+2)}', '\\frac{k+1}{k+2}'] },
+        { id: 'fr2', lhs: '\\frac{1}{1\\cdot 3}+\\frac{1}{3\\cdot 5}+\\cdots+\\frac{1}{(2n-1)(2n+1)}', rhs: '\\frac{n}{2n+1}', f: k => 1 / ((2 * k - 1) * (2 * k + 1)), t1: '\\frac{1}{(2k+1)(2k+3)}', rows: ['\\frac{k(2k+3)+1}{(2k+1)(2k+3)}', '\\frac{(k+1)(2k+1)}{(2k+1)(2k+3)}', '\\frac{k+1}{2k+3}'] },
+        { id: 'k2k', lhs: '1+2\\cdot 2+3\\cdot 2^2+\\cdots+n\\cdot 2^{n-1}', rhs: '(n-1)\\cdot 2^n+1', f: k => k * 2 ** (k - 1), t1: '(k+1)\\cdot 2^k', rows: ['2k\\cdot 2^k+1', 'k\\cdot 2^{k+1}+1'] },
+        r === 2 ? { id: 'geo2', lhs: '1+2+2^2+\\cdots+2^{n-1}', rhs: '2^n-1', f: k => 2 ** (k - 1), t1: '2^k', rows: ['2\\cdot 2^k-1', '2^{k+1}-1'] }
+          : { id: `geo${r}`, lhs: `1+${r}+${r}^2+\\cdots+${r}^{n-1}`, rhs: `\\frac{${r}^n-1}{${r - 1}}`, f: k => r ** (k - 1), t1: `${r}^k`, rows: [`\\frac{${r}^k-1+${r - 1}\\cdot ${r}^k}{${r - 1}}`, `\\frac{${r}\\cdot ${r}^k-1}{${r - 1}}`, `\\frac{${r}^{k+1}-1}{${r - 1}}`] },
+        { id: '3k2', lhs: '1+4+7+\\cdots+(3n-2)', rhs: '\\frac{1}{2}n(3n-1)', f: k => 3 * k - 2, t1: '\\{3(k+1)-2\\}', rows: ['\\frac{1}{2}(3k^2+5k+2)', '\\frac{1}{2}(k+1)(3k+2)'] },
+        { id: '4k3', lhs: '1+5+9+\\cdots+(4n-3)', rhs: 'n(2n-1)', f: k => 4 * k - 3, t1: '\\{4(k+1)-3\\}', rows: ['2k^2+3k+1', '(k+1)(2k+1)'] },
+        { id: '2k', lhs: '2+4+6+\\cdots+2n', rhs: 'n(n+1)', f: k => 2 * k, t1: '2(k+1)', rows: ['(k+1)(k+2)'] },
+        { id: 'odd2', lhs: '1^2+3^2+5^2+\\cdots+(2n-1)^2', rhs: '\\frac{1}{3}n(2n-1)(2n+1)', f: k => (2 * k - 1) ** 2, t1: '(2k+1)^2', rows: ['\\frac{1}{3}(2k+1)\\{k(2k-1)+3(2k+1)\\}', '\\frac{1}{3}(2k+1)(2k^2+5k+3)', '\\frac{1}{3}(k+1)(2k+1)(2k+3)'] }
+      ];
+      const g = pick(L), R = n => { let s = 0; for (let k = 1; k <= n; k++) s += g.f(k); return s; };
+      const lhsK = g.lhs.replace(/n/g, 'k'), rhsK = g.rhs.replace(/n/g, 'k'), rows = [`${rhsK}+${g.t1}`, ...g.rows];
+      const f1 = g.id.startsWith('fr') ? (g.id === 'fr1' ? '\\frac{1}{2}' : '\\frac{1}{3}') : `${g.f(1)}`;
+      const st = [{ t: 'txt', s: `(i) $n=1$ のとき，左辺 $=${f1}$，右辺 $=${f1}$ となり，成り立つ。` },
+        { t: 'txt', s: `(ii) $n=k$ のとき成り立つと仮定すると $${lhsK}=${rhsK}$` },
+        { t: 'txt', s: `$n=k+1$ のときの左辺は，仮定を使って` },
+        { t: 'eq', noEval: true, rows: [`& ${lhsK}+${g.t1}`, ...rows.map(x => `&= ${x}`)] },
+        { t: 'txt', s: 'これは右辺の $n$ に $k+1$ を代入した式に等しい。よって $n=k+1$ のときも成り立つ。' }, fin(1)];
+      return { unit: 'kinou', lv, key: `ki1|${g.id}`, sec: T.kinou1, label: `すべての自然数 $n$ について，次の等式が成り立つことを，数学的帰納法で証明せよ。$\\ ${g.lhs}=${g.rhs}$`, math: '', item: `$${g.lhs}=${g.rhs}$`, head: `$${g.lhs}=${g.rhs}$`,
+        ans: '（証明）', vars: {}, steps: st,
+        chk: () => { let bad = 0; for (let n = 1; n <= 12; n++) { if (!near(texEval(g.rhs, { n }), R(n))) bad++; if (n <= 8) rows.forEach(x => { if (!near(texEval(K2N(x), { n }), R(n + 1))) bad++; }); }
+          if (!near(Number(f1.replace(/\\frac\{(\d+)\}\{(\d+)\}/, (_, a, b) => a / b)), g.f(1))) bad++; return bad; } };
+    }
+    const kind = pick(['A', 'A', 'B', 'C']);
+    if (kind === 'A') {
+      // a^n−b^n は a−b の倍数
+      let a, b; do { a = ri(3, 9); b = ri(1, a - 2); } while (false);
+      const d = a - b, P = n => a ** n - b ** n, pT = b === 1 ? `${a}^n-1` : `${a}^n-${b}^n`, kT = pT.replace(/n/g, 'k');
+      const rows = b === 1 ? [`${a}\\cdot ${a}^k-1`, `${a}(${a}^k-1)+${d}`, `${a}\\cdot ${d}m+${d}`, `${d}(${a}m+1)`]
+        : [`${a}\\cdot ${a}^k-${b}\\cdot ${b}^k`, `${a}(${a}^k-${b}^k)+${d}\\cdot ${b}^k`, `${a}\\cdot ${d}m+${d}\\cdot ${b}^k`, `${d}(${a}m+${b}^k)`];
+      const top = b === 1 ? `${a}^{k+1}-1` : `${a}^{k+1}-${b}^{k+1}`;
+      const st = [{ t: 'txt', s: `(i) $n=1$ のとき，$${b === 1 ? `${a}-1` : `${a}-${b}`}=${d}$ で，$${d}$ の倍数である。` },
+        { t: 'txt', s: `(ii) $n=k$ のとき成り立つと仮定すると，整数 $m$ を用いて $${kT}=${d}m$ と表せる。$n=k+1$ のとき` },
+        { t: 'eq', noEval: true, rows: [`& ${top}`, ...rows.map(x => `&= ${x}`)] },
+        { t: 'txt', s: `$${b === 1 ? `${a}m+1` : `${a}m+${b}^k`}$ は整数なので，$n=k+1$ のときも $${d}$ の倍数である。` }, fin(1)];
+      return { unit: 'kinou', lv, key: `ki2|A|${a}|${b}`, sec: T.kinou2, label: `すべての自然数 $n$ について，$${pT}$ は $${d}$ の倍数であることを，数学的帰納法で証明せよ。`, math: '', item: `$${pT}$ は $${d}$ の倍数`, head: `$${pT}$ は $${d}$ の倍数`,
+        ans: '（証明）', vars: {}, steps: st,
+        chk: () => { let bad = 0; for (let n = 1; n <= 12; n++) if ((BigInt(a) ** BigInt(n) - BigInt(b) ** BigInt(n)) % BigInt(d) !== 0n) bad++;
+          for (let k = 1; k <= 6; k++) { const m = P(k) / d; [top, ...rows].forEach(x => { if (!near(texEval(K2N(x, m), { n: k }), P(k + 1))) bad++; }); } return bad; } };
+    }
+    if (kind === 'B') {
+      const B = pick([
+        { id: 'c2', base: '1+2', pT: 'n^3+2n', d: 3, P: n => n ** 3 + 2 * n, asm: 'k^3+2k=3m', rows: ['(k+1)^3+2(k+1)', 'k^3+3k^2+3k+1+2k+2', '(k^3+2k)+3(k^2+k+1)', '3m+3(k^2+k+1)', '3(m+k^2+k+1)'], end: '$m+k^2+k+1$ は整数なので' },
+        { id: 'c5', base: '1+5', pT: 'n^3+5n', d: 6, P: n => n ** 3 + 5 * n, asm: 'k^3+5k=6m', rows: ['(k+1)^3+5(k+1)', '(k^3+5k)+3k^2+3k+6', '6m+3k(k+1)+6'], end: '$k(k+1)$ は連続する2つの整数の積で偶数だから，$3k(k+1)$ は $6$ の倍数。よって' },
+        { id: 'c1', base: '1-1', pT: 'n^3-n', d: 6, P: n => n ** 3 - n, asm: 'k^3-k=6m', rows: ['(k+1)^3-(k+1)', '(k^3-k)+3k^2+3k', '6m+3k(k+1)'], end: '$k(k+1)$ は連続する2つの整数の積で偶数だから，$3k(k+1)$ は $6$ の倍数。よって' },
+        { id: 'c6', base: '2+3+1', pT: '2n^3+3n^2+n', d: 6, P: n => 2 * n ** 3 + 3 * n * n + n, asm: '2k^3+3k^2+k=6m', rows: ['2(k+1)^3+3(k+1)^2+(k+1)', '(2k^3+3k^2+k)+6k^2+12k+6', '6m+6(k^2+2k+1)', '6(m+k^2+2k+1)'], end: '$m+k^2+2k+1$ は整数なので' },
+        { id: 'e4', base: '4+6-1', pT: '4^n+6n-1', d: 9, P: n => 4 ** n + 6 * n - 1, asm: '4^k+6k-1=9m', pre: '$4^k=9m-6k+1$ だから', rows: ['4^{k+1}+6(k+1)-1', '4\\cdot 4^k+6k+5', '4(9m-6k+1)+6k+5', '36m-18k+9', '9(4m-2k+1)'], end: '$4m-2k+1$ は整数なので' },
+        { id: 'e5', base: '5+3', pT: '5^n+3', d: 4, P: n => 5 ** n + 3, asm: '5^k+3=4m', pre: '$5^k=4m-3$ だから', rows: ['5^{k+1}+3', '5(4m-3)+3', '20m-12', '4(5m-3)'], end: '$5m-3$ は整数なので' },
+        { id: 'e13', base: '3^2+4', pT: '3^{n+1}+4^{2n-1}', d: 13, P: n => 3 ** (n + 1) + 4 ** (2 * n - 1), asm: '3^{k+1}+4^{2k-1}=13m', pre: '$3^{k+1}=13m-4^{2k-1}$ だから', rows: ['3^{k+2}+4^{2k+1}', '3\\cdot 3^{k+1}+16\\cdot 4^{2k-1}', '3(13m-4^{2k-1})+16\\cdot 4^{2k-1}', '39m+13\\cdot 4^{2k-1}', '13(3m+4^{2k-1})'], end: '$3m+4^{2k-1}$ は整数なので' }
+      ]);
+      const st = [{ t: 'txt', s: `(i) $n=1$ のとき，$${B.base}=${B.P(1)}$ で，$${B.d}$ の倍数である。` },
+        { t: 'txt', s: `(ii) $n=k$ のとき成り立つと仮定すると，整数 $m$ を用いて $${B.asm}$ と表せる。${B.pre ? B.pre.replace('だから', 'となる。') : ''}$n=k+1$ のとき` },
+        { t: 'eq', noEval: true, rows: [`& ${B.rows[0]}`, ...B.rows.slice(1).map(x => `&= ${x}`)] },
+        { t: 'txt', s: `${B.end}，$n=k+1$ のときも $${B.d}$ の倍数である。` }, fin(1)];
+      return { unit: 'kinou', lv, key: `ki2|B|${B.id}`, sec: T.kinou2, label: `すべての自然数 $n$ について，$${B.pT}$ は $${B.d}$ の倍数であることを，数学的帰納法で証明せよ。`, math: '', item: `$${B.pT}$ は $${B.d}$ の倍数`, head: `$${B.pT}$ は $${B.d}$ の倍数`,
+        ans: '（証明）', vars: {}, steps: st,
+        chk: () => { let bad = 0; for (let n = 1; n <= 10; n++) if (B.P(n) % B.d !== 0) bad++;
+          for (let k = 1; k <= 5; k++) { const m = B.P(k) / B.d; B.rows.forEach(x => { if (!near(texEval(K2N(x, m), { n: k }), B.P(k + 1))) bad++; }); } return bad; } };
+    }
+    // 不等式
+    const C = pick([
+      { id: 'p2', s: '2^n>n^2', n0: 5, L: n => 2 ** n, R: n => n * n, base: '左辺 $=2^5=32$，右辺 $=5^2=25$',
+        step: ['$2^{k+1}=2\\cdot 2^k>2k^2$', '$2k^2-(k+1)^2=k^2-2k-1=(k-1)^2-2$ で，$k\\geqq 5$ のとき $(k-1)^2-2\\geqq 14>0$', 'よって $2^{k+1}>2k^2>(k+1)^2$'], key: k => 2 * k * k - (k + 1) ** 2 },
+      { id: 'p2b', s: '2^n>2n+1', n0: 3, L: n => 2 ** n, R: n => 2 * n + 1, base: '左辺 $=2^3=8$，右辺 $=2\\cdot 3+1=7$',
+        step: ['$2^{k+1}=2\\cdot 2^k>2(2k+1)=4k+2$', '$(4k+2)-\\{2(k+1)+1\\}=2k-1>0$', 'よって $2^{k+1}>4k+2>2(k+1)+1$'], key: k => 2 * k - 1 },
+      { id: 'p3', s: '3^n>2n+1', n0: 2, L: n => 3 ** n, R: n => 2 * n + 1, base: '左辺 $=3^2=9$，右辺 $=2\\cdot 2+1=5$',
+        step: ['$3^{k+1}=3\\cdot 3^k>3(2k+1)=6k+3$', '$(6k+3)-\\{2(k+1)+1\\}=4k>0$', 'よって $3^{k+1}>6k+3>2(k+1)+1$'], key: k => 4 * k },
+      { id: 'p3c', s: '3^n>n^3', n0: 4, L: n => 3 ** n, R: n => n ** 3, base: '左辺 $=3^4=81$，右辺 $=4^3=64$',
+        step: ['$3^{k+1}=3\\cdot 3^k>3k^3$', '$3k^3-(k+1)^3=2k^3-3k^2-3k-1=k^2(2k-3)-(3k+1)$。$k\\geqq 4$ のとき $k^2(2k-3)\\geqq 5k^2\\geqq 20k>3k+1$ なので，これは正', 'よって $3^{k+1}>3k^3>(k+1)^3$'], key: k => 3 * k ** 3 - (k + 1) ** 3 },
+      { id: 'fac', s: 'n!>2^n', n0: 4, L: n => { let p = 1; for (let i = 2; i <= n; i++) p *= i; return p; }, R: n => 2 ** n, base: '左辺 $=4!=24$，右辺 $=2^4=16$',
+        step: ['$(k+1)!=(k+1)\\cdot k!>(k+1)\\cdot 2^k$', '$k\\geqq 4$ より $k+1>2$ だから $(k+1)\\cdot 2^k>2\\cdot 2^k=2^{k+1}$', 'よって $(k+1)!>2^{k+1}$'], key: k => k - 1 },
+      { id: 'inv2', lt: true, s: '\\sum_{i=1}^{n}\\frac{1}{i^2}<2-\\frac{1}{n}', n0: 2, L: n => { let s = 0; for (let i = 1; i <= n; i++) s += 1 / (i * i); return s; }, R: n => 2 - 1 / n, base: '左辺 $=1+\\frac{1}{4}=\\frac{5}{4}$，右辺 $=2-\\frac{1}{2}=\\frac{3}{2}$',
+        step: ['$n=k+1$ のときの左辺は，仮定より $2-\\frac{1}{k}+\\frac{1}{(k+1)^2}$ より小さい', '$\\left(2-\\frac{1}{k+1}\\right)-\\left\\{2-\\frac{1}{k}+\\frac{1}{(k+1)^2}\\right\\}=\\frac{1}{k(k+1)}-\\frac{1}{(k+1)^2}=\\frac{1}{k(k+1)^2}>0$', 'よって，$n=k+1$ のときの左辺 $<2-\\frac{1}{k+1}$'], key: k => 1 / (k * (k + 1) ** 2) },
+      { id: 'rt1', lt: true, s: '\\sum_{i=1}^{n}\\frac{1}{\\sqrt{i}}<2\\sqrt{n}', n0: 1, L: n => { let s = 0; for (let i = 1; i <= n; i++) s += 1 / Math.sqrt(i); return s; }, R: n => 2 * Math.sqrt(n), base: '左辺 $=1$，右辺 $=2$',
+        step: ['$n=k+1$ のときの左辺は，仮定より $2\\sqrt{k}+\\frac{1}{\\sqrt{k+1}}$ より小さい', '$2\\sqrt{k+1}-\\left(2\\sqrt{k}+\\frac{1}{\\sqrt{k+1}}\\right)=\\frac{2k+1-2\\sqrt{k(k+1)}}{\\sqrt{k+1}}$ で，$(2k+1)^2-\\left\\{2\\sqrt{k(k+1)}\\right\\}^2=1>0$ だから，これは正', 'よって，$n=k+1$ のときの左辺 $<2\\sqrt{k+1}$'], key: k => 2 * Math.sqrt(k + 1) - 2 * Math.sqrt(k) - 1 / Math.sqrt(k + 1) },
+      { id: 'rt2', s: '\\sum_{i=1}^{n}\\frac{1}{\\sqrt{i}}>2\\sqrt{n+1}-2', n0: 1, L: n => { let s = 0; for (let i = 1; i <= n; i++) s += 1 / Math.sqrt(i); return s; }, R: n => 2 * Math.sqrt(n + 1) - 2, base: '左辺 $=1$，右辺 $=2\\sqrt{2}-2<3-2=1$',
+        step: ['$n=k+1$ のときの左辺は，仮定より $2\\sqrt{k+1}-2+\\frac{1}{\\sqrt{k+1}}$ より大きい', '$\\left(2\\sqrt{k+1}-2+\\frac{1}{\\sqrt{k+1}}\\right)-(2\\sqrt{k+2}-2)=\\frac{2k+3-2\\sqrt{(k+1)(k+2)}}{\\sqrt{k+1}}$ で，$(2k+3)^2-\\left\\{2\\sqrt{(k+1)(k+2)}\\right\\}^2=1>0$ だから，これは正', 'よって，$n=k+1$ のときの左辺 $>2\\sqrt{k+2}-2$'], key: k => 2 * Math.sqrt(k + 1) - 2 + 1 / Math.sqrt(k + 1) - (2 * Math.sqrt(k + 2) - 2) },
+      { id: 'hm', ge: true, s: '\\sum_{i=1}^{n}\\frac{1}{i}\\geqq \\frac{2n}{n+1}', n0: 1, L: n => { let s = 0; for (let i = 1; i <= n; i++) s += 1 / i; return s; }, R: n => 2 * n / (n + 1), base: '左辺 $=1$，右辺 $=1$ で等しい',
+        step: ['$n=k+1$ のときの左辺は，仮定より $\\frac{2k}{k+1}+\\frac{1}{k+1}=\\frac{2k+1}{k+1}$ 以上', '$\\frac{2k+1}{k+1}-\\frac{2(k+1)}{k+2}=\\frac{(2k+1)(k+2)-2(k+1)^2}{(k+1)(k+2)}=\\frac{k}{(k+1)(k+2)}>0$', 'よって，$n=k+1$ のときの左辺 $\\geqq \\frac{2(k+1)}{k+2}$'], key: k => k / ((k + 1) * (k + 2)) },
+      { id: 'cb', lt: true, s: '\\sum_{i=1}^{n}\\frac{1}{i^3}<\\frac{3}{2}-\\frac{1}{2n^2}', n0: 2, L: n => { let s = 0; for (let i = 1; i <= n; i++) s += 1 / i ** 3; return s; }, R: n => 1.5 - 1 / (2 * n * n), base: '左辺 $=1+\\frac{1}{8}=\\frac{9}{8}$，右辺 $=\\frac{3}{2}-\\frac{1}{8}=\\frac{11}{8}$',
+        step: ['$n=k+1$ のときの左辺は，仮定より $\\frac{3}{2}-\\frac{1}{2k^2}+\\frac{1}{(k+1)^3}$ より小さい', '$\\left\\{\\frac{3}{2}-\\frac{1}{2(k+1)^2}\\right\\}-\\left\\{\\frac{3}{2}-\\frac{1}{2k^2}+\\frac{1}{(k+1)^3}\\right\\}=\\frac{2k+1}{2k^2(k+1)^2}-\\frac{1}{(k+1)^3}=\\frac{3k+1}{2k^2(k+1)^3}>0$', 'よって，$n=k+1$ のときの左辺 $<\\frac{3}{2}-\\frac{1}{2(k+1)^2}$'], key: k => (3 * k + 1) / (2 * k * k * (k + 1) ** 3) },
+      { id: 'bern', s: '(1+h)^n\\geqq 1+nh', n0: 1, h: true, L: n => 1.5 ** n, R: n => 1 + 0.5 * n, base: '左辺 $=1+h$，右辺 $=1+h$ で等しい',
+        step: ['$(1+h)^{k+1}=(1+h)(1+h)^k\\geqq (1+h)(1+kh)$（$1+h>0$ だから）', '$(1+h)(1+kh)=1+(k+1)h+kh^2\\geqq 1+(k+1)h$', 'よって $(1+h)^{k+1}\\geqq 1+(k+1)h$'], key: () => 1 }
+    ]);
+    const asm = C.s.replace(/n/g, 'k');
+    const st = [{ t: 'txt', s: `(i) $n=${C.n0}$ のとき，${C.base}${C.h || C.ge ? 'ので，成り立つ' : ' で，成り立つ'}。` },
+      { t: 'txt', s: `(ii) $n=k$（$k\\geqq ${C.n0}$）のとき成り立つと仮定すると $${asm}$` },
+      ...C.step.map(s => ({ t: 'txt', s: s + '。' })), { t: 'txt', s: '$n=k+1$ のときも成り立つ。' }, fin(C.n0)];
+    const pre = C.h ? '$h>0$ とする。' : '';
+    return { unit: 'kinou', lv, key: `ki2|C|${C.id}`, sec: T.kinou2, label: `${pre}${C.n0 > 1 ? `$n\\geqq ${C.n0}$ を満たす` : 'すべての'}自然数 $n$ について，不等式 $${C.s}$ が成り立つことを，数学的帰納法で証明せよ。`, math: '', item: `$${C.s}$（$n\\geqq ${C.n0}$）`, head: `$${C.s}$`,
+      ans: '（証明）', vars: {}, steps: st,
+      chk: () => { let bad = 0; for (let n = C.n0; n <= 25; n++) if (!(C.h || C.ge ? C.L(n) >= C.R(n) - 1e-12 : C.lt ? C.L(n) < C.R(n) : C.L(n) > C.R(n))) bad++; for (let k = C.n0; k <= 25; k++) if (!(C.key(k) > 0)) bad++; return bad; } };
+  },
+  // 【数学的帰納法（発展）】lv1：全段仮定（a_1〜a_k をすべて仮定して a_{k+1} を求める）。lv2：二段仮定（n=k，k+1 を仮定）
+  kinouH(lv){
+    const near = (a, b) => Math.abs(a - b) <= 1e-9 * Math.max(1, Math.abs(b));
+    const cf = (c, s) => c === 1 ? s : `${c}${s}`;
+    if (lv === 1) {
+      const kind = pick(['cube', 'sq', 'avg']), c = kind === 'cube' ? ri(1, 4) : ri(1, 5), an = cf(c, 'n');
+      let cond, st, solve;
+      const Sk = c === 1 ? '\\frac{1}{2}k(k+1)' : c === 2 ? 'k(k+1)' : c % 2 === 0 ? `${c / 2}k(k+1)` : `\\frac{${c}}{2}k(k+1)`, ck1 = c === 1 ? 'k+1' : `${c}(k+1)`;
+      if (kind === 'cube') {
+        cond = `${c === 1 ? '' : c}(a_1+a_2+\\cdots+a_n)^2=a_1^3+a_2^3+\\cdots+a_n^3`;
+        solve = (prev) => { const S = prev.reduce((s, v) => s + v, 0), Q = prev.reduce((s, v) => s + v ** 3, 0); // c(S+x)^2=Q+x^3 の正の解
+          let lo = 1e-6, hi = 1000; const g = x => x ** 3 + Q - c * (S + x) ** 2; for (let i = 0; i < 200; i++) { const m = (lo + hi) / 2; if (g(m) < 0) lo = m; else hi = m; } return (lo + hi) / 2; };
+        st = [{ t: 'txt', s: `$n=1$ のとき $${cf(c, 'a_1^2')}=a_1^3$，$a_1>0$ より $a_1=${c}$。` },
+          { t: 'txt', s: `$n=2$ のとき $${c === 1 ? '' : c}(${c}+a_2)^2=${c ** 3}+a_2^3$ を整理すると $a_2(a_2-${2 * c})(a_2+${c})=0$，$a_2>0$ より $a_2=${2 * c}$。そこで $a_n=${an}$ と推定する。` },
+          { t: 'txt', s: `$a_1,\\ a_2,\\ \\cdots,\\ a_k$ がすべて $a_i=${cf(c, 'i')}$ を満たすと仮定する。このとき $a_1+\\cdots+a_k=${Sk}$，$a_1^3+\\cdots+a_k^3=${c === 1 ? '' : `${c ** 3}`}\\left\\{\\frac{1}{2}k(k+1)\\right\\}^2$。` },
+          { t: 'txt', s: `$x=a_{k+1}$ とおくと，$n=k+1$ の等式は $${c === 1 ? '' : c}\\left\\{${Sk}+x\\right\\}^2=${c === 1 ? '' : `${c ** 3}`}\\left\\{\\frac{1}{2}k(k+1)\\right\\}^2+x^3$。両辺の同じ項を消すと $${cf(c * c, 'k(k+1)x')}+${cf(c, 'x^2')}=x^3$。` },
+          { t: 'txt', s: `$x>0$ で割って $x^2-${cf(c, 'x')}-${cf(c * c, 'k(k+1)')}=0$，$\\{x-${cf(c, '(k+1)')}\\}(x+${cf(c, 'k')})=0$，$x>0$ より $a_{k+1}=${ck1}$。` }];
+      } else if (kind === 'sq') {
+        cond = `${cf(2 * c, 'S_n')}=a_n^2+${cf(c, 'a_n')}`;
+        solve = (prev) => { const S = prev.reduce((s, v) => s + v, 0); // 2c(S+x)=x^2+cx → x^2−cx−2cS=0
+          return (c + Math.sqrt(c * c + 8 * c * S)) / 2; };
+        st = [{ t: 'txt', s: `$S_n=a_1+a_2+\\cdots+a_n$ とする。$n=1$ のとき $${cf(2 * c, 'a_1')}=a_1^2+${cf(c, 'a_1')}$，$a_1>0$ より $a_1=${c}$。` },
+          { t: 'txt', s: `$n=2$ のとき $${2 * c}(${c}+a_2)=a_2^2+${cf(c, 'a_2')}$ より $a_2^2-${cf(c, 'a_2')}-${2 * c * c}=0$，$(a_2-${2 * c})(a_2+${c})=0$，$a_2=${2 * c}$。そこで $a_n=${an}$ と推定する。` },
+          { t: 'txt', s: `$a_1,\\ a_2,\\ \\cdots,\\ a_k$ がすべて $a_i=${cf(c, 'i')}$ を満たすと仮定すると $S_k=${Sk}$。` },
+          { t: 'txt', s: `$x=a_{k+1}$ とおくと，$n=k+1$ の等式は $${2 * c}\\left\\{${Sk}+x\\right\\}=x^2+${cf(c, 'x')}$ より $x^2-${cf(c, 'x')}-${cf(c * c, 'k(k+1)')}=0$。` },
+          { t: 'txt', s: `$\\{x-${cf(c, '(k+1)')}\\}(x+${cf(c, 'k')})=0$，$x>0$ より $a_{k+1}=${ck1}$。` }];
+      } else {
+        cond = `a_1=${c},\\ a_{n+1}=\\frac{2}{n}(a_1+a_2+\\cdots+a_n)`;
+        solve = (prev, n) => 2 / (n - 1) * prev.reduce((s, v) => s + v, 0);
+        st = [{ t: 'txt', s: `$a_2=\\frac{2}{1}\\times ${c}=${2 * c}$，$a_3=\\frac{2}{2}(${c}+${2 * c})=${3 * c}$。そこで $a_n=${an}$ と推定する。` },
+          { t: 'txt', s: `$n=1$ のとき $a_1=${c}$ で成り立つ。` },
+          { t: 'txt', s: `$a_1,\\ a_2,\\ \\cdots,\\ a_k$ がすべて $a_i=${cf(c, 'i')}$ を満たすと仮定すると $a_1+\\cdots+a_k=${Sk}$。` },
+          { t: 'txt', s: `$a_{k+1}=\\frac{2}{k}\\times ${Sk}=${ck1}$。` }];
+      }
+      st.push({ t: 'txt', s: `よって $n=k+1$ のときも成り立ち，すべての自然数 $n$ について $a_n=${an}$。` });
+      const label = kind === 'avg' ? `数列 $\\{a_n\\}$ が $${cond}$ で定められるとき，一般項 $a_n$ を推定し，それが正しいことを数学的帰納法で証明せよ。`
+        : `正の項からなる数列 $\\{a_n\\}$ が，すべての自然数 $n$ に対して $${cond}$ を満たすとき，一般項 $a_n$ を求めよ。${kind === 'sq' ? '（$S_n=a_1+a_2+\\cdots+a_n$）' : ''}`;
+      return { unit: 'kinouH', lv, key: `kh1|${kind}|${c}`, sec: T.kinouH1, label, math: '', item: `$${cond}$`, head: `$${cond}$`,
+        ans: `$a_n=${an}$`, vars: {}, steps: st,
+        chk: () => { let bad = 0; const seq = []; for (let n = 1; n <= 10; n++) { const v = kind === 'avg' && n === 1 ? c : solve(seq, n); if (Math.abs(v - c * n) > 1e-6) bad++; seq.push(c * n); } return bad; } };
+    }
+    const kind = pick(['root', 'root', 'gen', 'seq']);
+    if (kind === 'seq') {
+      // a_1=r+s，a_2=r²+s²，a_{n+2}=(r+s)a_{n+1}−rs a_n のとき a_n=r^n+s^n
+      const r = ri(2, 5), s = ri(1, r - 1), p = r + s, q = r * s, A = n => r ** n + s ** n;
+      const fT = s === 1 ? `${r}^n+1` : `${r}^n+${s}^n`, at = t => fT.replace(/n/g, t);
+      const rows = [`${p}\\{${at('{k+1}')}\\}-${q}(${at('k')})`, s === 1 ? `${p}\\cdot ${r}^{k+1}+${p}-${q}\\cdot ${r}^k-${q}` : `${p}\\cdot ${r}^{k+1}+${p}\\cdot ${s}^{k+1}-${q}\\cdot ${r}^k-${q}\\cdot ${s}^k`, at('{k+2}')];
+      const st = [{ t: 'txt', s: `(i) $n=1$ のとき $${at('1').replace(/\^1/g, '')}=${A(1)}$，$n=2$ のとき $${at('2')}=${A(2)}$ で，成り立つ。` },
+        { t: 'txt', s: `(ii) $n=k,\\ k+1$ のとき成り立つと仮定すると $a_k=${at('k')}$，$a_{k+1}=${at('{k+1}')}$。` },
+        { t: 'eq', noEval: true, rows: [`a_{k+2} &= ${rows[0]}`, ...rows.slice(1).map(x => `&= ${x}`)] },
+        { t: 'txt', s: `${s === 1 ? `$${p}\\cdot ${r}^{k+1}-${q}\\cdot ${r}^k=${r}^k(${p * r}-${q})=${r}^{k+2}$，$${p}-${q}=1$ だから` : `$${p}\\cdot ${r}^{k+1}-${q}\\cdot ${r}^k=${r}^{k+2}$，$${p}\\cdot ${s}^{k+1}-${q}\\cdot ${s}^k=${s}^{k+2}$ だから`}，$n=k+2$ のときも成り立つ。` },
+        { t: 'txt', s: '(i)，(ii) より，すべての自然数 $n$ について成り立つ。' }];
+      const def = `a_1=${A(1)},\\ a_2=${A(2)},\\ a_{n+2}=${p}a_{n+1}-${q}a_n`;
+      return { unit: 'kinouH', lv, key: `kh2|seq|${r}|${s}`, sec: T.kinouH2, label: `数列 $\\{a_n\\}$ が $${def}$ で定められるとき，$a_n=${fT}$ であることを数学的帰納法で証明せよ。`, math: '', item: `$${def}$`, head: `$${def}$`,
+        ans: '（証明）', vars: {}, steps: st,
+        chk: () => { let bad = 0; const a = [0, A(1), A(2)]; for (let n = 1; n <= 12; n++) { if (n >= 3) a[n] = p * a[n - 1] - q * a[n - 2]; if (a[n] !== A(n)) bad++; }
+          for (let k = 1; k <= 6; k++) rows.forEach(x => { if (!near(texEval(x.replace(/k/g, 'n'), { n: k }), A(k + 2))) bad++; }); return bad; } };
+    }
+    // α^n+β^n が整数（gen は a，b が文字のまま）
+    let a, b, eqT, aT, bT;
+    if (kind === 'gen') { aT = 'a'; bT = 'b'; eqT = 'x^2-ax+b=0'; }
+    else { a = ri(1, 6); b = pick([-3, -2, -1, 1, 2, 3, 4]); if (a * a - 4 * b <= 0) { a = a + 4; } aT = `${a}`; bT = `${b}`; eqT = `${sumTex([[1, 'x^2'], [-a, 'x'], [b, '']])}=0`; }
+    const st = [{ t: 'txt', s: `解と係数の関係から $\\alpha+\\beta=${aT}$，$\\alpha\\beta=${bT}$。` },
+      { t: 'txt', s: `(i) $n=1$ のとき $\\alpha+\\beta=${aT}$，$n=2$ のとき $\\alpha^2+\\beta^2=(\\alpha+\\beta)^2-2\\alpha\\beta=${kind === 'gen' ? 'a^2-2b' : a * a - 2 * b}$ で，どちらも整数。` },
+      { t: 'txt', s: '(ii) $n=k,\\ k+1$ のとき $\\alpha^n+\\beta^n$ が整数であると仮定する。' },
+      { t: 'eq', noEval: true, rows: ['\\alpha^{k+2}+\\beta^{k+2} &= (\\alpha+\\beta)(\\alpha^{k+1}+\\beta^{k+1})-\\alpha\\beta(\\alpha^k+\\beta^k)', `&= ${kind === 'gen' ? 'a' : a === 1 ? '' : a}(\\alpha^{k+1}+\\beta^{k+1})${kind === 'gen' ? '-b' : b < 0 ? `+${b === -1 ? '' : -b}` : `-${b === 1 ? '' : b}`}(\\alpha^k+\\beta^k)`] },
+      { t: 'txt', s: `${kind === 'gen' ? '$a$，$b$ は整数で，' : ''}仮定より右辺は整数なので，$n=k+2$ のときも成り立つ。` },
+      { t: 'txt', s: '(i)，(ii) より，すべての自然数 $n$ について $\\alpha^n+\\beta^n$ は整数である。' }];
+    const label = kind === 'gen' ? '$a$，$b$ を正の整数とする。2次方程式 $x^2-ax+b=0$ の2つの実数解を $\\alpha$，$\\beta$ とするとき，すべての自然数 $n$ について，$\\alpha^n+\\beta^n$ が整数となることを示せ。'
+      : `2次方程式 $${eqT}$ の2つの解を $\\alpha$，$\\beta$ とするとき，すべての自然数 $n$ について，$\\alpha^n+\\beta^n$ が整数となることを示せ。`;
+    return { unit: 'kinouH', lv, key: `kh2|${kind}|${a}|${b}`, sec: T.kinouH2, label, math: '', item: `$${eqT}$ の解で $\\alpha^n+\\beta^n$`, head: `$${eqT}$`,
+      ans: '（証明）', vars: {}, steps: st,
+      chk: () => { if (kind === 'gen') return 0; const D = Math.sqrt(a * a - 4 * b), al = (a + D) / 2, be = (a - D) / 2; let bad = 0, u = 2, v = a;
+        for (let n = 1; n <= 10; n++) { if (!near(al ** n + be ** n, v)) bad++; [u, v] = [v, a * v - b * u]; } return bad; } };
   }
 };
 Object.assign(GEN, B_GEN);
@@ -10607,6 +10798,8 @@ const FORMULA = {
   sekiWa: ['$(a_1+a_2+\\cdots+a_n)^2=(a_1^2+\\cdots+a_n^2)+2S$ を使う。'],
   gaussWa: ['$[\\sqrt{n}]=k$ となる $n$ は $k^2\\leqq n\\leqq (k+1)^2-1$ の $2k+1$ 個。値が同じ項をまとめて足す。', '$[\\log_2 n]=k$ となる $n$ は $2^k$ 個。和は（等差）×（等比）の形。'],
   kuukanKoshi: ['$z=k$ で切って，平面の格子点の個数を求め，$k$ について足す。'],
+  kinouH: ['全段仮定：$a_1,\\ \\cdots,\\ a_k$ がすべて成り立つと仮定して $a_{k+1}$ を求める。和 $a_1+\\cdots+a_k$ が使える。', '二段仮定：(i) $n=1,\\ 2$ で示す。(ii) $n=k,\\ k+1$ で成り立つと仮定して $n=k+2$ を示す。$\\alpha^{n+2}+\\beta^{n+2}=(\\alpha+\\beta)(\\alpha^{n+1}+\\beta^{n+1})-\\alpha\\beta(\\alpha^n+\\beta^n)$。'],
+  kinou: ['(i) 最初の $n$（ふつうは $n=1$）で成り立つことを示す。(ii) $n=k$ で成り立つと仮定して，$n=k+1$ でも成り立つことを示す。等式は，仮定の式に第 $k+1$ 項を足して右辺の形にする。', '倍数は，仮定を「（式）$=dm$」とおき，$n=k+1$ の式を $d\\times$（整数）の形にする。不等式は，仮定を使ったあと，（大きい方）$-$（小さい方）$>0$ を示す。'],
   zettaichi: ['$c>0$ のとき，$|X|=c \\iff X=\\pm c$，$|X|<c \\iff -c<X<c$，$|X|>c \\iff X<-c,\\ c<X$。', 'それ以外は，絶対値の中が 0 になる $x$ で区間を分け，$X\\geqq 0$ なら $|X|=X$，$X<0$ なら $|X|=-X$ としてはずす。求めた解が区間に入るか確かめる。'],
   seisuBubun: ['$n<\\sqrt{m}<n+1$ をみつけて，整数部分 $a$ を決める。小数部分は $b=($もとの数$)-a$。', '$b+n=\\sqrt{m}$ を使うと，$b$ の式の値が簡単に求まる。'],
   sessenHonsu: ['接点を $(t,\\ f(t))$ とおいて接線の方程式を作り，点の座標を代入した $t$ の方程式の実数解の個数を調べる。', '3次関数では，接点が異なれば接線も異なる。3次方程式が異なる3つの実数解をもつ条件は（極大値）×（極小値）$<0$。'],
@@ -11254,9 +11447,9 @@ function applyFont(){ document.documentElement.style.setProperty('--font', FONTS
 // 教科のタブ：その教科の分野だけを見せる（単元の選択は教科をまたいで残す）。分野の欄は1つだけひらく
 const SUBJ_TABS = ['1', 'A', '2', 'B', 'C'];
 // 受験基礎の印：入試の小問でよく出る典型処理の単元。新しい単元を足したら、ここに入れると受験基礎で表示される
-const JUKEN = new Set(['tousaMax', 'kyoutsuukou', 'baisuuWa', 'zettaiWa', 'bouenWa', 'sansuu', 'kiguuWa', 'heimen', 'kyori', 'gaiseki', 'kyuumen', 'tenChokusen', 'gunSuretsu', 'menseki12', 'amariBunrui', 'zettaichi', 'seisuBubun', 'sessenHonsu', 'okikae', 'teisuBunri', 'ketasuu', 'kakuMax', 'taisho', 'kaiKeisu1', 'kaiHaichi', 'kanshu', 'hanpuku', 'jokenTsuki', 'futeishiki', 'goudou', 'soukaSoujo', 'kaiKeisu2', 'teiten', 'senkei', 'tsuka', 'enSessen', 'gousei', 'taisuuHouteishiki', 'kyokuchi', 'rokubun', 'zenka', 'snAn', 'sabunWa', 'kouten', 'saisyou']);
+const JUKEN = new Set(['kinou', 'tousaMax', 'kyoutsuukou', 'baisuuWa', 'zettaiWa', 'bouenWa', 'sansuu', 'kiguuWa', 'heimen', 'kyori', 'gaiseki', 'kyuumen', 'tenChokusen', 'gunSuretsu', 'menseki12', 'amariBunrui', 'zettaichi', 'seisuBubun', 'sessenHonsu', 'okikae', 'teisuBunri', 'ketasuu', 'kakuMax', 'taisho', 'kaiKeisu1', 'kaiHaichi', 'kanshu', 'hanpuku', 'jokenTsuki', 'futeishiki', 'goudou', 'soukaSoujo', 'kaiKeisu2', 'teiten', 'senkei', 'tsuka', 'enSessen', 'gousei', 'taisuuHouteishiki', 'kyokuchi', 'rokubun', 'zenka', 'snAn', 'sabunWa', 'kouten', 'saisyou']);
 // 入試発展の印：受験基礎より一歩進んだ、入試の典型問題
-const HATTEN = new Set(['sekiWa', 'gaussWa', 'kuukanKoshi']);
+const HATTEN = new Set(['kinouH', 'sekiWa', 'gaussWa', 'kuukanKoshi']);
 const unitShown = i => !ST.juken || (ST.juken === 'h' ? HATTEN : JUKEN).has(i.value);
 // 分野の中で、いま表示している単元
 const shownIds = u => [...u.querySelectorAll('input[name="unit"]')].filter(unitShown).map(i => i.value);
