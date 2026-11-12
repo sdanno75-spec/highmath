@@ -798,8 +798,9 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.70.0', UPDATED = '2026-11-12';
+const VERSION = '5.70.1', UPDATED = '2026-11-12';
 const CHANGES = [
+  ['5.70.1', '2026-11-12', '文の中の Σ が横に添え字を出していたのを直した（Σ の上下に k=1，n が出るように）。数学的帰納法の和の不等式、空間の格子点・ガウス記号の和などの解答。'],
   ['5.70.0', '2026-11-12', '数B に入試発展の「数学的帰納法（発展）」を追加。基本：全段仮定（(Σa)²=Σa³、2cSₙ=aₙ²+caₙ、aₙ₊₁=(2/n)Sₙ から一般項）、標準：二段仮定（αⁿ+βⁿ が整数、3項間漸化式の一般項の証明）。数学的帰納法の標準に和の不等式を4つ追加（Σ1/√i と 2√n、Σ1/i と 2n/(n+1)、Σ1/i³）。'],
   ['5.69.0', '2026-11-12', '数B に「数学的帰納法」を追加（受験基礎の印つき）。基本：和の等式（13 種類＋等比の和）、標準：倍数であること（a^n−b^n、n^3+2n など）と不等式（2^n>n^2、n!>2^n、ベルヌーイの不等式など）。解答は (i)(ii) の形の証明。'],
   ['5.68.0', '2026-11-12', '「入試発展」のボタンを追加（押すと入試発展の単元だけ表示）。数B に受験基礎の単元を7つ追加：等差数列の和の最大・最小、共通項の数列、倍数の和、絶対値のついた数列の和、差の形にして和（望遠鏡和）、3数の表し方、符号が交互の数列の和。入試発展の単元を3つ追加：異なる2数の積の和、ガウス記号の数列の和、空間の格子点。'],
@@ -6402,7 +6403,7 @@ const B_GEN = {
     const N = ri(20, 300), M = Math.floor(Math.log2(N)), last = N - 2 ** M + 1, A = (M - 2) * 2 ** M + 2, S = A + M * last;
     const st = [{ t: 'txt', s: `$[\\log_2 n]=k$ となるのは $2^k\\leqq n\\leqq 2^{k+1}-1$ のときで，その個数は $2^k$。` },
       { t: 'txt', s: `$2^{${M}}=${2 ** M}\\leqq ${N}<${2 ** (M + 1)}$ だから，$k=0$ 〜 $${M - 1}$ はすべてそろい，$k=${M}$ は $n=${2 ** M}$ 〜 $${N}$ の $${last}$ 個。` },
-      { t: 'txt', s: `$T=\\sum_{k=1}^{${M - 1}}k\\cdot 2^k$ は，$T-2T$ を計算して $T=(${M}-2)\\cdot 2^{${M}}+2=${A}$。` },
+      { t: 'txt', s: `$T=\\displaystyle\\sum_{k=1}^{${M - 1}}k\\cdot 2^k$ は，$T-2T$ を計算して $T=(${M}-2)\\cdot 2^{${M}}+2=${A}$。` },
       { t: 'eq', noEval: true, rows: [`S &= ${A}+${M}\\times ${last}`, `&= ${S}`] }];
     return { unit: 'gaussWa', lv, key: `gw2|${N}`, sec: T.gauss2, label: `$x$ を超えない最大の整数を $[x]$ と表す。数列 $\\{a_n\\}$ が $a_n=\\left[\\log_2 n\\right]$ で定められるとき，$S=a_1+a_2+\\cdots+a_{${N}}$ を求めよ。`, math: '', item: `$[\\log_2 n]$ の和（$${N}$ 項）`, head: `$a_n=[\\log_2 n]$，$${N}$ 項`,
       ans: `$S=${S}$`, vars: {}, steps: st, chk: () => { let s = 0; for (let n = 1; n <= N; n++) { let k = 0; while (2 ** (k + 1) <= n) k++; s += k; } return s === S ? 0 : 1; } };
@@ -6412,15 +6413,15 @@ const B_GEN = {
     const K = lv === 1 ? pick(['eq0', 'le0', 'eq1', 'le1']) : pick(['two', 'abs']);
     const G = {
       eq0: { c: 'x+y+z=n,\\ x\\geqq 0,\\ y\\geqq 0,\\ z\\geqq 0', ok: (x, y, z, n) => x + y + z === n && x >= 0 && y >= 0 && z >= 0, nf: '\\frac{1}{2}(n+1)(n+2)', n0: 1,
-        how: ['$z=k$（$0\\leqq k\\leqq n$）のとき $x+y=n-k$ を満たす $(x,\\ y)$ は $n-k+1$ 個。', '$\\sum_{k=0}^{n}(n-k+1)=1+2+\\cdots+(n+1)=\\frac{1}{2}(n+1)(n+2)$'] },
+        how: ['$z=k$（$0\\leqq k\\leqq n$）のとき $x+y=n-k$ を満たす $(x,\\ y)$ は $n-k+1$ 個。', '$\\displaystyle\\sum_{k=0}^{n}(n-k+1)=1+2+\\cdots+(n+1)=\\frac{1}{2}(n+1)(n+2)$'] },
       le0: { c: 'x+y+z\\leqq n,\\ x\\geqq 0,\\ y\\geqq 0,\\ z\\geqq 0', ok: (x, y, z, n) => x + y + z <= n && x >= 0 && y >= 0 && z >= 0, nf: '\\frac{1}{6}(n+1)(n+2)(n+3)', n0: 1,
-        how: ['$z=k$（$0\\leqq k\\leqq n$）のとき $x+y\\leqq n-k$ を満たす $(x,\\ y)$ は $\\frac{1}{2}(n-k+1)(n-k+2)$ 個。', '$j=n-k+1$ とおくと $\\sum_{j=1}^{n+1}\\frac{1}{2}j(j+1)=\\frac{1}{6}(n+1)(n+2)(n+3)$'] },
+        how: ['$z=k$（$0\\leqq k\\leqq n$）のとき $x+y\\leqq n-k$ を満たす $(x,\\ y)$ は $\\frac{1}{2}(n-k+1)(n-k+2)$ 個。', '$j=n-k+1$ とおくと $\\displaystyle\\sum_{j=1}^{n+1}\\frac{1}{2}j(j+1)=\\frac{1}{6}(n+1)(n+2)(n+3)$'] },
       eq1: { c: 'x+y+z=n,\\ x\\geqq 1,\\ y\\geqq 1,\\ z\\geqq 1', ok: (x, y, z, n) => x + y + z === n && x >= 1 && y >= 1 && z >= 1, nf: '\\frac{1}{2}(n-1)(n-2)', n0: 3,
-        how: ['$z=k$（$1\\leqq k\\leqq n-2$）のとき $x+y=n-k$，$x\\geqq 1$，$y\\geqq 1$ を満たす $(x,\\ y)$ は $n-k-1$ 個。', '$\\sum_{k=1}^{n-2}(n-k-1)=1+2+\\cdots+(n-2)=\\frac{1}{2}(n-1)(n-2)$'] },
+        how: ['$z=k$（$1\\leqq k\\leqq n-2$）のとき $x+y=n-k$，$x\\geqq 1$，$y\\geqq 1$ を満たす $(x,\\ y)$ は $n-k-1$ 個。', '$\\displaystyle\\sum_{k=1}^{n-2}(n-k-1)=1+2+\\cdots+(n-2)=\\frac{1}{2}(n-1)(n-2)$'] },
       le1: { c: 'x+y+z\\leqq n,\\ x\\geqq 1,\\ y\\geqq 1,\\ z\\geqq 1', ok: (x, y, z, n) => x + y + z <= n && x >= 1 && y >= 1 && z >= 1, nf: '\\frac{1}{6}n(n-1)(n-2)', n0: 3,
-        how: ['$x+y+z=m$（$3\\leqq m\\leqq n$）を満たす組は $\\frac{1}{2}(m-1)(m-2)$ 個。', '$\\sum_{m=3}^{n}\\frac{1}{2}(m-1)(m-2)=\\frac{1}{6}n(n-1)(n-2)$'] },
+        how: ['$x+y+z=m$（$3\\leqq m\\leqq n$）を満たす組は $\\frac{1}{2}(m-1)(m-2)$ 個。', '$\\displaystyle\\sum_{m=3}^{n}\\frac{1}{2}(m-1)(m-2)=\\frac{1}{6}n(n-1)(n-2)$'] },
       two: { c: 'x+y+2z\\leqq 2n,\\ x\\geqq 0,\\ y\\geqq 0,\\ z\\geqq 0', ok: (x, y, z, n) => x + y + 2 * z <= 2 * n && x >= 0 && y >= 0 && z >= 0, nf: '\\frac{1}{6}(n+1)(n+2)(4n+3)', n0: 1,
-        how: ['$z=k$（$0\\leqq k\\leqq n$）のとき $x+y\\leqq 2(n-k)$ を満たす $(x,\\ y)$ は，$j=n-k$ として $\\frac{1}{2}(2j+1)(2j+2)=(2j+1)(j+1)$ 個。', '$\\sum_{j=0}^{n}(2j^2+3j+1)=\\frac{1}{3}n(n+1)(2n+1)+\\frac{3}{2}n(n+1)+(n+1)=\\frac{1}{6}(n+1)(n+2)(4n+3)$'] },
+        how: ['$z=k$（$0\\leqq k\\leqq n$）のとき $x+y\\leqq 2(n-k)$ を満たす $(x,\\ y)$ は，$j=n-k$ として $\\frac{1}{2}(2j+1)(2j+2)=(2j+1)(j+1)$ 個。', '$\\displaystyle\\sum_{j=0}^{n}(2j^2+3j+1)=\\frac{1}{3}n(n+1)(2n+1)+\\frac{3}{2}n(n+1)+(n+1)=\\frac{1}{6}(n+1)(n+2)(4n+3)$'] },
       abs: { c: '|x|+|y|+|z|\\leqq n', ok: (x, y, z, n) => Math.abs(x) + Math.abs(y) + Math.abs(z) <= n, nf: '\\frac{1}{3}(2n+1)(2n^2+2n+3)', n0: 1,
         how: ['$|x|+|y|\\leqq m$ を満たす $(x,\\ y)$ は $2m^2+2m+1$ 個（$m\\geqq 0$）。', '$z=\\pm k$ で同じ個数なので，$m=n$ の分と，$m=0$ 〜 $n-1$ の分の2倍を足して $(2n^2+2n+1)+2\\sum_{m=0}^{n-1}(2m^2+2m+1)=\\frac{1}{3}(2n+1)(2n^2+2n+3)$'] }
     }[K];
@@ -6514,15 +6515,15 @@ const B_GEN = {
         step: ['$3^{k+1}=3\\cdot 3^k>3k^3$', '$3k^3-(k+1)^3=2k^3-3k^2-3k-1=k^2(2k-3)-(3k+1)$。$k\\geqq 4$ のとき $k^2(2k-3)\\geqq 5k^2\\geqq 20k>3k+1$ なので，これは正', 'よって $3^{k+1}>3k^3>(k+1)^3$'], key: k => 3 * k ** 3 - (k + 1) ** 3 },
       { id: 'fac', s: 'n!>2^n', n0: 4, L: n => { let p = 1; for (let i = 2; i <= n; i++) p *= i; return p; }, R: n => 2 ** n, base: '左辺 $=4!=24$，右辺 $=2^4=16$',
         step: ['$(k+1)!=(k+1)\\cdot k!>(k+1)\\cdot 2^k$', '$k\\geqq 4$ より $k+1>2$ だから $(k+1)\\cdot 2^k>2\\cdot 2^k=2^{k+1}$', 'よって $(k+1)!>2^{k+1}$'], key: k => k - 1 },
-      { id: 'inv2', lt: true, s: '\\sum_{i=1}^{n}\\frac{1}{i^2}<2-\\frac{1}{n}', n0: 2, L: n => { let s = 0; for (let i = 1; i <= n; i++) s += 1 / (i * i); return s; }, R: n => 2 - 1 / n, base: '左辺 $=1+\\frac{1}{4}=\\frac{5}{4}$，右辺 $=2-\\frac{1}{2}=\\frac{3}{2}$',
+      { id: 'inv2', lt: true, s: '\\displaystyle\\sum_{i=1}^{n}\\frac{1}{i^2}<2-\\frac{1}{n}', n0: 2, L: n => { let s = 0; for (let i = 1; i <= n; i++) s += 1 / (i * i); return s; }, R: n => 2 - 1 / n, base: '左辺 $=1+\\frac{1}{4}=\\frac{5}{4}$，右辺 $=2-\\frac{1}{2}=\\frac{3}{2}$',
         step: ['$n=k+1$ のときの左辺は，仮定より $2-\\frac{1}{k}+\\frac{1}{(k+1)^2}$ より小さい', '$\\left(2-\\frac{1}{k+1}\\right)-\\left\\{2-\\frac{1}{k}+\\frac{1}{(k+1)^2}\\right\\}=\\frac{1}{k(k+1)}-\\frac{1}{(k+1)^2}=\\frac{1}{k(k+1)^2}>0$', 'よって，$n=k+1$ のときの左辺 $<2-\\frac{1}{k+1}$'], key: k => 1 / (k * (k + 1) ** 2) },
-      { id: 'rt1', lt: true, s: '\\sum_{i=1}^{n}\\frac{1}{\\sqrt{i}}<2\\sqrt{n}', n0: 1, L: n => { let s = 0; for (let i = 1; i <= n; i++) s += 1 / Math.sqrt(i); return s; }, R: n => 2 * Math.sqrt(n), base: '左辺 $=1$，右辺 $=2$',
+      { id: 'rt1', lt: true, s: '\\displaystyle\\sum_{i=1}^{n}\\frac{1}{\\sqrt{i}}<2\\sqrt{n}', n0: 1, L: n => { let s = 0; for (let i = 1; i <= n; i++) s += 1 / Math.sqrt(i); return s; }, R: n => 2 * Math.sqrt(n), base: '左辺 $=1$，右辺 $=2$',
         step: ['$n=k+1$ のときの左辺は，仮定より $2\\sqrt{k}+\\frac{1}{\\sqrt{k+1}}$ より小さい', '$2\\sqrt{k+1}-\\left(2\\sqrt{k}+\\frac{1}{\\sqrt{k+1}}\\right)=\\frac{2k+1-2\\sqrt{k(k+1)}}{\\sqrt{k+1}}$ で，$(2k+1)^2-\\left\\{2\\sqrt{k(k+1)}\\right\\}^2=1>0$ だから，これは正', 'よって，$n=k+1$ のときの左辺 $<2\\sqrt{k+1}$'], key: k => 2 * Math.sqrt(k + 1) - 2 * Math.sqrt(k) - 1 / Math.sqrt(k + 1) },
-      { id: 'rt2', s: '\\sum_{i=1}^{n}\\frac{1}{\\sqrt{i}}>2\\sqrt{n+1}-2', n0: 1, L: n => { let s = 0; for (let i = 1; i <= n; i++) s += 1 / Math.sqrt(i); return s; }, R: n => 2 * Math.sqrt(n + 1) - 2, base: '左辺 $=1$，右辺 $=2\\sqrt{2}-2<3-2=1$',
+      { id: 'rt2', s: '\\displaystyle\\sum_{i=1}^{n}\\frac{1}{\\sqrt{i}}>2\\sqrt{n+1}-2', n0: 1, L: n => { let s = 0; for (let i = 1; i <= n; i++) s += 1 / Math.sqrt(i); return s; }, R: n => 2 * Math.sqrt(n + 1) - 2, base: '左辺 $=1$，右辺 $=2\\sqrt{2}-2<3-2=1$',
         step: ['$n=k+1$ のときの左辺は，仮定より $2\\sqrt{k+1}-2+\\frac{1}{\\sqrt{k+1}}$ より大きい', '$\\left(2\\sqrt{k+1}-2+\\frac{1}{\\sqrt{k+1}}\\right)-(2\\sqrt{k+2}-2)=\\frac{2k+3-2\\sqrt{(k+1)(k+2)}}{\\sqrt{k+1}}$ で，$(2k+3)^2-\\left\\{2\\sqrt{(k+1)(k+2)}\\right\\}^2=1>0$ だから，これは正', 'よって，$n=k+1$ のときの左辺 $>2\\sqrt{k+2}-2$'], key: k => 2 * Math.sqrt(k + 1) - 2 + 1 / Math.sqrt(k + 1) - (2 * Math.sqrt(k + 2) - 2) },
-      { id: 'hm', ge: true, s: '\\sum_{i=1}^{n}\\frac{1}{i}\\geqq \\frac{2n}{n+1}', n0: 1, L: n => { let s = 0; for (let i = 1; i <= n; i++) s += 1 / i; return s; }, R: n => 2 * n / (n + 1), base: '左辺 $=1$，右辺 $=1$ で等しい',
+      { id: 'hm', ge: true, s: '\\displaystyle\\sum_{i=1}^{n}\\frac{1}{i}\\geqq \\frac{2n}{n+1}', n0: 1, L: n => { let s = 0; for (let i = 1; i <= n; i++) s += 1 / i; return s; }, R: n => 2 * n / (n + 1), base: '左辺 $=1$，右辺 $=1$ で等しい',
         step: ['$n=k+1$ のときの左辺は，仮定より $\\frac{2k}{k+1}+\\frac{1}{k+1}=\\frac{2k+1}{k+1}$ 以上', '$\\frac{2k+1}{k+1}-\\frac{2(k+1)}{k+2}=\\frac{(2k+1)(k+2)-2(k+1)^2}{(k+1)(k+2)}=\\frac{k}{(k+1)(k+2)}>0$', 'よって，$n=k+1$ のときの左辺 $\\geqq \\frac{2(k+1)}{k+2}$'], key: k => k / ((k + 1) * (k + 2)) },
-      { id: 'cb', lt: true, s: '\\sum_{i=1}^{n}\\frac{1}{i^3}<\\frac{3}{2}-\\frac{1}{2n^2}', n0: 2, L: n => { let s = 0; for (let i = 1; i <= n; i++) s += 1 / i ** 3; return s; }, R: n => 1.5 - 1 / (2 * n * n), base: '左辺 $=1+\\frac{1}{8}=\\frac{9}{8}$，右辺 $=\\frac{3}{2}-\\frac{1}{8}=\\frac{11}{8}$',
+      { id: 'cb', lt: true, s: '\\displaystyle\\sum_{i=1}^{n}\\frac{1}{i^3}<\\frac{3}{2}-\\frac{1}{2n^2}', n0: 2, L: n => { let s = 0; for (let i = 1; i <= n; i++) s += 1 / i ** 3; return s; }, R: n => 1.5 - 1 / (2 * n * n), base: '左辺 $=1+\\frac{1}{8}=\\frac{9}{8}$，右辺 $=\\frac{3}{2}-\\frac{1}{8}=\\frac{11}{8}$',
         step: ['$n=k+1$ のときの左辺は，仮定より $\\frac{3}{2}-\\frac{1}{2k^2}+\\frac{1}{(k+1)^3}$ より小さい', '$\\left\\{\\frac{3}{2}-\\frac{1}{2(k+1)^2}\\right\\}-\\left\\{\\frac{3}{2}-\\frac{1}{2k^2}+\\frac{1}{(k+1)^3}\\right\\}=\\frac{2k+1}{2k^2(k+1)^2}-\\frac{1}{(k+1)^3}=\\frac{3k+1}{2k^2(k+1)^3}>0$', 'よって，$n=k+1$ のときの左辺 $<\\frac{3}{2}-\\frac{1}{2(k+1)^2}$'], key: k => (3 * k + 1) / (2 * k * k * (k + 1) ** 3) },
       { id: 'bern', s: '(1+h)^n\\geqq 1+nh', n0: 1, h: true, L: n => 1.5 ** n, R: n => 1 + 0.5 * n, base: '左辺 $=1+h$，右辺 $=1+h$ で等しい',
         step: ['$(1+h)^{k+1}=(1+h)(1+h)^k\\geqq (1+h)(1+kh)$（$1+h>0$ だから）', '$(1+h)(1+kh)=1+(k+1)h+kh^2\\geqq 1+(k+1)h$', 'よって $(1+h)^{k+1}\\geqq 1+(k+1)h$'], key: () => 1 }
