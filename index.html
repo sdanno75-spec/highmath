@@ -504,6 +504,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
           <label class="chk"><input type="checkbox" name="unit" value="hanpuku">反復試行の確率</label>
           <label class="chk"><input type="checkbox" name="unit" value="jokenTsuki">条件付き確率</label>
           <label class="chk"><input type="checkbox" name="unit" value="kitaichi">期待値</label>
+          <label class="chk"><input type="checkbox" name="unit" value="kakuMax">確率の最大</label>
         </div>
         <div class="units" data-subj="A">
           <span class="ugrp">数A　整数の性質</span>
@@ -550,6 +551,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
           <label class="chk"><input type="checkbox" name="unit" value="kahou">加法定理</label>
           <label class="chk"><input type="checkbox" name="unit" value="gousei">三角関数の合成</label>
           <label class="chk"><input type="checkbox" name="unit" value="sankakuHouteishiki">三角方程式</label>
+          <label class="chk"><input type="checkbox" name="unit" value="okikae">置きかえと最大・最小</label>
         </div>
         <div class="units" data-subj="2">
           <span class="ugrp">数II　指数関数・対数関数</span>
@@ -558,6 +560,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
           <label class="chk"><input type="checkbox" name="unit" value="taisuuWa">対数の和・差・係数</label>
           <label class="chk"><input type="checkbox" name="unit" value="teiHenkan">底の変換</label>
           <label class="chk"><input type="checkbox" name="unit" value="taisuuHouteishiki">対数方程式・指数方程式</label>
+          <label class="chk"><input type="checkbox" name="unit" value="ketasuu">桁数・最高位の数字</label>
         </div>
         <div class="units" data-subj="2">
           <span class="ugrp">数II　微分・積分</span>
@@ -565,6 +568,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
           <label class="chk"><input type="checkbox" name="unit" value="kyokuchi">3次関数の極値</label>
           <label class="chk"><input type="checkbox" name="unit" value="teisekibun">定積分の計算</label>
           <label class="chk"><input type="checkbox" name="unit" value="rokubun">1/6公式の面積</label>
+          <label class="chk"><input type="checkbox" name="unit" value="teisuBunri">定数分離と解の個数</label>
         </div>
         <div class="units" data-subj="B">
           <span class="ugrp">数B　数列</span>
@@ -762,8 +766,9 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.64.0', UPDATED = '2026-11-12';
+const VERSION = '5.65.0', UPDATED = '2026-11-12';
 const CHANGES = [
+  ['5.65.0', '2026-11-12', '受験基礎の新しい単元を4つ追加（どれも受験基礎の印つき）。数II「置きかえと最大・最小」（t=2^x，t=sin x・cos x，発展は t=sin x+cos x）、「定数分離と解の個数」（3次方程式。発展は正の解・負の解の個数）、「桁数・最高位の数字」（常用対数。小数第何位も）、数A「確率の最大」（p_k が最大の k、P_n が最大の n）。'],
   ['5.64.0', '2026-11-12', '教科タブの右に「受験基礎」のボタンを追加。押すと、入試でよく出る典型処理の単元（対称式・解の配置・通過領域・漸化式など23単元）だけを表示する。もう一度押すと全部にもどる（選んだ単元はそのまま）。'],
   ['5.63.0', '2026-11-12', '数I 二次関数に「解の配置」を追加（基本：k をはさむ解、標準：ともに k より大きい・小さい、発展：区間に1つずつ・区間に2つ。解答にグラフの例）。通過領域（逆像法）の問題をふやした：放物線の通過領域、x²+y²=r² のときの ax+y の範囲、条件つきの点 (s+t, st)（s, t≧k、s≧k≧t、s²+t²=r² の描く図形）、x²±xy+y²=c のときの x+y の範囲、発展に s, t が区間にあるときの (s+t, st)。'],
   ['5.62.1', '2026-11-11', '「問題の量」の表の欄（基本・標準・発展、問題数）の左右に小さな −・＋ のボタンをつけ、1問ずつ増やす・減らすようにした。'],
@@ -1012,15 +1017,15 @@ const UNITS = [
   ['sankakuhiChi', '三角比の値', '1'], ['sougoKankei', '三角比の相互関係', '1'], ['sankaku', '正弦・余弦定理', '1'], ['mensekiGaisetsu', '三角形の面積と外接円の半径', '1'],
   ['bunsan', '平均・分散・標準偏差', '1'], ['soukan', '相関係数', '1'],
   ['junretsu', '順列・組合せの計算', 'A'], ['enJunretsu', '円順列・重複順列', 'A'], ['onaji', '同じものを含む順列', 'A'], ['chofuku', '重複組合せ', 'A'], ['kumiwake', '組分け', 'A'],
-  ['hanpuku', '反復試行の確率', 'A'], ['jokenTsuki', '条件付き確率', 'A'], ['kitaichi', '期待値', 'A'],
+  ['hanpuku', '反復試行の確率', 'A'], ['jokenTsuki', '条件付き確率', 'A'], ['kitaichi', '期待値', 'A'], ['kakuMax', '確率の最大', 'A'],
   ['gojohou', '互除法', 'A'], ['futeishiki', '不定方程式', 'A'], ['nshin', 'n進法', 'A'], ['yakusuu', '約数の個数・総和', 'A'], ['goudou', '合同式', 'A'],
   ['cheva', 'チェバの定理', 'A'], ['menelaus', 'メネラウスの定理', 'A'], ['houbeki', '方べきの定理', 'A'], ['kakunibun', '角の二等分線', 'A'], ['goshin', '三角形の五心', 'A'], ['kyoen', '共円条件', 'A'],
   ['nikou', '二項定理', '2'], ['warizan', '整式の割り算', '2'], ['soukaSoujo', '相加平均と相乗平均', '2'],
   ['fukuso', '複素数の計算', '2'], ['kaiKeisu2', '解と係数の関係（数II）', '2'], ['inshuTeiri', '因数定理による因数分解', '2'],
   ['en', '円の中心と半径', '2'], ['tenChokusen', '点と直線の距離', '2'], ['taba', '交点を通る直線・円', '2'], ['enSessen', '円の接線・極線', '2'], ['teiten', '定点を通る図形', '2'], ['senkei', '線形計画法', '2'], ['tsuka', '通過領域（逆像法）', '2'],
-  ['kodo', '弧度法の値', '2'], ['kahou', '加法定理', '2'], ['gousei', '三角関数の合成', '2'], ['sankakuHouteishiki', '三角方程式', '2'],
-  ['shisu', '指数の計算', '2'], ['taisuuChi', '対数の値', '2'], ['taisuuWa', '対数の和・差・係数', '2'], ['teiHenkan', '底の変換', '2'], ['taisuuHouteishiki', '対数方程式・指数方程式', '2'],
-  ['sessen', '接線の方程式', '2'], ['kyokuchi', '3次関数の極値', '2'], ['teisekibun', '定積分の計算', '2'], ['rokubun', '1/6公式の面積', '2'],
+  ['kodo', '弧度法の値', '2'], ['kahou', '加法定理', '2'], ['gousei', '三角関数の合成', '2'], ['sankakuHouteishiki', '三角方程式', '2'], ['okikae', '置きかえと最大・最小', '2'],
+  ['shisu', '指数の計算', '2'], ['taisuuChi', '対数の値', '2'], ['taisuuWa', '対数の和・差・係数', '2'], ['teiHenkan', '底の変換', '2'], ['taisuuHouteishiki', '対数方程式・指数方程式', '2'], ['ketasuu', '桁数・最高位の数字', '2'],
+  ['sessen', '接線の方程式', '2'], ['kyokuchi', '3次関数の極値', '2'], ['teisekibun', '定積分の計算', '2'], ['rokubun', '1/6公式の面積', '2'], ['teisuBunri', '定数分離と解の個数', '2'],
   ['tousa', '等差数列', 'B'], ['touhi', '等比数列', 'B'], ['sigma', 'Σの計算', 'B'], ['koshiten', '格子点の個数', 'B'], ['kaisa', '階差数列', 'B'], ['snAn', '和 Sₙ から一般項', 'B'], ['bunsuWa', '分数の数列の和', 'B'], ['sabunWa', '（等差）×（等比）の和', 'B'], ['zenka', '漸化式', 'B'],
   ['bunpu', '確率分布表から期待値・分散', 'B'], ['henkan', 'aX+b の期待値・分散', 'B'], ['waSeki', '確率変数の和と積', 'B'], ['nikouBunpu', '二項分布', 'B'], ['seiki', '正規分布', 'B'], ['seikiKinji', '二項分布の正規近似', 'B'], ['hyouhonHeikin', '標本平均の分布', 'B'], ['suitei', '母平均の推定', 'B'], ['kentei', '仮説検定', 'B'],
   ['naiseki', '内積の計算', 'C'], ['nasukaku', 'なす角', 'C'], ['menseki', '三角形の面積', 'C'], ['heikouSuichoku', '平行・垂直の条件', 'C'], ['ookisa', '大きさと内積', 'C'], ['saisyou', '|a+tb| の最小値', 'C'], ['ichiVec', '位置ベクトル', 'C'], ['kouten', '2直線の交点', 'C'], ['chokusenVec', '直線のベクトル方程式', 'C'], ['kuukanNaiseki', '空間ベクトルの内積となす角', 'C'], ['gaiseki', '2本に垂直なベクトル', 'C'], ['heimen', '平面の方程式', 'C'], ['kyuumen', '球面の方程式', 'C'], ['kyori', '点と平面の距離', 'C'], ['kyokkei', '絶対値と偏角・極形式', 'C'], ['kaiten', '点の回転', 'C'], ['deMoivre', 'ド・モアブルの定理', 'C'], ['nJouKon', 'n 乗根', 'C'], ['sanTenKaku', '3点がつくる角', 'C'], ['cxEn', '円 |z−α|=r', 'C'], ['suichoku', '垂直二等分線', 'C'], ['apollonius', 'アポロニウスの円', 'C'], ['kyokusenShiki', '条件から2次曲線の方程式', 'C'], ['heikouIdou', '平行移動した2次曲線', 'C'], ['kyouyuuten', '2次曲線と直線の共有点', 'C'], ['nijiSessen', '2次曲線の接線', 'C'], ['baikaiShoukyo', '媒介変数の消去', 'C'], ['baikaiEn', '円・楕円の媒介変数表示', 'C'], ['kyokuZahyou', '極座標と直交座標', 'C'], ['kyokuToChokkou', '極方程式 → 直交座標', 'C'], ['chokkouToKyoku', '直交座標 → 極方程式', 'C']
@@ -1064,6 +1069,16 @@ const TIME_TABLE = [
   ['sinR', '正弦定理で外接円の半径を求める', [20, 60, 120]],
   ['sinRside', '外接円の半径から辺を求める', [20, 60, 120]],
   ['surdAdd', '余弦定理で辺が √ をふくむ（加算）', [10, 20, 40]],
+  ['okikae1', '置きかえ（t=2^x）で最小値', [60, 120, 240]],
+  ['okikae2', '置きかえ（t=sin x, cos x）で最大・最小', [90, 180, 360]],
+  ['okikae3', '置きかえ（t=sin x+cos x）で最大・最小（発展）', [150, 300, 600]],
+  ['teisu1', '定数分離（異なる3つの実数解）', [90, 180, 360]],
+  ['teisu2', '定数分離（解の個数を場合分け）', [120, 240, 480]],
+  ['teisu3', '定数分離（正の解・負の解の個数）（発展）', [150, 300, 600]],
+  ['keta1', '桁数（常用対数）', [45, 90, 180]],
+  ['keta2', '最高位の数字・小数第何位（常用対数）', [90, 180, 360]],
+  ['kmax1', '確率が最大になる k', [120, 240, 480]],
+  ['kmax2', '確率が最大になる n', [120, 240, 480]],
   ['kanshu1', '二次関数の最大・最小（x² の係数が ±1・頂点が整数）', [40, 90, 180]],
   ['kanshuA', '二次関数の最大・最小（x² の係数が ±1 以外）', [50, 110, 210]],
   ['kanshuF', '二次関数の最大・最小（頂点が分数）', [60, 120, 240]],
@@ -1313,7 +1328,7 @@ const totalMins = () => sumSec(PROBS).map(s => Math.ceil(s / 60));
 const timeText = () => totalMins().map((m, k) => `${TIERS[k]} ${m}分`).join('・');
 // 難しさの説明：選んだ単元の分だけを出す（基本｜標準）
 // 発展（lv 3）がある単元。ほかの単元は「発展」を選ぶと標準を出す
-const ADV_UNITS = new Set(['kyokusenShiki', 'kahou', 'gousei', 'sankakuHouteishiki', 'taisuuHouteishiki', 'kyokuchi', 'teisekibun', 'kanshu', 'warizan', 'zenka', 'kyouyuuten', 'koshiten', 'taba', 'enSessen', 'teiten', 'senkei', 'tsuka', 'kaiHaichi']);
+const ADV_UNITS = new Set(['kyokusenShiki', 'kahou', 'gousei', 'sankakuHouteishiki', 'taisuuHouteishiki', 'kyokuchi', 'teisekibun', 'kanshu', 'warizan', 'zenka', 'kyouyuuten', 'koshiten', 'taba', 'enSessen', 'teiten', 'senkei', 'tsuka', 'kaiHaichi', 'okikae', 'teisuBunri']);
 const UNIT_LEVEL = {
   tasuki: ['x の係数の片方が1', '2文字（x, y）・係数がどちらも2以上'],
   nijuu: ['√(5+2√6) の形', '√(7+4√3)・√(4+√15) の形'],
@@ -1322,6 +1337,10 @@ const UNIT_LEVEL = {
   heihou: ['x² の係数が1で整数', '分数が出る・x² の係数が1以外'],
   heikouTaisho: ['平行移動した式', '対称移動・移動の量を求める'],
   kanshu: ['x² の係数が ±1, ±2・頂点が整数', '係数 ±3・頂点が分数', '文字定数 a で場合分け（軸・定義域に文字）'],
+  okikae: ['t=2^x とおいて最小値', 't=sin x, cos x とおいて最大・最小', 't=sin x+cos x とおいて最大・最小'],
+  teisuBunri: ['異なる3つの実数解をもつ a の範囲', '実数解の個数を a で場合分け', '正の解・負の解の個数の条件'],
+  ketasuu: ['N^n の桁数', '桁数と最高位の数字・小数第何位'],
+  kakuMax: ['n 回中 k 回の確率が最大の k', 'r 回起こる確率が最大の n'],
   kaiHaichi: ['k をはさむ2つの解（f(k)<0 だけ）', 'ともに k より大きい・小さい（判別式・軸・f(k)）', '区間に1つずつ・区間に2つ（端の値の符号）'],
   sankakuhiChi: ['有名角の sin・cos・tan・2つの三角比の式', '3〜4つの三角比の式・180°−θ, 90°−θ を使う'],
   sougoKankei: ['鋭角・sin か cos から残り', '鈍角・tan から sin, cos'],
@@ -1443,6 +1462,8 @@ const ZENKA_FORM = {
 };
 // 発展を選んだときに、公式・手順の欄へ足す行
 const FORMULA_ADV = {
+  okikae: ['$t=\\sin x+\\cos x$ のとき $2\\sin x\\cos x=t^2-1$，$t=\\sqrt{2}\\sin\\left(x+\\frac{\\pi}{4}\\right)$ より $-\\sqrt{2}\\leqq t\\leqq\\sqrt{2}$。'],
+  teisuBunri: ['グラフが原点を通るとき，共有点の $x$ 座標の正負は直線 $y=a$ が原点より上か下かで見る。'],
   kaiHaichi: ['区間 $p<x<q$ に異なる2つの解：$D>0$，$p<$ 軸 $<q$，$f(p)>0$，$f(q)>0$。', '$p<x<q$，$q<x<r$ に1つずつ解：$f(p)>0$，$f(q)<0$，$f(r)>0$。'],
   kanshu: ['場合分け：軸と定義域の位置で分ける。軸に近い側の値（下に凸なら最小）は，軸が定義域の左・中・右の3通り。遠い側の値（下に凸なら最大）は，軸が定義域の真ん中の左・上・右の3通り。'],
   warizan: ['余りの定理：$P(x)$ を $x-k$ で割った余りは $P(k)$。2次式で割った余りは $ax+b$，3次式で割った余りは2次以下とおく。'],
@@ -5665,9 +5686,259 @@ const B_GEN = {
         chk: () => haichiChk(fx, cond, ans)
       };
     }
+  },
+  // 【置きかえと最大・最小】lv1：t=2^x（t>0）／lv2：t=sin x，cos x（−1≦t≦1）／lv3：t=sin x+cos x（−√2≦t≦√2）。t の2次関数にして，t の範囲で最大・最小
+  okikae(lv){
+    for (;;) {
+      if (lv === 1) {
+        // y=4^x−2^{x+s}+c：t=2^x とおくと y=t²−2^s t+c，頂点 t=2^{s−1}
+        const s = pick([0, 1, 2, 3]), c = ri(-3, 6), t0 = new F(2 ** s, 2), q = new F(c).sub(t0.mul(t0)), x0 = s - 1;
+        const fx = `y=4^x-${s ? `2^{x+${s}}` : '2^x'}${c ? (c > 0 ? `+${c}` : c) : ''}`;
+        const quad = sumTex([[1, 't^2'], [-(2 ** s), 't'], [c, '']]), vf = joinPoly(`\\left(${sumTex([[1, 't'], [t0.neg(), '']])}\\right)^2`, numTex(q));
+        const st = [{ t: 'txt', s: `$t=2^x$ とおくと，$4^x=(2^x)^2=t^2$，$${s ? `2^{x+${s}}=${s === 1 ? 2 : `2^{${s}}`}\\cdot 2^x=${2 ** s}t` : '2^x=t'}$。$x$ がすべての実数値をとるとき $t>0$ である。` },
+          { t: 'eq', noEval: true, rows: [`${quad} &= ${vf}`] },
+          { t: 'txt', s: `$t>0$ の範囲で，$t=${numTex(t0)}$ のとき最小値 $${numTex(q)}$ をとる。$2^x=${numTex(t0)}$ より $x=${x0}$` }];
+        return {
+          unit: 'okikae', lv, key: `ok1|${s}|${c}`, sec: T.okikae1,
+          label: `関数 $${fx}$ の最小値と，そのときの $x$ の値を求めよ。`, math: '', item: `$${fx}$ の最小値`, head: `$${fx}$`,
+          ans: `$x=${x0}$ のとき最小値 $${numTex(q)}$`, vars: { t: 1.37 }, steps: st,
+          chk: () => { const f = x => 4 ** x - 2 ** (x + s) + c; let m = Infinity; for (let i = 0; i <= 40000; i++) m = Math.min(m, f(-8 + 16 * i / 40000)); return Math.abs(m - q.val()) < 1e-4 && Math.abs(f(x0) - q.val()) < 1e-9 ? 0 : 1; }
+        };
+      }
+      if (lv === 2) {
+        // y=cos²x+a sin x+c（t=sin x）または y=sin²x+a cos x+c（t=cos x）。y=−t²+at+(1+c)，−1≦t≦1
+        const useSin = Math.random() < 0.5, a = pick([-4, -3, -2, -1, 1, 2, 3, 4]), c = ri(-3, 3);
+        const fn = useSin ? '\\sin' : '\\cos', other = useSin ? '\\cos' : '\\sin', C1 = 1 + c;
+        const fx = `y=${other}^2 x${a === 1 ? '+' : a === -1 ? '-' : a > 0 ? `+${a}` : a}${fn} x${c ? (c > 0 ? `+${c}` : c) : ''}`;
+        const yv = t => F.of(t).mul(t).neg().add(F.of(t).mul(a)).add(C1), t0 = new F(a, 2);
+        const pts = [new F(-1), new F(1)]; if (t0.val() > -1 && t0.val() < 1) pts.push(t0);
+        const vals = pts.map(t => [t, yv(t)]), mx = vals.reduce((p, q) => q[1].val() > p[1].val() ? q : p), mn = vals.reduce((p, q) => q[1].val() < p[1].val() ? q : p);
+        if (mx[1].val() === mn[1].val()) continue;
+        const xs = t => (useSin ? SIN_X : COS_X)[t.n + '/' + t.d]; if (!xs(mx[0]) || !xs(mn[0])) continue;
+        const quad = sumTex([[-1, 't^2'], [a, 't'], [C1, '']]), vf = joinPoly(`-\\left(${sumTex([[1, 't'], [t0.neg(), '']])}\\right)^2`, numTex(yv(t0)));
+        const st = [{ t: 'txt', s: `$t=${fn} x$ とおくと，$${other}^2 x=1-${fn}^2 x=1-t^2$。$0\\leqq x<2\\pi$ より $-1\\leqq t\\leqq 1$ である。` },
+          { t: 'eq', noEval: true, rows: [`${sumTex([[1, '(1-t^2)'], [a, 't'], [c, '']])} &= ${quad}`, `&= ${vf}`] },
+          { t: 'txt', s: `$-1\\leqq t\\leqq 1$ の範囲で，${t0.val() > -1 && t0.val() < 1 ? `軸 $t=${numTex(t0)}$ は範囲の中にある。` : `軸 $t=${numTex(t0)}$ は範囲の外にある。`}$t=${numTex(mx[0])}$ のとき最大値 $${numTex(mx[1])}$，$t=${numTex(mn[0])}$ のとき最小値 $${numTex(mn[1])}$ をとる。` },
+          { t: 'txt', s: `$${fn} x=${numTex(mx[0])}$ より $x=${xs(mx[0])}$，$${fn} x=${numTex(mn[0])}$ より $x=${xs(mn[0])}$` }];
+        const ans = `$x=${xs(mx[0])}$ のとき最大値 $${numTex(mx[1])}$，$x=${xs(mn[0])}$ のとき最小値 $${numTex(mn[1])}$`;
+        return {
+          unit: 'okikae', lv, key: `ok2|${useSin}|${a}|${c}`, sec: T.okikae2,
+          label: `$0\\leqq x<2\\pi$ のとき，関数 $${fx}$ の最大値と最小値，およびそのときの $x$ の値を求めよ。`, math: '', item: `$${fx}$ の最大・最小`, head: `$${fx}$`,
+          ans, vars: { t: 1.37 }, steps: st,
+          chk: () => okChk(x => (useSin ? Math.cos(x) ** 2 + a * Math.sin(x) : Math.sin(x) ** 2 + a * Math.cos(x)) + c, mx[1].val(), mn[1].val(), (useSin ? SIN_XV : COS_XV)[mx[0].n + '/' + mx[0].d], (useSin ? SIN_XV : COS_XV)[mn[0].n + '/' + mn[0].d])
+        };
+      }
+      // 発展：y=A·2sin x cos x+b(sin x+cos x)+c。t=sin x+cos x，2sin x cos x=t²−1，−√2≦t≦√2
+      const A = pick([1, -1]), b = pick([2, -2]), c = ri(-3, 3), C0 = c - A;
+      const fx = `y=${A > 0 ? '' : '-'}2\\sin x\\cos x${b > 0 ? '+' : '-'}${Math.abs(b)}(\\sin x+\\cos x)${c ? (c > 0 ? `+${c}` : c) : ''}`;
+      const t0 = new F(-b, 2 * A), q = F.of(C0).sub(t0.mul(t0).mul(A));   // 頂点 (t0, q)
+      // 端の値：t=±√2 で y=2A+C0 ± b√2
+      const ep = sg => ({ tex: sumTex([[2 * A + C0, ''], [sg * b, '\\sqrt{2}']]), v: 2 * A + C0 + sg * b * Math.SQRT2, t: sg > 0 ? '\\sqrt{2}' : '-\\sqrt{2}', x: sg > 0 ? '\\frac{\\pi}{4}' : '\\frac{5}{4}\\pi', xv: [sg > 0 ? Math.PI / 4 : 5 * Math.PI / 4] });
+      const far = ep(-Math.sign(t0.val()));   // 軸から遠い端
+      const vx = SC_X[t0.n], vxv = SC_XV[t0.n];
+      const top = A > 0 ? far : { tex: numTex(q), v: q.val(), t: numTex(t0), x: vx, xv: vxv }, bot = A > 0 ? { tex: numTex(q), v: q.val(), t: numTex(t0), x: vx, xv: vxv } : far;
+      const quad = sumTex([[A, 't^2'], [b, 't'], [C0, '']]), vf = joinPoly(`${A < 0 ? '-' : ''}\\left(${sumTex([[1, 't'], [t0.neg(), '']])}\\right)^2`, numTex(q));
+      const st = [{ t: 'txt', s: '$t=\\sin x+\\cos x$ とおくと，$t^2=1+2\\sin x\\cos x$ より $2\\sin x\\cos x=t^2-1$。' },
+        { t: 'txt', s: '$t=\\sqrt{2}\\sin\\left(x+\\frac{\\pi}{4}\\right)$ で，$0\\leqq x<2\\pi$ より $\\frac{\\pi}{4}\\leqq x+\\frac{\\pi}{4}<\\frac{9}{4}\\pi$ だから $-\\sqrt{2}\\leqq t\\leqq\\sqrt{2}$ である。' },
+        { t: 'eq', noEval: true, rows: [`${sumTex([[A, '(t^2-1)'], [b, 't'], [c, '']])} &= ${quad}`, `&= ${vf}`] },
+        { t: 'txt', s: `軸 $t=${numTex(t0)}$ は $-\\sqrt{2}\\leqq t\\leqq\\sqrt{2}$ の中にある。${A > 0 ? '下' : '上'}に凸なので，${A > 0 ? '最小値は頂点，最大値は軸から遠い端' : '最大値は頂点，最小値は軸から遠い端'} $t=${far.t}$ でとる。` },
+        { t: 'txt', s: `最大値 $${top.tex}$（$t=${top.t}$），最小値 $${bot.tex}$（$t=${bot.t}$）。$\\sqrt{2}\\sin\\left(x+\\frac{\\pi}{4}\\right)=t$ を解いて，最大のとき $x=${top.x}$，最小のとき $x=${bot.x}$` }];
+      return {
+        unit: 'okikae', lv, key: `ok3|${A}|${b}|${c}`, sec: T.okikae3,
+        label: `$0\\leqq x<2\\pi$ のとき，関数 $${fx}$ の最大値と最小値，およびそのときの $x$ の値を求めよ。`, math: '', item: `$${fx}$ の最大・最小`, head: `$${fx}$`,
+        ans: `$x=${top.x}$ のとき最大値 $${top.tex}$，$x=${bot.x}$ のとき最小値 $${bot.tex}$`, vars: { t: 1.37 }, steps: st,
+        chk: () => okChk(x => A * 2 * Math.sin(x) * Math.cos(x) + b * (Math.sin(x) + Math.cos(x)) + c, top.v, bot.v, top.xv, bot.xv)
+      };
+    }
+  },
+  // 【定数分離と解の個数】f(x)=L x³−(3L/2)(α+β)x²+3Lαβ x（極値の x が整数 α<β）。f(x)=a の実数解の個数を y=f(x) と y=a の共有点で数える
+  teisuBunri(lv){
+    for (;;) {
+      const L = pick([1, 2]), al = ri(-4, 3), be = al + pick([1, 2, 3, 4, 5]); if (be > 5) continue;
+      if (L === 1 && (al + be) % 2) continue;
+      const c2 = -3 * L * (al + be) / 2, c1 = 3 * L * al * be, f = x => L * x ** 3 + c2 * x * x + c1 * x, M = f(al), m = f(be);
+      if (Math.abs(M) > 60 || Math.abs(m) > 60 || !c1 && !c2) continue;
+      const fT = sumTex([[L, 'x^3'], [c2, 'x^2'], [c1, 'x']]), eq = `${fT}-a=0`;
+      const fp = sumTex([[3 * L, 'x^2'], [2 * c2, 'x'], [c1, '']]), fac = `${3 * L}${al ? `(${sumTex([[1, 'x'], [-al, '']])})` : 'x'}${be ? `(${sumTex([[1, 'x'], [-be, '']])})` : 'x'}`;
+      const facT = al === 0 ? `${3 * L}x(${sumTex([[1, 'x'], [-be, '']])})` : be === 0 ? `${3 * L}x(${sumTex([[1, 'x'], [-al, '']])})` : fac;
+      let kind, ans, label, cnt;
+      if (lv === 1) { kind = 'three'; ans = `$${m}<a<${M}$`; label = '異なる3つの実数解をもつ'; }
+      else if (lv === 2) { kind = 'count'; ans = `$a<${m}$，$${M}<a$ のとき1個；$a=${m}$，$${M}$ のとき2個；$${m}<a<${M}$ のとき3個`; }
+      else {
+        kind = pick(['2p1n', '1p2n', 'pos3']);
+        cnt = a => { const rs = cubicRoots(f, al, be, M, m, a); const p = rs.filter(x => x > 1e-9).length, n = rs.filter(x => x < -1e-9).length; return { p, n, all: rs.length }; };
+        const ok = a => { const c = cnt(a); return kind === '2p1n' ? c.all === 3 && c.p === 2 && c.n === 1 : kind === '1p2n' ? c.all === 3 && c.p === 1 && c.n === 2 : c.all === 3 && c.p === 3; };
+        const iv = aRange(ok, [m, M, 0]); if (!iv) continue;
+        ans = `$${iv}$`;
+        label = { '2p1n': '異なる2つの正の解と1つの負の解をもつ', '1p2n': '1つの正の解と異なる2つの負の解をもつ', pos3: '異なる3つの正の解をもつ' }[kind];
+      }
+      const st = [{ t: 'txt', s: `方程式は $${fT}=a$ と変形できる。$f(x)=${fT}$ とおくと，実数解の個数は，$y=f(x)$ のグラフと直線 $y=a$ の共有点の個数に等しい。` },
+        { t: 'txt', s: '$f\'(x)$ を因数分解すると' }, { t: 'eq', rows: [`${fp} &= ${facT}`] },
+        { t: 'txt', s: `増減を調べると，$x=${al}$ で極大値 $f(${al})=${M}$，$x=${be}$ で極小値 $f(${be})=${m}$ をとる（図）。` }];
+      if (lv === 1) st.push({ t: 'txt', s: `直線 $y=a$ がグラフと異なる3点で交わるのは，極小値と極大値の間にあるとき。よって ${ans}` });
+      else if (lv === 2) st.push({ t: 'txt', s: `直線 $y=a$ を上下に動かして共有点の個数を数えると，${ans}` });
+      else st.push({ t: 'txt', s: `共有点の $x$ 座標の正負は，グラフが原点を通ることに注意して，直線 $y=a$ が原点より上か下かで見る。$y=a$ を動かして条件に合う範囲を読むと ${ans}` });
+      const x0 = al - 1.6, x1 = be + 1.6, y0 = Math.min(m, 0) - (M - m) * 0.35 - 1, y1 = Math.max(M, 0) + (M - m) * 0.35 + 1;
+      const fig = planeShapes({ x0, x1, y0, y1, curves: [{ f }], lines: [{ a: 0, b: 1, c: M, st: 'faint' }, { a: 0, b: 1, c: m, st: 'faint' }],
+        dots: [{ x: al, y: M, label: ptLab('', al, M), pos: 'above' }, { x: be, y: m, label: ptLab('', be, m), pos: 'below' }] });
+      st.push({ t: 'fig', f: fig });
+      const q = lv === 2 ? `方程式 $${eq}$ の異なる実数解の個数を，定数 $a$ の値によって調べよ。` : `方程式 $${eq}$ が${label}ような定数 $a$ の値の範囲を求めよ。`;
+      return {
+        unit: 'teisuBunri', lv, key: `tb${lv}|${fT}|${kind}`, sec: T[`teisu${lv}`],
+        label: q, math: '', item: `$${eq}$`, head: `$${eq}$`, ans, vars: { x: 1.37 }, steps: st,
+        // 極値を数値で確かめ，いくつかの a で格子の符号の変わり目から解を数える
+        chk: () => {
+          let bad = 0; const d = x => 3 * L * x * x + 2 * c2 * x + c1;
+          if (Math.abs(d(al)) > 1e-9 || Math.abs(d(be)) > 1e-9 || f(al) <= f(be)) bad++;
+          const grid = a => { let n = 0, pv = f(-30) - a; for (let i = 1; i <= 24000; i++) { const x = -30 + i / 400, v = f(x) - a; if (pv * v < 0 || v === 0) n++; pv = v; } return n; };
+          [m - 3.3, (m + M) / 2 + 0.01, M + 2.7].forEach(a => { const g = grid(a), want = a > m && a < M ? 3 : 1; if (g !== want) bad++; });
+          if (lv === 3) { const rs = a => cubicRoots(f, al, be, M, m, a); [m - 1.1, m + 0.37, -0.21, 0.23, M - 0.41, M + 1.3].forEach(a => { if (rs(a).length !== grid(a)) bad++; }); }
+          return bad;
+        }
+      };
+    }
+  },
+  // 【桁数・最高位の数字】log₁₀2=0.3010，log₁₀3=0.4771，log₁₀7=0.8451 を使う。答えは BigInt の正確な値で確かめる
+  ketasuu(lv){
+    for (;;) {
+      const B = pick(KETA_BASES), n = ri(lv === 1 ? 15 : 20, 60), X4 = n * B.l4;   // 1万倍の整数
+      const k = Math.floor(X4 / 10000), fr = X4 - k * 10000;
+      if (fr < 60 || fr > 9940) continue;
+      const exact = (B.num ** BigInt(n)).toString();
+      const Xs = `${k}.${String(fr).padStart(4, '0')}`;
+      const base = `${B.tex}^{${n}}`;
+      const logRow = `$\\log_{10}${base}=${n}\\log_{10}${B.tex}=${n}\\times ${B.l4s}=${Xs}$`;
+      if (lv === 1) {
+        if (exact.length !== k + 1) continue;
+        const st = [{ t: 'txt', s: `${B.how ? B.how + '。' : ''}${logRow}` }, { t: 'txt', s: `$${k}<\\log_{10}${base}<${k + 1}$ より $10^{${k}}<${base}<10^{${k + 1}}$。よって $${base}$ は $${k + 1}$ 桁の数である。` }];
+        return { unit: 'ketasuu', lv, key: `kt1|${B.tex}|${n}`, sec: T.keta1, label: `$${base}$ は何桁の数か。ただし，${KETA_GIVEN}とする。`, math: '', item: `$${base}$ の桁数`, head: `$${base}$`,
+          ans: `$${k + 1}$ 桁`, vars: {}, steps: st, chk: () => (B.num ** BigInt(n)).toString().length === k + 1 ? 0 : 1 };
+      }
+      // 標準：桁数と最高位の数字，または小数第何位
+      if (Math.random() < 0.6) {
+        const d = KETA_D.findIndex((v, i) => fr >= v && fr < KETA_D[i + 1]) + 1;
+        if (d < 1 || KETA_D.some(v => Math.abs(fr - v) < 25) || exact.length !== k + 1 || +exact[0] !== d) continue;
+        const st = [{ t: 'txt', s: `${B.how ? B.how + '。' : ''}${logRow}` }, { t: 'txt', s: `$${k}<\\log_{10}${base}<${k + 1}$ より，$${base}$ は $${k + 1}$ 桁の数である。` },
+          { t: 'txt', s: `小数部分 $0.${String(fr).padStart(4, '0')}$ について，$\\log_{10}${d}=${KETA_LS[d]}$，$\\log_{10}${d + 1}=${KETA_LS[d + 1]}$ だから $\\log_{10}${d}<0.${String(fr).padStart(4, '0')}<\\log_{10}${d + 1}$。` },
+          { t: 'txt', s: `よって $${d}\\times 10^{${k}}<${base}<${d + 1}\\times 10^{${k}}$ となり，最高位の数字は $${d}$ である。` }];
+        return { unit: 'ketasuu', lv, key: `kt2|${B.tex}|${n}`, sec: T.keta2, label: `$${base}$ は何桁の数か。また，最高位の数字を求めよ。ただし，${KETA_GIVEN}とする。`, math: '', item: `$${base}$ の桁数と最高位`, head: `$${base}$`,
+          ans: `$${k + 1}$ 桁，最高位の数字は $${d}$`, vars: {}, steps: st, chk: () => { const e = (B.num ** BigInt(n)).toString(); return e.length === k + 1 && +e[0] === d ? 0 : 1; } };
+      }
+      // 小数：(p/q)^n（p<q）を小数で表したとき，初めて 0 でない数字が出るのは小数第何位か
+      const S = pick(KETA_SMALL), Y4 = n * S.l4, kk = Math.ceil(Y4 / 10000), fr2 = kk * 10000 - Y4;
+      if (fr2 < 60 || fr2 > 9940) continue;
+      const pos = smallPos(S.p, S.q, n); if (pos !== kk) continue;
+      const sb = `\\left(${S.tex}\\right)^{${n}}`, Ys = `${Math.floor(Y4 / 10000)}.${String(Y4 % 10000).padStart(4, '0')}`;
+      const st = [{ t: 'txt', s: `$\\log_{10}${sb}=${n}\\left(${S.lt}\\right)=${n}\\times(-${S.l4s})=-${Ys}$` },
+        { t: 'txt', s: `$-${kk}<\\log_{10}${sb}<-${kk - 1}$ より $10^{-${kk}}<${sb}<10^{-${kk - 1}}$。よって，小数第 $${kk}$ 位に初めて 0 でない数字が現れる。` }];
+      return { unit: 'ketasuu', lv, key: `kt2s|${S.tex}|${n}`, sec: T.keta2, label: `$${sb}$ を小数で表すと，小数第何位に初めて 0 でない数字が現れるか。ただし，${KETA_GIVEN}とする。`, math: '', item: `$${sb}$ の小数第何位`, head: `$${sb}$`,
+        ans: `小数第 $${kk}$ 位`, vars: {}, steps: st, chk: () => smallPos(S.p, S.q, n) === kk ? 0 : 1 };
+    }
+  },
+  // 【確率の最大】lv1：n 回中 k 回起こる確率 p_k が最大の k。lv2：r 回起こる確率 P_n が最大の n。比 p_{k+1}/p_k と 1 を比べる
+  kakuMax(lv){
+    for (;;) {
+      const E = pick(KAKU_EV), a = E.a, b = E.b, cf = (c, x) => c === 1 ? x : `${c}(${x})`;
+      if (lv === 1) {
+        const n = ri(10, 40), num = (n + 1) * a - b;   // k < num/b
+        if (num % b === 0 || num <= 0) continue;
+        const K = Math.floor(num / b) + 1;
+        if (K >= n || K < 1) continue;
+        const kb = new F(num, b);
+        const st = [{ t: 'txt', s: `$p_k={}_{${n}}\\mathrm{C}_{k}\\left(\\frac{${a}}{${b}}\\right)^{k}\\left(\\frac{${b - a}}{${b}}\\right)^{${n}-k}$ である。` },
+          { t: 'eq', noEval: true, rows: [`\\frac{p_{k+1}}{p_k} &= \\frac{${n}!}{(k+1)!\\,(${n - 1}-k)!}\\cdot\\frac{k!\\,(${n}-k)!}{${n}!}\\cdot\\frac{${a}}{${b - a}}`, `&= \\frac{${cf(a, `${n}-k`)}}{${cf(b - a, 'k+1')}}`] },
+          { t: 'txt', s: `$\\frac{p_{k+1}}{p_k}>1$ とすると $${cf(a, `${n}-k`)}>${cf(b - a, 'k+1')}$，よって $${b}k<${num}$，$k<${numTex(kb)}$` },
+          { t: 'txt', s: `$k$ は整数なので，$k\\leqq ${K - 1}$ のとき $p_k<p_{k+1}$，$k\\geqq ${K}$ のとき $p_k>p_{k+1}$。よって $p_0<p_1<\\cdots<p_{${K}}$，$p_{${K}}>p_{${K + 1}}>\\cdots>p_{${n}}$ となり，$p_k$ は $k=${K}$ のとき最大になる。` }];
+        return { unit: 'kakuMax', lv, key: `km1|${E.nm}|${n}`, sec: T.kmax1,
+          label: `${E.txt}を ${n} 回くり返すとき，${E.ev}回数がちょうど $k$ 回である確率を $p_k$ とする。$p_k$ が最大となる $k$ の値を求めよ。`, math: '', item: `$p_k$ が最大の $k$（${n} 回）`, head: `${E.ev}回数が $k$ 回（${n} 回中）`,
+          ans: `$k=${K}$`, vars: {}, steps: st, chk: () => { const ps = binomPs(n, a / b), mx = Math.max(...ps); return ps.indexOf(mx) === K && ps.filter(v => Math.abs(v - mx) < 1e-12 * mx).length === 1 ? 0 : 1; } };
+      }
+      // 標準：r 回起こる確率 P_n が最大の n（P_{n+1}/P_n=(n+1)q/(n+1−r)）
+      const r = ri(2, 5), X = new F(r * b - a, a);   // n < r/p − 1 = (rb−a)/a
+      const tie = X.int, N1 = tie ? X.val() : Math.floor(X.val()) + 1;
+      if (N1 <= r) continue;
+      const st = [{ t: 'txt', s: `$n\\geqq ${r}$ のとき $P_n={}_{n}\\mathrm{C}_{${r}}\\left(\\frac{${a}}{${b}}\\right)^{${r}}\\left(\\frac{${b - a}}{${b}}\\right)^{n-${r}}$ である。` },
+        { t: 'eq', noEval: true, rows: [`\\frac{P_{n+1}}{P_n} &= \\frac{{}_{n+1}\\mathrm{C}_{${r}}}{{}_{n}\\mathrm{C}_{${r}}}\\cdot\\frac{${b - a}}{${b}}`, `&= \\frac{n+1}{n+1-${r}}\\cdot\\frac{${b - a}}{${b}}`] },
+        { t: 'txt', s: `$\\frac{P_{n+1}}{P_n}>1$ とすると $${cf(b - a, 'n+1')}>${b}(n+1-${r})$，よって $${cf(a, 'n+1')}<${r * b}$，$n<${numTex(X)}$${tie ? `。また $n=${X.val()}$ のとき $\\frac{P_{n+1}}{P_n}=1$` : ''}` },
+        { t: 'txt', s: tie ? `したがって $P_${r}<\\cdots<P_{${N1}}=P_{${N1 + 1}}>P_{${N1 + 2}}>\\cdots$ となり，$P_n$ は $n=${N1}$，$${N1 + 1}$ のとき最大になる。` : `$n$ は整数なので，$n\\leqq ${N1 - 1}$ のとき $P_n<P_{n+1}$，$n\\geqq ${N1}$ のとき $P_n>P_{n+1}$。よって $P_n$ は $n=${N1}$ のとき最大になる。` }];
+      return { unit: 'kakuMax', lv, key: `km2|${E.nm}|${r}`, sec: T.kmax2,
+        label: `${E.txt}を $n$ 回くり返すとき，${E.ev}回数がちょうど ${r} 回である確率を $P_n$ とする。$P_n$ が最大となる $n$ の値を求めよ。`, math: '', item: `$P_n$ が最大の $n$（${r} 回）`, head: `${E.ev}回数が ${r} 回`,
+        ans: tie ? `$n=${N1}$，$${N1 + 1}$` : `$n=${N1}$`, vars: {}, steps: st,
+        chk: () => { const P = n => binomPs(n, a / b)[r], vs = Array.from({ length: 90 }, (_, i) => i + r).map(n => [n, P(n)]), mx = Math.max(...vs.map(v => v[1])), at = vs.filter(v => Math.abs(v[1] - mx) < 1e-9 * mx).map(v => v[0]); return JSON.stringify(at) === JSON.stringify(tie ? [N1, N1 + 1] : [N1]) ? 0 : 1; } };
+    }
   }
 };
 Object.assign(GEN, B_GEN);
+// 置きかえ：t の値 → 0≦x<2π の x（キーは F の 分子/分母）
+const SIN_X = { '1/1': '\\frac{\\pi}{2}', '-1/1': '\\frac{3}{2}\\pi', '1/2': '\\frac{\\pi}{6},\\ \\frac{5}{6}\\pi', '-1/2': '\\frac{7}{6}\\pi,\\ \\frac{11}{6}\\pi' };
+const SIN_XV = { '1/1': [Math.PI / 2], '-1/1': [3 * Math.PI / 2], '1/2': [Math.PI / 6, 5 * Math.PI / 6], '-1/2': [7 * Math.PI / 6, 11 * Math.PI / 6] };
+const COS_X = { '1/1': '0', '-1/1': '\\pi', '1/2': '\\frac{\\pi}{3},\\ \\frac{5}{3}\\pi', '-1/2': '\\frac{2}{3}\\pi,\\ \\frac{4}{3}\\pi' };
+const COS_XV = { '1/1': [0], '-1/1': [Math.PI], '1/2': [Math.PI / 3, 5 * Math.PI / 3], '-1/2': [2 * Math.PI / 3, 4 * Math.PI / 3] };
+// t=sin x+cos x=±1 のときの x
+const SC_X = { 1: '0,\\ \\frac{\\pi}{2}', '-1': '\\pi,\\ \\frac{3}{2}\\pi' }, SC_XV = { 1: [0, Math.PI / 2], '-1': [Math.PI, 3 * Math.PI / 2] };
+// 0≦x<2π を細かく動かした最大・最小が答えと一致し，答えの x でその値になるか
+function okChk(f, mx, mn, mxX, mnX){
+  let hi = -Infinity, lo = Infinity;
+  for (let i = 0; i < 40000; i++) { const v = f(2 * Math.PI * i / 40000); hi = Math.max(hi, v); lo = Math.min(lo, v); }
+  let bad = (Math.abs(hi - mx) < 1e-6 ? 0 : 1) + (Math.abs(lo - mn) < 1e-6 ? 0 : 1);
+  (mxX || [NaN]).forEach(x => { if (!(Math.abs(f(x) - mx) < 1e-9)) bad++; });
+  (mnX || [NaN]).forEach(x => { if (!(Math.abs(f(x) - mn) < 1e-9)) bad++; });
+  return bad;
+}
+// 定数分離：3次関数 f（極大 M（x=al），極小 m（x=be））で f(x)=a の異なる実数解（区間ごとに二分法）
+function cubicRoots(f, al, be, M, m, a){
+  const rs = [], bis = (lo, hi, up) => { for (let i = 0; i < 200; i++) { const md = (lo + hi) / 2; if ((f(md) - a > 0) === up) hi = md; else lo = md; } return (lo + hi) / 2; };
+  if (a === M) rs.push(al); else if (a < M) { let lo = al - 1; while (f(lo) > a) lo -= 1 + Math.abs(lo); rs.push(bis(lo, al, true)); }
+  if (a < M && a > m) rs.push(bis(al, be, false));
+  if (a === m) rs.push(be); else if (a > m) { let hi = be + 1; while (f(hi) < a) hi += 1 + Math.abs(hi); rs.push(bis(be, hi, true)); }
+  return rs;
+}
+// 条件 ok(a) を満たす a が1つながりの範囲になるときだけ，その範囲の式を返す（境目の候補 cands とその間を調べる）
+function aRange(ok, cands){
+  const cs = [...new Set(cands)].sort((p, q) => p - q), pts = [];
+  pts.push({ v: cs[0] - 1, pt: false });
+  cs.forEach((c, i) => { pts.push({ v: c, pt: true }); pts.push({ v: i + 1 < cs.length ? (c + cs[i + 1]) / 2 : c + 1, pt: false }); });
+  const on = pts.map(p => ok(p.v)), idx = on.map((b, i) => b ? i : -1).filter(i => i >= 0);
+  if (!idx.length || idx[idx.length - 1] - idx[0] + 1 !== idx.length) return null;
+  const i0 = idx[0], i1 = idx[idx.length - 1];
+  if (i0 === i1 && pts[i0].pt) return null;   // 1点だけ
+  const lo = i0 === 0 ? null : pts[i0].pt ? { v: pts[i0].v, eq: true } : { v: pts[i0 - 1].v, eq: false };
+  const hi = i1 === pts.length - 1 ? null : pts[i1].pt ? { v: pts[i1].v, eq: true } : { v: pts[i1 + 1].v, eq: false };
+  if (!lo && !hi) return null;
+  const L = lo ? `${lo.v}${lo.eq ? '\\leqq' : '<'}` : '', H = hi ? `${hi.eq ? '\\leqq' : '<'}${hi.v}` : '';
+  return lo && !hi ? `a${lo.eq ? '\\geqq' : '>'}${lo.v}` : `${L}a${H}`;
+}
+// 桁数：使う底（l4 は log₁₀ の1万倍）
+const KETA_GIVEN = '$\\log_{10}2=0.3010$，$\\log_{10}3=0.4771$，$\\log_{10}7=0.8451$';
+const KETA_BASES = [
+  { num: 2n, tex: '2', l4: 3010, l4s: '0.3010' }, { num: 3n, tex: '3', l4: 4771, l4s: '0.4771' }, { num: 7n, tex: '7', l4: 8451, l4s: '0.8451' },
+  { num: 6n, tex: '6', l4: 7781, l4s: '0.7781', how: '$\\log_{10}6=\\log_{10}2+\\log_{10}3=0.7781$' },
+  { num: 5n, tex: '5', l4: 6990, l4s: '0.6990', how: '$\\log_{10}5=\\log_{10}\\frac{10}{2}=1-\\log_{10}2=0.6990$' },
+  { num: 12n, tex: '12', l4: 10791, l4s: '1.0791', how: '$\\log_{10}12=2\\log_{10}2+\\log_{10}3=1.0791$' },
+  { num: 18n, tex: '18', l4: 12552, l4s: '1.2552', how: '$\\log_{10}18=\\log_{10}2+2\\log_{10}3=1.2552$' },
+  { num: 15n, tex: '15', l4: 11761, l4s: '1.1761', how: '$\\log_{10}15=\\log_{10}3+\\log_{10}5=\\log_{10}3+1-\\log_{10}2=1.1761$' },
+  { num: 14n, tex: '14', l4: 11461, l4s: '1.1461', how: '$\\log_{10}14=\\log_{10}2+\\log_{10}7=1.1461$' }
+];
+// 最高位の数字：log₁₀1〜log₁₀10 の1万倍
+const KETA_D = [0, 3010, 4771, 6020, 6990, 7781, 8451, 9030, 9542, 10000];
+const KETA_LS = { 1: '0', 2: '0.3010', 3: '0.4771', 4: '0.6020', 5: '0.6990', 6: '0.7781', 7: '0.8451', 8: '0.9030', 9: '0.9542', 10: '1' };
+// 小数：(p/q)^n の log₁₀ は −n×l4/10000
+const KETA_SMALL = [
+  { p: 1n, q: 2n, tex: '\\frac{1}{2}', l4: 3010, l4s: '0.3010', lt: '-\\log_{10}2' }, { p: 1n, q: 3n, tex: '\\frac{1}{3}', l4: 4771, l4s: '0.4771', lt: '-\\log_{10}3' },
+  { p: 2n, q: 3n, tex: '\\frac{2}{3}', l4: 1761, l4s: '0.1761', lt: '\\log_{10}2-\\log_{10}3' }, { p: 1n, q: 6n, tex: '\\frac{1}{6}', l4: 7781, l4s: '0.7781', lt: '-\\log_{10}2-\\log_{10}3' },
+  { p: 3n, q: 4n, tex: '\\frac{3}{4}', l4: 1249, l4s: '0.1249', lt: '\\log_{10}3-2\\log_{10}2' }, { p: 1n, q: 7n, tex: '\\frac{1}{7}', l4: 8451, l4s: '0.8451', lt: '-\\log_{10}7' }
+];
+// (p/q)^n を小数で表したとき，初めて 0 でない数字が出る位（BigInt で正確に）
+const smallPos = (p, q, n) => { const a = p ** BigInt(n), b = q ** BigInt(n); let k = 0, t = a; while (t < b) { t *= 10n; k++; } return k; };
+// 確率の最大：試行と事象（a/b が確率）
+const KAKU_EV = [
+  { nm: 'd1', txt: '1個のさいころを投げる試行', ev: '1の目が出る', a: 1, b: 6 }, { nm: 'd3', txt: '1個のさいころを投げる試行', ev: '3の倍数の目が出る', a: 1, b: 3 },
+  { nm: 'd34', txt: '1個のさいころを投げる試行', ev: '3以上の目が出る', a: 2, b: 3 },
+  { nm: 'b14', txt: '赤玉1個と白玉3個が入った袋から玉を1個取り出し，色を見てもとにもどす試行', ev: '赤玉が出る', a: 1, b: 4 },
+  { nm: 'b25', txt: '赤玉2個と白玉3個が入った袋から玉を1個取り出し，色を見てもとにもどす試行', ev: '赤玉が出る', a: 2, b: 5 }
+];
+// n 回中 k 回の確率（k=0〜n），対数で計算
+function binomPs(n, p){ const lf = [0]; for (let i = 1; i <= n; i++) lf.push(lf[i - 1] + Math.log(i)); return Array.from({ length: n + 1 }, (_, k) => Math.exp(lf[n] - lf[k] - lf[n - k] + k * Math.log(p) + (n - k) * Math.log(1 - p))); }
 // 解の配置の道具：m の範囲を開区間の和 [[下, 上], …] で持つ（端は F，はてしない側は ±Infinity）
 const IV_INF = Infinity, ivV = x => typeof x === 'number' ? x : x.val();
 function ivAnd(A, B){
@@ -9627,6 +9898,10 @@ const FORMULA = {
   taisho: ['$x^2+y^2=(x+y)^2-2xy$', '$x^3+y^3=(x+y)^3-3xy(x+y)$', 'まず $x+y$ と $xy$ の値を求めてから代入する。'],
   kaiKeisu1: ['$ax^2+bx+c=0$ の2つの解 $\\alpha$，$\\beta$ について $\\alpha+\\beta=-\\frac{b}{a}$，$\\alpha\\beta=\\frac{c}{a}$', '式を $\\alpha+\\beta$ と $\\alpha\\beta$ で表してから代入する（$\\alpha^2+\\beta^2=(\\alpha+\\beta)^2-2\\alpha\\beta$ など）。'],
   heihou: ['$ax^2+bx+c=a\\left(x+\\frac{b}{2a}\\right)^2-\\frac{b^2-4ac}{4a}$', '$x^2$ の係数でくくる → $(x+p)^2$ をつくる → 定数を整理する。'],
+  okikae: ['置きかえた文字 $t$ のとりうる値の範囲を先に求める（$t=2^x$ なら $t>0$，$t=\\sin x$ なら $-1\\leqq t\\leqq 1$）。', '$t$ の2次関数を平方完成し，範囲の中で最大・最小を求める。最後に $t$ を $x$ にもどす。'],
+  teisuBunri: ['文字 $a$ を分離して $f(x)=a$ の形にする。実数解の個数は $y=f(x)$ と直線 $y=a$ の共有点の個数。', '$f\'(x)=0$ から極値を求め，直線 $y=a$ を上下に動かして数える。'],
+  ketasuu: ['$k\\leqq\\log_{10}N<k+1$ のとき $N$ は $k+1$ 桁。', '小数部分 $\\alpha$ が $\\log_{10}d\\leqq\\alpha<\\log_{10}(d+1)$ なら最高位の数字は $d$。', '$-k\\leqq\\log_{10}N<-k+1$ なら小数第 $k$ 位に初めて 0 でない数字。'],
+  kakuMax: ['確率 $p_k$ の比 $\\frac{p_{k+1}}{p_k}$ と 1 の大小を比べ，$p_k$ が増える範囲と減る範囲を調べる。'],
   kaiHaichi: ['$x^2$ の係数が正のとき，$f(x)=0$ が $k$ をはさむ2つの解をもつ条件は $f(k)<0$（$k=0$ なら正の解と負の解）。', '異なる2つの解がともに $k$ より大きい条件は，判別式 $D>0$，軸 $>k$，$f(k)>0$ の3つ。', 'それぞれの条件を $m$ の不等式にして，共通範囲を求める。'],
   kanshu: ['平方完成して $y=a(x-p)^2+q$ にし，頂点 $(p,\\ q)$ を求める。', '定義域があるときは，軸が定義域の中か外かで分け，頂点と端点の $y$ の値を比べる。'],
   sankaku: ['正弦定理 $\\frac{a}{\\sin A}=\\frac{b}{\\sin B}=\\frac{c}{\\sin C}=2R$', '余弦定理 $a^2=b^2+c^2-2bc\\cos A$，$\\cos A=\\frac{b^2+c^2-a^2}{2bc}$'],
@@ -10254,7 +10529,7 @@ function applyFont(){ document.documentElement.style.setProperty('--font', FONTS
 // 教科のタブ：その教科の分野だけを見せる（単元の選択は教科をまたいで残す）。分野の欄は1つだけひらく
 const SUBJ_TABS = ['1', 'A', '2', 'B', 'C'];
 // 受験基礎の印：入試の小問でよく出る典型処理の単元。新しい単元を足したら、ここに入れると受験基礎で表示される
-const JUKEN = new Set(['taisho', 'kaiKeisu1', 'kaiHaichi', 'kanshu', 'hanpuku', 'jokenTsuki', 'futeishiki', 'goudou', 'soukaSoujo', 'kaiKeisu2', 'teiten', 'senkei', 'tsuka', 'enSessen', 'gousei', 'taisuuHouteishiki', 'kyokuchi', 'rokubun', 'zenka', 'snAn', 'sabunWa', 'kouten', 'saisyou']);
+const JUKEN = new Set(['okikae', 'teisuBunri', 'ketasuu', 'kakuMax', 'taisho', 'kaiKeisu1', 'kaiHaichi', 'kanshu', 'hanpuku', 'jokenTsuki', 'futeishiki', 'goudou', 'soukaSoujo', 'kaiKeisu2', 'teiten', 'senkei', 'tsuka', 'enSessen', 'gousei', 'taisuuHouteishiki', 'kyokuchi', 'rokubun', 'zenka', 'snAn', 'sabunWa', 'kouten', 'saisyou']);
 const unitShown = i => !ST.juken || JUKEN.has(i.value);
 // 分野の中で、いま表示している単元
 const shownIds = u => [...u.querySelectorAll('input[name="unit"]')].filter(unitShown).map(i => i.value);
