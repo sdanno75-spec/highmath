@@ -85,6 +85,13 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 .setbox h3{margin:0;font-size:14px}
 .setbox .chk{background:#fff;align-self:flex-start}
 .subjTabs{margin-bottom:8px}
+/* 受験基礎：押すと受験基礎の印がある単元だけを表示する（選んだ単元はそのまま） */
+.subjRow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:8px}
+.subjRow .subjTabs{margin-bottom:0}
+.jukenBtn{padding:6px 14px;border:1px solid var(--teal);border-radius:999px;background:#fff;color:var(--teal);font-weight:700;font-size:14px;cursor:pointer}
+.jukenBtn:hover{background:var(--teal-bg)}
+.jukenBtn.on{background:var(--teal);color:#fff}
+.chk[hidden]{display:none}
 .subjTabs button b{font-weight:700;margin-left:4px;font-variant-numeric:tabular-nums}
 .fields{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
 .field + .field{border-top:1px solid var(--line)}
@@ -459,7 +466,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
             </div>
           </div>
         </div>
-        <div class="seg subjTabs" id="subjTabs" aria-label="教科"><button data-sj="1">数I</button><button data-sj="A">数A</button><button data-sj="2">数II</button><button data-sj="B">数B</button><button data-sj="C">数C</button></div>
+        <div class="subjRow"><div class="seg subjTabs" id="subjTabs" aria-label="教科"><button data-sj="1">数I</button><button data-sj="A">数A</button><button data-sj="2">数II</button><button data-sj="B">数B</button><button data-sj="C">数C</button></div><button type="button" class="jukenBtn" id="jukenBtn" aria-pressed="false" title="受験基礎の単元だけを表示する">受験基礎</button></div>
         <div class="fields" id="fields">
         <div class="units" data-subj="1">
           <span class="ugrp">数I　数と式</span>
@@ -755,8 +762,9 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.63.0', UPDATED = '2026-11-12';
+const VERSION = '5.64.0', UPDATED = '2026-11-12';
 const CHANGES = [
+  ['5.64.0', '2026-11-12', '教科タブの右に「受験基礎」のボタンを追加。押すと、入試でよく出る典型処理の単元（対称式・解の配置・通過領域・漸化式など23単元）だけを表示する。もう一度押すと全部にもどる（選んだ単元はそのまま）。'],
   ['5.63.0', '2026-11-12', '数I 二次関数に「解の配置」を追加（基本：k をはさむ解、標準：ともに k より大きい・小さい、発展：区間に1つずつ・区間に2つ。解答にグラフの例）。通過領域（逆像法）の問題をふやした：放物線の通過領域、x²+y²=r² のときの ax+y の範囲、条件つきの点 (s+t, st)（s, t≧k、s≧k≧t、s²+t²=r² の描く図形）、x²±xy+y²=c のときの x+y の範囲、発展に s, t が区間にあるときの (s+t, st)。'],
   ['5.62.1', '2026-11-11', '「問題の量」の表の欄（基本・標準・発展、問題数）の左右に小さな −・＋ のボタンをつけ、1問ずつ増やす・減らすようにした。'],
   ['5.62.0', '2026-11-11', '2ページ目からの見出しを初めはなしにした（そのぶん問題の欄が広くなる）。その他の設定「見出しの欄」の「毎ページに題名」「毎ページに年組番・氏名」で入れられる（画面・印刷・LaTeX とも）。'],
@@ -10245,11 +10253,19 @@ window.addEventListener('afterprint', () => { if (titleBeforePrint) document.tit
 function applyFont(){ document.documentElement.style.setProperty('--font', FONTS[ST.font] || FONTS.maru); }
 // 教科のタブ：その教科の分野だけを見せる（単元の選択は教科をまたいで残す）。分野の欄は1つだけひらく
 const SUBJ_TABS = ['1', 'A', '2', 'B', 'C'];
+// 受験基礎の印：入試の小問でよく出る典型処理の単元。新しい単元を足したら、ここに入れると受験基礎で表示される
+const JUKEN = new Set(['taisho', 'kaiKeisu1', 'kaiHaichi', 'kanshu', 'hanpuku', 'jokenTsuki', 'futeishiki', 'goudou', 'soukaSoujo', 'kaiKeisu2', 'teiten', 'senkei', 'tsuka', 'enSessen', 'gousei', 'taisuuHouteishiki', 'kyokuchi', 'rokubun', 'zenka', 'snAn', 'sabunWa', 'kouten', 'saisyou']);
+const unitShown = i => !ST.juken || JUKEN.has(i.value);
+// 分野の中で、いま表示している単元
+const shownIds = u => [...u.querySelectorAll('input[name="unit"]')].filter(unitShown).map(i => i.value);
 function applySubject(){
   if (ST.subject === 'both') ST.subject = '1';
   if (ST.subject === '2BC') ST.subject = '2';
   if (!SUBJ_TABS.includes(ST.subject)) ST.subject = '1';
-  document.querySelectorAll('#fields .field').forEach(f => { f.hidden = f.dataset.subj !== ST.subject; f.classList.toggle('open', f.dataset.key === ST.openField); f.querySelector('.fhead').setAttribute('aria-expanded', f.dataset.key === ST.openField); });
+  document.querySelectorAll('#fields input[name="unit"]').forEach(i => { i.closest('.chk').hidden = !unitShown(i); });
+  document.querySelectorAll('#fields .field').forEach(f => { const n = shownIds(f.querySelector('.units')).length; f.querySelector('.fhead em').textContent = n + '単元'; });
+  $('jukenBtn').classList.toggle('on', !!ST.juken); $('jukenBtn').setAttribute('aria-pressed', !!ST.juken);
+  document.querySelectorAll('#fields .field').forEach(f => { f.hidden = f.dataset.subj !== ST.subject || !shownIds(f.querySelector('.units')).length; f.classList.toggle('open', f.dataset.key === ST.openField); f.querySelector('.fhead').setAttribute('aria-expanded', f.dataset.key === ST.openField); });
   document.querySelectorAll('#subjTabs button').forEach(b => { b.classList.toggle('on', b.dataset.sj === ST.subject); b.setAttribute('aria-pressed', b.dataset.sj === ST.subject); });
   document.title = '数学 基礎計算プリント';
 }
@@ -10292,7 +10308,7 @@ document.querySelectorAll('#fields > .units[data-subj]').forEach(u => {
   u.insertAdjacentHTML('beforeend', '<button type="button" class="btn fAll">この分野をすべて選ぶ</button>');
   f.querySelector('.fhead').addEventListener('click', () => { ST.openField = ST.openField === key ? '' : key; save(); applySubject(); });
   u.querySelector('.fAll').addEventListener('click', () => {
-    const ids = [...u.querySelectorAll('input[name="unit"]')].map(i => i.value), all = ids.every(x => ST.units.includes(x));
+    const ids = shownIds(u), all = ids.every(x => ST.units.includes(x));
     setUnits(all ? ST.units.filter(x => !ids.includes(x)) : [...ST.units, ...ids.filter(x => !ST.units.includes(x))]);
   });
 });
@@ -10449,7 +10465,7 @@ function updateGroupCounts(){
     + '<button type="button" data-remove="' + u + '" aria-label="' + esc(nm) + ' を外す">' + XMARK + '</button></span>').join('')
     || '<span class="pempty">まだ選んでいません。下の教科と分野から選んでください。</span>';
   document.querySelectorAll('#fields .field').forEach(f => { const n = f.querySelectorAll('input[name="unit"]:checked').length; f.querySelector('.n').textContent = n ? n + '個 選択中' : ''; });
-  document.querySelectorAll('#fields .units').forEach(u => { const ids = [...u.querySelectorAll('input[name="unit"]')].map(i => i.value); u.querySelector('.fAll').textContent = ids.every(x => ST.units.includes(x)) ? 'この分野をすべて外す' : 'この分野をすべて選ぶ'; });
+  document.querySelectorAll('#fields .units').forEach(u => { const ids = shownIds(u); u.querySelector('.fAll').textContent = ids.every(x => ST.units.includes(x)) ? 'この分野をすべて外す' : 'この分野をすべて選ぶ'; });
   document.querySelectorAll('#subjTabs button').forEach(b => { const n = sel.filter(u => u[2] === b.dataset.sj).length; b.innerHTML = SUBJ_NAME[b.dataset.sj] + (n ? '<b>' + n + '</b>' : ''); });
   quizSync();
   $('title').placeholder = 'プリントの題名（空らんなら「' + baseTitle() + '」）';
@@ -10516,6 +10532,7 @@ $('picked').addEventListener('click', e => {
   else if (b.dataset.setopen) { ST.setOpen = ST.setOpen === b.dataset.setopen ? '' : b.dataset.setopen; save(); showOpts(); updateGroupCounts(); }
 });
 $('unitClear').addEventListener('click', () => setUnits([]));
+$('jukenBtn').addEventListener('click', () => { ST.juken = !ST.juken; save(); applySubject(); updateGroupCounts(); });
 $('subjTabs').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; ST.subject = b.dataset.sj; save(); applySubject(); });
 // よく使う組み合わせ：単元のセットに名前をつけて、フォルダ（1段）に分けて保存する。押すとその単元に入れかわる
 // ST.presets = [{ n: 名前, u: [単元], f: フォルダ名（'' は未分類） }]、ST.presetFolders = [フォルダ名]（空のフォルダも残すため）
