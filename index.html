@@ -803,8 +803,9 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.76.2', UPDATED = '2026-11-12';
+const VERSION = '5.77.0', UPDATED = '2026-11-12';
 const CHANGES = [
+  ['5.77.0', '2026-11-12', '帰納法の問題を数から作る型でふやした。等式：等差数列の和（初項・公差をかえる）、等比数列の和（初項 2〜5）、Σk(k+c)。不等式：aⁿ>(a−1)n+1 を a=3〜9 に、n!>4ⁿ・n!>5ⁿ、cⁿ>n²。倍数：aⁿ−(a−1)n−1 は (a−1)² の倍数、n³+11n など、4ⁿ+15n−1。同じ問題がプリントに2回以上出たときは、画面に番号つきで知らせるようにした（全単元）。'],
   ['5.76.2', '2026-11-12', '和の不等式6つの問題文は、Σ の形と和を書き並べた形を半々でまぜて出すようにした。'],
   ['5.76.1', '2026-11-12', '帰納法（不等式の証明）の和の不等式6つは、問題文を Σ の形にもどした（Σ1/k²<2−1/n など）。証明では和を書き並べた形を①とする。'],
   ['5.76.0', '2026-11-12', '全段仮定と二段仮定をそれぞれ単元に分けた（入試発展の印つき）。帰納法（全段仮定）：基本 2cSₙ=aₙ²+caₙ・aₙ₊₁=(2/n)Sₙ、標準 c(a₁+⋯+aₙ)²=a₁³+⋯+aₙ³。帰納法（二段仮定）：基本 αⁿ+βⁿ が整数、標準 3項間漸化式。倍数・漸化式から推定は基本・標準の2つにした。'],
@@ -6491,6 +6492,7 @@ const B_GEN = {
         { id: 'k3k', lhs: '1+2\\cdot 3+3\\cdot 3^2+\\cdots+n\\cdot 3^{n-1}', rhs: '\\frac{(2n-1)\\cdot 3^n+1}{4}', f: k => k * 3 ** (k - 1), t1: '(k+1)\\cdot 3^k', rows: ['\\frac{(2k-1)\\cdot 3^k+4(k+1)\\cdot 3^k+1}{4}', '\\frac{(6k+3)\\cdot 3^k+1}{4}', '\\frac{(2k+1)\\cdot 3^{k+1}+1}{4}'] },
         { id: 'odd2', lhs: '1^2+3^2+5^2+\\cdots+(2n-1)^2', rhs: '\\frac{1}{3}n(2n-1)(2n+1)', f: k => (2 * k - 1) ** 2, t1: '(2k+1)^2', rows: ['\\frac{1}{3}(2k+1)\\{k(2k-1)+3(2k+1)\\}', '\\frac{1}{3}(2k+1)(2k^2+5k+3)', '\\frac{1}{3}(k+1)(2k+1)(2k+3)'] }
       ];
+      L.push(...kinouEqMore());   // 数から作る型（等差・等比・Σk(k+c)）を1つずつ加える
       const g = pick(L), R = n => { let s = 0; for (let k = 1; k <= n; k++) s += g.f(k); return s; };
       const lhsK = g.lhs.replace(/n/g, 'k'), rhsK = g.rhs.replace(/n/g, 'k'), rows = [`${rhsK}+${g.t1}`, ...g.rows];
       const f1 = g.f1 || (g.id.startsWith('fr') ? (g.id === 'fr1' ? '\\frac{1}{2}' : '\\frac{1}{3}') : `${g.f(1)}`);
@@ -6537,6 +6539,11 @@ const B_GEN = {
         { id: 'e7', base: '8+27', pT: '2^{n+2}+3^{2n+1}', d: 7, P: n => 2 ** (n + 2) + 3 ** (2 * n + 1), asm: '2^{k+2}+3^{2k+1}=7m', pre: '$2^{k+2}=7m-3^{2k+1}$ だから', rows: ['2^{k+3}+3^{2k+3}', '2\\cdot 2^{k+2}+9\\cdot 3^{2k+1}', '2(7m-3^{2k+1})+9\\cdot 3^{2k+1}', '14m+7\\cdot 3^{2k+1}', '7(2m+3^{2k+1})'], end: '$2m+3^{2k+1}$ は整数なので' },
         { id: 'e25', base: '6-5-1', pT: '6^n-5n-1', d: 25, P: n => 6 ** n - 5 * n - 1, asm: '6^k-5k-1=25m', pre: '$6^k=25m+5k+1$ だから', rows: ['6^{k+1}-5(k+1)-1', '6\\cdot 6^k-5k-6', '6(25m+5k+1)-5k-6', '150m+25k', '25(6m+k)'], end: '$6m+k$ は整数なので' },
         { id: 'e133', base: '121+12', pT: '11^{n+1}+12^{2n-1}', d: 133, P: n => 11 ** (n + 1) + 12 ** (2 * n - 1), asm: '11^{k+1}+12^{2k-1}=133m', pre: '$11^{k+1}=133m-12^{2k-1}$ だから', rows: ['11^{k+2}+12^{2k+1}', '11\\cdot 11^{k+1}+144\\cdot 12^{2k-1}', '11(133m-12^{2k-1})+144\\cdot 12^{2k-1}', '1463m+133\\cdot 12^{2k-1}', '133(11m+12^{2k-1})'], end: '$11m+12^{2k-1}$ は整数なので' },
+        ...[3, 4, 5, 7].map(a => { const d = (a - 1) ** 2; return { id: `ea${a}`, base: `${a}-${a - 1}-1`, pT: `${a}^n-${a - 1}n-1`, d, P: n => a ** n - (a - 1) * n - 1, asm: `${a}^k-${a - 1}k-1=${d}m`, pre: `$${a}^k=${d}m+${a - 1}k+1$ だから`,
+          rows: [`${a}^{k+1}-${a - 1}(k+1)-1`, `${a}\\cdot ${a}^k-${a - 1}k-${a}`, `${a}(${d}m+${a - 1}k+1)-${a - 1}k-${a}`, `${a * d}m+${d}k`, `${d}(${a}m+k)`], end: `$${a}m+k$ は整数なので` }; }),
+        ...[2, 3, 4].map(c => { const e = 6 * c - 1; return { id: `c6_${c}`, base: `1+${e}`, pT: `n^3+${e}n`, d: 6, P: n => n ** 3 + e * n, asm: `k^3+${e}k=6m`,
+          rows: [`(k+1)^3+${e}(k+1)`, `(k^3+${e}k)+3k^2+3k+${6 * c}`, `6m+3k(k+1)+${6 * c}`], end: `$k(k+1)$ は連続する2つの整数の積で偶数だから，$3k(k+1)$ は $6$ の倍数。$${6 * c}$ も $6$ の倍数。よって` }; }),
+        { id: 'e9b', base: '4+15-1', pT: '4^n+15n-1', d: 9, P: n => 4 ** n + 15 * n - 1, asm: '4^k+15k-1=9m', pre: '$4^k=9m-15k+1$ だから', rows: ['4^{k+1}+15(k+1)-1', '4\\cdot 4^k+15k+14', '4(9m-15k+1)+15k+14', '36m-45k+18', '9(4m-5k+2)'], end: '$4m-5k+2$ は整数なので' },
         { id: 'e13', base: '3^2+4', pT: '3^{n+1}+4^{2n-1}', d: 13, P: n => 3 ** (n + 1) + 4 ** (2 * n - 1), asm: '3^{k+1}+4^{2k-1}=13m', pre: '$3^{k+1}=13m-4^{2k-1}$ だから', rows: ['3^{k+2}+4^{2k+1}', '3\\cdot 3^{k+1}+16\\cdot 4^{2k-1}', '3(13m-4^{2k-1})+16\\cdot 4^{2k-1}', '39m+13\\cdot 4^{2k-1}', '13(3m+4^{2k-1})'], end: '$3m+4^{2k-1}$ は整数なので' }
       ]);
       const st = [{ t: 'txt', s: `「$${B.pT}$ は $${B.d}$ の倍数である」を①とする。` },
@@ -6555,6 +6562,10 @@ const B_GEN = {
     const fact = n => { let p = 1; for (let i = 2; i <= n; i++) p *= i; return p; };
     const pw = a => ({ id: `pw${a}`, n0: 2, s: `${a}^n>${a - 1}n+1`, t1: `${a}^{k+1}>${a - 1}(k+1)+1`, bl: `${a}^2=${a * a}`, br: `${a - 1}\\cdot 2+1=${2 * a - 1}`, L: n => a ** n, R: n => (a - 1) * n + 1,
       rows: [['', `${a}^{k+1}-\\{${a - 1}(k+1)+1\\}`], ['=', `${a}\\cdot ${a}^k-${a - 1}k-${a}`], ['>', `${a}(${a - 1}k+1)-${a - 1}k-${a}`], ['=', `${(a - 1) ** 2}k`]] });
+    const facC = (c, n0) => ({ id: `fac${c}`, n0, s: `n!>${c}^n`, t1: `(k+1)!>${c}^{k+1}`, bl: `${n0}!=${fact(n0)}`, br: `${c}^{${n0}}=${c ** n0}`, L: fact, R: n => c ** n,
+      rows: [['', `(k+1)!-${c}^{k+1}`], ['=', `(k+1)\\cdot k!-${c}\\cdot ${c}^k`], ['>', `(k+1)\\cdot ${c}^k-${c}\\cdot ${c}^k`], ['=', `(k-${c - 1})\\cdot ${c}^k`]], why: `k\\geqq ${n0}` });
+    const sqC = c => ({ id: `sq${c}`, n0: 2, s: `${c}^n>n^2`, t1: `${c}^{k+1}>(k+1)^2`, bl: `${c}^2=${c * c}`, br: '2^2=4', L: n => c ** n, R: n => n * n,
+      rows: [['', `${c}^{k+1}-(k+1)^2`], ['=', `${c}\\cdot ${c}^k-(k+1)^2`], ['>', `${c}k^2-(k+1)^2`], ['=', `${c - 1}k^2-2k-1`], ['\\geqq', `${2 * (c - 1)}k-2k-1`], ['=', `${2 * c - 4}k-1`]], why: 'k\\geqq 2' });
     const C = pick([
       { id: 'p2', n0: 5, s: '2^n>n^2', t1: '2^{k+1}>(k+1)^2', bl: '2^5=32', br: '5^2=25', L: n => 2 ** n, R: n => n * n,
         rows: [['', '2^{k+1}-(k+1)^2'], ['=', '2\\cdot 2^k-(k+1)^2'], ['>', '2k^2-(k+1)^2'], ['=', 'k^2-2k-1'], ['=', '(k-1)^2-2']], why: 'k\\geqq 5' },
@@ -6583,7 +6594,7 @@ const B_GEN = {
       { id: 'cb', lt: true, n0: 2, q: '\\displaystyle\\sum_{k=1}^{n}\\frac{1}{k^3}<\\frac{3}{2}-\\frac{1}{2n^2}', s: '1+\\frac{1}{2^3}+\\frac{1}{3^3}+\\cdots+\\frac{1}{n^3}<\\frac{3}{2}-\\frac{1}{2n^2}', t1: '1+\\frac{1}{2^3}+\\cdots+\\frac{1}{k^3}+\\frac{1}{(k+1)^3}<\\frac{3}{2}-\\frac{1}{2(k+1)^2}', bl: '1+\\frac{1}{8}=\\frac{9}{8}', br: '\\frac{3}{2}-\\frac{1}{8}=\\frac{11}{8}',
         L: n => { let t = 0; for (let i = 1; i <= n; i++) t += 1 / i ** 3; return t; }, R: n => 1.5 - 1 / (2 * n * n),
         rows: [['', '\\left\\{\\frac{3}{2}-\\frac{1}{2(k+1)^2}\\right\\}-\\left\\{\\left(1+\\frac{1}{2^3}+\\cdots+\\frac{1}{k^3}\\right)+\\frac{1}{(k+1)^3}\\right\\}'], ['>', '\\left\\{\\frac{3}{2}-\\frac{1}{2(k+1)^2}\\right\\}-\\left\\{\\left(\\frac{3}{2}-\\frac{1}{2k^2}\\right)+\\frac{1}{(k+1)^3}\\right\\}'], ['=', '\\frac{2k+1}{2k^2(k+1)^2}-\\frac{1}{(k+1)^3}'], ['=', '\\frac{3k+1}{2k^2(k+1)^3}']] },
-      pw(3), pw(4), pw(5), pw(6),
+      pw(3), pw(4), pw(5), pw(6), pw(7), pw(8), pw(9), facC(4, 9), facC(5, 12), sqC(3), sqC(4), sqC(5),
       { id: 'fac3', n0: 7, s: 'n!>3^n', t1: '(k+1)!>3^{k+1}', bl: '7!=5040', br: '3^7=2187', L: fact, R: n => 3 ** n,
         rows: [['', '(k+1)!-3^{k+1}'], ['=', '(k+1)\\cdot k!-3\\cdot 3^k'], ['>', '(k+1)\\cdot 3^k-3\\cdot 3^k'], ['=', '(k-2)\\cdot 3^k']], why: 'k\\geqq 7' },
       { id: 'p3n', n0: 4, s: '2^n>3n', t1: '2^{k+1}>3(k+1)', bl: '2^4=16', br: '3\\cdot 4=12', L: n => 2 ** n, R: n => 3 * n,
@@ -6759,11 +6770,11 @@ const B_GEN = {
   // 【帰納法（等式の証明）】基本：1次式・等比・k(k+1)。標準：k²・k³・分数・k·2^(k−1)・(2k−1)²
   kinouTou(lv){
     const L1 = ['odd', 'k', '2k', '3k2', '4k3'], v = lv === 1 ? 1 : 2;
-    for (;;) { const p = GEN.kinou(1), id = p.key.split('|')[1]; if ((v === 1) === (L1.includes(id) || id.startsWith('geo'))) return Object.assign(p, { unit: 'kinouTou', lv: v, key: 'kt|' + p.key, sec: T[`kTou${v}`] }); }
+    for (;;) { const p = GEN.kinou(1), id = p.key.split('|')[1]; if ((v === 1) === (L1.includes(id) || /^(geo|ar|gm)/.test(id))) return Object.assign(p, { unit: 'kinouTou', lv: v, key: 'kt|' + p.key, sec: T[`kTou${v}`] }); }
   },
   // 【帰納法（不等式の証明）】基本：2ⁿ>2n+1・3ⁿ>2n+1・n!>2ⁿ・ベルヌーイ。標準：2ⁿ>n²・3ⁿ>n³・和の不等式
   kinouFu(lv){
-    const L1 = ['p2b', 'p3', 'fac', 'bern', 'pw3', 'pw4', 'pw5', 'pw6', 'fac3', 'p3n', 'p2e'], v = lv === 1 ? 1 : 2;
+    const L1 = ['p2b', 'p3', 'fac', 'bern', 'pw3', 'pw4', 'pw5', 'pw6', 'pw7', 'pw8', 'pw9', 'fac3', 'fac4', 'fac5', 'p3n', 'p2e'], v = lv === 1 ? 1 : 2;
     for (;;) { const p = GEN.kinou(2), [, k, id] = p.key.split('|'); if (k === 'C' && (v === 1) === L1.includes(id)) return Object.assign(p, { unit: 'kinouFu', lv: v, key: 'kf|' + p.key, sec: T[`kFu${v}`] }); }
   },
   // 【帰納法（倍数などの証明）】基本：aⁿ−bⁿ。標準：n³+2n など。発展：二段仮定
@@ -6788,6 +6799,40 @@ const B_GEN = {
   }
 };
 Object.assign(GEN, B_GEN);
+// 帰納法（等式）の型を数から作る（逆算）：等差数列の和・等比数列の和（a≧2）・Σk(k+c)
+function kinouEqMore(){
+  const cf = (c, s) => c === 1 ? s : `${c}${s}`, w = t => /[+-]/.test(t) ? `(${t})` : t;
+  const out = [];
+  // 等差 pk+q（いまある型と同じ組は除く）
+  for (;;) {
+    const p = ri(1, 5), q = ri(-3, 4); if (p + q < 1 || p + 2 * q === 0) continue;
+    if ([[2, -1], [1, 0], [2, 0], [3, -2], [4, -3]].some(([a, b]) => a === p && b === q)) continue;
+    const tN = sumTex([[p, 'n'], [q, '']]), lhs = `${p + q}+${2 * p + q}+${3 * p + q}+\\cdots+${w(tN)}`;
+    const odd = p % 2 === 1;
+    const rhs = odd ? `\\frac{1}{2}n(${sumTex([[p, 'n'], [p + 2 * q, '']])})` : `n${w(sumTex([[p / 2, 'n'], [(p + 2 * q) / 2, '']]))}`;
+    const t1 = q === 0 ? `${p}(k+1)` : p === 1 ? `\\{(k+1)${q > 0 ? `+${q}` : q}\\}` : `\\{${p}(k+1)${q > 0 ? `+${q}` : q}\\}`;
+    const mid = odd ? `\\frac{1}{2}(${sumTex([[p, 'k^2'], [3 * p + 2 * q, 'k'], [2 * p + 2 * q, '']])})` : sumTex([[p / 2, 'k^2'], [(3 * p + 2 * q) / 2, 'k'], [p + q, '']]);
+    const fin = odd ? `\\frac{1}{2}(k+1)(${sumTex([[p, 'k'], [2 * p + 2 * q, '']])})` : `(k+1)${w(sumTex([[p / 2, 'k'], [p + q, '']]))}`;
+    out.push({ id: `ar${p}_${q}`, lhs, rhs, f: k => p * k + q, t1, rows: [mid, fin] });
+    break;
+  }
+  // 等比 a·r^(k−1)（a≧2）
+  {
+    const a = ri(2, 5), r = ri(2, 5), d = r - 1, A = n => a * (r ** n - 1) / d;
+    const lhs = `${a}+${a * r}+${a * r * r}+\\cdots+${a}\\cdot ${r}^{n-1}`;
+    const rhsF = v => a % d === 0 ? (a / d === 1 ? `${r}^{${v}}-1` : `${a / d}(${r}^{${v}}-1)`) : `\\frac{${a}(${r}^{${v}}-1)}{${d}}`;
+    const rows = d === 1 ? [`${a}\\cdot 2^{k+1}-${a}`, `${a}(2^{k+1}-1)`]
+      : [`\\frac{${a}(${r}^k-1)+${a * d}\\cdot ${r}^k}{${d}}`, `\\frac{${a}\\cdot ${r}^{k+1}-${a}}{${d}}`, rhsF('k+1')];
+    out.push({ id: `gm${a}_${r}`, f1: `${a}`, lhs, rhs: rhsF('n').replace('{n}', 'n'), f: k => a * r ** (k - 1), t1: `${a}\\cdot ${r}^k`, rows, A });
+  }
+  // Σk(k+c)（c=3〜6）
+  {
+    const c = ri(3, 6);
+    out.push({ id: `kc${c}`, lhs: `1\\cdot ${1 + c}+2\\cdot ${2 + c}+\\cdots+n(n+${c})`, rhs: `\\frac{1}{6}n(n+1)(2n+${1 + 3 * c})`, f: k => k * (k + c), t1: `(k+1)(k+${c + 1})`,
+      rows: [`\\frac{1}{6}(k+1)\\{k(2k+${1 + 3 * c})+6(k+${c + 1})\\}`, `\\frac{1}{6}(k+1)(2k^2+${7 + 3 * c}k+${6 + 6 * c})`, `\\frac{1}{6}(k+1)(k+2)(2k+${3 + 3 * c})`] });
+  }
+  return out;
+}
 // 領域分割の点検：実際に直線・円をおいて，交点を求め，オイラーの公式（F=E−V+1 または +2）で部分の個数を数える
 function bunkCount(kind, n, m){
   if (kind === 'plane') { let d = 2; for (let k = 1; k < n; k++) d += (k * k + k + 2) / 2; const known = [2, 4, 8, 15, 26]; return n <= 5 && known[n - 1] !== d ? -1 : d; }
@@ -11282,7 +11327,11 @@ function finishRender(box, A){
   $('pageInfo').textContent = `全${all.length}ページ（${fn ? `公式・手順 ${fn}・` : ''}問題 ${qn}${zn ? `・正規分布表 ${zn}` : ''}・解答解説 ${an}）／${PROBS.length}問`;
   // 式の折り返し・はみ出しの自動点検
   ISSUES = layoutCheck(box);
-  $('layoutWarn').textContent = ISSUES.length ? `表示の点検：${ISSUES.length}か所で式の折り返し・はみ出し・縮小があります（${ISSUES.slice(0, 4).map(x => x.msg).join('、')}${ISSUES.length > 4 ? ' など' : ''}）` : '';
+  // 同じ問題の点検：同じ問題が2回以上あれば番号を出す（その単元の問題の種類が、選んだ問題数より少ないとき）
+  const dmap = {}; PROBS.forEach((p, i) => { (dmap[p.key] = dmap[p.key] || []).push(i + 1); });
+  const dups = Object.values(dmap).filter(a => a.length > 1);
+  const dupMsg = dups.length ? `同じ問題が出ています：${dups.slice(0, 4).map(a => a.map(n => `(${n})`).join('と')).join('、')}${dups.length > 4 ? ' など' : ''}（その単元の問題の種類が足りません。問題数を減らすか、難しさを変えると避けられます）` : '';
+  $('layoutWarn').textContent = [ISSUES.length ? `表示の点検：${ISSUES.length}か所で式の折り返し・はみ出し・縮小があります（${ISSUES.slice(0, 4).map(x => x.msg).join('、')}${ISSUES.length > 4 ? ' など' : ''}）` : '', dupMsg].filter(Boolean).join('　／　');
   applyPv(); renderVer();
 }
 function applyPv(){ $('sheets').className = 'sheet-wrap show-' + ST.pv; document.querySelector('.seg[data-set="pv"] button[data-v="a"]').textContent = ST.ans === 'only' ? '解答' : '解答・解説'; }
