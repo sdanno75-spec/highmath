@@ -566,6 +566,8 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
           <label class="chk"><input type="checkbox" name="unit" value="teiten">定点を通る図形</label>
           <label class="chk"><input type="checkbox" name="unit" value="senkei">線形計画法</label>
           <label class="chk"><input type="checkbox" name="unit" value="tsuka">通過領域（逆像法）</label>
+          <label class="chk"><input type="checkbox" name="unit" value="yosen">一文字固定法（予選決勝）</label>
+          <label class="chk"><input type="checkbox" name="unit" value="fax">ファクシミリの原理</label>
         </div>
         <div class="units" data-subj="2">
           <span class="ugrp">数II　三角関数</span>
@@ -808,8 +810,10 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.77.1', UPDATED = '2026-11-14';
+const VERSION = '5.79.0', UPDATED = '2026-11-14';
 const CHANGES = [
+  ['5.79.0', '2026-11-14', '新しい単元「ファクシミリの原理」（受験基礎）。直線の通過領域を x を固定して求める。基本：t はすべての実数。標準：t≧p・t≦p で2つに場合分け。発展：p≦t≦q で4つに場合分け（境界は放物線と2本の接線）。図つき。'],
+  ['5.78.0', '2026-11-14', '新しい単元「一文字固定法（予選決勝）」（受験基礎）。基本：x, y がすべての実数で平方完成を2回。標準：x, y が区間にある（軸は区間の中、決勝で端になることも）。発展：軸が区間からはみ出して y の範囲で場合分け。'],
   ['5.77.1', '2026-11-14', '同じ問題がプリントに出たときは、画面の右下に赤いポップアップでも知らせるようにした（×で閉じる。印刷には出ない）。'],
   ['5.77.0', '2026-11-12', '帰納法の問題を数から作る型でふやした。等式：等差数列の和（初項・公差をかえる）、等比数列の和（初項 2〜5）、Σk(k+c)。不等式：aⁿ>(a−1)n+1 を a=3〜9 に、n!>4ⁿ・n!>5ⁿ、cⁿ>n²。倍数：aⁿ−(a−1)n−1 は (a−1)² の倍数、n³+11n など、4ⁿ+15n−1。同じ問題がプリントに2回以上出たときは、画面に番号つきで知らせるようにした（全単元）。'],
   ['5.76.2', '2026-11-12', '和の不等式6つの問題文は、Σ の形と和を書き並べた形を半々でまぜて出すようにした。'],
@@ -1087,7 +1091,7 @@ const UNITS = [
   ['cheva', 'チェバの定理', 'A'], ['menelaus', 'メネラウスの定理', 'A'], ['houbeki', '方べきの定理', 'A'], ['kakunibun', '角の二等分線', 'A'], ['goshin', '三角形の五心', 'A'], ['kyoen', '共円条件', 'A'],
   ['nikou', '二項定理', '2'], ['warizan', '整式の割り算', '2'], ['soukaSoujo', '相加平均と相乗平均', '2'],
   ['fukuso', '複素数の計算', '2'], ['kaiKeisu2', '解と係数の関係（数II）', '2'], ['inshuTeiri', '因数定理による因数分解', '2'],
-  ['en', '円の中心と半径', '2'], ['tenChokusen', '点と直線の距離', '2'], ['taba', '交点を通る直線・円', '2'], ['enSessen', '円の接線・極線', '2'], ['teiten', '定点を通る図形', '2'], ['senkei', '線形計画法', '2'], ['tsuka', '通過領域（逆像法）', '2'],
+  ['en', '円の中心と半径', '2'], ['tenChokusen', '点と直線の距離', '2'], ['taba', '交点を通る直線・円', '2'], ['enSessen', '円の接線・極線', '2'], ['teiten', '定点を通る図形', '2'], ['senkei', '線形計画法', '2'], ['tsuka', '通過領域（逆像法）', '2'], ['yosen', '一文字固定法（予選決勝）', '2'], ['fax', 'ファクシミリの原理', '2'],
   ['kodo', '弧度法の値', '2'], ['kahou', '加法定理', '2'], ['gousei', '三角関数の合成', '2'], ['sankakuHouteishiki', '三角方程式', '2'], ['okikae', '置きかえと最大・最小', '2'],
   ['shisu', '指数の計算', '2'], ['taisuuChi', '対数の値', '2'], ['taisuuWa', '対数の和・差・係数', '2'], ['teiHenkan', '底の変換', '2'], ['taisuuHouteishiki', '対数方程式・指数方程式', '2'], ['ketasuu', '桁数・最高位の数字', '2'],
   ['sessen', '接線の方程式', '2'], ['kyokuchi', '3次関数の極値', '2'], ['teisekibun', '定積分の計算', '2'], ['rokubun', '1/6公式の面積', '2'], ['menseki12', '1/12公式の面積', '2'], ['teisuBunri', '定数分離と解の個数', '2'], ['sessenHonsu', '接線の本数', '2'],
@@ -1295,6 +1299,12 @@ const TIME_TABLE = [
   ['tsuka1', '直線の通過領域（判別式）', [60, 150, 300]],
   ['tsuka2', '逆像法：条件つきの点 (s+t, st)・式の値の範囲', [90, 180, 360]],
   ['tsuka3', 't≧0 の通過領域・s, t が区間にある (s+t, st)（発展）', [150, 300, 600]],
+  ['yosen1', '予選決勝法（x, y がすべての実数）', [60, 120, 240]],
+  ['yosen2', '予選決勝法（x, y が区間にある）', [90, 180, 360]],
+  ['yosen3', '予選決勝法（軸が区間からはみ出す・場合分け）（発展）', [150, 300, 600]],
+  ['fax1', 'ファクシミリの原理（t はすべての実数）', [60, 120, 240]],
+  ['fax2', 'ファクシミリの原理（t≧p・t≦p で2つに場合分け）', [90, 180, 360]],
+  ['fax3', 'ファクシミリの原理（p≦t≦q で4つに場合分け）（発展）', [150, 300, 600]],
   ['kodo1', '弧度法の値（0〜2π の角）', [10, 30, 60]],
   ['kodo2', '弧度法の値（負の角・2π をこえる角）', [20, 50, 100]],
   ['kahou1', '加法定理（sin75°・cos15°・tan105° など）', [30, 70, 140]],
@@ -1440,7 +1450,7 @@ const totalMins = () => sumSec(PROBS).map(s => Math.ceil(s / 60));
 const timeText = () => totalMins().map((m, k) => `${TIERS[k]} ${m}分`).join('・');
 // 難しさの説明：選んだ単元の分だけを出す（基本｜標準）
 // 発展（lv 3）がある単元。ほかの単元は「発展」を選ぶと標準を出す
-const ADV_UNITS = new Set(['bunkatsu', 'kyokusenShiki', 'kahou', 'gousei', 'sankakuHouteishiki', 'taisuuHouteishiki', 'kyokuchi', 'teisekibun', 'kanshu', 'warizan', 'zenka', 'kyouyuuten', 'koshiten', 'taba', 'enSessen', 'teiten', 'senkei', 'tsuka', 'kaiHaichi', 'okikae', 'teisuBunri']);
+const ADV_UNITS = new Set(['bunkatsu', 'kyokusenShiki', 'kahou', 'gousei', 'sankakuHouteishiki', 'taisuuHouteishiki', 'kyokuchi', 'teisekibun', 'kanshu', 'warizan', 'zenka', 'kyouyuuten', 'koshiten', 'taba', 'enSessen', 'teiten', 'senkei', 'tsuka', 'yosen', 'fax', 'kaiHaichi', 'okikae', 'teisuBunri']);
 const UNIT_LEVEL = {
   tasuki: ['x の係数の片方が1', '2文字（x, y）・係数がどちらも2以上'],
   nijuu: ['√(5+2√6) の形', '√(7+4√3)・√(4+√15) の形'],
@@ -1516,6 +1526,8 @@ const UNIT_LEVEL = {
   teiten: ['直線（k について整理して連立）', '放物線（a について整理）', '円（2つの定点・円と直線の連立）'],
   senkei: ['四角形の領域で ax+by の最大（傾きを比べる）', '三角形の領域で ax+by の最大・最小', 'x²+y² の最大・最小（垂線の足）'],
   tsuka: ['直線・放物線の通過領域，x²+y²=r² のときの値の範囲（判別式）', '逆像法：条件つきの点 (s+t, st)，対称式の条件と x+y の範囲', 't≧0 の通過領域，s, t が区間にあるときの (s+t, st)'],
+  yosen: ['x, y がすべての実数（平方完成を2回）', 'x, y が区間にある（軸は区間の中）', '軸が区間からはみ出す（場合分け）'],
+  fax: ['t はすべての実数（x を固定して t の2次関数の値の範囲）', 't≧p・t≦p（軸と範囲で2つに場合分け）', 'p≦t≦q（4つに場合分け・境界は放物線と接線）'],
   kodo: ['0〜2π の角', '負の角・2π をこえる角'],
   kahou: ['sin75°・cos15°・tan105° など（設定で弧度法も）', 'sin α, cos β から sin(α+β) など（弧度法）', 'sin α か cos α から sin 2α，cos 2α（2倍角）'],
   gousei: ['r sin(θ+α) の形に合成', '範囲つきの最大・最小（端点で最大・最小の型も）', '合成して方程式を解く'],
@@ -1609,6 +1621,8 @@ const FORMULA_ADV = {
   teiten: ['円と直線の連立：直線の式を $y=mx+n$ の形にして円の式に代入し，2次方程式を解く。'],
   senkei: ['$x^2+y^2$ は原点からの距離の2乗。最小は，原点から辺に下ろした垂線の足が辺の上にあれば，点と直線の距離 $\\frac{\\left|c\\right|}{\\sqrt{a^2+b^2}}$ の2乗。'],
   tsuka: ['$t$ に範囲があるときは，$x$ を固定して $y$ を $t$ の関数とみて，$y$ のとりうる値の範囲を求める（順像法）。軸と区間の位置で場合分けする。'],
+  yosen: ['$y$ を固定したとき，$x$ の軸が区間の外に出るなら，区間の端で最小。$y$ の範囲を分けて，それぞれの最小値を $y$ の式で表し，$y$ を動かして比べる。'],
+  fax: ['$p\\leqq t\\leqq q$ のときは，軸 $t=x$ が区間の左・中（左半分・右半分）・右の4つに分ける。最小（最大）は軸から遠いほうの端。境界の直線は放物線の接線になる。'],
   enSessen: ['中心が $(a,\\ b)$ の円 $(x-a)^2+(y-b)^2=r^2$ では，接線は $(x_{1}-a)(x-a)+(y_{1}-b)(y-b)=r^2$，点 $(p,\\ q)$ の極線は $(p-a)(x-a)+(q-b)(y-b)=r^2$'],
   koshiten: ['偶奇で場合分け：$k$ の上限が $\\frac{n}{2}$ のときは，$n=2m$（偶数）と $n=2m+1$（奇数）に分けて Σ を計算し，最後に $n$ の式にもどす。'],
   teisekibun: ['絶対値：中の式が $0$ になる $x$ で区間を分け，$\\left|A\\right|=A$（$A\\geqq 0$），$\\left|A\\right|=-A$（$A\\leqq 0$）で絶対値を外す。'],
@@ -6803,8 +6817,162 @@ const B_GEN = {
     const v = lv === 1 ? 1 : 2;
     return Object.assign(GEN.kinouH(2, v === 1 ? pick(['root', 'root', 'gen']) : 'seq'), { unit: 'kinouNi', lv: v, sec: T[`kNi${v}`] });
   }
+  ,yosen(lv){ return yosenGen(lv); }
+  ,fax(lv){ return faxGen(lv); }
 };
 Object.assign(GEN, B_GEN);
+
+// 【ファクシミリの原理】直線 y=s(2mtx−mt²)+bx+c の通過領域を，x を固定して t の2次関数の値の範囲として求める
+// 難しさ1：t はすべての実数／2：t≧p または t≦p（2つに場合分け）／3：p≦t≦q（4つに場合分け）
+function faxGen(lv){
+  const ptsMax = (f, a, b, n = 6000) => { let m = -Infinity; for (let i = 0; i <= n; i++) m = Math.max(m, f(a + (b - a) * i / n)); return m; };
+  for (;;) {
+    const s = pick([1, -1]), m = lv === 1 ? pick([1, 1, 2]) : 1, b = ri(-3, 3), c = ri(-3, 3);
+    const yt = (x, t) => s * (2 * m * t * x - m * t * t) + b * x + c, U = x => s * m * x * x + b * x + c;
+    const line = `y=${sumTex([[2 * s * m, 'tx'], [-s * m, 't^2'], [b, 'x'], [c, '']])}`;
+    const UT = sumTex([[s * m, 'x^2'], [b, 'x'], [c, '']]);
+    const lT = t0 => sumTex([[2 * s * m * t0 + b, 'x'], [-s * m * t0 * t0 + c, '']]), lF = t0 => x => yt(x, t0);
+    const tail = b ? (c ? `+(${sumTex([[b, 'x'], [c, '']])})` : `${b > 0 ? '+' : ''}${sumTex([[b, 'x']])}`) : c ? `${c > 0 ? '+' : ''}${c}` : '';
+    const conv = s > 0 ? '上に凸' : '下に凸', top = s > 0 ? '最大値' : '最小値', rel = s > 0 ? '\\leqq ' : '\\geqq ';
+    const pre = [{ t: 'txt', s: '$x$ を固定して（定数とみて），$t$ が動くときの $y$ のとりうる値の範囲を調べる。$y$ を $t$ の2次関数とみて平方完成すると' },
+      { t: 'eq', noEval: true, rows: [`y &= ${sumTex([[-s * m, 't^2'], [2 * s * m, 'xt']])}${tail}`, `&= ${sumTex([[-s * m, '(t-x)^2'], [s * m, 'x^2'], [b, 'x'], [c, '']])}`] },
+      { t: 'txt', s: `グラフは${conv}の放物線で，軸は $t=x$ である。` }];
+    const tT = t0 => `t=${t0}`;
+    let tr, up, lo, ansT, st, key, cond, X0, X1;
+    if (lv === 1) {
+      tr = [-40, 40]; up = s > 0 ? U : () => Infinity; lo = s > 0 ? () => -Infinity : U;
+      ansT = `$y${rel}${UT}$`; cond = '$t$ がすべての実数値をとって'; key = `fx1|${line}`; X0 = -3; X1 = 3;
+      st = [...pre, { t: 'txt', s: `$t$ はすべての実数をとるので，$t=x$ のとき${top} $${UT}$ をとり，${s > 0 ? '最小値はない' : '最大値はない'}。` },
+        { t: 'txt', s: `よって $y$ のとりうる値の範囲は $y${rel}${UT}$。$x$ を動かすと，求める領域は $y${rel}${UT}$（境界を含む）。` }];
+    } else if (lv === 2) {
+      const p = ri(-2, 2), ge = Math.random() < 0.5;   // ge: t≧p，そうでなければ t≦p
+      tr = ge ? [p, p + 40] : [p - 40, p]; cond = `$t$ が $t${ge ? '\\geqq' : '\\leqq'} ${p}$ の範囲で`; key = `fx2|${line}|${ge ? 'ge' : 'le'}${p}`; X0 = p - 3; X1 = p + 3;
+      const inR = x => ge ? x >= p : x <= p, ext = x => inR(x) ? U(x) : yt(x, p);
+      up = s > 0 ? ext : () => Infinity; lo = s > 0 ? () => -Infinity : ext;
+      const inT = ge ? `x\\geqq ${p}` : `x\\leqq ${p}`, outT = ge ? `x<${p}` : `x>${p}`;
+      const mono = (ge ? -1 : 1) * s > 0 ? '増加' : '減少';
+      ansT = `$${inT}$ のとき $y${rel}${UT}$，$${outT}$ のとき $y${rel}${lT(p)}$`;
+      st = [...pre, { t: 'txt', s: `(i) $${inT}$ のとき：軸 $t=x$ は $t${ge ? '\\geqq' : '\\leqq'} ${p}$ の中にあるので，$t=x$ で${top} $${UT}$ をとる。$y${rel}${UT}$` },
+        { t: 'txt', s: `(ii) $${outT}$ のとき：軸は範囲の${ge ? '左' : '右'}にあり，$t${ge ? '\\geqq' : '\\leqq'} ${p}$ で $y$ は${mono}するので，$t=${p}$ で${top}をとる。$t=${p}$ を代入して $y${rel}${lT(p)}$` },
+        { t: 'txt', s: `よって，求める領域は ${ansT}（境界を含む）。` }];
+    } else {
+      const p = ri(-2, 1), q = p + pick([1, 2, 2, 3]), mid = new F(p + q, 2), mT = numTex(mid), mv = mid.val();
+      tr = [p, q]; cond = `$t$ が $${p}\\leqq t\\leqq ${q}$ の範囲で`; key = `fx3|${line}|${p},${q}`; X0 = p - 2.5; X1 = q + 2.5;
+      const val = (nm, x) => nm === 'U' ? U(x) : yt(x, nm === 'p' ? p : q), tex = nm => nm === 'U' ? UT : lT(nm === 'p' ? p : q), tw = nm => nm === 'U' ? 't=x' : tT(nm === 'p' ? p : q);
+      // 4つの範囲で [下側, 上側]（上に凸のとき）。下に凸なら入れかえる
+      const base = [['q', 'p'], ['q', 'U'], ['p', 'U'], ['p', 'q']], pcs = base.map(([l, h]) => s > 0 ? [l, h] : [h, l]);
+      const xr = [`x<${p}`, `${p}\\leqq x\\leqq ${mT}`, `${mT}<x\\leqq ${q}`, `x>${q}`];
+      const which = x => x < p ? 0 : x <= mv ? 1 : x <= q ? 2 : 3;
+      lo = x => val(pcs[which(x)][0], x); up = x => val(pcs[which(x)][1], x);
+      const why = [`軸は区間の左にあるので，区間で $y$ は${s > 0 ? '減少' : '増加'}する。`, `軸は区間の中にあり，区間の右端 $t=${q}$ のほうが軸から遠い。`, `軸は区間の中にあり，区間の左端 $t=${p}$ のほうが軸から遠い。`, `軸は区間の右にあるので，区間で $y$ は${s > 0 ? '増加' : '減少'}する。`];
+      const nums = ['(i)', '(ii)', '(iii)', '(iv)'];
+      st = [...pre, ...pcs.map(([l, h], i) => ({ t: 'txt', s: `${nums[i]} $${xr[i]}$ のとき：${why[i]}最大は $${tw(h)}$，最小は $${tw(l)}$ のときで，$${tex(l)}\\leqq y\\leqq ${tex(h)}$` }))];
+      ansT = pcs.map(([l, h], i) => `$${xr[i]}$ のとき $${tex(l)}\\leqq y\\leqq ${tex(h)}$`).join('，');
+      st.push({ t: 'txt', s: `よって，求める領域は ${ansT}（境界を含む）。境界の直線は，放物線 $y=${UT}$ の $x=${p}$，$x=${q}$ での接線である。` });
+    }
+    // 図：x の範囲で上側・下側の境界
+    const xs = Array.from({ length: 61 }, (_, i) => X0 + (X1 - X0) * i / 60), fin = v => isFinite(v);
+    const vals = xs.flatMap(x => [up(x), lo(x)]).filter(fin);
+    if (!vals.length) continue;
+    const Y0 = Math.min(...vals, 0) - 1.5, Y1 = Math.max(...vals, 0) + 1.5;
+    if (Y1 - Y0 > 30) continue;
+    const hiF = x => fin(up(x)) ? up(x) : Y1, loF = x => fin(lo(x)) ? lo(x) : Y0;
+    const fig = planeShapes({ x0: X0, x1: X1, y0: Y0, y1: Y1, fills: [{ lo: loF, hi: hiF, a: X0, b: X1 }],
+      curves: [{ f: U, st: lv === 1 ? undefined : 'faint' }, ...(lv === 1 ? [] : [{ f: up }, { f: lo }].filter(o => xs.some(x => fin(o.f(x)))).map(o => ({ f: x => fin(o.f(x)) ? o.f(x) : NaN })))] });
+    st.push({ t: 'fig', f: fig });
+    return { unit: 'fax', lv, key, sec: T[`fax${lv}`],
+      label: `${cond}変化するとき，直線 $${line}$ が通過する領域を，$x$ を固定する方法（ファクシミリの原理）で求め，$x$，$y$ の不等式で表せ。`, math: '',
+      item: `直線 $${line}$ の通過領域`, head: `直線 $${line}$`, ans: `${ansT}（境界を含む）`, vars: {}, steps: st,
+      // いくつかの x で，t を範囲の中で細かく動かした y の最大・最小が答えの境界と一致するか
+      chk: () => xs.filter((_, i) => i % 5 === 2).reduce((e, x) => { const M = ptsMax(t => yt(x, t), tr[0], tr[1]), N = -ptsMax(t => -yt(x, t), tr[0], tr[1]);
+        return e + (fin(up(x)) ? (Math.abs(M - up(x)) < 1e-3 ? 0 : 1) : (M > 50 ? 0 : 1)) + (fin(lo(x)) ? (Math.abs(N - lo(x)) < 1e-3 ? 0 : 1) : (N < -50 ? 0 : 1)); }, 0) };
+  }
+}
+
+// 【一文字固定法（予選決勝法）】P=(x+py+u)²+k(y+v)²+m から逆算して作る
+// 難しさ1：x, y はすべての実数／2：長方形の範囲（軸は区間の中）／3：軸が区間の右にはみ出す（場合分け）
+function yosenGen(lv){
+  const yv = v => sumTex([[1, 'y'], [v, '']]), sq = s => `(${s})^2`;
+  for (;;) {
+    const k = lv === 3 ? pick([1, 1, 2]) : pick([1, 2, 3]), v = nz(-3, 3), m = ri(-5, 5);
+    const p = lv === 3 ? -1 : pick([1, -1, 2, -2]), u = lv === 3 ? ri(-2, 2) : nz(-3, 3);
+    const C = p * p + k, E = 2 * p * u + 2 * k * v, c0 = u * u + k * v * v + m;
+    if (Math.abs(E) > 24 || Math.abs(c0) > 40) continue;
+    const fT = sumTex([[1, 'x^2'], [2 * p, 'xy'], [C, 'y^2'], [2 * u, 'x'], [E, 'y'], [c0, '']]);
+    const f = (x, y) => (x + p * y + u) ** 2 + k * (y + v) ** 2 + m;
+    const poly = (x, y) => x * x + 2 * p * x * y + C * y * y + 2 * u * x + E * y + c0;
+    const L = sumTex([[p, 'y'], [u, '']]), xL = sumTex([[1, 'x'], [p, 'y'], [u, '']]), negL = sumTex([[-p, 'y'], [-u, '']]);
+    const G = sumTex([[k, 'y^2'], [2 * k * v, 'y'], [k * v * v + m, '']]), Gs = sumTex([[k, sq(yv(v))], [m, '']]);
+    const rest = sumTex([[C, 'y^2'], [E, 'y'], [c0, '']]);
+    const g = y => k * (y + v) ** 2 + m;
+    const pre = [{ t: 'txt', s: '【予選】まず $y$ を定数とみて（固定して），$P$ を $x$ の2次式として平方完成する。' },
+      { t: 'eq', noEval: true, rows: [p > 0 ? `P &= x^2+2(${L})x+${rest}` : `P &= x^2-2(${negL})x+${rest}`, `&= ${sq(xL)}-(${p > 0 ? L : negL})^2+${rest}`, `&= ${sq(xL)}+${G}`] }];
+    const expChk = () => [[0.3, -1.7], [2.1, 0.4], [-1.2, 3.3], [4, -2]].reduce((s, [x, y]) => s + Math.abs(f(x, y) - poly(x, y)), 0);
+    const head = `$P=${fT}$ の最小値`, item = `$P=${fT}$ の最小値`;
+    if (lv === 1) {
+      const xs = p * v - u, ys = -v;
+      const st = [...pre, { t: 'txt', s: `$y$ を固定したとき，$P$ は $x=${negL}$ で最小値 $${G}$ をとる。` },
+        { t: 'txt', s: `【決勝】次に $y$ を動かして，$${G}$ の最小値を求める。` }, { t: 'eq', noEval: true, rows: [`${G} &= ${Gs}`] },
+        { t: 'txt', s: `よって $y=${ys}$ のとき最小値 $${m}$ をとる。このとき $x=${negL.replace(/y/g, `(${ys})`)}=${xs}$ である。` }];
+      return { unit: 'yosen', lv, key: `ys1|${fT}`, sec: T.yosen1,
+        label: `$x$，$y$ が実数のとき，$P=${fT}$ の最小値と，そのときの $x$，$y$ の値を求めよ。`, math: '', item, head,
+        ans: `$x=${xs}$，$y=${ys}$ のとき，最小値 $${m}$`, vars: {}, steps: st,
+        chk: () => expChk() + Math.abs(poly(xs, ys) - m) + [[1, 2], [-3, 0.5], [2.2, -1.1]].reduce((s, [x, y]) => s + (poly(x, y) >= m - 1e-9 ? 0 : 1), 0) };
+    }
+    const X0 = y => -p * y - u;
+    if (lv === 2) {
+      const c = ri(-3, 1), d = c + ri(2, 4), lo = Math.min(X0(c), X0(d)), hi = Math.max(X0(c), X0(d));
+      const a = lo - ri(0, 2), b = hi + ri(0, 2);
+      if (Math.abs(a) > 9 || Math.abs(b) > 9) continue;
+      const inside = c <= -v && -v <= d;
+      if (inside !== (Math.random() < 0.5)) continue;
+      const ys = Math.min(d, Math.max(c, -v)), xs = X0(ys), val = g(ys);
+      const dom = `$${a}\\leqq x\\leqq ${b}$，$${c}\\leqq y\\leqq ${d}$`;
+      const st = [...pre, { t: 'txt', s: `$${c}\\leqq y\\leqq ${d}$ のとき，軸 $x=${negL}$ は $${lo}\\leqq ${negL}\\leqq ${hi}$ の範囲にあり，$${a}\\leqq x\\leqq ${b}$ に入る。よって $y$ を固定したとき，$P$ は $x=${negL}$ で最小値 $${G}$ をとる。` },
+        { t: 'txt', s: `【決勝】次に $${c}\\leqq y\\leqq ${d}$ で $y$ を動かして，$${G}$ の最小値を求める。` }, { t: 'eq', noEval: true, rows: [`${G} &= ${Gs}`] },
+        inside ? { t: 'txt', s: `軸 $y=${-v}$ は $${c}\\leqq y\\leqq ${d}$ の中にあるので，$y=${ys}$ のとき最小値 $${val}$ をとる。` }
+          : { t: 'txt', s: `軸 $y=${-v}$ は区間 $${c}\\leqq y\\leqq ${d}$ の${-v < c ? '左' : '右'}外にあるので，区間の${-v < c ? '左' : '右'}端 $y=${ys}$ で最小。最小値は $${sumTex([[k, sq(`${ys}${v > 0 ? '+' : ''}${v}`)], [m, '']])}=${val}$` },
+        { t: 'txt', s: `このとき $x=${xs}$ である。` }];
+      return { unit: 'yosen', lv, key: `ys2|${fT}|${a},${b},${c},${d}`, sec: T.yosen2,
+        label: `$x$，$y$ が ${dom} を満たすとき，$P=${fT}$ の最小値と，そのときの $x$，$y$ の値を求めよ。`, math: '', item: `${dom} で ${item}`, head,
+        ans: `$x=${xs}$，$y=${ys}$ のとき，最小値 $${val}$`, vars: {}, steps: st,
+        chk: () => { let mn = Infinity; const N = 120; for (let i = 0; i <= N; i++) for (let j = 0; j <= N; j++) mn = Math.min(mn, poly(a + (b - a) * i / N, c + (d - c) * j / N)); return expChk() + Math.abs(poly(xs, ys) - val) + (mn >= val - 1e-9 ? 0 : 1) + (xs >= a && xs <= b ? 0 : 1); } };
+    }
+    // 発展：p=-1，軸 x=y−u が区間の右にはみ出す
+    const w = -u, c = ri(-2, 1), d = c + ri(3, 5), y1 = ri(c + 1, d - 1), b = y1 + w, a = c + w - ri(0, 2);
+    if (Math.abs(a) > 9 || Math.abs(b) > 9) continue;
+    const kind = -v < c ? 'B' : -v <= y1 ? 'A' : 'C';
+    if ((kind === 'C') !== (Math.random() < 0.7)) continue;
+    const hF = y => { y = F.of(y); const t = y.sub(y1), s = y.add(v); return t.mul(t).add(s.mul(s).mul(k)).add(m); };
+    const yh = new F(y1 - k * v, 1 + k), hmin = hF(yh);
+    if (yh.d > 3) continue;
+    const H = sumTex([[1 + k, 'y^2'], [-2 * y1 + 2 * k * v, 'y'], [y1 * y1 + k * v * v + m, '']]);
+    const Hs = sumTex([[1 + k, yh.n ? sq(sumTex([[1, 'y'], [yh.neg(), '']])) : 'y^2'], [hmin, '']]);
+    let xs, ys, val; const fin = [];
+    if (kind === 'A') { ys = new F(-v); xs = new F(-v + w); val = new F(m);
+      fin.push({ t: 'txt', s: `[1] の最小値 $${Gs}$ は $y=${-v}$（$${c}\\leqq y\\leqq ${y1}$ の中）で $${m}$ になる。$P\\geqq ${m}$ はつねに成り立つので，これが最小値である。` });
+    } else if (kind === 'B') { ys = new F(c); xs = new F(c + w); val = new F(g(c));
+      fin.push({ t: 'txt', s: `[1] の $${Gs}$ は，軸 $y=${-v}$ が区間の左外にあるので $y=${c}$ で最小で，値は $${g(c)}$。[2] の最小値は $${G}$ に $(${sumTex([[1, 'y'], [-y1, '']])})^2>0$ をたしたものなので，$${g(c)}$ より大きい。` });
+    } else {
+      ys = yh.val() <= d ? yh : new F(d); xs = new F(b); val = hF(ys);
+      fin.push({ t: 'txt', s: `[1] の $${Gs}$ は，軸 $y=${-v}$ が区間の右外にあるので $${c}\\leqq y\\leqq ${y1}$ で減少し，$y=${y1}$ で最小（値は $${g(y1)}$）。これは [2] の式の $y=${y1}$ のときの値と同じ。` },
+        { t: 'txt', s: yh.val() <= d ? `[2] の式は，軸 $y=${numTex(yh)}$ が $${y1}< y\\leqq ${d}$ の中にあるので，$y=${numTex(yh)}$ で最小値 $${numTex(hmin)}$ をとる。` : `[2] の式は，軸 $y=${numTex(yh)}$ が区間の右外にあるので，$y=${d}$ で最小値 $${numTex(val)}$ をとる。` });
+    }
+    const dom = `$${a}\\leqq x\\leqq ${b}$，$${c}\\leqq y\\leqq ${d}$`;
+    const st = [...pre, { t: 'txt', s: `軸は $x=${negL}$。$${c}\\leqq y\\leqq ${d}$ のとき軸は $${c + w}\\leqq ${negL}\\leqq ${d + w}$ を動くので，区間 $${a}\\leqq x\\leqq ${b}$ の右にはみ出すことがある。軸が $x=${b}$ になるのは $y=${y1}$ のとき。` },
+      { t: 'txt', s: `[1] $${c}\\leqq y\\leqq ${y1}$ のとき，軸は区間の中にあるので，$x=${negL}$ で最小。最小値は $${G}$` },
+      { t: 'txt', s: `[2] $${y1}< y\\leqq ${d}$ のとき，軸は区間の右外にあるので，$x=${b}$ で最小。最小値は` },
+      { t: 'eq', noEval: true, rows: [`&\\ ${sq(sumTex([[1, 'y'], [-y1, '']]))}+${G}`, `&= ${H}`, ...(H === Hs ? [] : [`&= ${Hs}`])] },
+      { t: 'txt', s: '【決勝】[1]，[2] の最小値の関数を $y$ を動かして比べる。' }, ...fin,
+      { t: 'txt', s: `よって $x=${numTex(xs)}$，$y=${numTex(ys)}$ のとき最小である。` }];
+    return { unit: 'yosen', lv, key: `ys3|${fT}|${a},${b},${c},${d}`, sec: T.yosen3,
+      label: `$x$，$y$ が ${dom} を満たすとき，$P=${fT}$ の最小値と，そのときの $x$，$y$ の値を求めよ。`, math: '', item: `${dom} で ${item}`, head,
+      ans: `$x=${numTex(xs)}$，$y=${numTex(ys)}$ のとき，最小値 $${numTex(val)}$`, vars: {}, steps: st,
+      chk: () => { let mn = Infinity; const N = 240; for (let i = 0; i <= N; i++) for (let j = 0; j <= N; j++) mn = Math.min(mn, poly(a + (b - a) * i / N, c + (d - c) * j / N));
+        const X = xs.val(), Y = ys.val(), V = val.val();
+        return expChk() + Math.abs(poly(X, Y) - V) + (mn >= V - 1e-9 && mn - V < 0.02 ? 0 : 1) + (X >= a && X <= b && Y >= c && Y <= d ? 0 : 1); } };
+  }
+}
 // 帰納法（等式）の型を数から作る（逆算）：等差数列の和・等比数列の和（a≧2）・Σk(k+c)
 function kinouEqMore(){
   const cf = (c, s) => c === 1 ? s : `${c}${s}`, w = t => /[+-]/.test(t) ? `(${t})` : t;
@@ -11159,6 +11327,8 @@ const FORMULA = {
   teiten: ['文字（$k$ など）について整理して $f+kg=0$ の形にする。', '$k$ の値に関係なく成り立つ条件は $f=0$ かつ $g=0$。これを連立して解く。'],
   senkei: ['連立不等式の表す領域をかき，境界の直線の交点（頂点）を求める。', '$ax+by=k$ とおき，この直線が領域と共有点をもつように動かす。傾きを境界の直線の傾きと比べて，$k$ が最大・最小になる頂点を決める。'],
   tsuka: ['点 $(x,\\ y)$ を直線が通る条件は，その $x$，$y$ に対して式を満たす実数 $t$ が存在すること（逆像法）。', '$t$ の2次方程式とみて，判別式 $D\\geqq 0$。', '$x=s+t$，$y=st$ のとき，$s$，$t$ は $u^2-xu+y=0$ の2つの解。$s$，$t$ に条件があれば，解の配置（判別式・軸・端の値）で書く。', '$x$，$y$ の式の値の範囲は，値を $k$ とおいて1文字消去し，実数解をもつ条件（判別式）から求める。'],
+  yosen: ['2つの文字の式は，まず一方の文字（$y$）を定数とみて固定し，もう一方（$x$）について最小値を求める（予選）。', '次に，その最小値を $y$ の式とみて，$y$ を動かして最小値を求める（決勝）。'],
+  fax: ['通過領域は，$x$ を固定して（定数とみて），$t$ が動くときの $y$ のとりうる値の範囲を求める（ファクシミリの原理・順像法）。', '$y$ を $t$ の2次関数とみて平方完成し，軸 $t=x$ と $t$ の範囲の位置で場合分けする。'],
   taba: ['2直線 $f=0$，$g=0$ の交点を通る直線は $f+kg=0$（$k$ は定数）と表せる。', '2円 $f=0$，$g=0$ の交点を通る図形は $f+kg=0$。$k\\neq -1$ のとき円，$k=-1$ のとき交点を通る直線。', '通る点の座標を代入して $k$ を決める。'],
   enSessen: ['円 $x^2+y^2=r^2$ 上の点 $(x_{1},\\ y_{1})$ における接線は $x_{1}x+y_{1}y=r^2$', '円の外の点 $(p,\\ q)$ から引いた2本の接線の，接点を通る直線（極線）は $px+qy=r^2$'],
   tenChokusen: ['点 $(x_{0},\\ y_{0})$ と直線 $ax+by+c=0$ の距離 $d=\\frac{|ax_{0}+by_{0}+c|}{\\sqrt{a^2+b^2}}$', '$y=mx+n$ の形は，$ax+by+c=0$ の形に直してから使う。'],
@@ -11768,7 +11938,7 @@ function applyFont(){ document.documentElement.style.setProperty('--font', FONTS
 // 教科のタブ：その教科の分野だけを見せる（単元の選択は教科をまたいで残す）。分野の欄は1つだけひらく
 const SUBJ_TABS = ['1', 'A', '2', 'B', 'C'];
 // 受験基礎の印：入試の小問でよく出る典型処理の単元。新しい単元を足したら、ここに入れると受験基礎で表示される
-const JUKEN = new Set(['bunkatsu', 'kinouTou', 'kinouFu', 'kinouBai', 'kinouSui', 'tousaMax', 'kyoutsuukou', 'baisuuWa', 'zettaiWa', 'bouenWa', 'sansuu', 'kiguuWa', 'heimen', 'kyori', 'gaiseki', 'kyuumen', 'tenChokusen', 'gunSuretsu', 'menseki12', 'amariBunrui', 'zettaichi', 'seisuBubun', 'sessenHonsu', 'okikae', 'teisuBunri', 'ketasuu', 'kakuMax', 'taisho', 'kaiKeisu1', 'kaiHaichi', 'kanshu', 'hanpuku', 'jokenTsuki', 'futeishiki', 'goudou', 'soukaSoujo', 'kaiKeisu2', 'teiten', 'senkei', 'tsuka', 'enSessen', 'gousei', 'taisuuHouteishiki', 'kyokuchi', 'rokubun', 'zenka', 'snAn', 'sabunWa', 'kouten', 'saisyou']);
+const JUKEN = new Set(['bunkatsu', 'kinouTou', 'kinouFu', 'kinouBai', 'kinouSui', 'tousaMax', 'kyoutsuukou', 'baisuuWa', 'zettaiWa', 'bouenWa', 'sansuu', 'kiguuWa', 'heimen', 'kyori', 'gaiseki', 'kyuumen', 'tenChokusen', 'gunSuretsu', 'menseki12', 'amariBunrui', 'zettaichi', 'seisuBubun', 'sessenHonsu', 'okikae', 'teisuBunri', 'ketasuu', 'kakuMax', 'taisho', 'kaiKeisu1', 'kaiHaichi', 'kanshu', 'hanpuku', 'jokenTsuki', 'futeishiki', 'goudou', 'soukaSoujo', 'kaiKeisu2', 'teiten', 'senkei', 'tsuka', 'yosen', 'fax', 'enSessen', 'gousei', 'taisuuHouteishiki', 'kyokuchi', 'rokubun', 'zenka', 'snAn', 'sabunWa', 'kouten', 'saisyou']);
 // 入試発展の印：受験基礎より一歩進んだ、入試の典型問題
 const HATTEN = new Set(['kinouZen', 'kinouNi', 'sekiWa', 'gaussWa', 'kuukanKoshi']);
 const unitShown = i => !ST.juken || (ST.juken === 'h' ? HATTEN : JUKEN).has(i.value);
