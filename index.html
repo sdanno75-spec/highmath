@@ -232,6 +232,11 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 .pv-info{display:flex;flex-wrap:wrap;gap:4px 14px;margin:12px 0;font-size:13px;color:var(--muted)}
 .pv-info:empty,.pv-info span:empty{display:none}
 /* 下部に固定するバー。高さは setupDock が測って --dock-h に入れ、その分だけページの下をあける */
+.dupPop{position:fixed;right:16px;bottom:84px;z-index:60;max-width:min(380px,calc(100vw - 32px));box-sizing:border-box;background:#fdecea;border:1.5px solid #c62828;border-left-width:6px;color:#8e1b1b;border-radius:10px;padding:10px 36px 10px 12px;font-size:13px;line-height:1.6;box-shadow:0 6px 20px rgba(0,0,0,.18)}
+.dupPop[hidden]{display:none}
+.dupPop b{display:block;font-size:14px;margin-bottom:2px}
+.dupPop button{position:absolute;right:6px;top:6px;width:24px;height:24px;border:0;border-radius:6px;background:transparent;color:#8e1b1b;font-size:18px;line-height:1;cursor:pointer}
+.dupPop button:hover{background:rgba(198,40,40,.12)}
 .dock{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--paper);border-top:1px solid var(--line);box-shadow:0 -2px 10px rgba(0,0,0,.06);padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
 .dock-in{max-width:968px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
 .dock .actions{margin:0}
@@ -363,7 +368,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 @media print{
   @page{size:A4 portrait;margin:0}
   body{background:#fff!important}
-  header,.panel,.dock,.pv-info,#view-help,.ctl,#histBox,#printAsk,.win,#reMenu{display:none!important}
+  .dupPop,header,.panel,.dock,.pv-info,#view-help,.ctl,#histBox,#printAsk,.win,#reMenu{display:none!important}
   .wrap{padding:0!important;max-width:none!important}
   .sheet-wrap{overflow:visible;padding:0}
   .sheet{display:flex!important;box-shadow:none;margin:0;height:296mm;page-break-after:always;break-after:page}
@@ -751,7 +756,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
     </div></div>
     <div class="pv-info">
       <span id="timeInfo"></span>
-      <span id="layoutWarn" style="color:var(--err)"></span>
+      <span id="layoutWarn" style="color:var(--err)"></span><div class="dupPop" id="dupPop" role="alert" hidden><b>同じ問題が出ています</b><span id="dupPopText"></span><button type="button" id="dupPopX" aria-label="閉じる">×</button></div>
     </div>
     <div class="sheet-wrap show-q" id="sheets"></div>
     <div id="allSheets"></div>
@@ -803,8 +808,9 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.77.0', UPDATED = '2026-11-12';
+const VERSION = '5.77.1', UPDATED = '2026-11-14';
 const CHANGES = [
+  ['5.77.1', '2026-11-14', '同じ問題がプリントに出たときは、画面の右下に赤いポップアップでも知らせるようにした（×で閉じる。印刷には出ない）。'],
   ['5.77.0', '2026-11-12', '帰納法の問題を数から作る型でふやした。等式：等差数列の和（初項・公差をかえる）、等比数列の和（初項 2〜5）、Σk(k+c)。不等式：aⁿ>(a−1)n+1 を a=3〜9 に、n!>4ⁿ・n!>5ⁿ、cⁿ>n²。倍数：aⁿ−(a−1)n−1 は (a−1)² の倍数、n³+11n など、4ⁿ+15n−1。同じ問題がプリントに2回以上出たときは、画面に番号つきで知らせるようにした（全単元）。'],
   ['5.76.2', '2026-11-12', '和の不等式6つの問題文は、Σ の形と和を書き並べた形を半々でまぜて出すようにした。'],
   ['5.76.1', '2026-11-12', '帰納法（不等式の証明）の和の不等式6つは、問題文を Σ の形にもどした（Σ1/k²<2−1/n など）。証明では和を書き並べた形を①とする。'],
@@ -11331,6 +11337,10 @@ function finishRender(box, A){
   const dmap = {}; PROBS.forEach((p, i) => { (dmap[p.key] = dmap[p.key] || []).push(i + 1); });
   const dups = Object.values(dmap).filter(a => a.length > 1);
   const dupMsg = dups.length ? `同じ問題が出ています：${dups.slice(0, 4).map(a => a.map(n => `(${n})`).join('と')).join('、')}${dups.length > 4 ? ' など' : ''}（その単元の問題の種類が足りません。問題数を減らすか、難しさを変えると避けられます）` : '';
+  { const pop = $('dupPop');
+    if (dups.length) { $('dupPopText').textContent = `${dups.slice(0, 4).map(a => a.map(n => `(${n})`).join('と')).join('、')}${dups.length > 4 ? ' など' : ''}。その単元の問題の種類が足りません。問題数を減らすか、難しさを変えると避けられます。`;
+      const d = document.querySelector('.dock'); pop.style.bottom = ((d && d.offsetHeight) || 68) + 12 + 'px'; pop.hidden = false; }
+    else pop.hidden = true; }
   $('layoutWarn').textContent = [ISSUES.length ? `表示の点検：${ISSUES.length}か所で式の折り返し・はみ出し・縮小があります（${ISSUES.slice(0, 4).map(x => x.msg).join('、')}${ISSUES.length > 4 ? ' など' : ''}）` : '', dupMsg].filter(Boolean).join('　／　');
   applyPv(); renderVer();
 }
@@ -12044,6 +12054,7 @@ $('picked').addEventListener('click', e => {
   else if (b.dataset.setopen) { ST.setOpen = ST.setOpen === b.dataset.setopen ? '' : b.dataset.setopen; save(); showOpts(); updateGroupCounts(); }
 });
 $('unitClear').addEventListener('click', () => setUnits([]));
+$('dupPopX').addEventListener('click', () => { $('dupPop').hidden = true; });
 $('jukenBtn').addEventListener('click', () => { ST.juken = ST.juken === true ? false : true; save(); applySubject(); updateGroupCounts(); });
 $('hattenBtn').addEventListener('click', () => { ST.juken = ST.juken === 'h' ? false : 'h'; save(); applySubject(); updateGroupCounts(); });
 $('subjTabs').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; ST.subject = b.dataset.sj; save(); applySubject(); });
