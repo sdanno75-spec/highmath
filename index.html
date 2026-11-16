@@ -824,8 +824,9 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.88.0', UPDATED = '2026-11-14';
+const VERSION = '5.89.0', UPDATED = '2026-11-16';
 const CHANGES = [
+  ['5.89.0', '2026-11-16', '不等式で絞りこむ不定方程式（発展）に、分母に係数のある単位分数 1/(ax)+1/(by)+1/(cz)=q の小問つきの問題を足した（利用者の見本 1/x+1/(2y)+1/(3z)=4/3 の類題）。（1）x を1つ決めて y,z を求める（2）1/(by)≦1/b などから x を絞り、とりうる値を求める（3）すべての解。y,z は Y=by,Z=cz とおいて (mY−n)(mZ−n)=n² の積の形で解く。計算が重いもの（残りの式の分母が 12 以上、約数の組が多い、解が多い、y,z が 60 をこえる、x の候補が4個以上）は出さない。式は42通り、（1）で決める x の選び方を合わせて86問（見本の式そのものは出さない）。解答は横いっぱいに出し、左に式と文、右に約数の表を並べた。問題文の中の改行（小問を行に分ける）に対応した。解答は式を別の行に出し、約数の組は表（Y,Z と y,z、条件に合う行に○）にして読みやすくした。'],
   ['5.88.0', '2026-11-16', '不等式で絞りこむ不定方程式に3つの型を足した（利用者の見本から）。基本：2x²−3x+y−9=0 のように1次の文字 y について解き、y≧1 から x の2次不等式で絞る型、x+2y+3z=10 のように係数のいちばん大きい文字から絞る型。標準：x²+2xy+3y²=19 のように平方完成して (x+y)²+2y²=19 とし、整数（負の数も）で y を絞る型。'],
   ['5.87.1', '2026-11-16', '「パターン練習」を教科タブから外して、受験基礎・入試発展の隣にいつも出るボタンにした（受験基礎・入試発展・検索のときも見える。押すとそれらを外してパターン練習の単元を出す）。共面条件と交点（発展）で、まれに分母の大きい数が出ていたのを直した。'],
   ['5.87.0', '2026-11-16', '単元を検索できるようにした（受験基礎・入試発展のボタンの右の欄）。単元名・分野名・教科名で探す（ひらがな・カタカナ、全角・半角は区別しない。空白で区切ると両方を含む単元）。検索用のことばを単元ごとに内部で持てるようにした（画面には出さない）。'],
@@ -1609,7 +1610,7 @@ const UNIT_LEVEL = {
   kouten: ['線分 AD と BC の交点', '交点のあと直線 OP と AB の交点も'],
   chokusenVec: ['点と方向ベクトルから', '2点を通る・法線ベクトルから'],
   ptNiji: ['√(c−kn) が整数・√(n²+a) が自然数', 'n²+2pn+c が平方数', 'x の2次方程式とみて判別式で絞る'],
-  ptShibori: ['ax+by=c・x²+ky²=N・ax²−bx+y=c・ax+by+cz=N（自然数）', '1/x+1/y=q・1/x+1/y+1/z=q（x≦y≦z・x<y<z）・x²+y²+z²=N・x²+2pxy+qy²=N（整数，平方完成）', 'xyz=k(x+y+z)・xyz=x+y+z+c・x+y+z+w+c=xyzw・解の多い単位分数'],
+  ptShibori: ['ax+by=c・x²+ky²=N・ax²−bx+y=c・ax+by+cz=N（自然数）', '1/x+1/y=q・1/x+1/y+1/z=q（x≦y≦z・x<y<z）・x²+y²+z²=N・x²+2pxy+qy²=N（整数，平方完成）', 'xyz=k(x+y+z)・xyz=x+y+z+c・x+y+z+w+c=xyzw・解の多い単位分数・1/x+1/(2y)+1/(3z)=q 型（小問つき）'],
   ptSeki: ['xy+ax+by=c（自然数・整数）', 'x²−y²=k（偶奇）・axy+bx+cy=d', 'a/x+b/y=1/n（自然数）'],
   kyoumen: ['座標で4点が同じ平面上（未知数 a）', '四面体で直線 OQ と平面 ABC の交点', '直線 OG と平面 DEF の交点'],
   kuukanZahyou: ['対称な点・2点間の距離', '三角形の形・軸上で2点から等距離な点', 'xy 平面上で3点から等距離な点'],
@@ -1656,7 +1657,7 @@ const ZENKA_FORM = {
 // 発展を選んだときに、公式・手順の欄へ足す行
 const FORMULA_ADV = {
   ptNiji: ['2次の不定方程式は，$x$ の2次方程式とみて判別式 $D\\geqq 0$ から $y$ の範囲を絞る。その中で $D$ が平方数になる $y$ だけ，$x$ を計算する。'],
-  ptShibori: ['$xyz=k(x+y+z)$ は，$x+y+z\\leqq 3z$ から $xyz\\leqq 3kz$，$xy\\leqq 3k$ と絞る。残りは $z$ について解いて代入する。'],
+  ptShibori: ['$xyz=k(x+y+z)$ は，$x+y+z\\leqq 3z$ から $xyz\\leqq 3kz$，$xy\\leqq 3k$ と絞る。残りは $z$ について解いて代入する。', '分母に係数があって対称でない $\\frac{1}{ax}+\\frac{1}{by}+\\frac{1}{cz}=q$ は，大小を決めずに $\\frac{1}{by}\\leqq\\frac{1}{b}$，$\\frac{1}{cz}\\leqq\\frac{1}{c}$ から $x$ を絞る。$x$ を決めたら $Y=by$，$Z=cz$ とおき，$\\frac{1}{Y}+\\frac{1}{Z}=\\frac{m}{n}$ を $(mY-n)(mZ-n)=n^2$ と積の形にする。'],
   ptSeki: ['分数の式は分母をはらって積の形に。$\\frac{a}{x}<1$ のような不等式から $x$ の範囲を出して，約数の組を絞る。'],
   kyoumen: ['平面 DEF 上にある条件は，$\\overrightarrow{\\mathrm{OP}}$ を $\\overrightarrow{\\mathrm{OD}}$，$\\overrightarrow{\\mathrm{OE}}$，$\\overrightarrow{\\mathrm{OF}}$ で表して，係数の和 $=1$。'],
   kuukanZahyou: ['$xy$ 平面上の点は $(x,\\ y,\\ 0)$ とおき，$\\mathrm{PA}^2=\\mathrm{PB}^2$，$\\mathrm{PA}^2=\\mathrm{PC}^2$ の2式を連立する（$x^2$，$y^2$ の項は消える）。'],
@@ -7154,6 +7155,91 @@ function ptShiboriGen(lv){
       const strict = Math.random() < 0.35, L2 = ptShiboriGen.q3[strict ? 1 : 0];
       return uf3Prob(pick(L2), strict, 2);
     }
+    // 分母に係数のある単位分数 1/(ax)+1/(by)+1/(cz)=q（小問3つ）。1/(by)≦1/b，1/(cz)≦1/c から x を絞り，x ごとに (mY−n)(mZ−n)=n² で解く
+    if (!ptShiboriGen.ub) {
+      const L = [], nd = n => { let k = 0; for (let d = 1; d <= n * n; d++) if (n * n % d === 0) k++; return k; };
+      const two = (r, b, c) => {   // 1/(by)+1/(cz)=r の正の整数解。Y=by，Z=cz とおくと (mY−n)(mZ−n)=n²
+        const m = r.n, n = r.d, N = n * n, prs = [], cand = [], sol = [];
+        for (let d = 1; d <= N; d++) if (N % d === 0) {
+          const e = N / d; prs.push([d, e]);
+          if ((d + n) % m || (e + n) % m) continue;
+          const Y = (d + n) / m, Z = (e + n) / m; cand.push([Y, Z]);
+          if (Y % b || Z % c) continue; sol.push([Y / b, Z / c]);
+        }
+        return { m, n, prs, cand, sol };
+      };
+      const rowsOf = (a, b, c, q) => {
+        const lo = q.sub(new F(1, b)).sub(new F(1, c)); if (lo.n <= 0) return null;
+        const xlo = Math.floor(q.d / (a * q.n)) + 1, xhi = Math.floor(lo.d / (a * lo.n)), rows = [];
+        if (xhi - xlo + 1 < 2 || xhi - xlo + 1 > 3) return null;
+        for (let x = xlo; x <= xhi; x++) { const r = q.sub(new F(1, a * x)); rows.push({ x, r, ...(r.n > 0 && r.d <= 12 ? two(r, b, c) : { bad: true, n: r.d, prs: [], cand: [], sol: [] }) }); }
+        return { lo, xlo, xhi, rows };
+      };
+      // 計算が重くならないもの：x の候補は2〜3個，残りの式 m/n は n² の約数が9個以下（n≦11）・m≦6，約数の組は合わせて30以下，解は3〜8組，y と z は 60 以下，途中の Y，Z は 160 以下
+      // 係数 a≦8，b，c≦12，q の分母≦48 を総当たりで調べた結果（毎回調べると3秒ほどかかるので，結果だけ持つ。下で条件をもう一度確かめる）
+      const UB = '1,2,2,4,3 1,2,3,7,6 1,2,4,5,4 1,2,4,9,8 1,2,5,11,10 1,2,6,7,6 1,2,8,9,8 1,2,10,11,10 1,3,2,4,3 1,3,2,7,6 1,3,3,1,1 1,3,3,7,6 1,4,2,5,4 1,4,2,9,8 1,4,4,5,6 1,4,12,2,3 1,5,2,11,10 1,6,2,7,6 1,8,2,9,8 1,8,8,1,2 1,10,2,11,10 1,12,4,2,3 2,3,6,3,4 2,3,12,5,8 2,4,8,5,8 2,6,3,3,4 2,6,6,1,2 2,8,4,5,8 2,8,8,5,12 2,12,3,5,8 3,4,4,2,3 3,4,12,1,2 3,8,8,1,3 3,9,9,1,3 3,12,4,1,2 3,12,12,5,18 4,3,3,3,4 4,6,12,3,8 4,12,6,3,8 4,12,12,1,4 5,6,6,2,5 6,8,8,1,3';
+      for (const [a, b, c, m, n] of UB.split(' ').map(t => t.split(',').map(Number))) {   // 見本の式（1,2,3,4,3）は入れていない
+        const q = new F(m, n);
+        const u = rowsOf(a, b, c, q); if (!u) continue;
+        if (u.rows.some(w => w.bad || nd(w.n) > 9 || w.m > 6)) continue;
+        const tot = u.rows.reduce((s, w) => s + w.sol.length, 0), pairs = u.rows.reduce((s, w) => s + w.prs.length, 0);
+        if (u.rows.filter(w => w.sol.length).length < 2 || tot < 3 || tot > 8 || pairs > 30 || !u.rows.some(w => w.sol.length >= 2)) continue;
+        if (u.rows.some(w => w.sol.some(([y, z]) => y > 60 || z > 60) || w.cand.some(([Y, Z]) => Y > 160 || Z > 160))) continue;
+        L.push([a, b, c, m, n]);
+      }
+      ptShiboriGen.ub = { L, rowsOf };
+    }
+    if (lv === 3 && Math.random() < 0.2) {
+      const [a, b, c, m, n] = pick(ptShiboriGen.ub.L), q = new F(m, n), qT = numTex(q), u = ptShiboriGen.ub.rowsOf(a, b, c, q);
+      const fr = (k, v) => `\\frac{1}{${k === 1 ? '' : k}${v}}`, eqT = `${fr(a, 'x')}+${fr(b, 'y')}+${fr(c, 'z')}=${qT}`;
+      const Yv = b > 1 ? 'Y' : 'y', Zv = c > 1 ? 'Z' : 'z';
+      // x を1つ決めたあとの解き方を段に分けて返す（式は別の行，約数の組は表にする）
+      const solve = (w, pre) => {
+        const rT = numTex(w.r), A = sumTex([[w.m, Yv], [-w.n, '']]), B = sumTex([[w.m, Zv], [-w.n, '']]);
+        const put = [b > 1 ? '$Y=' + b + 'y$' : '', c > 1 ? '$Z=' + c + 'z$' : ''].filter(Boolean).join('，');
+        const conds = [w.m > 1 ? `$${Yv}$，$${Zv}$ が整数` : '', b > 1 && b === c ? `$Y$，$Z$ が ${b} の倍数` : [b > 1 ? `$Y$ が ${b} の倍数` : '', c > 1 ? `$Z$ が ${c} の倍数` : ''].filter(Boolean).join('，')].filter(Boolean).join('，');
+        const cell = (V, k) => { const f = new F(V, w.m); return f.d === 1 && f.n % k === 0 ? String(f.n / k) : '\\times'; };
+        const rows = w.prs.map(([d, e]) => {
+          const yc = cell(d + w.n, b), zc = cell(e + w.n, c), ok = yc !== '\\times' && zc !== '\\times';
+          const iv = V => (V % w.m ? '\\times' : String(V / w.m));   // 整数にならないときは ×
+          return [d, e, iv(d + w.n), iv(e + w.n), ...(b > 1 ? [yc] : []), ...(c > 1 ? [zc] : []), ok ? '\\bigcirc' : ''].join(' & ');
+        });
+        const head = [A, B, Yv, Zv, ...(b > 1 ? ['y'] : []), ...(c > 1 ? ['z'] : []), ''].join(' & ');
+        const cols = 'cc|cc' + (b > 1 ? 'c' : '') + (c > 1 ? 'c' : '') + '|c';
+        // 解答は横いっぱい（ansFull）なので，左に式と文，右に約数の表を並べて縦に短くする
+        return [{ t: 'cols', cols: [[...pre,
+          { t: 'txt', s: `${put ? put + ' とおき，' : ''}分母を払うと $${w.n === 1 ? '' : w.n}(${Yv}+${Zv})=${w.m === 1 ? '' : w.m}${Yv}${Zv}$。${w.m > 1 ? `${w.m} 倍して` : ''}変形すると` },
+          { t: 'disp', tex: `(${A})(${B})=${w.n * w.n}` },
+          { t: 'txt', s: `$\\frac{1}{${Yv}}<${rT}$ より $${A}>0$，同様に $${B}>0$。正の約数の組を右の表で調べる${conds ? `（${conds}→○）` : ''}。` },
+          { t: 'txt', s: w.sol.length ? `○の行から $(y,\\ z)=${T3(w.sol)}$` : '○の行はないので，解はない。' }],
+          [{ t: 'disp', lines: rows.length + 1, tex: `\\begin{array}{${cols}} ${head} \\\\ \\hline ${rows.join(' \\\\ ')} \\end{array}` }]] }];
+      };
+      const many = u.rows.filter(w => w.sol.length), w0 = pick(many), x0 = w0.x;   // （1）で決める x は解のあるものから選ぶ
+      const valid = u.rows.filter(w => w.sol.length).map(w => w.x), all = u.rows.flatMap(w => w.sol.map(([y, z]) => [w.x, y, z]));
+      const lo = u.lo, xs = u.rows.map(w => w.x);
+      const yzT = w => `$${fr(b, 'y')}+${fr(c, 'z')}=${numTex(w.r)}$`;
+      const st = [...solve(w0, [{ t: 'txt', s: `（1）$x=${x0}$ のとき，①は ${yzT(w0)}` }]),
+        { t: 'txt', s: `（2）$y\\geqq 1$，$z\\geqq 1$ より $${fr(b, 'y')}\\leqq ${numTex(new F(1, b))}$，$${fr(c, 'z')}\\leqq ${numTex(new F(1, c))}$ だから，①より` },
+        { t: 'disp', tex: `${fr(a, 'x')}=${qT}-${fr(b, 'y')}-${fr(c, 'z')}\\geqq ${qT}-${numTex(new F(1, b))}-${numTex(new F(1, c))}=${numTex(lo)}` },
+        { t: 'txt', s: `よって $x\\leqq ${numTex(new F(lo.d, a * lo.n))}$。${u.xlo > 1 ? `また $${fr(a, 'x')}<${qT}$ より $x>${numTex(new F(n, a * m))}$。` : ''}$x$ は $x=${xs.join(',\\ ')}$ のどれかである。` },
+        ...u.rows.flatMap(w => w.x === x0 ? [{ t: 'txt', s: `【$x=${x0}$ のとき】（1）より解がある。` }] : solve(w, [{ t: 'txt', s: `【$x=${w.x}$ のとき】①は ${yzT(w)}` }])),
+        { t: 'txt', s: `以上より，$x$ のとりうる値は $x=${valid.join(',\\ ')}$` },
+        { t: 'txt', s: `（3）（1），（2）より $(x,\\ y,\\ z)=${T3(all)}$` }];
+      const label = `方程式 $${eqT.replace(/\\frac/g, '\\dfrac')}$ ……① を満たす正の整数の組 $(x,\\ y,\\ z)$ について考える。\n（1）$x=${x0}$ のとき，正の整数 $y$，$z$ の組をすべて求めよ。\n（2）$x$ のとりうる値を求めよ。\n（3）方程式①を解け。`;
+      return { unit: 'ptShibori', lv, key: `pb3|b|${a},${b},${c}|${m}/${n}|${x0}`, sec: T.pb3, wide: true, ansFull: true,
+        label, math: '', item: `$${eqT}$ の正の整数解（小問つき）`, head: `$${eqT}$`, short: '不等式で絞る',
+        ans: `（1）$(y,\\ z)=${T3(w0.sol)}$　（2）$x=${valid.join(',\\ ')}$　（3）$(x,\\ y,\\ z)=${T3(all)}$`, vars: {}, steps: st,
+        chk: () => {
+          const B = [];
+          for (let x = 1; x <= 30; x++) for (let y = 1; y <= 300; y++) {
+            const R = q.sub(new F(1, a * x)).sub(new F(1, b * y)); if (R.n <= 0) continue;
+            const z = new F(R.d, c * R.n); if (z.d === 1) B.push([x, y, z.n]);
+          }
+          const same = (P, Q) => P.length === Q.length && P.every(p => Q.some(t => t.join() === p.join()));
+          const vx = [...new Set(B.map(p => p[0]))];
+          return same(B, all) && same(B.filter(p => p[0] === x0).map(p => [p[1], p[2]]), w0.sol) && vx.length === valid.length && vx.every(x => valid.includes(x)) ? 0 : 1;
+        } };
+    }
     // 発展：解の多い単位分数・xyz=k(x+y+z)・xyz=x+y+z+c・4つの文字 x+y+z+w+c=xyzw
     const form = pick(['k', 'c', 'w', 'h']);
     if (form === 'h') return uf3Prob(pick(ptShiboriGen.q3.h), false, 3);
@@ -12247,7 +12333,7 @@ function renderWork(box, A){
   const pages = packWork(A, h1, h2, 1.35, BRK.work);
   // 図つきの問題は、文章のあと（右がわ）に図をおき、左がわを解くスペースにする
   // 問題文に同じ式がすでにあるときは、下の式の行は出さない
-  const cell = (x, cls = '') => `<div class="cell${cls}${aBoxOn() ? ' hasbox' : ''}" data-i="${x.i}" style="height:${x.h.toFixed(1)}mm"><div class="lb">${noHTML(x.a)}${rich(x.a.p.label)}${ptSpan(x.a.p)}</div>${showMx(x.a.p) ?`<div class="mx">${K('\\displaystyle ' + x.a.p.math)}</div>` : ''}${x.a.p.fig ? `<div class="pf">${svgOf(x.a.p.fig)}</div>` : ''}${aBoxHTML(x.a.p)}</div>`;
+  const cell = (x, cls = '') => `<div class="cell${cls}${aBoxOn() ? ' hasbox' : ''}" data-i="${x.i}" style="height:${x.h.toFixed(1)}mm"><div class="lb">${noHTML(x.a)}${rich(x.a.p.label).replace(/\n/g, '<br>')}${ptSpan(x.a.p)}</div>${showMx(x.a.p) ?`<div class="mx">${K('\\displaystyle ' + x.a.p.math)}</div>` : ''}${x.a.p.fig ? `<div class="pf">${svgOf(x.a.p.fig)}</div>` : ''}${aBoxHTML(x.a.p)}</div>`;
   const two = (s, style = '') => `<div class="wcols"${style}><div class="wcol lcol">${s.cols[0].map(x => cell(x)).join('')}</div><div class="wcol">${s.cols[1].map(x => cell(x)).join('')}</div></div>`;
   pages.forEach((segs, k) => {
     const flow = k ? newSheet(box, false) : flow1;
@@ -12505,7 +12591,7 @@ ${r}
     pk.pages.forEach((segs, k) => {
       const H = k ? (eHead ? 238 : 250) : 212, f = H / (k ? pk.h2 : pk.h1);
       const cellTex = (x, w) => {
-        const a = A[x.i], p = a.p, body = `${noTex(a)}\\ ${p.label}${ptTex(p)}${showMx(p) ? `\\par\\smallskip\\hspace*{1.5em}$\\displaystyle ${p.math}$` : ''}`;
+        const a = A[x.i], p = a.p, body = `${noTex(a)}\\ ${p.label.replace(/\n/g, '\\newline ')}${ptTex(p)}${showMx(p) ? `\\par\\smallskip\\hspace*{1.5em}$\\displaystyle ${p.math}$` : ''}`;
         // 図つきの問題は、左に文章・右に図
         return `\\begin{minipage}[t][${(x.h * f).toFixed(1)}mm][${aBoxOn() ? 's' : 't'}]{${w}}
 ${p.fig ? `\\begin{minipage}[t]{0.6\\linewidth}${body}\\end{minipage}\\hfill\\begin{minipage}[t]{0.36\\linewidth}${tikzOf(p.fig, 0.18, false)}\\end{minipage}` : body}${aBoxTex(p)}
