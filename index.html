@@ -88,6 +88,9 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 /* 受験基礎：押すと受験基礎の印がある単元だけを表示する（選んだ単元はそのまま） */
 .subjRow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:8px}
 .subjRow .subjTabs{margin-bottom:0}
+.unitQ{flex:1 1 12em;min-width:10em;max-width:22em;padding:6px 14px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--ink);font:inherit;font-size:14px}
+.unitQ:focus{outline:2px solid var(--teal);outline-offset:1px}
+.unitQMsg{font-size:13px;color:var(--muted)}
 .jukenBtn{padding:6px 14px;border:1px solid var(--teal);border-radius:999px;background:#fff;color:var(--teal);font-weight:700;font-size:14px;cursor:pointer}
 .jukenBtn:hover{background:var(--teal-bg)}
 .jukenBtn.on{background:var(--teal);color:#fff}
@@ -103,6 +106,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 .fields.jk .chk{font-size:13.5px;padding:6px 12px}
 .ugs{font-size:11px;font-weight:400;color:var(--muted)}
 @media (max-width:600px){.fields.jk .field.open .units{grid-template-columns:1fr;padding-left:10px}.fields.jk .ugrp{position:static;width:auto}}
+#patBtn b{font-weight:700;margin-left:4px;font-variant-numeric:tabular-nums}
 .subjTabs button b{font-weight:700;margin-left:4px;font-variant-numeric:tabular-nums}
 .fields{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
 .field + .field{border-top:1px solid var(--line)}
@@ -485,7 +489,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
             </div>
           </div>
         </div>
-        <div class="subjRow"><div class="seg subjTabs" id="subjTabs" aria-label="教科"><button data-sj="1">数I</button><button data-sj="A">数A</button><button data-sj="2">数II</button><button data-sj="B">数B</button><button data-sj="C">数C</button><button data-sj="P">パターン練習</button></div><button type="button" class="jukenBtn" id="jukenBtn" aria-pressed="false" title="受験基礎の単元だけを表示する">受験基礎</button><button type="button" class="jukenBtn" id="hattenBtn" aria-pressed="false" title="入試発展の単元だけを表示する">入試発展</button></div>
+        <div class="subjRow"><div class="seg subjTabs" id="subjTabs" aria-label="教科"><button data-sj="1">数I</button><button data-sj="A">数A</button><button data-sj="2">数II</button><button data-sj="B">数B</button><button data-sj="C">数C</button></div><button type="button" class="jukenBtn" id="jukenBtn" aria-pressed="false" title="受験基礎の単元だけを表示する">受験基礎</button><button type="button" class="jukenBtn" id="hattenBtn" aria-pressed="false" title="入試発展の単元だけを表示する">入試発展</button><button type="button" class="jukenBtn" id="patBtn" aria-pressed="false" title="パターン練習の単元を表示する">パターン練習</button><input type="search" class="unitQ" id="unitQ" placeholder="単元を検索（例：整数、漸化式）" aria-label="単元を検索" autocomplete="off"><span class="unitQMsg" id="unitQMsg" aria-live="polite"></span></div>
         <div class="fields" id="fields">
         <div class="units" data-subj="1">
           <span class="ugrp">数I　数と式</span>
@@ -684,7 +688,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
           <label class="chk"><input type="checkbox" name="unit" value="chokkouToKyoku">直交座標 → 極方程式</label>
         </div>
         <div class="units" data-subj="P">
-          <span class="ugrp">整数のパターン</span>
+          <span class="ugrp">パターン練習　整数</span>
           <label class="chk"><input type="checkbox" name="unit" value="ptSeki">積の形にする不定方程式</label>
           <label class="chk"><input type="checkbox" name="unit" value="ptShibori">不等式で絞りこむ不定方程式</label>
           <label class="chk"><input type="checkbox" name="unit" value="ptNiji">2次の不定方程式・√ が整数</label>
@@ -820,8 +824,10 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.86.1', UPDATED = '2026-11-14';
+const VERSION = '5.87.1', UPDATED = '2026-11-14';
 const CHANGES = [
+  ['5.87.1', '2026-11-16', '「パターン練習」を教科タブから外して、受験基礎・入試発展の隣にいつも出るボタンにした（受験基礎・入試発展・検索のときも見える。押すとそれらを外してパターン練習の単元を出す）。共面条件と交点（発展）で、まれに分母の大きい数が出ていたのを直した。'],
+  ['5.87.0', '2026-11-16', '単元を検索できるようにした（受験基礎・入試発展のボタンの右の欄）。単元名・分野名・教科名で探す（ひらがな・カタカナ、全角・半角は区別しない。空白で区切ると両方を含む単元）。検索用のことばを単元ごとに内部で持てるようにした（画面には出さない）。'],
   ['5.86.1', '2026-11-16', '不等式で絞りこむ不定方程式の種類をふやした。標準：x²+y²+z²=N（z の範囲から絞る）、1/x+1/y+1/z=q の x<y<z、q の種類。発展：4つの文字の x+y+z+w+c=xyzw、解の多い 1/x+1/y+1/z=q、xyz=k(x+y+z) の k=5・6、xyz=x+y+z+c の c=7〜10。'],
   ['5.86.0', '2026-11-14', 'パターン練習・整数3「2次の不定方程式・√ が整数」（受験基礎）。基本：√(c−kn) が整数・√(n²+a) が自然数となる n。標準：n²+2pn+c が平方数となる n（平方完成して積の形）。発展：x の2次方程式とみて判別式で y を絞る。'],
   ['5.85.0', '2026-11-14', 'パターン練習・整数2「不等式で絞りこむ不定方程式」（受験基礎）。基本：ax+by=c・x²+ky²=N の自然数解（1つの文字の範囲を出して調べる）。標準：1/x+1/y=q（x≦y）・1/x+1/y+1/z=q（x≦y≦z で x を絞る）。発展：xyz=k(x+y+z)・xyz=x+y+z+c。'],
@@ -7263,7 +7269,8 @@ function kyoumenGen(lv){
     const isG = Math.random() < 0.5;
     const X = isG ? [new F(1, 3), new F(1, 3), new F(1, 3)] : [new F(ri(1, 3), ri(4, 6)), new F(ri(1, 3), ri(4, 6)), new F(ri(1, 3), ri(4, 6))];
     const w = X.map((x, k) => x.div(pq[k])), sw = w.reduce((a, b) => a.add(b), new F(0)), k0 = new F(1).div(sw), Pc = X.map(x => x.mul(k0));
-    if (Pc.some(x => x.d > 40) || w.some(x => x.d > 12)) continue;
+    // 途中に出る数（係数の和・k）も分母が大きくならないものだけ（計算量のきまり）
+    if (Pc.some(x => x.d > 40) || w.some(x => x.d > 12) || [sw, k0].some(x => x.d > 40 || Math.abs(x.n) > 40)) continue;
     const nm = ['D', 'E', 'F'], ed = [['O', 'A'], ['O', 'B'], ['O', 'C']];
     const cond = rs.map(([i, j], k) => `辺 ${ratioT(i, j, ...ed[k], nm[k])}`).join('，') + '，' + (isG ? '三角形 ABC の重心を G とする。' : `$${OV('OG')}=${vT(X)}$ を満たす点を G とする。`);
     const ODEF = nm.map((s, k) => `${OV('O' + s)}=${sumTex([[pq[k], abc[k]]])}`).join('$，$');
@@ -12518,7 +12525,15 @@ const SUBJ_TABS = ['1', 'A', '2', 'B', 'C', 'P'];
 const JUKEN = new Set(['bunkatsu', 'kinouTou', 'kinouFu', 'kinouBai', 'kinouSui', 'tousaMax', 'kyoutsuukou', 'baisuuWa', 'zettaiWa', 'bouenWa', 'sansuu', 'kiguuWa', 'heimen', 'kyori', 'gaiseki', 'kyuumen', 'tenChokusen', 'gunSuretsu', 'menseki12', 'amariBunrui', 'zettaichi', 'seisuBubun', 'sessenHonsu', 'okikae', 'teisuBunri', 'ketasuu', 'kakuMax', 'taisho', 'kaiKeisu1', 'kaiHaichi', 'kanshu', 'hanpuku', 'jokenTsuki', 'futeishiki', 'goudou', 'soukaSoujo', 'kaiKeisu2', 'teiten', 'senkei', 'tsuka', 'yosen', 'fax', 'kyoumen', 'ptSeki', 'ptShibori', 'ptNiji', 'enSessen', 'gousei', 'taisuuHouteishiki', 'kyokuchi', 'rokubun', 'zenka', 'snAn', 'sabunWa', 'kouten', 'saisyou']);
 // 入試発展の印：受験基礎より一歩進んだ、入試の典型問題
 const HATTEN = new Set(['kinouZen', 'kinouNi', 'sekiWa', 'gaussWa', 'kuukanKoshi']);
-const unitShown = i => !ST.juken || (ST.juken === 'h' ? HATTEN : JUKEN).has(i.value);
+// 単元の検索：単元名・分野名・教科名と，下の UNIT_TAGS（画面には出さない検索用のことば）から探す。空白で区切ると，すべてを含む単元
+// ことばは単元ごとに空白で区切って書く（例：ptSeki: '不定方程式 因数分解 約数'）。あとで足していく
+const UNIT_TAGS = {};
+let UNIT_Q = '';
+// ひらがな・カタカナ，全角・半角，大文字・小文字の違いを気にせずに比べる
+const normQ = t => String(t).normalize('NFKC').toLowerCase().replace(/[\u30a1-\u30f6]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60)).replace(/\s+/g, ' ').trim();
+const unitText = i => { const u = i.value, box = i.closest('.units'), g = box && box.querySelector('.ugrp'); return normQ([unitName(u), g ? g.textContent : '', SUBJ_NAME[UNIT_SUBJ[u]] || '', UNIT_TAGS[u] || ''].join(' ')).replace(/ /g, ''); };
+const unitHit = i => !UNIT_Q || normQ(UNIT_Q).split(' ').every(w => unitText(i).includes(w));
+const unitShown = i => (!ST.juken || (ST.juken === 'h' ? HATTEN : JUKEN).has(i.value)) && unitHit(i);
 // 分野の中で、いま表示している単元
 const shownIds = u => [...u.querySelectorAll('input[name="unit"]')].filter(unitShown).map(i => i.value);
 function applySubject(){
@@ -12529,9 +12544,12 @@ function applySubject(){
   document.querySelectorAll('#fields .field').forEach(f => { const n = shownIds(f.querySelector('.units')).length; f.querySelector('.fhead em').textContent = n + '単元'; });
   $('jukenBtn').classList.toggle('on', ST.juken === true); $('jukenBtn').setAttribute('aria-pressed', ST.juken === true);
   $('hattenBtn').classList.toggle('on', ST.juken === 'h'); $('hattenBtn').setAttribute('aria-pressed', ST.juken === 'h');
-  $('subjTabs').hidden = !!ST.juken; $('fields').classList.toggle('jk', !!ST.juken);
-  document.querySelectorAll('#fields .jsubj').forEach(h => { h.hidden = !ST.juken; });
-  if (ST.juken) { document.querySelectorAll('#fields .field').forEach(f => { f.hidden = !shownIds(f.querySelector('.units')).length; f.classList.add('open'); f.querySelector('.fhead').setAttribute('aria-expanded', true); }); return; }
+  { const on = ST.subject === 'P' && !ST.juken && !UNIT_Q; $('patBtn').classList.toggle('on', on); $('patBtn').setAttribute('aria-pressed', on); }   // パターン練習のボタン（いつも出す）
+  const across = !!ST.juken || !!UNIT_Q;   // 受験基礎・入試発展・検索のときは，教科をまたいで表示する
+  $('subjTabs').hidden = across; $('fields').classList.toggle('jk', across);
+  document.querySelectorAll('#fields .jsubj').forEach(h => { h.hidden = !across; });
+  if (UNIT_Q) { const n = [...document.querySelectorAll('#fields input[name="unit"]')].filter(unitShown).length; $('unitQMsg').textContent = n ? n + '単元' : '見つかりません'; } else $('unitQMsg').textContent = '';
+  if (across) { document.querySelectorAll('#fields .field').forEach(f => { f.hidden = !shownIds(f.querySelector('.units')).length; f.classList.add('open'); f.querySelector('.fhead').setAttribute('aria-expanded', true); }); return; }
   document.querySelectorAll('#fields .field').forEach(f => { f.hidden = f.dataset.subj !== ST.subject || !shownIds(f.querySelector('.units')).length; f.classList.toggle('open', f.dataset.key === ST.openField); f.querySelector('.fhead').setAttribute('aria-expanded', f.dataset.key === ST.openField); });
   document.querySelectorAll('#subjTabs button').forEach(b => { b.classList.toggle('on', b.dataset.sj === ST.subject); b.setAttribute('aria-pressed', b.dataset.sj === ST.subject); });
   document.title = '数学 基礎計算プリント';
@@ -12736,6 +12754,7 @@ function updateGroupCounts(){
   document.querySelectorAll('#fields .field').forEach(f => { const n = [...f.querySelectorAll('input[name="unit"]:checked')].filter(unitShown).length; f.querySelector('.n').textContent = n ? n + '個 選択中' : ''; });
   document.querySelectorAll('#fields .units').forEach(u => { const ids = shownIds(u); u.querySelector('.fAll').textContent = ids.every(x => ST.units.includes(x)) ? 'この分野をすべて外す' : 'この分野をすべて選ぶ'; });
   document.querySelectorAll('#subjTabs button').forEach(b => { const n = sel.filter(u => u[2] === b.dataset.sj).length; b.innerHTML = SUBJ_NAME[b.dataset.sj] + (n ? '<b>' + n + '</b>' : ''); });
+  { const n = sel.filter(u => u[2] === 'P').length; $('patBtn').innerHTML = 'パターン練習' + (n ? '<b>' + n + '</b>' : ''); }
   quizSync();
   $('title').placeholder = 'プリントの題名（空らんなら「' + baseTitle() + '」）';
   updateGrpSums();
@@ -12802,6 +12821,9 @@ $('picked').addEventListener('click', e => {
 });
 $('unitClear').addEventListener('click', () => setUnits([]));
 $('dupPopX').addEventListener('click', () => { $('dupPop').hidden = true; });
+$('unitQ').addEventListener('input', e => { UNIT_Q = e.target.value; applySubject(); });
+$('unitQ').addEventListener('keydown', e => { if (e.key === 'Escape') { e.target.value = ''; UNIT_Q = ''; applySubject(); } });
+$('patBtn').addEventListener('click', () => { ST.juken = false; UNIT_Q = ''; $('unitQ').value = ''; ST.subject = 'P'; save(); applySubject(); updateGroupCounts(); });
 $('jukenBtn').addEventListener('click', () => { ST.juken = ST.juken === true ? false : true; save(); applySubject(); updateGroupCounts(); });
 $('hattenBtn').addEventListener('click', () => { ST.juken = ST.juken === 'h' ? false : 'h'; save(); applySubject(); updateGroupCounts(); });
 $('subjTabs').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; ST.subject = b.dataset.sj; save(); applySubject(); });
