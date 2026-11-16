@@ -824,8 +824,9 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.87.1', UPDATED = '2026-11-14';
+const VERSION = '5.88.0', UPDATED = '2026-11-14';
 const CHANGES = [
+  ['5.88.0', '2026-11-16', '不等式で絞りこむ不定方程式に3つの型を足した（利用者の見本から）。基本：2x²−3x+y−9=0 のように1次の文字 y について解き、y≧1 から x の2次不等式で絞る型、x+2y+3z=10 のように係数のいちばん大きい文字から絞る型。標準：x²+2xy+3y²=19 のように平方完成して (x+y)²+2y²=19 とし、整数（負の数も）で y を絞る型。'],
   ['5.87.1', '2026-11-16', '「パターン練習」を教科タブから外して、受験基礎・入試発展の隣にいつも出るボタンにした（受験基礎・入試発展・検索のときも見える。押すとそれらを外してパターン練習の単元を出す）。共面条件と交点（発展）で、まれに分母の大きい数が出ていたのを直した。'],
   ['5.87.0', '2026-11-16', '単元を検索できるようにした（受験基礎・入試発展のボタンの右の欄）。単元名・分野名・教科名で探す（ひらがな・カタカナ、全角・半角は区別しない。空白で区切ると両方を含む単元）。検索用のことばを単元ごとに内部で持てるようにした（画面には出さない）。'],
   ['5.86.1', '2026-11-16', '不等式で絞りこむ不定方程式の種類をふやした。標準：x²+y²+z²=N（z の範囲から絞る）、1/x+1/y+1/z=q の x<y<z、q の種類。発展：4つの文字の x+y+z+w+c=xyzw、解の多い 1/x+1/y+1/z=q、xyz=k(x+y+z) の k=5・6、xyz=x+y+z+c の c=7〜10。'],
@@ -1608,7 +1609,7 @@ const UNIT_LEVEL = {
   kouten: ['線分 AD と BC の交点', '交点のあと直線 OP と AB の交点も'],
   chokusenVec: ['点と方向ベクトルから', '2点を通る・法線ベクトルから'],
   ptNiji: ['√(c−kn) が整数・√(n²+a) が自然数', 'n²+2pn+c が平方数', 'x の2次方程式とみて判別式で絞る'],
-  ptShibori: ['ax+by=c・x²+ky²=N（自然数）', '1/x+1/y=q・1/x+1/y+1/z=q（x≦y≦z・x<y<z）・x²+y²+z²=N', 'xyz=k(x+y+z)・xyz=x+y+z+c・x+y+z+w+c=xyzw・解の多い単位分数'],
+  ptShibori: ['ax+by=c・x²+ky²=N・ax²−bx+y=c・ax+by+cz=N（自然数）', '1/x+1/y=q・1/x+1/y+1/z=q（x≦y≦z・x<y<z）・x²+y²+z²=N・x²+2pxy+qy²=N（整数，平方完成）', 'xyz=k(x+y+z)・xyz=x+y+z+c・x+y+z+w+c=xyzw・解の多い単位分数'],
   ptSeki: ['xy+ax+by=c（自然数・整数）', 'x²−y²=k（偶奇）・axy+bx+cy=d', 'a/x+b/y=1/n（自然数）'],
   kyoumen: ['座標で4点が同じ平面上（未知数 a）', '四面体で直線 OQ と平面 ABC の交点', '直線 OG と平面 DEF の交点'],
   kuukanZahyou: ['対称な点・2点間の距離', '三角形の形・軸上で2点から等距離な点', 'xy 平面上で3点から等距離な点'],
@@ -6982,6 +6983,49 @@ function ptShiboriGen(lv){
   const fl = (n, d) => Math.floor(n / d);
   for (;;) {
     if (lv === 1 && Math.random() < 0.5) {
+      const sameSet = (B, S) => B.length === S.length && B.every(p => S.some(t => t.join() === p.join())) ? 0 : 1;
+      if (Math.random() < 0.5) {
+        // ax²−bx+y−c=0（自然数）：1次の文字 y について解き，y≧1 から x の2次不等式で x を絞る
+        const a = ri(1, 3), b = ri(-3, 6), c = ri(4, 24), D = b * b + 4 * a * (c - 1), X = Math.floor((b + Math.sqrt(D)) / (2 * a) + 1e-9);
+        if (X < 2 || X > 6) continue;
+        const sol = []; for (let x = 1; x <= X; x++) { const y = c + b * x - a * x * x; if (y >= 1) sol.push([x, y]); }
+        if (!sol.length || sol.length > 5) continue;
+        const eqT = sumTex([[a, 'x^2'], [-b, 'x'], [1, 'y'], [-c, '']]) + '=0', yT = sumTex([[-a, 'x^2'], [b, 'x'], [c, '']]), ineq = sumTex([[a, 'x^2'], [-b, 'x'], [-(c - 1), '']]);
+        const r = Math.round(Math.sqrt(D)), sq = r * r === D;
+        // 解の公式の根号を簡単にして約分する：(b±m√n)/(2a)
+        const [m, nR] = simp(D); if (!sq && nR > 100) continue;   // 簡単にした根号の中も 100 まで（計算量のきまり）
+        const g = gcd(gcd(Math.abs(b), m), 2 * a) || 1, bb = b / g, mm = m / g, dd = 2 * a / g;
+        const rootT = sg => { const num = `${bb ? bb : ''}${sg}${mm === 1 ? '' : mm}\\sqrt{${nR}}`.replace(/^\+/, ''); return dd === 1 ? num : `\\frac{${num}}{${dd}}`; };
+        const upT = sq ? numTex(new F(b + r, 2 * a)) : rootT('+'), loT = sq ? numTex(new F(b - r, 2 * a)) : rootT('-');
+        const approx = (Math.floor((b + Math.sqrt(D)) / (2 * a) * 100) / 100).toFixed(2), k = `${upT}\\fallingdotseq ${approx}`;
+        const st = [{ t: 'txt', s: `1次の文字 $y$ について解くと $y=${yT}$。$y\\geqq 1$ より $${yT}\\geqq 1$，すなわち $${ineq}\\leqq 0$` },
+          { t: 'txt', s: `これを解くと $${loT}\\leqq x\\leqq ${upT}$。${sq ? '' : `$${k}$ だから，`}これを満たす自然数は $x=${Array.from({ length: X }, (_, i) => i + 1).join(',\\ ')}$` },
+          { t: 'txt', s: `それぞれ $y=${yT}$ に代入して $(x,\\ y)=${T3(sol)}$` }];
+        return { unit: 'ptShibori', lv, key: `pb1c|${a},${b},${c}`, sec: T.pb1, wide: true,
+          label: `$${eqT}$ を満たす自然数 $x$，$y$ の組をすべて求めよ。`, math: '', item: `$${eqT}$ の自然数解`, head: `$${eqT}$`, short: '不等式で絞る',
+          ans: `$(x,\\ y)=${T3(sol)}$`, vars: {}, steps: st,
+          chk: () => { const B = []; for (let x = 1; x <= 40; x++) for (let y = 1; y <= 200; y++) if (a * x * x - b * x + y - c === 0) B.push([x, y]); return sameSet(B, sol); } };
+      }
+      // ax+by+cz=N（自然数，a<b<c）：係数のいちばん大きい z から絞り，z ごとに y を調べる
+      const [a, b, c] = pick([[1, 2, 3], [1, 2, 4], [1, 2, 5], [1, 3, 4], [1, 3, 5], [2, 3, 4], [2, 3, 5], [1, 4, 5], [2, 3, 7], [1, 3, 7], [3, 4, 5]]), N = ri(a + b + c + 2, 30);
+      const zm = Math.floor((N - a - b) / c); if (zm < 1 || zm > 4) continue;
+      const sol = [], lines = [];
+      for (let z = 1; z <= zm; z++) {
+        const R = N - c * z, ym = Math.floor((R - a) / b), got = [];
+        for (let y = 1; y <= ym; y++) if ((R - b * y) % a === 0) got.push([(R - b * y) / a, y, z]);
+        sol.push(...got);
+        lines.push(`$z=${z}$ のとき $${sumTex([[a, 'x'], [b, 'y']])}=${R}$。$y\\leqq ${numTex(new F(R - a, b))}$ で${got.length ? `，$(x,\\ y)=${T3(got.map(p => [p[0], p[1]]))}$` : '，$x$ が自然数になる $y$ はない'}`);
+      }
+      if (!sol.length || sol.length > 6) continue;
+      const eqT = sumTex([[a, 'x'], [b, 'y'], [c, 'z']]) + `=${N}`;
+      const st = [{ t: 'txt', s: `係数のいちばん大きい $z$ から絞る。$x\\geqq 1$，$y\\geqq 1$ より $${c === 1 ? '' : c}z=${N}-(${sumTex([[a, 'x'], [b, 'y']])})\\leqq ${N}-${a + b}=${N - a - b}$ なので $z\\leqq ${numTex(new F(N - a - b, c))}$。よって $z=${Array.from({ length: zm }, (_, i) => i + 1).join(',\\ ')}$` },
+        { t: 'txt', s: lines.join('。') + '。' }, { t: 'txt', s: `よって $(x,\\ y,\\ z)=${T3(sol)}$` }];
+      return { unit: 'ptShibori', lv, key: `pb1d|${a},${b},${c},${N}`, sec: T.pb1, wide: true,
+        label: `$${eqT}$ を満たす自然数 $x$，$y$，$z$ の組をすべて求めよ。`, math: '', item: `$${eqT}$ の自然数解`, head: `$${eqT}$`, short: '不等式で絞る',
+        ans: `$(x,\\ y,\\ z)=${T3(sol)}$`, vars: {}, steps: st,
+        chk: () => { const B = []; for (let x = 1; x <= N; x++) for (let y = 1; y <= N; y++) for (let z = 1; z <= N; z++) if (a * x + b * y + c * z === N) B.push([x, y, z]); return sameSet(B, sol); } };
+    }
+    if (lv === 1 && Math.random() < 0.5) {
       // ax+by=c（自然数）：y の範囲を出して調べる
       const a = ri(2, 9), b = ri(3, 9); if (gcd(a, b) !== 1) continue;
       const c = ri(a + b, 70), ym = fl(c - a, b);
@@ -7011,6 +7055,29 @@ function ptShiboriGen(lv){
         label: `$x^2+${kT}y^2=${N}$ を満たす自然数 $x$，$y$ の組をすべて求めよ。`, math: '', item: `$x^2+${kT}y^2=${N}$ の自然数解`, head: `$x^2+${kT}y^2=${N}$`, short: '不等式で絞る',
         ans: `$(x,\\ y)=${T3(sol)}$`, vars: {}, steps: st,
         chk: () => { const B = []; for (let x = 1; x <= N; x++) for (let y = 1; y <= N; y++) if (x * x + k * y * y === N) B.push([x, y]); return B.length === sol.length && B.every(p => sol.some(q => q[0] === p[0] && q[1] === p[1])) ? 0 : 1; } };
+    }
+    if (lv === 2 && Math.random() < 0.25) {
+      // x²+2pxy+qy²=N（整数）：平方完成して (x+py)²+ky²=N。ky²≦N から y を絞る（負の数も入る）
+      const p = pick([1, -1, 2, -2]), k = ri(1, 4), q = p * p + k, N = ri(6, 50), Y = Math.floor(Math.sqrt(N / k) + 1e-9);
+      if (Y < 1 || Y > 4) continue;
+      const sol = [], lines = [];
+      for (let t = 0; t <= Y; t++) {
+        const R = N - k * t * t, s = Math.round(Math.sqrt(R)), ok = s * s === R;
+        lines.push(`$y=${t ? `\\pm ${t}` : '0'}$ のとき $(${sumTex([[1, 'x'], [p, 'y']])})^2=${R}$${ok ? '' : '（平方数でない）'}`);
+        if (!ok) continue;
+        for (const y of t ? [-t, t] : [0]) for (const v of s ? [-s, s] : [0]) sol.push([v - p * y, y]);
+      }
+      if (!sol.length || sol.length > 8 || sol.every(u => u[1] === 0)) continue;   // y=0 だけの答えは使わない
+      sol.sort((u, v) => u[1] - v[1] || u[0] - v[0]);
+      const eqT = sumTex([[1, 'x^2'], [2 * p, 'xy'], [q, 'y^2']]) + `=${N}`, XP = sumTex([[1, 'x'], [p, 'y']]);
+      const st = [{ t: 'txt', s: `$x$ について平方完成すると $(${XP})^2+${k === 1 ? '' : k}y^2=${N}$。` },
+        { t: 'txt', s: `$(${XP})^2\\geqq 0$ より $${k === 1 ? '' : k}y^2\\leqq ${N}$，$y^2\\leqq ${numTex(new F(N, k))}$。$y$ は整数なので $y=${Array.from({ length: 2 * Y + 1 }, (_, i) => i - Y).join(',\\ ')}$` },
+        { t: 'txt', s: lines.join('，') + '。' },
+        { t: 'txt', s: `右辺が平方数のとき，$${XP}$ はその正と負の平方根になる。それぞれ $x$ を求めて $(x,\\ y)=${T3(sol)}$` }];
+      return { unit: 'ptShibori', lv, key: `pb2e|${p},${k},${N}`, sec: T.pb2, wide: true,
+        label: `$${eqT}$ を満たす整数 $x$，$y$ の組をすべて求めよ。`, math: '', item: `$${eqT}$ の整数解`, head: `$${eqT}$`, short: '不等式で絞る',
+        ans: `$(x,\\ y)=${T3(sol)}$`, vars: {}, steps: st,
+        chk: () => { const B = []; for (let x = -40; x <= 40; x++) for (let y = -40; y <= 40; y++) if (x * x + 2 * p * x * y + q * y * y === N) B.push([x, y]); return B.length === sol.length && B.every(u => sol.some(v => v.join() === u.join())) ? 0 : 1; } };
     }
     if (lv === 2 && Math.random() < 0.5) {
       // 1/x+1/y=q（x≦y）
@@ -11951,7 +12018,7 @@ const FORMULA = {
   kouten: ['交点を2通りに表す：$\\overrightarrow{\\mathrm{OP}}=(1-s)\\vec{a}+s\\overrightarrow{\\mathrm{OD}}=t\\overrightarrow{\\mathrm{OC}}+(1-t)\\vec{b}$', '$\\vec{a}$ と $\\vec{b}$ は平行でない（どちらも $\\vec{0}$ でない）ので，係数を比べて $s$，$t$ を求める。'],
   chokusenVec: ['点 A を通り $\\vec{d}$ に平行な直線：$\\vec{p}=\\vec{a}+t\\vec{d}$。2点 A，B を通る直線：$\\vec{p}=(1-t)\\vec{a}+t\\vec{b}$', '点 $(x_{0},\\ y_{0})$ を通り $\\vec{n}=(a,\\ b)$ に垂直な直線：$a(x-x_{0})+b(y-y_{0})=0$'],
   ptNiji: ['$\\sqrt{f(n)}$ が整数のときは $\\sqrt{f(n)}=m$ とおいて $f(n)=m^2$ にする。$n$ の範囲から $m$ を絞るか，$m^2-n^2=a$ なら $(m+n)(m-n)=a$ と積の形にする。', '$n^2+2pn+c$ が平方数のときは，平方完成して $(n+p)^2-m^2=p^2-c$，$(n+p+m)(n+p-m)=p^2-c$。2つの因数の偶奇は同じ。'],
-  ptShibori: ['自然数の解が有限個しかないときは，不等式で1つの文字の範囲を出して，その範囲を全部調べる（$x\\geqq 1$ から $y\\leqq\\cdots$ など）。', '文字が対称なときは $x\\leqq y\\leqq z$ と大小を決める。$\\frac{1}{x}+\\frac{1}{y}+\\frac{1}{z}=q$ なら $q\\leqq\\frac{3}{x}$ から $x$ を絞り，$x$ ごとに $y$ を絞る。'],
+  ptShibori: ['1次の文字があれば，その文字について解き，$y\\geqq 1$ などから残りの文字の不等式（2次不等式）を作って絞る。文字が3つの1次式は，係数のいちばん大きい文字から絞る。', '$x^2+2pxy+qy^2=N$ は平方完成して $(x+py)^2+(q-p^2)y^2=N$。$(x+py)^2\\geqq 0$ から $y$ を絞る（整数なら負の数も調べる）。', '自然数の解が有限個しかないときは，不等式で1つの文字の範囲を出して，その範囲を全部調べる（$x\\geqq 1$ から $y\\leqq\\cdots$ など）。', '文字が対称なときは $x\\leqq y\\leqq z$ と大小を決める。$\\frac{1}{x}+\\frac{1}{y}+\\frac{1}{z}=q$ なら $q\\leqq\\frac{3}{x}$ から $x$ を絞り，$x$ ごとに $y$ を絞る。'],
   ptSeki: ['$xy+ax+by=c$ は，両辺に $ab$ をたして $(x+b)(y+a)=c+ab$ と積の形にする。$axy+bx+cy=d$ は両辺に $a$ をかけてから $(ax+c)(ay+b)=ad+bc$。', '積が決まった数になるので，約数の組を書き出す（自然数なら範囲で絞る。整数なら負の約数も入れる）。', '$x^2-y^2=k$ は $(x+y)(x-y)=k$。$x+y$ と $x-y$ の偶奇は同じ。'],
   kyoumen: ['4点 A，B，C，P が同じ平面上にあるのは，$\\overrightarrow{\\mathrm{AP}}=s\\overrightarrow{\\mathrm{AB}}+t\\overrightarrow{\\mathrm{AC}}$ となる実数 $s$，$t$ があるとき。', '$\\overrightarrow{\\mathrm{OP}}=x\\vec{a}+y\\vec{b}+z\\vec{c}$ の点 P が平面 ABC 上にあるのは，$x+y+z=1$ のとき（O は平面 ABC の外）。', '直線 OQ 上の点は $\\overrightarrow{\\mathrm{OP}}=k\\overrightarrow{\\mathrm{OQ}}$ とおき，係数の和 $=1$ から $k$ を求める。'],
   kuukanZahyou: ['2点 $\\mathrm{A}(x_{1},\\ y_{1},\\ z_{1})$，$\\mathrm{B}(x_{2},\\ y_{2},\\ z_{2})$ の距離は $\\mathrm{AB}=\\sqrt{(x_{2}-x_{1})^2+(y_{2}-y_{1})^2+(z_{2}-z_{1})^2}$', '対称な点：$xy$ 平面なら $z$ 座標，$x$ 軸なら $y$ 座標と $z$ 座標，原点ならすべての座標の符号を変える。', '三角形の形は，3辺の長さの2乗を比べる（等しい辺があるか，三平方の定理が成り立つか）。'],
