@@ -231,7 +231,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 .actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 12px}
 #status{font-size:13px;color:var(--muted)}
 #status.err{color:var(--err)}
-#bBrkAll,#bAdjAll{padding:4px 10px;font-size:12px}
+#bBrkAll,#bAdjAll,#bEven{padding:4px 10px;font-size:12px}
 .pv-bar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;font-size:13px;color:var(--muted)}
 .pv-info{display:flex;flex-wrap:wrap;gap:4px 14px;margin:12px 0;font-size:13px;color:var(--muted)}
 .pv-info:empty,.pv-info span:empty{display:none}
@@ -284,6 +284,8 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 .cell.wfull{border-top:1px solid #999;border-bottom:1px solid #999}
 .flow > .wcols + .wcols, .flow > .wfull + .wcols, .flow > .wcols + .wfull, .flow > .wfull + .wfull{margin-top:-1px}
 .cell{flex:none;padding:2mm 3mm;font-size:10pt;border-bottom:1px dashed #c8c8c8;overflow:hidden}
+/* 列のいちばん下の問題（下に問題がない）は、点線を引かない */
+.wcol > .cell:last-child{border-bottom:0}
 .cell .lb{line-height:1.6}
 .cell .pt{white-space:nowrap;font-weight:600;font-size:.92em;margin-left:.5em}
 .cell.hasbox{position:relative}
@@ -373,6 +375,8 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
   @page{size:A4 portrait;margin:0}
   body{background:#fff!important}
   .dupPop,header,.panel,.dock,.pv-info,#view-help,.ctl,#histBox,#printAsk,.win,#reMenu{display:none!important}
+  /* ブラウザの拡張機能などがページに足したボタン（読み上げ・翻訳など）も印刷・PDF に出さない */
+  html>:not(head):not(body),body>:not(.wrap){display:none!important}
   .wrap{padding:0!important;max-width:none!important}
   .sheet-wrap{overflow:visible;padding:0}
   .sheet{display:flex!important;box-shadow:none;margin:0;height:296mm;page-break-after:always;break-after:page}
@@ -405,10 +409,11 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
   <div class="winHead"><h2 id="winPresetT">よく使う組み合わせ</h2><button type="button" class="winX" aria-label="閉じる"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></div>
   <div class="winBody">
         <div class="pfolders" id="presetList"></div>
-        <div class="presetSave"><input class="txt" id="presetName" maxlength="30" placeholder="名前をつけて保存（例：数列の復習）" aria-label="組み合わせの名前"><select class="sel" id="presetFolder" aria-label="保存するフォルダ"></select><button class="btn" id="presetAdd" type="button">今の単元を保存</button></div>
+        <div class="presetSave"><input class="txt" id="presetName" maxlength="30" placeholder="名前をつけて保存（例：数列の復習）" aria-label="組み合わせの名前"><select class="sel" id="presetFolder" aria-label="保存するフォルダ"></select><button class="btn" id="presetAdd" type="button">保存する</button></div>
         <label class="chk" style="margin-top:8px"><input type="checkbox" id="presetWithSet">題名・問題数・難しさ・ならび順・解答ページ・単元ごとの設定も一緒に保存する</label>
+        <label class="chk" style="margin-top:4px"><input type="checkbox" id="presetWithProb">いまの問題も一緒に保存する（入れかえ・並べかえ・配点・高さや改ページの調整、別バージョンもそのまま）</label>
         <div class="presetTools"><button class="btn" id="folderAdd" type="button">フォルダを作る</button><button class="btn" id="presetExport" type="button">ファイルに書き出す</button><button class="btn" id="presetImportBtn" type="button">ファイルから読みこむ</button><input type="file" id="presetImport" accept=".json,application/json" hidden></div>
-        <div class="gnote">押すと、保存した単元に入れかわります。「一緒に保存する」にチェックして保存した組み合わせ（「設定つき」の印）は、題名・問題数・難しさなども保存したときの設定にもどります。</div>
+        <div class="gnote">押すと、保存した単元に入れかわります。「一緒に保存する」にチェックして保存した組み合わせ（「設定つき」の印）は、題名・問題数・難しさなども保存したときの設定にもどります。「問題つき」の印のものは、保存したときの問題がそのままの形で開きます。</div>
   </div>
 </dialog>
 <dialog id="winRecent" class="win" aria-labelledby="winRecentT">
@@ -766,6 +771,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
       <div class="seg" data-set="pv"><button data-v="q">問題</button><button data-v="a">解答・解説</button></div>
       <span class="outLab">版</span><div class="seg" id="verBox"></div>
       <span id="pageInfo"></span>
+      <button class="btn" id="bEven" type="button" style="display:none" title="列ごとに、問題の高さを同じにして縦に均等に並べる（中身が入りきらない問題は、その分だけ高くする）">高さを均等にする</button>
       <button class="btn" id="bAdjAll" type="button" style="display:none">高さを自動にもどす</button>
       <button class="btn" id="bBrkAll" type="button" style="display:none">改ページをすべて取り消す</button>
     </div>
@@ -824,8 +830,11 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.89.0', UPDATED = '2026-11-16';
+const VERSION = '5.91.0', UPDATED = '2026-11-17';
 const CHANGES = [
+  ['5.91.0', '2026-11-17', '問題の枠：列のいちばん下の問題（下に問題がない）には、下の点線を引かないようにした。プレビューの下に「高さを均等にする」ボタンを足した（列ごとに問題の高さを同じにして縦に均等に並べる。中身が入りきらない問題はその分だけ高くする。LaTeX にも同じ高さで出る。元にもどすボタンで戻せる）。'],
+  ['5.90.0', '2026-11-17', '「よく使う組み合わせ」に、いまの問題も一緒に保存できるようにした（「いまの問題も一緒に保存する」。入れかえた問題・並べかえた順・手で直した配点・高さや改ページの調整・別バージョンもそのまま。印は「問題つき」）。押すと保存したときの問題で開く。ファイルへの書き出し・読みこみにも入る。最近作ったプリントにも、手で直した配点を残すようにした。'],
+  ['5.89.1', '2026-11-17', '印刷・PDF に、ブラウザの拡張機能などがページに足したボタン（左の余白のピンクの印など）が写りこまないようにした。'],
   ['5.89.0', '2026-11-16', '不等式で絞りこむ不定方程式（発展）に、分母に係数のある単位分数 1/(ax)+1/(by)+1/(cz)=q の小問つきの問題を足した（利用者の見本 1/x+1/(2y)+1/(3z)=4/3 の類題）。（1）x を1つ決めて y,z を求める（2）1/(by)≦1/b などから x を絞り、とりうる値を求める（3）すべての解。y,z は Y=by,Z=cz とおいて (mY−n)(mZ−n)=n² の積の形で解く。計算が重いもの（残りの式の分母が 12 以上、約数の組が多い、解が多い、y,z が 60 をこえる、x の候補が4個以上）は出さない。式は42通り、（1）で決める x の選び方を合わせて86問（見本の式そのものは出さない）。解答は横いっぱいに出し、左に式と文、右に約数の表を並べた。問題文の中の改行（小問を行に分ける）に対応した。解答は式を別の行に出し、約数の組は表（Y,Z と y,z、条件に合う行に○）にして読みやすくした。'],
   ['5.88.0', '2026-11-16', '不等式で絞りこむ不定方程式に3つの型を足した（利用者の見本から）。基本：2x²−3x+y−9=0 のように1次の文字 y について解き、y≧1 から x の2次不等式で絞る型、x+2y+3z=10 のように係数のいちばん大きい文字から絞る型。標準：x²+2xy+3y²=19 のように平方完成して (x+y)²+2y²=19 とし、整数（負の数も）で y を絞る型。'],
   ['5.87.1', '2026-11-16', '「パターン練習」を教科タブから外して、受験基礎・入試発展の隣にいつも出るボタンにした（受験基礎・入試発展・検索のときも見える。押すとそれらを外してパターン練習の単元を出す）。共面条件と交点（発展）で、まれに分母の大きい数が出ていたのを直した。'],
@@ -12211,7 +12220,7 @@ function render(){
   box.className = 'sheet-wrap';           // 計測のあいだは全ページを表示しておく
   box.innerHTML = '';
   // 単元を選んでいないときは、プリントを空にする
-  if (!PROBS.length) { ['pageInfo', 'layoutWarn'].forEach(id => { $(id).textContent = ''; }); $('timeInfo').innerHTML = ''; $('bBrkAll').style.display = $('bAdjAll').style.display = 'none'; ISSUES = []; renderVer(); return; }
+  if (!PROBS.length) { ['pageInfo', 'layoutWarn'].forEach(id => { $(id).textContent = ''; }); $('timeInfo').innerHTML = ''; $('bBrkAll').style.display = $('bAdjAll').style.display = $('bEven').style.display = 'none'; ISSUES = []; renderVer(); return; }
   measureAns(PROBS);   // 解くスペース・計算用紙の欄の高さは解答の長さから
   const A = arranged();
   renderWork(box, A);
@@ -12466,11 +12475,45 @@ $('sheets').addEventListener('pointerdown', ev => {
 });
 // 手で高さを変えたページ・自分で入れた改ページがあるときだけ、元にもどすボタンを出す
 function resetBtns(){
+  $('bEven').style.display = $('sheets').querySelector('.sheet .cell') ? '' : 'none';
   const na = [...$('sheets').querySelectorAll('.sheet')].filter(sh => kindOf(sh) && ADJ[sigOf(sh)]).length;
   $('bAdjAll').style.display = na ? '' : 'none'; $('bAdjAll').textContent = `高さを自動にもどす（${na}ページ）`;
   const nb = BRK.work.size;
   $('bBrkAll').style.display = nb ? '' : 'none'; $('bBrkAll').textContent = `改段・改ページをすべて取り消す（${nb}か所）`;
 }
+// 高さを均等にする：帯（左右2列）は列ごとに、横いっぱいの問題だけのページはページの中で、問題の高さを同じにする。
+// 中身（問題文・解答らん）が入りきらない問題はその高さにして、残りを均等に分ける。帯の高さと改ページは変えない
+function evenCells(cs, T){
+  if (!cs.length || !(T > 0)) return false;
+  const m = cs.map(c => Math.max(MIN_CELL, contentMM(c)));
+  if (m.reduce((a, b) => a + b, 0) > T + 0.01) return false;
+  const fixed = new Set(); let h;
+  for (;;) {
+    const rest = T - [...fixed].reduce((t, j) => t + m[j], 0); h = rest / (cs.length - fixed.size);
+    const more = m.map((_, j) => j).filter(j => !fixed.has(j) && m[j] > h);
+    if (!more.length) break; more.forEach(j => fixed.add(j));
+  }
+  cs.forEach((c, j) => { c.style.height = (fixed.has(j) ? m[j] : h).toFixed(2) + 'mm'; });
+  return true;
+}
+function evenPage(sh){
+  let did = false;
+  const flow = sh.querySelector('.flow'); if (!flow) return false;
+  const bands = [...flow.querySelectorAll(':scope > .wcols')];
+  bands.forEach(band => {
+    const T = mmOf(band) ?? band.getBoundingClientRect().height / MM;
+    band.querySelectorAll(':scope > .wcol').forEach(col => { if (evenCells([...col.children].filter(c => c.classList.contains('cell')), T)) did = true; });
+  });
+  if (!bands.length) { const cs = [...flow.children].filter(c => c.classList.contains('cell')); if (cs.length > 1 && evenCells(cs, cs.reduce((t, c) => t + (mmOf(c) ?? c.getBoundingClientRect().height / MM), 0))) did = true; }
+  return did;
+}
+$('bEven').addEventListener('click', () => {
+  const before = snapLay(), shs = [...$('sheets').querySelectorAll('.sheet')].filter(kindOf);
+  const n = shs.filter(sh => { const ok = evenPage(sh); if (ok) saveAdj(sh); return ok; }).length;
+  syncPack($('sheets')); shs.map(planCtl).filter(Boolean).forEach(placeCtl); placeAnsRe($('sheets')); resetBtns();
+  if (n) { pushHist('adj', before); status(`問題の高さを均等にしました（${n}ページ）。元にもどすときは左上のボタンか「高さを自動にもどす」。`); }
+  else status('均等にできるページがありませんでした（中身が入りきらないため）。', true);
+});
 // 高さを自動にもどす：手で変えた高さを全部すて、見積もった高さで並べなおす（改ページはそのまま）
 $('bAdjAll').addEventListener('click', () => { const before = snapLay(); ADJ = {}; const y = window.scrollY; render(); window.scrollTo(0, y); pushHist('adjAll', before); });
 // 改ページをすべて取り消す（いまの配置の分。手で調整した高さはページの並びが同じなら残る）
@@ -13006,7 +13049,7 @@ function renderPresets(){
       + (open && f ? '<button type="button" class="fop" data-rename="' + attr(f) + '">名前を変える</button><button type="button" class="fop" data-fdel="' + attr(f) + '">消す</button>' : '') + '</div>'
       + '<div class="pfbody">' + (items.map(([p, i]) => movingPreset === i
         ? '<span class="preset"><select data-move="' + i + '" aria-label="' + attr(p.n) + ' を移すフォルダ">' + ['', ...ST.presetFolders].map(x => '<option value="' + attr(x) + '"' + (x === p.f ? ' selected' : '') + '>' + esc(folderLabel(x)) + '</option>').join('') + '</select><button type="button" class="del" data-cancel="1" aria-label="移すのをやめる">' + XMARK + '</button></span>'
-        : '<span class="preset"><button type="button" data-use="' + i + '" title="' + attr(p.u.map(unitName).join('・')) + '">' + esc(p.n) + (p.s ? ' <small>設定つき</small>' : '') + '</button><button type="button" class="mv" data-mv="' + i + '" aria-label="' + attr(p.n) + ' を別のフォルダに移す" title="別のフォルダに移す">' + MOVE_ICON + '</button><button type="button" class="del" data-del="' + i + '" aria-label="' + attr(p.n) + ' を消す">' + XMARK + '</button></span>').join('')
+        : '<span class="preset"><button type="button" data-use="' + i + '" title="' + attr(p.u.map(unitName).join('・')) + '">' + esc(p.n) + (p.q ? ' <small>問題つき</small>' : p.s ? ' <small>設定つき</small>' : '') + '</button><button type="button" class="mv" data-mv="' + i + '" aria-label="' + attr(p.n) + ' を別のフォルダに移す" title="別のフォルダに移す">' + MOVE_ICON + '</button><button type="button" class="del" data-del="' + i + '" aria-label="' + attr(p.n) + ' を消す">' + XMARK + '</button></span>').join('')
         || '<span class="pempty">まだ入っていません。</span>') + '</div></div>';
   }).join('');
   $('presetEmpty') && $('presetEmpty').remove();
@@ -13039,6 +13082,7 @@ $('presetList').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
   const d = b.dataset;
   if (d.folder !== undefined) { const k = 'f:' + d.folder; ST.openFolder = ST.openFolder === k ? '' : k; movingPreset = -1; save(); renderPresets(); }
+  else if (d.use && ST.presets[+d.use].q) { const p = ST.presets[+d.use]; openRecent({ u: p.u, s: p.s, title: p.t, ...p.q }, true, p.n); }
   else if (d.use) { const p = ST.presets[+d.use]; ST.setOpen = ''; if (p.s) applySettings(p.s); setUnits(p.u, false); holdNote = true; status('「' + p.n + '」の' + (p.s ? '単元と設定' : '単元') + 'にしました。'); }
   else if (d.mv) { movingPreset = +d.mv; renderPresets(); const s = document.querySelector('#presetList select'); if (s) s.focus(); }
   else if (d.cancel) { movingPreset = -1; renderPresets(); }
@@ -13073,10 +13117,12 @@ const addPreset = () => {
   if (!n) { status('組み合わせの名前を入れてください。', true); $('presetName').focus(); return; }
   let f = $('presetFolder').value;
   if (f === '__new') { f = addFolder(); if (f === null) return; }
-  const old = ST.presets.findIndex(p => p.n === n && p.f === f), item = { n, u: ST.units.slice(), f, ...($('presetWithSet').checked ? { s: snapSettings() } : {}) };
+  // 問題つきは、問題を作りなおせるように設定と題名もかならず一緒に残す
+  const withQ = $('presetWithProb').checked && PROBS.length > 0 && PROBS.every(p => p._g);
+  const old = ST.presets.findIndex(p => p.n === n && p.f === f), item = { n, u: ST.units.slice(), f, ...($('presetWithSet').checked || withQ ? { s: snapSettings() } : {}), ...(withQ ? { t: ST.title.trim(), q: snapProbs() } : {}) };
   if (old >= 0) { if (!confirm('「' + folderLabel(f) + '」の「' + n + '」を、今の単元で上書きしますか？')) return; ST.presets[old] = item; } else ST.presets.push(item);
   ST.openFolder = 'f:' + f;
-  $('presetName').value = ''; save(); renderPresets(); status('「' + folderLabel(f) + '」に「' + n + '」を保存しました（' + item.u.length + '単元）。');
+  $('presetName').value = ''; save(); renderPresets(); status('「' + folderLabel(f) + '」に「' + n + '」を保存しました（' + item.u.length + '単元' + (withQ ? '・問題' + PROBS.length + '問つき' : '') + '）。');
 };
 $('presetAdd').addEventListener('click', addPreset);
 $('presetName').addEventListener('keydown', e => { if (e.key === 'Enter') addPreset(); });
@@ -13085,7 +13131,7 @@ const PRESET_FILE_KIND = 'suu1print-presets';
 $('presetExport').addEventListener('click', () => {
   normPresets();
   if (!ST.presets.length && !ST.presetFolders.length) { status('書き出す組み合わせがありません。', true); return; }
-  const data = { kind: PRESET_FILE_KIND, v: 1, app: VERSION, saved: new Date().toISOString(), folders: ST.presetFolders, presets: ST.presets.map(p => ({ n: p.n, f: p.f, u: p.u, ...(p.s ? { s: p.s } : {}) })) };
+  const data = { kind: PRESET_FILE_KIND, v: 1, app: VERSION, saved: new Date().toISOString(), folders: ST.presetFolders, presets: ST.presets.map(p => ({ n: p.n, f: p.f, u: p.u, ...(p.s ? { s: p.s } : {}), ...(p.q ? { t: p.t || '', q: p.q } : {}) })) };
   const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 1)], { type: 'application/json' }));
   const d = new Date(), ymd = d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
   const a = document.createElement('a'); a.href = url; a.download = '基礎計算プリント_組み合わせ_' + ymd + '.json';
@@ -13101,7 +13147,7 @@ function importPresets(text){
   normPresets();
   const clean = s => typeof s === 'string' ? s.trim().slice(0, FOLDER_MAX) : '';
   const folders = (Array.isArray(data.folders) ? data.folders : []).map(clean).filter(f => f && f !== NO_FOLDER);
-  const items = data.presets.map(p => p && { n: clean(p.n), f: clean(p.f) === NO_FOLDER ? '' : clean(p.f), u: Array.isArray(p.u) ? p.u.filter(u => UNIT_SUBJ[u]) : [], ...(cleanSettings(p.s) ? { s: cleanSettings(p.s) } : {}) }).filter(p => p && p.n && p.u.length);
+  const items = data.presets.map(p => p && { n: clean(p.n), f: clean(p.f) === NO_FOLDER ? '' : clean(p.f), u: Array.isArray(p.u) ? p.u.filter(u => UNIT_SUBJ[u]) : [], ...(cleanSettings(p.s) ? { s: cleanSettings(p.s) } : {}), ...(cleanSettings(p.s) && cleanProbs(p.q) ? { t: clean(p.t), q: cleanProbs(p.q) } : {}) }).filter(p => p && p.n && p.u.length);
   if (!items.length && !folders.length) { status('ファイルに組み合わせが入っていませんでした。', true); return; }
   const dups = items.filter(p => ST.presets.some(q => q.f === p.f && q.n === p.n));
   const over = dups.length ? confirm('同じフォルダに同じ名前の組み合わせが' + dups.length + '件あります。上書きしますか？（「キャンセル」なら、その分は読みこみません）') : false;
@@ -13345,20 +13391,34 @@ ST.scoreMax = clampScore(ST.scoreMax) || 100;
 $('scoreMax').value = ST.scoreMax; $('scoreMaxBox').style.display = ST.hScore === 'points' ? 'flex' : 'none';
 $('scoreMax').addEventListener('change', () => { ST.scoreMax = clampScore($('scoreMax').value) || ST.scoreMax; $('scoreMax').value = ST.scoreMax; save(); render(); });
 $('presetWithSet').checked = ST.presetWithSet !== false;
+$('presetWithProb').checked = ST.presetWithProb !== false;
+$('presetWithProb').addEventListener('change', () => { ST.presetWithProb = $('presetWithProb').checked; save(); });
 $('presetWithSet').addEventListener('change', () => { ST.presetWithSet = $('presetWithSet').checked; save(); });
 
 /* ========== 最近作ったプリント ========== */
 // 印刷・LaTeX の出力のときに、単元と設定（と題名）を残す。同じ内容は1件にまとめて先頭へ。10件まで
 const RECENT_MAX = 10, LEVEL_NAME = { basic: '基本', std: '標準', adv: '発展', mix: 'まぜる' };
+// いま画面にある問題を残す形：版ごとの種（[単元, 引数1, 引数2, 種, 印, 配点]）と、手で直した高さ・改段。
+// 入れかえた問題・並べかえた順・手で直した配点もここに入るので、同じ問題を同じ形で開ける
+function snapProbs(){
+  const lists = VARS ? VARS.list : [PROBS], cur = VARS ? VARS.cur : 0;
+  const keepOf = i => i === cur ? { ADJ, BRK } : (VARS && VARS.keep[i]) || null;
+  const v = lists.map(l => l.map(p => p._g ? [...p._g, keyHash(p.key), ...(p.pt != null ? [p.pt] : [])] : null));
+  const k = lists.map((_, i) => { const x = keepOf(i); return x ? { a: JSON.parse(JSON.stringify(x.ADJ)), b: [...x.BRK.work] } : null; });
+  return { v, vc: cur, k };
+}
+// ファイルから読みこんだ問題の記録を確かめる（形がおかしいものは捨てる）
+function cleanProbs(q){
+  if (!q || !Array.isArray(q.v) || !q.v.length) return null;
+  const okG = g => Array.isArray(g) && g.length >= 4 && typeof g[0] === 'string' && UNIT_SUBJ[g[0]] !== undefined && Number.isFinite(g[3]);
+  if (!q.v.every(l => Array.isArray(l) && l.length && l.every(okG))) return null;
+  const k = Array.isArray(q.k) ? q.v.map((_, i) => { const x = q.k[i]; return x && typeof x === 'object' ? { a: x.a && typeof x.a === 'object' && !Array.isArray(x.a) ? x.a : {}, b: Array.isArray(x.b) ? x.b.filter(Number.isInteger) : [] } : null; }) : q.v.map(() => null);
+  return { v: q.v.map(l => l.map(g => g.slice(0, 6))), vc: Number.isInteger(q.vc) ? q.vc : 0, k };
+}
 function recordRecent(){
   if (!PROBS.length) return;
   if (!Array.isArray(ST.recent)) ST.recent = [];
-  // 問題（版ごとの種）と、手で直した高さ・改段も残す。同じ問題を同じ形で開けるように
-  const lists = VARS ? VARS.list : [PROBS], cur = VARS ? VARS.cur : 0;
-  const keepOf = i => i === cur ? { ADJ, BRK } : (VARS && VARS.keep[i]) || null;
-  const v = lists.map(l => l.map(p => p._g ? [...p._g, keyHash(p.key)] : null));
-  const k = lists.map((_, i) => { const x = keepOf(i); return x ? { a: x.ADJ, b: [...x.BRK.work] } : null; });
-  const e = { t: Date.now(), u: ST.units.slice(), s: snapSettings(), title: ST.title.trim(), v, vc: cur, k }, sig = x => JSON.stringify([x.u, x.s, x.title, x.v]);
+  const e = { t: Date.now(), u: ST.units.slice(), s: snapSettings(), title: ST.title.trim(), ...snapProbs() }, sig = x => JSON.stringify([x.u, x.s, x.title, x.v]);
   ST.recent = [e, ...ST.recent.filter(x => sig(x) !== sig(e))].slice(0, RECENT_MAX);
   save(); renderRecent();
 }
@@ -13389,19 +13449,20 @@ $('recentList').addEventListener('click', e => {
   openRecent(r, b.dataset.recent !== undefined);
 });
 // 最近作ったプリントを開く。same=true なら同じ問題（種から作りなおす）、false なら同じ単元と設定で新しい問題
-function openRecent(r, same){
+function openRecent(r, same, name){
+  const what = name ? `「${name}」` : '前に作ったプリント';
   const before = PROBS.length ? snapFull(lastSt) : null;
   ST.setOpen = ''; if (r.s) applySettings(r.s);
   ST.title = r.title || ''; $('title').value = ST.title;
   const lists = same && Array.isArray(r.v) && r.v.length ? r.v.map(l => l.map(g => (Array.isArray(g) && regenP(g)) || null)) : null;
   if (!lists || lists.some(l => !l.length || l.some(p => !p))) {
     setUnits(r.u, false); holdNote = true;
-    status(same ? '前のプリントの問題は作りなおせなかったので、同じ単元と設定で新しく作ります（記録が古いため）。' : '前に作ったときの単元と設定で、新しく問題を作ります。', same);
+    status(same ? (name ? `「${name}」` : '前のプリント') + 'の問題は作りなおせなかったので、同じ単元と設定で新しく作ります（記録が古いため）。' : '前に作ったときの単元と設定で、新しく問題を作ります。', same);
     return;
   }
   setUnits(r.u, false); clearTimeout(regenTimer); regenSeq++;
   // 種から作った問題が前と同じか（アプリを直したあとは変わることがある）
-  let diff = 0; lists.forEach((l, i) => l.forEach((p, j) => { p._g = r.v[i][j].slice(0, 4); if (keyHash(p.key) !== r.v[i][j][4]) diff++; }));
+  let diff = 0; lists.forEach((l, i) => l.forEach((p, j) => { const g = r.v[i][j]; p._g = g.slice(0, 4); if (g[5] != null) p.pt = g[5]; if (keyHash(p.key) !== g[4]) diff++; }));
   const keepOf = i => { const x = r.k && r.k[i]; return x ? { ADJ: x.a || {}, BRK: { work: new Set(x.b || []), list: new Set() } } : null; };
   const cur = lists.length > 1 ? Math.min(r.vc || 0, lists.length - 1) : 0;
   VARS = lists.length > 1 ? { list: lists, cur, keep: lists.map((_, i) => keepOf(i)) } : null;
@@ -13409,7 +13470,7 @@ function openRecent(r, same){
   const k0 = keepOf(cur) || { ADJ: {}, BRK: { work: new Set(), list: new Set() } }; ADJ = k0.ADJ; BRK = k0.BRK;
   ST.count = String(PROBS.length); ST.uCnt = cntFrom(PROBS); ST.uBase = null; ST.fit = 'count'; $('cnt').value = ST.count; save(); syncSeg(); updateGrpSums();
   render(); lastSt = snapSt(); if (before) pushFull('recent', before);
-  status(diff ? `前に作ったプリントを開きました。ただし${diff}問は、アプリを直したため前と少しちがう問題です。` : '前に作ったプリントを、同じ問題で開きました。', !!diff);
+  status(diff ? `${what}を開きました。ただし${diff}問は、アプリを直したため前と少しちがう問題です。` : `${what}を、保存したときと同じ問題で開きました。`, !!diff);
 }
 // 印刷（印刷する・Ctrl+P）は、印刷の画面が開くときに残す。ほかはボタンを押したとき
 $('bTexDl').addEventListener('click', recordRecent);
