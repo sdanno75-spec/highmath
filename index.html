@@ -238,6 +238,12 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 #status{font-size:13px;color:var(--muted)}
 #status.err{color:var(--err)}
 #bBrkAll,#bAdjAll,#bEven{padding:4px 10px;font-size:12px}
+.zoomBox{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--card)}
+.zoomBox button{border:0;background:transparent;color:var(--ink);padding:4px 9px;font-size:12px;cursor:pointer;min-width:28px}
+.zoomBox button + button{border-left:1px solid var(--line)}
+.zoomBox button:hover{background:var(--teal-bg)}
+.zoomBox #zLab{font-variant-numeric:tabular-nums;min-width:48px}
+.zoomBox #zFit.on{background:var(--teal);color:#fff}
 .pv-bar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;font-size:13px;color:var(--muted)}
 .pv-info{display:flex;flex-wrap:wrap;gap:4px 14px;margin:12px 0;font-size:13px;color:var(--muted)}
 .pv-info:empty,.pv-info span:empty{display:none}
@@ -383,6 +389,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
   /* ブラウザの拡張機能などがページに足したボタン（読み上げ・翻訳など）も印刷・PDF に出さない */
   html>:not(head):not(body),body>:not(.wrap){display:none!important}
   .wrap{padding:0!important;max-width:none!important}
+  #sheets{zoom:1!important}   /* 画面の拡大縮小は印刷には使わない */
   .sheet-wrap{overflow:visible;padding:0}
   .sheet{display:flex!important;box-shadow:none;margin:0;height:calc(var(--ph,297mm) - 1mm);page-break-after:always;break-after:page}
   .sheet:last-child{page-break-after:auto;break-after:auto}
@@ -780,6 +787,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
       <div class="seg" data-set="pv"><button data-v="q">問題</button><button data-v="a">解答・解説</button></div>
       <span class="outLab">版</span><div class="seg" id="verBox"></div>
       <span id="pageInfo"></span>
+      <span class="zoomBox" role="group" aria-label="表示の大きさ"><button type="button" id="zOut" title="小さく表示" aria-label="小さく表示">−</button><button type="button" id="zLab" title="100% で表示">100%</button><button type="button" id="zIn" title="大きく表示" aria-label="大きく表示">＋</button><button type="button" id="zFit" title="ウインドウの横幅に合わせて表示">幅に合わせる</button></span>
       <button class="btn" id="bEven" type="button" style="display:none" title="列ごとに、問題の高さを同じにして縦に均等に並べる（中身が入りきらない問題は、その分だけ高くする）">高さを均等にする</button>
       <button class="btn" id="bAdjAll" type="button" style="display:none">高さを自動にもどす</button>
       <button class="btn" id="bBrkAll" type="button" style="display:none">改ページをすべて取り消す</button>
@@ -839,8 +847,9 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.94.0', UPDATED = '2026-11-18';
+const VERSION = '5.95.0', UPDATED = '2026-11-18';
 const CHANGES = [
+  ['5.95.0', '2026-11-18', 'プレビューの拡大縮小を足した（下のバーの −・＋、％を押すと 100%、「幅に合わせる」）。はじめは「幅に合わせる」で、ウインドウの横幅に紙がちょうど入る大きさで出す（A3 でも横にスクロールしない）。ウインドウの大きさや用紙を変えると合わせなおす。印刷・LaTeX・ページ割りは今までどおり（計測はいつも 100% で行う）。'],
   ['5.94.0', '2026-11-18', '用紙に「A3横（3列）」を足した。問題も解答も3列に並べる（列の数を2本から n 本にできるようにした：ページ割り・改段・均等・高さのつまみ・LaTeX の列・解答の段組み）。まん中の列の並べかえボタンは欄の右上に出す。印刷は A3 横、LaTeX は a3paper,landscape。'],
   ['5.93.0', '2026-11-18', 'その他の設定に「用紙」を足した（A4縦・A3縦）。A3縦は文字の大きさはそのままで紙が大きくなり、1ページに入る問題と解くスペースがふえる。画面・印刷（@page）・LaTeX（a3paper）が同じ用紙になる。用紙を変えると、手で変えた高さは自動にもどす。組み合わせ・最近作ったプリントにも用紙が入る。'],
   ['5.92.0', '2026-11-18', '問題数は、±1・±5 や入力で数を決めてから「変更する」（または Enter）を押したときだけ作りなおすようにした（押すたびに作りなおして重かったため）。「問題の量」の表で単元ごとの数を直したときも同じ。決めかけのまま「問題を作りなおす」を押したときは、その数で作る。'],
@@ -11628,7 +11637,7 @@ const FONTS = {
   gothic: "'Zen Kaku Gothic New','Hiragino Sans','Yu Gothic',system-ui,sans-serif",
   mincho: "'Zen Old Mincho','Hiragino Mincho ProN','Yu Mincho',serif"
 };
-const ST = { kind: 'print', paper: 'a4', ptB: 3, ptS: 5, ptA: 8, ptShow: 'on', ansBox: 'on', goshinMode: 'level', goshinOrder: 'num', goshinPats: GOSHIN_TYPES.filter(t => !t[3]).map(t => t[0]), hScore: 'count', scoreMax: 100, avoidRecent: false, presetWithSet: true, recent: [], outPart: 'all', presets: [], presetFolders: [], openFolder: '', openField: '', setOpen: '', more: false, uCnt: null, fit: 'count', fitPages: 2, defV: 1, baikaiMode: 'level', baikaiOrder: 'num', baikaiPats: null, zenkaOrder: 'num', zenkaMode: 'level', zenkaPats: ['ari', 'geo', 'diff', 'char'], waSekiBig: false, yakusuuBig: false, ans: 'full', units: ['tasuki', 'heihou'], count: '10', level: 'mix', order: 'unit', font: 'maru', tex: 'lua', title: '', pv: 'q', mode: 'work', subject: '1', kahouUnit: 'deg', formula: 'off', mixLv: 'seq', closedGrp: [], time: 'off' };
+const ST = { kind: 'print', paper: 'a4', zoom: 'fit', ptB: 3, ptS: 5, ptA: 8, ptShow: 'on', ansBox: 'on', goshinMode: 'level', goshinOrder: 'num', goshinPats: GOSHIN_TYPES.filter(t => !t[3]).map(t => t[0]), hScore: 'count', scoreMax: 100, avoidRecent: false, presetWithSet: true, recent: [], outPart: 'all', presets: [], presetFolders: [], openFolder: '', openField: '', setOpen: '', more: false, uCnt: null, fit: 'count', fitPages: 2, defV: 1, baikaiMode: 'level', baikaiOrder: 'num', baikaiPats: null, zenkaOrder: 'num', zenkaMode: 'level', zenkaPats: ['ari', 'geo', 'diff', 'char'], waSekiBig: false, yakusuuBig: false, ans: 'full', units: ['tasuki', 'heihou'], count: '10', level: 'mix', order: 'unit', font: 'maru', tex: 'lua', title: '', pv: 'q', mode: 'work', subject: '1', kahouUnit: 'deg', formula: 'off', mixLv: 'seq', closedGrp: [], time: 'off' };
 let PROBS = [];
 let VARS = null;   // 別バージョン（addVariant）
 const SAVE_KEY = 'suu1print_settings';
@@ -12480,9 +12489,9 @@ function placeAnsRe(box){
 $('sheets').addEventListener('pointerdown', ev => {
   const knob = ev.target.closest('.adj i'); if (!knob) return;
   ev.preventDefault();
-  const line = knob.parentNode, sh = line.closest('.sheet'), y0 = ev.clientY, top0 = parseFloat(line.style.top), apply = knob._drag(), before = snapLay();
+  const line = knob.parentNode, sh = line.closest('.sheet'), y0 = ev.clientY, top0 = parseFloat(line.style.top), apply = noZoom(knob._drag), before = snapLay();
   knob.setPointerCapture(ev.pointerId); line.classList.add('on');
-  const move = e => { line.style.top = (top0 + apply((e.clientY - y0) / MM) * MM) + 'px'; };
+  const move = e => { line.style.top = (top0 + apply((e.clientY - y0) / ZOOM / MM) * MM) + 'px'; };
   const end = () => {
     knob.removeEventListener('pointermove', move); knob.removeEventListener('pointerup', end); knob.removeEventListener('pointercancel', end);
     saveAdj(sh); syncPack($('sheets')); placeCtl(planCtl(sh)); resetBtns();
@@ -12740,7 +12749,35 @@ function applyPaper(){
   d.setProperty('--nc', ncols());
   d.setProperty('--pw', p.w + 'mm'); d.setProperty('--ph', p.h + 'mm');
   $('pageSize').textContent = `@media print{@page{size:${p.css};margin:0}}`;
+  applyZoom();
 }
+// プレビューの拡大縮小（画面だけ）。'fit' はウインドウの横幅に合わせる、数はその倍率。
+// 高さの見積もり・ページ割り・ボタンの位置などの計測は、いつも 100% で行う（noZoom）。印刷は 100%
+let ZOOM = 1;
+const ZMIN = 0.3, ZMAX = 2;
+function zoomCalc(){
+  if (ST.zoom !== 'fit' && Number.isFinite(+ST.zoom)) return Math.max(ZMIN, Math.min(ZMAX, +ST.zoom));
+  const host = $('sheets').parentElement, avail = host.clientWidth - 4;
+  return Math.max(ZMIN, Math.min(ZMAX, Math.floor(avail / (paper().w * MM) * 100) / 100));
+}
+function applyZoom(){
+  ZOOM = zoomCalc();
+  $('sheets').style.zoom = ZOOM === 1 ? '' : String(ZOOM);
+  $('zLab').textContent = Math.round(ZOOM * 100) + '%';
+  $('zFit').classList.toggle('on', ST.zoom === 'fit');
+}
+function noZoom(fn){
+  const el = $('sheets'), z = el.style.zoom; if (!z) return fn();
+  const x = window.scrollX, y = window.scrollY; el.style.zoom = '';
+  try { return fn(); } finally { el.style.zoom = z; window.scrollTo(x, y); }
+}
+const setZoom = z => { ST.zoom = z; save(); applyZoom(); };
+const ZSTEPS = [0.3, 0.4, 0.5, 0.6, 0.67, 0.75, 0.8, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2];
+$('zIn').addEventListener('click', () => setZoom(ZSTEPS.find(v => v > ZOOM + 0.001) ?? ZMAX));
+$('zOut').addEventListener('click', () => setZoom([...ZSTEPS].reverse().find(v => v < ZOOM - 0.001) ?? ZMIN));
+$('zLab').addEventListener('click', () => setZoom(1));
+$('zFit').addEventListener('click', () => setZoom('fit'));
+{ let t = 0; window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(() => { if (ST.zoom === 'fit') applyZoom(); }, 120); }); }
 function applyFont(){ document.documentElement.style.setProperty('--font', FONTS[ST.font] || FONTS.maru); }
 // 教科のタブ：その教科の分野だけを見せる（単元の選択は教科をまたいで残す）。分野の欄は1つだけひらく
 const SUBJ_TABS = ['1', 'A', '2', 'B', 'C', 'P'];
@@ -13787,6 +13824,10 @@ document.addEventListener('keydown', e => {
   else if ((k === 'y' || (k === 'z' && e.shiftKey)) && HIST.future.length) { e.preventDefault(); stepHist(false); }
 });
 
+{ const wrapZ = fn => function (...a) { return noZoom(() => fn.apply(this, a)); };
+  render = wrapZ(render); finishRender = wrapZ(finishRender); renderWork = wrapZ(renderWork); setupAdjust = wrapZ(setupAdjust);
+  planCtl = wrapZ(planCtl); placeAnsRe = wrapZ(placeAnsRe); evenPage = wrapZ(evenPage); layoutCheck = wrapZ(layoutCheck);
+  layoutAnswers = wrapZ(layoutAnswers); fitMath = wrapZ(fitMath); }
 applyFont(); applyPaper(); syncSeg(); renderPresets(); renderRecent(); applyMore();
 (document.fonts ? document.fonts.ready : Promise.resolve()).then(regenerate);
 </script>
