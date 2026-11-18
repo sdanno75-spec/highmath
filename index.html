@@ -8,6 +8,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Zen+Old+Mincho:wght@400;700&family=Zen+Maru+Gothic:wght@400;500;700&family=Klee+One:wght@400;600&family=M+PLUS+Rounded+1c:wght@400;500;700&display=swap" rel="stylesheet">
+<style id="pageSize">@media print{@page{size:A4 portrait;margin:0}}</style>
 <style>
 :root{
   --paper:#f5f3ec; --card:#fffdf8; --ink:#1c2230; --muted:#6b6f7a; --line:#e2dccd;
@@ -20,6 +21,8 @@ body{background:var(--paper);color:var(--ink);font-family:var(--font);line-heigh
 button,input{font:inherit;color:inherit}
 button{cursor:pointer}
 .wrap{max-width:1000px;margin:0 auto;padding:0 16px 60px}
+html.paper-a3 .wrap{max-width:1180px}
+html.paper-a3l .wrap{max-width:1660px}   /* A3横（420mm） */   /* A3 の紙（297mm）が横に入るように */
 header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items:flex-end;justify-content:space-between}
 .brand h1{margin:0;font-size:24px;letter-spacing:.02em}
 .brand p{margin:2px 0 0;color:var(--muted);font-size:13px}
@@ -227,6 +230,9 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 .stepper button:hover{background:var(--teal);color:#fff}
 .stepper input{width:64px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;font-size:15px;text-align:center;background:#fff;color:inherit}
 .stepper .cu{margin-right:4px}
+.stepper button.cntGo{background:var(--teal);color:#fff;padding:6px 14px}
+.stepper button.cntGo:hover{filter:brightness(1.1)}
+.stepper input.pending{border-color:var(--teal);box-shadow:0 0 0 2px var(--teal-bg)}
 .txt{border:1px solid var(--line);border-radius:8px;padding:6px 10px;background:#fff;width:100%;max-width:520px;font-size:14px}
 .actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 12px}
 #status{font-size:13px;color:var(--muted)}
@@ -258,7 +264,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 
 /* ===== A4 シート ===== */
 .sheet-wrap{overflow-x:auto;padding-bottom:20px}
-.sheet{width:210mm;height:297mm;margin:0 auto 24px;background:#fff;color:#111;box-shadow:0 2px 14px rgba(0,0,0,.14);padding:12mm 12mm 14mm;font-family:var(--font);overflow:hidden;display:flex;flex-direction:column;position:relative}
+.sheet{width:var(--pw,210mm);height:var(--ph,297mm);margin:0 auto 24px;background:#fff;color:#111;box-shadow:0 2px 14px rgba(0,0,0,.14);padding:12mm 12mm 14mm;font-family:var(--font);overflow:hidden;display:flex;flex-direction:column;position:relative}
 .sheet-wrap.show-q .sheet.ans{display:none}
 .sheet-wrap.show-a .sheet:not(.ans){display:none}
 
@@ -303,7 +309,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 .qz-head h2{display:flex;align-items:baseline;flex-wrap:wrap}
 .qz-head .time{margin-left:auto;font-size:9pt;font-weight:500;border:1px solid #111;border-radius:1.5mm;padding:.4mm 2.5mm}
 .qa-head .tm{float:right;font-size:.8em;color:#666}
-.qa-wrap{flex:1;min-height:0;columns:2;column-gap:7mm;column-rule:1px solid #ccc;column-fill:auto;overflow:hidden;font-size:10pt}
+.qa-wrap{flex:1;min-height:0;columns:var(--nc,2);column-gap:7mm;column-rule:1px solid #ccc;column-fill:auto;overflow:hidden;font-size:10pt}
 .qa{break-inside:avoid;margin:0 0 2.5mm;padding-bottom:2mm;border-bottom:1px dotted #bbb}
 /* 解答が2列に入らない問題（p.ansFull）は、その問題だけ2列をまたいで横いっぱいに出す */
 .qa.span{column-span:all}
@@ -372,14 +378,13 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 .ver{font-size:13px;color:var(--muted)}
 
 @media print{
-  @page{size:A4 portrait;margin:0}
   body{background:#fff!important}
   .dupPop,header,.panel,.dock,.pv-info,#view-help,.ctl,#histBox,#printAsk,.win,#reMenu{display:none!important}
   /* ブラウザの拡張機能などがページに足したボタン（読み上げ・翻訳など）も印刷・PDF に出さない */
   html>:not(head):not(body),body>:not(.wrap){display:none!important}
   .wrap{padding:0!important;max-width:none!important}
   .sheet-wrap{overflow:visible;padding:0}
-  .sheet{display:flex!important;box-shadow:none;margin:0;height:296mm;page-break-after:always;break-after:page}
+  .sheet{display:flex!important;box-shadow:none;margin:0;height:calc(var(--ph,297mm) - 1mm);page-break-after:always;break-after:page}
   .sheet:last-child{page-break-after:auto;break-after:auto}
   /* 問題だけ／解答だけ */
   body.out-q .sheet.ans, body.out-a .sheet:not(.ans){display:none!important}
@@ -709,7 +714,7 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
       <div class="grp"><div class="glab">問題の量</div><div>
         <div class="seg" data-set="fit" style="margin-bottom:8px"><button data-v="count">問題数を自分で決める</button><button data-v="page">問題のページ数に合わせる</button></div>
         <div id="cntOpt">
-        <div class="stepper" id="cntBox"><button type="button" data-d="-5">−5</button><button type="button" data-d="-1">−1</button><input type="number" id="cnt" min="1" max="50" step="1" inputmode="numeric" aria-label="問題数"><span class="cu">問</span><button type="button" data-d="1">＋1</button><button type="button" data-d="5">＋5</button></div>
+        <div class="stepper" id="cntBox"><button type="button" data-d="-5">−5</button><button type="button" data-d="-1">−1</button><input type="number" id="cnt" min="1" max="50" step="1" inputmode="numeric" aria-label="問題数"><span class="cu">問</span><button type="button" data-d="1">＋1</button><button type="button" data-d="5">＋5</button><button type="button" class="cntGo" id="cntGo" hidden>変更する</button></div>
         <div class="gnote">1〜50問（重くなるので50問まで）。全体の問題数を変えると、選んだ単元に同じくらいずつ配りなおします。</div>
         </div>
         <div id="fitOpt">
@@ -748,6 +753,10 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
         <div class="seg" data-set="formula"><button data-v="off">公式・手順をのせない</button><button data-v="on">公式・手順をのせる</button></div>
         <div class="seg" data-set="miwake"><button data-v="on">解き方の見分け方を入れる</button><button data-v="off">見分け方を入れない</button></div>
         <div class="gnote">のせると、1ページ目の上に、選んだ単元の公式や計算の手順をまとめた枠が入ります。単元が多くて枠が大きいときは、公式・手順だけの1ページになります。見分け方は、線形計画法・逆像法・一文字固定法・ファクシミリの原理の単元を選んだときに、どの解き方を使うかの見分け方を1行ずつ入れます。</div>
+      </div></div>
+      <div class="grp"><div class="glab">用紙</div><div>
+        <div class="seg" data-set="paper"><button data-v="a4">A4縦</button><button data-v="a3">A3縦</button><button data-v="a3l">A3横（3列）</button></div>
+        <div class="gnote">A3縦は、文字の大きさはそのままで紙が大きくなります（1ページに入る問題・解くスペースがふえます）。A3横は、問題と解答を3列に並べます。印刷・LaTeX も同じ用紙で出ます。</div>
       </div></div>
       <div class="grp"><div class="glab">見た目</div><div>
         <div class="seg" data-set="font"><button data-v="maru">まる文字</button><button data-v="round">まるゴシック</button><button data-v="klee">手書き風</button><button data-v="gothic">ゴシック</button><button data-v="mincho">明朝</button></div>
@@ -830,8 +839,11 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.91.0', UPDATED = '2026-11-17';
+const VERSION = '5.94.0', UPDATED = '2026-11-18';
 const CHANGES = [
+  ['5.94.0', '2026-11-18', '用紙に「A3横（3列）」を足した。問題も解答も3列に並べる（列の数を2本から n 本にできるようにした：ページ割り・改段・均等・高さのつまみ・LaTeX の列・解答の段組み）。まん中の列の並べかえボタンは欄の右上に出す。印刷は A3 横、LaTeX は a3paper,landscape。'],
+  ['5.93.0', '2026-11-18', 'その他の設定に「用紙」を足した（A4縦・A3縦）。A3縦は文字の大きさはそのままで紙が大きくなり、1ページに入る問題と解くスペースがふえる。画面・印刷（@page）・LaTeX（a3paper）が同じ用紙になる。用紙を変えると、手で変えた高さは自動にもどす。組み合わせ・最近作ったプリントにも用紙が入る。'],
+  ['5.92.0', '2026-11-18', '問題数は、±1・±5 や入力で数を決めてから「変更する」（または Enter）を押したときだけ作りなおすようにした（押すたびに作りなおして重かったため）。「問題の量」の表で単元ごとの数を直したときも同じ。決めかけのまま「問題を作りなおす」を押したときは、その数で作る。'],
   ['5.91.0', '2026-11-17', '問題の枠：列のいちばん下の問題（下に問題がない）には、下の点線を引かないようにした。プレビューの下に「高さを均等にする」ボタンを足した（列ごとに問題の高さを同じにして縦に均等に並べる。中身が入りきらない問題はその分だけ高くする。LaTeX にも同じ高さで出る。元にもどすボタンで戻せる）。'],
   ['5.90.0', '2026-11-17', '「よく使う組み合わせ」に、いまの問題も一緒に保存できるようにした（「いまの問題も一緒に保存する」。入れかえた問題・並べかえた順・手で直した配点・高さや改ページの調整・別バージョンもそのまま。印は「問題つき」）。押すと保存したときの問題で開く。ファイルへの書き出し・読みこみにも入る。最近作ったプリントにも、手で直した配点を残すようにした。'],
   ['5.89.1', '2026-11-17', '印刷・PDF に、ブラウザの拡張機能などがページに足したボタン（左の余白のピンクの印など）が写りこまないようにした。'],
@@ -11616,7 +11628,7 @@ const FONTS = {
   gothic: "'Zen Kaku Gothic New','Hiragino Sans','Yu Gothic',system-ui,sans-serif",
   mincho: "'Zen Old Mincho','Hiragino Mincho ProN','Yu Mincho',serif"
 };
-const ST = { kind: 'print', ptB: 3, ptS: 5, ptA: 8, ptShow: 'on', ansBox: 'on', goshinMode: 'level', goshinOrder: 'num', goshinPats: GOSHIN_TYPES.filter(t => !t[3]).map(t => t[0]), hScore: 'count', scoreMax: 100, avoidRecent: false, presetWithSet: true, recent: [], outPart: 'all', presets: [], presetFolders: [], openFolder: '', openField: '', setOpen: '', more: false, uCnt: null, fit: 'count', fitPages: 2, defV: 1, baikaiMode: 'level', baikaiOrder: 'num', baikaiPats: null, zenkaOrder: 'num', zenkaMode: 'level', zenkaPats: ['ari', 'geo', 'diff', 'char'], waSekiBig: false, yakusuuBig: false, ans: 'full', units: ['tasuki', 'heihou'], count: '10', level: 'mix', order: 'unit', font: 'maru', tex: 'lua', title: '', pv: 'q', mode: 'work', subject: '1', kahouUnit: 'deg', formula: 'off', mixLv: 'seq', closedGrp: [], time: 'off' };
+const ST = { kind: 'print', paper: 'a4', ptB: 3, ptS: 5, ptA: 8, ptShow: 'on', ansBox: 'on', goshinMode: 'level', goshinOrder: 'num', goshinPats: GOSHIN_TYPES.filter(t => !t[3]).map(t => t[0]), hScore: 'count', scoreMax: 100, avoidRecent: false, presetWithSet: true, recent: [], outPart: 'all', presets: [], presetFolders: [], openFolder: '', openField: '', setOpen: '', more: false, uCnt: null, fit: 'count', fitPages: 2, defV: 1, baikaiMode: 'level', baikaiOrder: 'num', baikaiPats: null, zenkaOrder: 'num', zenkaMode: 'level', zenkaPats: ['ari', 'geo', 'diff', 'char'], waSekiBig: false, yakusuuBig: false, ans: 'full', units: ['tasuki', 'heihou'], count: '10', level: 'mix', order: 'unit', font: 'maru', tex: 'lua', title: '', pv: 'q', mode: 'work', subject: '1', kahouUnit: 'deg', formula: 'off', mixLv: 'seq', closedGrp: [], time: 'off' };
 let PROBS = [];
 let VARS = null;   // 別バージョン（addVariant）
 const SAVE_KEY = 'suu1print_settings';
@@ -11868,17 +11880,17 @@ const flatSteps = st => st.flatMap(s => s.t === 'cols' ? s.cols.flat() : [s]);
 // 解くスペース＝解答の高さ × ANS_RATIO。解答は小さい文字（10pt、1行 約5.6mm）で、手書きは1行 約8mm なので、8÷5.6≒1.4 倍にする（利用者の指摘。以前は 0.8）
 const ANS_RATIO = 1.4, SPACE_MIN = 34, SPACE_MAX = 180;
 function measureAns(ps){
-  const need = ps.filter(p => p._ahFont !== ST.font); if (!need.length) return;
+  const fk = ST.font + '|' + ST.paper, need = ps.filter(p => p._ahFont !== fk); if (!need.length) return;
   const keep = ST.ans; ST.ans = 'full';
   const host = document.createElement('div'); host.className = 'sheet';
   host.style.cssText = 'position:absolute;left:-9999px;top:0;height:auto;display:block;visibility:hidden';
-  host.innerHTML = `<div class="qa-wrap" style="columns:auto;height:auto;overflow:visible;font-size:10pt">${need.map(p => `<div style="width:${(210 - 24 - 7) / 2 * MM}px">${answerBlock({ p, no: '(1)', g: 0 })}</div>`).join('')}</div>`;
+  host.innerHTML = `<div class="qa-wrap" style="columns:auto;height:auto;overflow:visible;font-size:10pt">${need.map(p => `<div style="width:${(paper().w - 24 - 7 * (ncols() - 1)) / ncols() * MM}px">${answerBlock({ p, no: '(1)', g: 0 })}</div>`).join('')}</div>`;
   ST.ans = keep;
   document.body.appendChild(host);
   // まとめて書きこんでから、まとめて読みとる（測るたびに画面の再計算が起きないように）
   const hs = [...host.firstChild.children].map(b => b.getBoundingClientRect().height / MM);
   host.remove();
-  need.forEach((p, i) => { p._ah = hs[i]; p._ahFont = ST.font; });
+  need.forEach((p, i) => { p._ah = hs[i]; p._ahFont = fk; });
 }
 const spaceOf = p => {
   if (p._ah != null) return Math.max(SPACE_MIN, p.minSpace || 0, Math.min(SPACE_MAX, p._ah * ANS_RATIO / (p.halfSpace ? 2 : 1)));
@@ -12292,13 +12304,13 @@ function packCols(A, h1, h2, maxF){
 function packWork(A, h1, h2, maxF, brk = new Set()){
   const pages = []; let segs = [], used = 0, band = null, startBrk = null;
   const cap = () => pages.length ? h2 : h1;
-  const newBand = () => ({ k: 'two', cols: [[], []], sum: [0, 0], c: 0 });
+  const nc = ncols(), newBand = () => ({ k: 'two', cols: Array.from({ length: nc }, () => []), sum: Array(nc).fill(0), c: 0, cut: [] });
   const close = () => { if (band && band.cols[0].length) { segs.push(band); used += Math.max(...band.sum); } band = null; };
   const newPage = () => { close(); segs.brk = startBrk; pages.push(segs); segs = []; used = 0; startBrk = null; };
   A.forEach((a, i) => {
     const x = { a, i, need: spaceOf(a.p) + aNeed(a.p) };
     if (brk.has(i)) {
-      if (!a.p.full && band && band.c === 0 && band.cols[0].length) { band.c = 1; band.cut0 = true; }
+      if (!a.p.full && band && band.c < nc - 1 && band.cols[band.c].length) { band.cut.push(band.c); band.c++; }   // 最後の列でなければ改段
       else if (segs.length || (band && band.cols[0].length)) { newPage(); pages[pages.length - 1].cut = true; startBrk = i; }
     }
     if (a.p.full) {
@@ -12310,17 +12322,22 @@ function packWork(A, h1, h2, maxF, brk = new Set()){
     if (!band) band = newBand();
     const room = cap() - used;
     if (band.cols[band.c].length && band.sum[band.c] + x.need > room) {
-      if (band.c === 0) band.c = 1; else { newPage(); band = newBand(); }
+      if (band.c < nc - 1) band.c++; else { newPage(); band = newBand(); }
     } else if (!band.cols[0].length && x.need > room && segs.length) { newPage(); band = newBand(); }
     band.cols[band.c].push(x); band.sum[band.c] += x.need;
   });
   newPage();
   // 横いっぱいの問題があるページの帯は、左の列だけに寄らないよう、順番を保ったまま左右の高さがそろう所で分ける
   const sumOf = xs => xs.reduce((t, x) => t + x.need, 0);
-  pages.filter(segs => segs.some(s => s.k === 'full')).forEach(segs => segs.filter(s => s.k === 'two' && !s.cut0).forEach(s => {
-    const xs = s.cols[0].concat(s.cols[1]); let best = 1;
-    for (let j = 1; j <= xs.length; j++) if (Math.max(sumOf(xs.slice(0, j)), sumOf(xs.slice(j))) < Math.max(sumOf(xs.slice(0, best)), sumOf(xs.slice(best)))) best = j;
-    s.cols = [xs.slice(0, best), xs.slice(best)]; s.sum = s.cols.map(sumOf);
+  // 順番を保ったまま nc 本に分けて、いちばん高い列が低くなる分け方（列が2本なら前と同じ）
+  const split = (xs, k) => {
+    if (k === 1) return [xs];
+    let best = null;
+    for (let j = 1; j <= xs.length; j++) { const rest = split(xs.slice(j), k - 1), cand = [xs.slice(0, j), ...rest], m = Math.max(...cand.map(sumOf)); if (!best || m < best.m) best = { m, cand }; }
+    return best ? best.cand : [xs, ...Array(k - 1).fill([])];
+  };
+  pages.filter(segs => segs.some(s => s.k === 'full')).forEach(segs => segs.filter(s => s.k === 'two' && !s.cut.length).forEach(s => {
+    s.cols = split(s.cols.flat(), nc); s.sum = s.cols.map(sumOf);
   }));
   // 高さの配分：ページ全体を maxF 倍まで広げ、帯の中の列は帯の高さまで広げる（packCols と同じ結果になる）
   pages.forEach((segs, k) => {
@@ -12329,7 +12346,7 @@ function packWork(A, h1, h2, maxF, brk = new Set()){
     segs.forEach(s => {
       if (s.k === 'full') { s.h = s.x.h = s.x.need * F; return; }
       s.h = Math.max(...s.sum) * F;
-      s.cols.forEach((col, j) => { const f = j === 0 && s.cut0 ? (segs.length === 1 ? H - 0.5 : s.h) / Math.max(s.sum[0], 1) : Math.min(mf, s.h / Math.max(s.sum[j], 1)); col.forEach(x => { x.h = x.need * f; }); });
+      s.cols.forEach((col, j) => { const f = s.cut.includes(j) ? (segs.length === 1 ? H - 0.5 : s.h) / Math.max(s.sum[j], 1) : Math.min(mf, s.h / Math.max(s.sum[j], 1)); col.forEach(x => { x.h = x.need * f; }); });
     });
   });
   return pages;
@@ -12343,7 +12360,7 @@ function renderWork(box, A){
   // 図つきの問題は、文章のあと（右がわ）に図をおき、左がわを解くスペースにする
   // 問題文に同じ式がすでにあるときは、下の式の行は出さない
   const cell = (x, cls = '') => `<div class="cell${cls}${aBoxOn() ? ' hasbox' : ''}" data-i="${x.i}" style="height:${x.h.toFixed(1)}mm"><div class="lb">${noHTML(x.a)}${rich(x.a.p.label).replace(/\n/g, '<br>')}${ptSpan(x.a.p)}</div>${showMx(x.a.p) ?`<div class="mx">${K('\\displaystyle ' + x.a.p.math)}</div>` : ''}${x.a.p.fig ? `<div class="pf">${svgOf(x.a.p.fig)}</div>` : ''}${aBoxHTML(x.a.p)}</div>`;
-  const two = (s, style = '') => `<div class="wcols"${style}><div class="wcol lcol">${s.cols[0].map(x => cell(x)).join('')}</div><div class="wcol">${s.cols[1].map(x => cell(x)).join('')}</div></div>`;
+  const two = (s, style = '') => `<div class="wcols"${style}>${s.cols.map((col, j) => `<div class="wcol${j < s.cols.length - 1 ? ' lcol' : ''}">${col.map(x => cell(x)).join('')}</div>`).join('')}</div>`;
   pages.forEach((segs, k) => {
     const flow = k ? newSheet(box, false) : flow1;
     if (segs.brk != null) flow.closest('.sheet').dataset.brk = segs.brk;
@@ -12380,7 +12397,7 @@ function syncPack(box){
   if (PACK) PACK.pages.forEach(segs => segs.forEach(s => {
     if (s.k === 'full') { s.h = hOf('.cell', s.i) ?? s.h; return; }
     s.cols.forEach(col => col.forEach(x => { x.h = hOf('.cell', x.i) ?? x.h; }));
-    const c = s.cols[0][0] || s.cols[1][0], bh = c && mmOf(box.querySelector(`.cell[data-i="${c.i}"]`).closest('.wcols'));
+    const c = s.cols.flat()[0], bh = c && mmOf(box.querySelector(`.cell[data-i="${c.i}"]`).closest('.wcols'));
     if (bh != null) s.h = bh;
   }));
 }
@@ -12420,8 +12437,8 @@ function planCtl(sh){
       out.re.push({ x: r.right - S.left - 28, y: r.top - S.top + 14, pi: i });
       if (isQuiz()) { const ab = c.querySelector('.aboxes'); out.pt.push({ x: r.left - S.left + 8, y: (ab ? ab.getBoundingClientRect().top - 3 : r.bottom) - S.top - 27, pi: i }); }
       // 並べかえ（上へ・ドラッグ・下へ）は紙の余白に：左の列と横いっぱいは左の余白、右の列は右の余白
-      const rcol = !!c.closest('.wcol') && !left;
-      out.mv.push({ x: rcol ? r.right - S.left + 12 : r.left - S.left - 32, y: r.top - S.top + 6, pi: i });
+      const wc = c.closest('.wcol'), rcol = !!wc && !left, mid = !!wc && left && !!wc.previousElementSibling;
+      out.mv.push(mid ? { x: r.right - S.left - 26, y: r.top - S.top + 40, pi: i } : { x: rcol ? r.right - S.left + 12 : r.left - S.left - 32, y: r.top - S.top + 6, pi: i });
       if (BRK.work.has(i)) out.brk.push({ y: r.top - S.top + 1.5 * MM, right, key: i, un: true, lb: i === first ? '改ページを取り消す' : '改段を取り消す' });
       else if (i !== first) out.brk.push({ y: r.top - S.top, right, key: i, un: false, lb: left ? 'ここで改段' : 'ここで改ページ' });
     });
@@ -12572,14 +12589,14 @@ function layoutAnswers(box, blocks, title){
     qa.forEach(b => { w.appendChild(b); if (over(w) && w.children.length > 1) { w.removeChild(b); w = addPage(9); w.appendChild(b); } });
     return;
   }
-  w.style.fontSize = '9pt'; w.style.columns = 'auto'; w.style.width = ((w.clientWidth - 7 * MM) / 2) + 'px';
+  w.style.fontSize = '9pt'; w.style.columns = 'auto'; w.style.width = ((w.clientWidth - 7 * MM * (ncols() - 1)) / ncols()) + 'px';
   const colH = w.clientHeight, hs = qa.map(b => b.offsetHeight + 2.5 * MM);
   w.style.columns = ''; w.style.width = '';
   first.remove();
   let col = 0, used = 0;
   w = addPage(9);
   qa.forEach((b, i) => {
-    if (used + hs[i] > colH && used > 0) { used = 0; if (++col === 2) { col = 0; w = addPage(9); } }
+    if (used + hs[i] > colH && used > 0) { used = 0; if (++col === ncols()) { col = 0; w = addPage(9); } }
     w.appendChild(b); used += hs[i];
   });
 }
@@ -12613,26 +12630,24 @@ function layoutCheck(box){
 function buildLatex(){
   const A = arranged();
   const cls = ST.tex === 'lua'
-    ? '% LuaLaTeX でコンパイルしてください（Overleaf：Menu → Compiler → LuaLaTeX）\n\\documentclass[a4paper,11pt]{ltjsarticle}'
-    : '% pLaTeX + dvipdfmx でコンパイルしてください（platex → dvipdfmx）\n\\documentclass[a4paper,11pt,dvipdfmx]{jsarticle}';
+    ? '% LuaLaTeX でコンパイルしてください（Overleaf：Menu → Compiler → LuaLaTeX）\n\\documentclass[' + paper().tex + ',11pt]{ltjsarticle}'
+    : '% pLaTeX + dvipdfmx でコンパイルしてください（platex → dvipdfmx）\n\\documentclass[' + paper().tex + ',11pt,dvipdfmx]{jsarticle}';
   // 見出しの欄（その他の設定「見出しの欄」で選ぶ）。2ページ目からは「毎ページに題名」「毎ページに年組番・氏名」のチェックしたものだけ
   const nameLine = [ST.hClass !== false ? `年\\hspace{6mm}組\\hspace{6mm}番` : '', ST.hName !== false ? `氏名\\underline{\\hspace{48mm}}` : ''].filter(Boolean).join('\\quad ');
   const firstInfo = [ST.hDate !== false ? `月\\hspace{8mm}日\\hspace{8mm}` : '', nameLine, ST.hScore !== 'off' ? `\\fbox{\\parbox[c][8mm]{28mm}{得点\\hfill ／${scoreDen()}}}` : ''].filter(Boolean).join('\\quad\n');
   const eT = ST.hEveryTitle === true, eN = ST.hEveryName === true && !!nameLine, eHead = eT || eN;
   const pageHead = t => eHead ? `${eT ? `{\\large\\bfseries ${t}}` : ''}${eN ? `\\hfill ${nameLine}` : ''}\\par\\vspace{2mm}\\hrule\\vspace{3mm}\n` : '';
   const texD = s => s.split('$').map((x, i) => i % 2 ? `$\\displaystyle ${x}$` : x).join('');
-  const twoCols = (l, r, ht, np = true) => `\\begin{minipage}[t][${ht}mm][t]{0.48\\textwidth}
-${l}
-\\end{minipage}\\hfill\\vrule\\hfill
-\\begin{minipage}[t][${ht}mm][t]{0.48\\textwidth}
-${r}
-\\end{minipage}${np ? '\n\\newpage' : ''}`;
+  // 列を nc 本ならべる（2本なら幅 0.48、3本なら 0.313）
+  const twoCols = (cs, ht, np = true) => cs.map(c => `\\begin{minipage}[t][${ht}mm][t]{${((0.98 - 0.02 * (cs.length - 1)) / cs.length).toFixed(3)}\\textwidth}
+${c}
+\\end{minipage}`).join('\\hfill\\vrule\\hfill\n') + (np ? '\n\\newpage' : '');
   const pages = [];
   {
     // しっかり解く：画面と同じページ割り・同じ高さの比率で（横いっぱいの問題は \textwidth の箱）
     const pk = PACK || { pages: [], h1: 1, h2: 1 };
     pk.pages.forEach((segs, k) => {
-      const H = k ? (eHead ? 238 : 250) : 212, f = H / (k ? pk.h2 : pk.h1);
+      const H = (k ? (eHead ? 238 : 250) : 212) + paper().h - 297, f = H / (k ? pk.h2 : pk.h1);
       const cellTex = (x, w) => {
         const a = A[x.i], p = a.p, body = `${noTex(a)}\\ ${p.label.replace(/\n/g, '\\newline ')}${ptTex(p)}${showMx(p) ? `\\par\\smallskip\\hspace*{1.5em}$\\displaystyle ${p.math}$` : ''}`;
         // 図つきの問題は、左に文章・右に図
@@ -12640,8 +12655,8 @@ ${r}
 ${p.fig ? `\\begin{minipage}[t]{0.6\\linewidth}${body}\\end{minipage}\\hfill\\begin{minipage}[t]{0.36\\linewidth}${tikzOf(p.fig, 0.18, false)}\\end{minipage}` : body}${aBoxTex(p)}
 \\end{minipage}`; };
       const col = c => c.map(x => cellTex(x, '\\linewidth')).join('\n\\par\\nointerlineskip\n') || '\\mbox{}';
-      const body = segs.length === 1 && segs[0].k === 'two' ? twoCols(col(segs[0].cols[0]), col(segs[0].cols[1]), H)
-        : `\\hrule\n${segs.map(s => s.k === 'full' ? `\\noindent${cellTex(s, '\\textwidth')}` : `\\noindent${twoCols(col(s.cols[0]), col(s.cols[1]), (s.h * f).toFixed(1), false)}`).join('\n\\par\\nointerlineskip\\hrule\n')}\n\\par\\nointerlineskip\\hrule\n\\newpage`;
+      const body = segs.length === 1 && segs[0].k === 'two' ? twoCols(segs[0].cols.map(col), H)
+        : `\\hrule\n${segs.map(s => s.k === 'full' ? `\\noindent${cellTex(s, '\\textwidth')}` : `\\noindent${twoCols(s.cols.map(col), (s.h * f).toFixed(1), false)}`).join('\n\\par\\nointerlineskip\\hrule\n')}\n\\par\\nointerlineskip\\hrule\n\\newpage`;
       pages.push(`${k ? pageHead(texTitle()) : ''}${body}`);
     });
   }
@@ -12651,10 +12666,10 @@ ${p.fig ? `\\begin{minipage}[t]{0.6\\linewidth}${body}\\end{minipage}\\hfill\\be
   const answers = A.map(a => { if (ST.ans === 'only') return `\\noindent${noTex(a)}\\ ${a.p.head}${ptAnsTex(a.p)}\\par\\noindent\\textbf{答}\\ ${a.p.ans}\\par\\medskip\\hrule\\medskip`;
     const body = `\\noindent${noTex(a)}\\ ${a.p.head}${ptAnsTex(a.p)}${ST.time !== 'off' ? `\\hfill{\\footnotesize 目安 ${fmt3(a.p.sec)}}` : ''}\\par
 ${joinEq(a.p.steps).map(stepTex).join('\n')}
-\\noindent\\textbf{答}\\ ${a.p.ans}\\par\\medskip\\hrule\\medskip`; return a.p.ansFull ? `\\end{multicols}\n${body}\n\\begin{multicols}{2}\n\\small` : body; }).join('\n\n');
+\\noindent\\textbf{答}\\ ${a.p.ans}\\par\\medskip\\hrule\\medskip`; return a.p.ansFull ? `\\end{multicols}\n${body}\n\\begin{multicols}{${ncols()}}\n\\small` : body; }).join('\n\n');
   return `% ${texTitle()}${unitList() ? `（${unitList()}）` : ''}
 ${cls}
-\\usepackage[margin=14mm]{geometry}
+\\usepackage[${paper().tex},margin=14mm]{geometry}
 \\usepackage{amsmath,amssymb}
 \\usepackage{multicol}
 \\usepackage{xcolor}
@@ -12670,7 +12685,7 @@ ${INST[ST.mode]}\\par\\vspace{3mm}
 ${ST.formula === 'on' && formulaUnits().length && formulaUnits().length <= FBIG ? formulaTex(formulaUnits()) : ''}
 ${pages.join('\n\n')}
 ${needZ() ? zTableTex() : ''}{\\Large\\bfseries ${ST.ans === 'only' ? '解答' : '解答・解説'}}\\par\\vspace{2mm}\\hrule\\vspace{2mm}
-\\begin{multicols}{2}
+\\begin{multicols}{${ncols()}}
 \\small
 ${answers}
 \\end{multicols}
@@ -12714,6 +12729,18 @@ window.addEventListener('afterprint', () => { if (titleBeforePrint) document.tit
 
 
 /* ========== 操作 ========== */
+// 用紙：画面の紙の大きさ（mm）・印刷の @page・LaTeX の用紙と本文の高さ（A4 との差だけ足す）
+const PAPERS = { a4: { w: 210, h: 297, css: 'A4 portrait', tex: 'a4paper', name: 'A4縦' }, a3: { w: 297, h: 420, css: 'A3 portrait', tex: 'a3paper', name: 'A3縦' }, a3l: { w: 420, h: 297, css: 'A3 landscape', tex: 'a3paper,landscape', name: 'A3横（3列）', cols: 3 } };
+const ncols = () => paper().cols || 2;   // 問題・解答の列の数
+const paper = () => PAPERS[ST.paper] || PAPERS.a4;
+function applyPaper(){
+  const p = paper(), d = document.documentElement.style;
+  document.documentElement.classList.toggle('paper-a3', ST.paper === 'a3');
+  document.documentElement.classList.toggle('paper-a3l', ST.paper === 'a3l');
+  d.setProperty('--nc', ncols());
+  d.setProperty('--pw', p.w + 'mm'); d.setProperty('--ph', p.h + 'mm');
+  $('pageSize').textContent = `@media print{@page{size:${p.css};margin:0}}`;
+}
 function applyFont(){ document.documentElement.style.setProperty('--font', FONTS[ST.font] || FONTS.maru); }
 // 教科のタブ：その教科の分野だけを見せる（単元の選択は教科をまたいで残す）。分野の欄は1つだけひらく
 const SUBJ_TABS = ['1', 'A', '2', 'B', 'C', 'P'];
@@ -12809,6 +12836,7 @@ $('zenkaAll').addEventListener('click', () => { ST.zenkaPats = ZENKA_TYPES.map(t
 new ResizeObserver(() => { const h = $('dock').offsetHeight; if (h) document.documentElement.style.setProperty('--dock-h', h + 'px'); }).observe($('dock'));
 ['waSekiBig', 'yakusuuBig'].forEach(id => $(id).addEventListener('change', e => { ST[id] = e.target.checked; save(); regenerate(); }));
 function regenerate(){
+  cntDirty = false; cntShow();
   clearTimeout(regenTimer); regenSeq++;   // 待っている「ページに合わせる」の作りなおしは取りやめる
   // 元にもどすための、作りなおす前のようす（設定は前に落ち着いたときの lastSt）
   const before = PROBS.length ? snapFull(lastSt) : null;
@@ -12909,6 +12937,7 @@ document.querySelectorAll('.seg[data-set] button').forEach(b => b.addEventListen
   if (lastSt && ['kind', 'ptShow', 'ansBox', 'ans', 'zenkaOrder', 'baikaiOrder', 'goshinOrder'].includes(name)) lastSt = { ...lastSt, [name]: ST[name] };   // 作りなおさない設定は、元にもどすときの設定にもすぐ入れる
   if (name === 'font') { applyFont(); (document.fonts ? document.fonts.ready : Promise.resolve()).then(ST.fit === 'page' ? () => { regenKeep = true; regenerate(); } : render); }   // ページに合わせるときも、問題は残して数えなおす
   else if (name === 'pv') { flushRender(); applyPv(); }
+  else if (name === 'paper') { applyPaper(); ADJ = {}; if (VARS) VARS.keep = VARS.keep.map(k => k && { ...k, ADJ: {} }); if (ST.fit === 'page') { regenKeep = true; regenerate(); } else { const y = window.scrollY; render(); window.scrollTo(0, y); } updateGrpSums(); status(`用紙を${paper().name}にしました（手で変えた高さは自動にもどしました）。`); }
 
   else if (ST.fit === 'page' && (name === 'formula' || name === 'miwake')) regenerate();   // 紙面が変わると入る問題数も変わる
   else if (Object.values(PICK).some(c => c.order === name)) { ADJ = {}; BRK = { work: new Set(), list: new Set() }; applyPickOrder(Object.keys(PICK).find(u => PICK[u].order === name)); render(); }   // 同じ問題のまま並べかえる
@@ -12999,7 +13028,8 @@ $('uTable').addEventListener('change', e => {
   ST.uCnt[u] = next; ST.uBase = null; ST.count = String(cntSum()); ST.fit = 'count'; regenKeep = true;
   $('cnt').value = ST.count; save(); fillUTable();
   document.querySelectorAll('.seg[data-set="fit"] button').forEach(x => x.classList.toggle('on', x.dataset.v === ST.fit));
-  $('levelNote').innerHTML = levelNoteHTML(); showOpts(); updateGrpSums(); regenSoon();
+  $('levelNote').innerHTML = levelNoteHTML(); showOpts(); cntDirty = true; updateGrpSums();
+  if (!msg) status('数を決めたら「変更する」を押してください（問題を作りなおします）。');
 });
 $('uTable').addEventListener('click', e => {
   const b = e.target.closest('button[data-step]'); if (!b) return;
@@ -13193,6 +13223,7 @@ ST.closedGrp = grps.map(g => g.dataset.name);
 function applyClosed(){ if (!Array.isArray(ST.closedGrp)) ST.closedGrp = [];grps.forEach(g => g.classList.toggle('closed', ST.closedGrp.includes(g.dataset.name))); }
 // たたんだときの1行：単元は選んだ単元の名前（多いときは数）、題名の欄は入力した題名、そのほかは選んでいるボタン
 function updateGrpSums(){
+  cntShow();
   grps.forEach(g => {
     let s;
     if (g.querySelector('input[name="unit"]')) { const nm = UNITS.filter(u => ST.units.includes(u[0])).map(u => u[1]); s = !nm.length ? '単元を選んでいません' : nm.length <= 4 ? nm.join('・') : `${nm.slice(0, 3).join('・')} ほか（${nm.length}単元）`; }
@@ -13225,10 +13256,15 @@ document.querySelectorAll('#fitBox button').forEach(b => b.addEventListener('cli
 $('fitPages').addEventListener('change', () => setFit($('fitPages').value));
 $('fitPages').addEventListener('keydown', e => { if (e.key === 'Enter') setFit($('fitPages').value); });
 
-document.querySelectorAll('#cntBox button').forEach(b => b.addEventListener('click', () => setCnt(+ST.count + +b.dataset.d)));
-$('cnt').addEventListener('change', () => setCnt($('cnt').value));
-$('cnt').addEventListener('keydown', e => { if (e.key === 'Enter') setCnt($('cnt').value); });
-$('bMake').addEventListener('click', () => { regenKeep = false; regenerate(); });
+// 問題数は、数を決めてから「変更する」を押したときだけ作りなおす（押すたびに作りなおすと重いので）。Enter でも変更する
+var cntDirty = false;   // 表で単元ごとの数を直して、まだ作りなおしていない
+function cntShow(){ const c = clampCnt($('cnt').value), on = cntDirty || (!!c && String(c) !== ST.count); $('cntGo').hidden = !on; $('cnt').classList.toggle('pending', on); }
+document.querySelectorAll('#cntBox button[data-d]').forEach(b => b.addEventListener('click', () => { $('cnt').value = clampCnt((+$('cnt').value || +ST.count) + +b.dataset.d) || ST.count; cntShow(); }));
+$('cnt').addEventListener('input', cntShow);
+$('cnt').addEventListener('change', () => { const c = clampCnt($('cnt').value); if (c) $('cnt').value = c; cntShow(); });
+$('cnt').addEventListener('keydown', e => { if (e.key === 'Enter') { setCnt($('cnt').value); cntShow(); } });
+$('cntGo').addEventListener('click', () => { const c = clampCnt($('cnt').value); if (c && String(c) !== ST.count) setCnt(c); else { regenKeep = true; regenSoon(); } cntDirty = false; cntShow(); });
+$('bMake').addEventListener('click', () => { if (!$('cntGo').hidden) { setCnt($('cnt').value); cntShow(); clearTimeout(regenTimer); } regenKeep = false; regenerate(); });
 $('bPrint').addEventListener('click', printOut);
 $('bTexDl').addEventListener('click', downloadTex);
 document.querySelectorAll('#tabs button').forEach(b => b.addEventListener('click', () => {
@@ -13355,7 +13391,7 @@ window.__engine = { regenP, keyHash, GEN, UNIT_SUBJ, sumFormTex, nTex, nPolyTex,
 
 /* ========== 設定の写し（組み合わせ・最近作ったプリント） ========== */
 // 組み合わせに「一緒に保存」する設定。その他の設定のうち、題名と解答ページは入れる（目安時間・公式・見た目・LaTeX は入れない）
-const PRESET_KEYS = ['kind', 'ptB', 'ptS', 'ptA', 'ptShow', 'ansBox', 'title', 'count', 'fit', 'fitPages', 'level', 'lvOn', 'uCnt', 'mixLv', 'order', 'ans', 'kahouUnit', 'waSekiBig', 'yakusuuBig', 'zenkaMode', 'zenkaPats', 'zenkaOrder', 'baikaiMode', 'baikaiPats', 'baikaiOrder', 'goshinMode', 'goshinPats', 'goshinOrder'];
+const PRESET_KEYS = ['kind', 'paper', 'ptB', 'ptS', 'ptA', 'ptShow', 'ansBox', 'title', 'count', 'fit', 'fitPages', 'level', 'lvOn', 'uCnt', 'mixLv', 'order', 'ans', 'kahouUnit', 'waSekiBig', 'yakusuuBig', 'zenkaMode', 'zenkaPats', 'zenkaOrder', 'baikaiMode', 'baikaiPats', 'baikaiOrder', 'goshinMode', 'goshinPats', 'goshinOrder'];
 const snapSettings = () => JSON.parse(JSON.stringify(Object.fromEntries(PRESET_KEYS.map(k => [k, ST[k]]))));
 // 読みこんだファイルの設定：決まった名前の、文字・数・true/false・文字の配列・null だけを残す
 function cleanSettings(s){
@@ -13377,7 +13413,8 @@ function applySettings(s){
   ST.count = String(clampCnt(ST.count) || 10); ST.fitPages = clampFit(ST.fitPages) || 2;
   if (!['full', 'only'].includes(ST.ans)) ST.ans = 'full';
   if (typeof ST.title !== 'string') ST.title = '';
-  syncSeg();
+  if (!PAPERS[ST.paper]) ST.paper = 'a4';
+  applyPaper(); syncSeg();
 }
 // 見出しの欄
 if (!['count', 'points', 'off'].includes(ST.hScore)) ST.hScore = 'count';
@@ -13750,7 +13787,7 @@ document.addEventListener('keydown', e => {
   else if ((k === 'y' || (k === 'z' && e.shiftKey)) && HIST.future.length) { e.preventDefault(); stepHist(false); }
 });
 
-applyFont(); syncSeg(); renderPresets(); renderRecent(); applyMore();
+applyFont(); applyPaper(); syncSeg(); renderPresets(); renderRecent(); applyMore();
 (document.fonts ? document.fonts.ready : Promise.resolve()).then(regenerate);
 </script>
 </body>
