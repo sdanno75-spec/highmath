@@ -245,8 +245,14 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 /* 問題を選ぶウインドウ */
 #winPick{width:min(1040px,calc(100vw - 32px))}
 #winPick .winBody{display:flex;flex-direction:column;gap:10px;max-height:calc(100vh - 170px)}
+#winPick .winBody>*{flex-shrink:0}   /* 単元の欄などが押しつぶされないように（窓の中身ごとスクロール） */
 .pkTop{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
-.pkTop .sel{max-width:min(320px,100%)}
+.pkUnits{display:flex;flex-direction:column;gap:2px;max-height:30vh;overflow:auto;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff}
+.pkUnits .units{margin-bottom:4px}
+.pkUnits button.chk{font:inherit;font-size:14px;color:var(--ink)}
+.pkUnits button.chk.on{border-color:var(--ink);background:#efebe0;font-weight:700}
+.pkUnits button.chk .pkC{min-width:18px;height:18px;border-radius:9px;background:#2b4a7a;color:#fff;font-size:11px;display:grid;place-items:center;padding:0 5px;font-weight:700}
+@media (max-width:640px){.pkUnits .units{padding-left:0}.pkUnits .ugrp{position:static;width:100%;padding-top:0}}
 .pkGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
 .pkCard{position:relative;border:1px solid var(--line);border-radius:10px;padding:10px 10px 8px 34px;background:var(--card);cursor:pointer;font-size:13px;line-height:1.6;overflow:hidden;text-align:left;min-height:64px}
 .pkCard:hover{border-color:#2f6fdb}
@@ -256,6 +262,17 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 .pkCard.on .pkNo{background:#2b4a7a;border-color:#2b4a7a}
 .pkCard .pkMx{overflow-x:auto;margin-top:2px}
 .pkCard .pkFig svg{max-width:100%;height:auto;max-height:120px}
+.pkAct{display:flex;justify-content:flex-end;gap:6px;margin-top:6px}
+.pkA{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:6px;font-size:12px;padding:2px 8px;cursor:pointer}
+.pkA:hover{border-color:#2f6fdb}
+.pkA.on{background:var(--line)}
+.pkAns{margin-top:6px;padding-top:6px;border-top:1px dashed var(--line);font-size:12.5px}
+.pkAns .pkT{color:var(--muted);font-size:11.5px}
+.pkCard.pkNew{animation:pkNew 1.2s ease-out}
+@keyframes pkNew{from{box-shadow:0 0 0 3px #2f6fdb}to{box-shadow:0 0 0 0 transparent}}
+.pkSum{font-size:13px}
+.pkSum b{font-weight:700}
+#pkMsg{font-size:12.5px;color:var(--err);min-height:0}
 .pkTray{display:flex;flex-wrap:wrap;gap:6px;align-items:center;border-top:1px solid var(--line);padding-top:10px}
 .pkChip{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:999px;padding:2px 4px 2px 10px;font-size:12px;cursor:grab;background:var(--card)}
 .pkChip button{border:0;background:transparent;width:20px;height:20px;display:grid;place-items:center;padding:0;color:var(--muted);cursor:pointer}
@@ -492,8 +509,11 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 <dialog id="winPick" class="win" aria-labelledby="winPickT">
   <div class="winHead"><h2 id="winPickT">小テストの問題を選ぶ</h2><button type="button" class="winX" aria-label="閉じる"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></div>
   <div class="winBody">
-    <div class="pkTop"><select class="sel" id="pkUnit" aria-label="単元"></select><div class="seg" id="pkLv" aria-label="難しさ"></div><button class="btn" id="pkMore" type="button">候補をふやす</button></div>
-    <div class="gnote" style="margin:0">クリックした順に (1)(2)… と番号がつきます。もう一度クリックすると外れます。単元を切りかえて、ほかの単元の問題も続けて選べます。</div>
+    <div class="seg subjTabs" id="pkSubj" aria-label="教科" style="margin:0"></div>
+    <div class="pkUnits" id="pkUnits"></div>
+    <div class="pkTop"><b id="pkUName" style="font-size:14px"></b><div class="seg" id="pkLv" aria-label="難しさ"></div><button class="btn" id="pkMore" type="button">候補をふやす</button></div>
+    <div class="gnote" style="margin:0">クリックした順に (1)(2)… と番号がつきます。もう一度クリックすると外れます。上の単元のボタンで切りかえて、ほかの単元の問題も続けて選べます（単元の数字は選んだ問題の数）。</div>
+    <div id="pkMsg"></div>
     <div class="pkGrid" id="pkGrid"></div>
     <div class="pkTray" id="pkTray"></div>
   </div>
@@ -529,8 +549,8 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
         <div id="quizBox" style="margin-top:10px">
           <div class="qstep"><span class="qn">1</span><b>問題を選ぶ</b><button class="btn" id="bPick" type="button">一覧から問題を選ぶ</button></div>
           <div class="gnote" id="pickNote">式を見ながら、出す問題をクリックで選びます。選ばずに、下の単元と問題の量からおまかせで作ることもできます。</div>
-          <div class="qstep"><span class="qn">2</span><b>レイアウトを決める</b></div>
-          <div class="gnote">配点・答えの枠と、「ならび順」「用紙」「見た目」などで紙面を整えます。選んだ問題はロックされるので、設定を変えても残ります。</div>
+          <div class="qstep"><span class="qn">2</span><b>レイアウトを決める</b><button class="btn" id="bQuizSave" type="button">この小テストを保存</button></div>
+          <div class="gnote">配点・答えの枠と、「ならび順」「用紙」「見た目」などで紙面を整えます。選んだ問題はロックされるので、設定を変えても残ります。「この小テストを保存」で名前をつけて残すと、来年も同じ問題・同じ数で開けます（よく使う組み合わせに入ります）。</div>
           <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px">配点　基本 <input class="txt ptin3" type="text" inputmode="numeric" id="ptB" aria-label="基本の配点"> 標準 <input class="txt ptin3" type="text" inputmode="numeric" id="ptS" aria-label="標準の配点"> 発展 <input class="txt ptin3" type="text" inputmode="numeric" id="ptA" aria-label="発展の配点"> 点</div>
           <div id="ptTotal" style="margin-top:6px;font-weight:600"></div>
           <div class="seg" data-set="ptShow" style="margin-top:8px"><button data-v="on">各問に配点を出す</button><button data-v="off">配点を出さない</button></div>
@@ -966,8 +986,10 @@ header{padding:22px 0 10px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items
 </div>
 
 <script>
-const VERSION = '5.109.0', UPDATED = '2026-11-21';
+const VERSION = '5.110.1', UPDATED = '2026-11-21';
 const CHANGES = [
+  ['5.110.1', '2026-11-21', '小テストの問題を選ぶウインドウで、単元のボタンの欄が押しつぶされて小さくなっていたのを直した（欄の高さを保ち、ウインドウの中身ごとスクロール）。'],
+  ['5.110.0', '2026-11-21', 'ロックした問題は数も変わらないように（各版の問題を覚え、問題の写しも保存。アプリを直したあとも同じ数）。別バージョンもロックしたまま作りなおす。小テストを名前をつけて保存（問題・数・ロックつき）。問題を選ぶウインドウに、解答をのぞく・似た問題・満点と参考タイム、単元はプリント作成と同じ教科タブとボタンで選ぶ'],
   ['5.109.0', '2026-11-21', '問題ごとにロック・削除のボタン（画面だけ）。ロックした問題は作りなおしても、問題数や設定を変えても残る。削除は同じ単元・同じ難しさの別の問題に入れかえ、消した問題はもう出さない。小テストは「1 問題を選ぶ → 2 レイアウト」の順に（式が見える一覧から選ぶウインドウ）'],
   ['5.108.0', '2026-11-19', '積分パターン②f(g(x))g′(x) 型に sinᵐx cos³x・1/(x(log x)ⁿ)・tan³x・log(sin x)/tan x・x⁵e^{x³} 型を追加'],
   ['5.107.0', '2026-11-19', '1次関数との合成型を足した：基本に a^{px+q}（底 2・3・5）、標準に 1/(ax+b)²（分母を展開した形）と 1/cos²kx・1/sin²kx。'],
@@ -14973,6 +14995,7 @@ const FONTS = {
 const ST = { kind: 'print', paper: 'a4', zoom: 'fit', ptB: 3, ptS: 5, ptA: 8, ptShow: 'on', ansBox: 'on', goshinMode: 'level', goshinOrder: 'num', goshinPats: GOSHIN_TYPES.filter(t => !t[3]).map(t => t[0]), hScore: 'count', scoreMax: 100, avoidRecent: false, presetWithSet: true, recent: [], outPart: 'all', presets: [], presetFolders: [], openFolder: '', openField: '', setOpen: '', more: false, uCnt: null, fit: 'count', fitPages: 2, defV: 1, baikaiMode: 'level', baikaiOrder: 'num', baikaiPats: null, zenkaOrder: 'num', zenkaMode: 'level', zenkaPats: ['ari', 'geo', 'diff', 'char'], waSekiBig: false, yakusuuBig: false, ans: 'full', units: ['tasuki', 'heihou'], count: '10', level: 'mix', order: 'unit', font: 'maru', tex: 'lua', title: '', pv: 'q', mode: 'work', subject: '1', attrs: [], attrMap: null, kahouUnit: 'deg', formula: 'off', mixLv: 'seq', closedGrp: [], time: 'off' };
 let PROBS = [];
 let LOCKS = [];             // ロックした問題（A 版の問題そのもの）。作りなおしても残す
+const LOCK_V = new Map();   // ロックした問題 → 各版の問題 [A, B, …]（別バージョンも同じ数のまま残す）
 const EXCL = new Set();     // 削除した問題の印（keyHash）。このページを開いているあいだは、もう出さない
 let VARS = null;   // 別バージョン（addVariant）
 const SAVE_KEY = 'suu1print_settings';
@@ -15631,6 +15654,7 @@ function render(){
   if (needZ()) box.insertAdjacentHTML('beforeend', zTableHTML());   // 正規分布表は問題と一緒に配れるよう、解答の前
   setupAdjust(box);
   resetBtns();
+  syncLockV();
   markLocks();
   quizSync();
   // 参考タイムの内訳（単元ごと）
@@ -16348,14 +16372,16 @@ function regenerate(){
   const build = () => {
     const pool = keep ? poolFrom(oldA) : null;
     if (ST.fit === 'page') fitToPages(pool); else makeSet(pool);
+    const olds = new Set(oldA), kept = keep ? PROBS.filter(p => olds.has(p)).length : 0;
+    // 別バージョン：残した問題（keep）とロックした問題は各版の同じ問題（同じ数）を、新しい問題はその版用に別の数で作る。
+    // ロックした問題があるときは、全部作りなおしても版の数を残す（開きなおしたときも、ロックに覚えている版までもどす）
+    { const lockedIn = PROBS.filter(p => LOCKS.includes(p)), nv = Math.max(keep && oldVars ? oldVars.list.length : 1, lockedIn.length && oldVars ? oldVars.list.length : 1, ...lockedIn.map(p => (LOCK_V.get(p) || []).length));
+      if (nv > 1) {
+        const idx = keep && oldVars ? new Map(oldA.map((p, j) => [p, j])) : new Map(), keys = new Set((oldVars ? oldVars.list.flat() : []).concat(PROBS, ...lockedIn.map(p => LOCK_V.get(p) || [])).map(p => p.key)), list = [PROBS];
+        for (let k = 1; k < nv; k++) list.push(PROBS.map(p => { const v = LOCK_V.get(p); if (LOCKS.includes(p) && v && v[k]) return v[k]; const j = idx.get(p); if (j !== undefined && oldVars.list[k]) return oldVars.list[k][j]; const q = sibling(p, keys) || p; keys.add(q.key); return q; }));
+        VARS = { list, cur: Math.min(oldVars ? oldVars.cur : 0, list.length - 1), keep: [] }; PROBS = list[VARS.cur];
+      } }
     if (keep) {
-      const olds = new Set(oldA), kept = PROBS.filter(p => olds.has(p)).length;
-      // 別バージョンがあったときは、残した問題は各版の同じ問題を、新しい問題はその版用に別の数で作る
-      if (oldVars && oldVars.list.length > 1) {
-        const idx = new Map(oldA.map((p, j) => [p, j])), keys = new Set(oldVars.list.flat().concat(PROBS).map(p => p.key)), list = [PROBS];
-        for (let k = 1; k < oldVars.list.length; k++) list.push(PROBS.map(p => { const j = idx.get(p); if (j !== undefined) return oldVars.list[k][j]; const q = sibling(p, keys) || p; keys.add(q.key); return q; }));
-        VARS = { list, cur: Math.min(oldVars.cur, list.length - 1), keep: [] }; PROBS = list[VARS.cur];
-      }
       if (kept) msgs.push(`前の問題を${kept}問残し、${PROBS.length > kept ? `${PROBS.length - kept}問を新しく作りました` : 'そのまま並べなおしました'}（「問題を作りなおす」なら全部新しくなります）。`);
     }
     render();
@@ -16644,7 +16670,7 @@ const addPreset = () => {
   if (f === '__new') { f = addFolder(); if (f === null) return; }
   // 問題つきは、問題を作りなおせるように設定と題名もかならず一緒に残す
   const withQ = $('presetWithProb').checked && PROBS.length > 0 && PROBS.every(p => p._g);
-  const old = ST.presets.findIndex(p => p.n === n && p.f === f), item = { n, u: ST.units.slice(), f, ...($('presetWithSet').checked || withQ ? { s: snapSettings() } : {}), ...(withQ ? { t: ST.title.trim(), q: snapProbs() } : {}) };
+  const old = ST.presets.findIndex(p => p.n === n && p.f === f), item = { n, u: ST.units.slice(), f, ...($('presetWithSet').checked || withQ ? { s: snapSettings() } : {}), ...(withQ ? { t: ST.title.trim(), q: { ...snapProbs(), sn: (VARS ? VARS.list : [PROBS]).map(l => l.map(snapP)) } } : {}) };
   if (old >= 0) { if (!confirm('「' + folderLabel(f) + '」の「' + n + '」を、今の単元で上書きしますか？')) return; ST.presets[old] = item; } else ST.presets.push(item);
   ST.openFolder = 'f:' + f;
   $('presetName').value = ''; save(); renderPresets(); status('「' + folderLabel(f) + '」に「' + n + '」を保存しました（' + item.u.length + '単元' + (withQ ? '・問題' + PROBS.length + '問つき' : '') + '）。');
@@ -16952,7 +16978,8 @@ function snapProbs(){
   const keepOf = i => i === cur ? { ADJ, BRK } : (VARS && VARS.keep[i]) || null;
   const v = lists.map(l => l.map(p => p._g ? [...p._g, keyHash(p.key), ...(p.pt != null ? [p.pt] : [])] : null));
   const k = lists.map((_, i) => { const x = keepOf(i); return x ? { a: JSON.parse(JSON.stringify(x.ADJ)), b: [...x.BRK.work] } : null; });
-  return { v, vc: cur, k };
+  const lk = lockBase().map((_, i) => i).filter(lockedAt);
+  return { v, vc: cur, k, ...(lk.length ? { lk } : {}) };
 }
 // ファイルから読みこんだ問題の記録を確かめる（形がおかしいものは捨てる）
 function cleanProbs(q){
@@ -16960,7 +16987,9 @@ function cleanProbs(q){
   const okG = g => Array.isArray(g) && g.length >= 4 && typeof g[0] === 'string' && UNIT_SUBJ[g[0]] !== undefined && Number.isFinite(g[3]);
   if (!q.v.every(l => Array.isArray(l) && l.length && l.every(okG))) return null;
   const k = Array.isArray(q.k) ? q.v.map((_, i) => { const x = q.k[i]; return x && typeof x === 'object' ? { a: x.a && typeof x.a === 'object' && !Array.isArray(x.a) ? x.a : {}, b: Array.isArray(x.b) ? x.b.filter(Number.isInteger) : [] } : null; }) : q.v.map(() => null);
-  return { v: q.v.map(l => l.map(g => g.slice(0, 6))), vc: Number.isInteger(q.vc) ? q.vc : 0, k };
+  const lk = Array.isArray(q.lk) ? q.lk.filter(i => Number.isInteger(i) && i >= 0 && i < q.v[0].length) : [];
+  const sn = Array.isArray(q.sn) ? q.v.map((l, i) => l.map((_, j) => { const x = q.sn[i] && q.sn[i][j]; return typeof x === 'string' ? x : null; })) : null;
+  return { v: q.v.map(l => l.map(g => g.slice(0, 6))), vc: Number.isInteger(q.vc) ? q.vc : 0, k, ...(lk.length ? { lk } : {}), ...(sn ? { sn } : {}) };
 }
 function recordRecent(){
   if (!PROBS.length) return;
@@ -17002,7 +17031,7 @@ function openRecent(r, same, name){
   const before = PROBS.length ? snapFull(lastSt) : null;
   ST.setOpen = ''; if (r.s) applySettings(r.s);
   ST.title = r.title || ''; $('title').value = ST.title;
-  const lists = same && Array.isArray(r.v) && r.v.length ? r.v.map(l => l.map(g => (Array.isArray(g) && regenP(g)) || null)) : null;
+  const lists = same && Array.isArray(r.v) && r.v.length ? r.v.map((l, i) => l.map((g, j) => Array.isArray(g) ? reviveP(g, r.sn && r.sn[i] && r.sn[i][j]).p : null)) : null;
   if (!lists || lists.some(l => !l.length || l.some(p => !p))) {
     setUnits(r.u, false); holdNote = true;
     status(same ? (name ? `「${name}」` : '前のプリント') + 'の問題は作りなおせなかったので、同じ単元と設定で新しく作ります（記録が古いため）。' : '前に作ったときの単元と設定で、新しく問題を作ります。', same);
@@ -17015,6 +17044,8 @@ function openRecent(r, same, name){
   const cur = lists.length > 1 ? Math.min(r.vc || 0, lists.length - 1) : 0;
   VARS = lists.length > 1 ? { list: lists, cur, keep: lists.map((_, i) => keepOf(i)) } : null;
   PROBS = lists[cur];
+  // ロック：開いたプリントでロックしていた番号をロックしなおす（前のロックは外す）
+  LOCKS = []; LOCK_V.clear(); (Array.isArray(r.lk) ? r.lk : []).forEach(i => { const p = lists[0][i]; if (p) { LOCKS.push(p); LOCK_V.set(p, lists.map(l => l[i])); } }); saveLocks();
   const k0 = keepOf(cur) || { ADJ: {}, BRK: { work: new Set(), list: new Set() } }; ADJ = k0.ADJ; BRK = k0.BRK;
   ST.count = String(PROBS.length); ST.uCnt = cntFrom(PROBS); ST.uBase = null; ST.fit = 'count'; $('cnt').value = ST.count; save(); syncSeg(); updateGrpSums();
   render(); lastSt = snapSt(); if (before) pushFull('recent', before);
@@ -17195,7 +17226,33 @@ function lockLabel(b, on){
   b.title = on ? 'ロック中：作りなおしても、問題数や設定を変えても残ります（押すと外す）' : 'この問題をロックする（作りなおしても残す）';
   b.setAttribute('aria-label', `問題 ${+b.dataset.pi + 1} の${on ? 'ロックを外す' : 'ロック'}`); b.setAttribute('aria-pressed', on ? 'true' : 'false');
 }
-function saveLocks(){ ST.locks = LOCKS.map(p => p._g).filter(Boolean); save(); }
+// 問題の写し（JSON）。アプリを直して種から同じ問題が作れなくなったときに使う。ふつうの値だけの問題に限る（chk・配点はのぞく）
+function snapP(p){
+  const ok = o => o == null || typeof o !== 'object' || (Array.isArray(o) ? o.every(ok) : Object.getPrototypeOf(o) === Object.prototype && Object.keys(o).every(k => typeof o[k] === 'function' ? k === 'chk' : ok(o[k])));
+  try { return ok(p) ? JSON.stringify(p, (k, v) => k === 'chk' || k === 'pt' ? undefined : v) : null; } catch (e) { return null; }
+}
+function fromSnap(sn, g){ try { const p = JSON.parse(sn); if (!p || typeof p.label !== 'string') return null; p.chk = () => 0; p._g = g.slice(0, 4); return p; } catch (e) { return null; } }
+// 種から作りなおす。印（keyHash）がちがえば写しを使う（数が前と同じになる）。どちらもだめなら changed
+function reviveP(g, sn){
+  let p = null; try { p = Array.isArray(g) && GEN[g[0]] ? regenP(g) : null; } catch (e) { p = null; }
+  if (p && (g[4] === undefined || keyHash(p.key) === g[4])) { p._g = g.slice(0, 4); return { p }; }
+  const q = sn ? fromSnap(sn, g) : null; if (q) return { p: q };
+  if (p) p._g = g.slice(0, 4);
+  return { p, changed: true };
+}
+const recP = p => p && p._g ? [...p._g, keyHash(p.key)] : null;
+function saveLocks(){ ST.locks = LOCKS.map(p => { const v = LOCK_V.get(p) || [p]; return { g: v.map(recP), s: v.map(snapP) }; }).filter(e => e.g.every(Boolean)); save(); }
+// 別バージョンがあるとき、ロックした番号の各版の問題を覚えなおす（版を足した・並べかえたあと）
+function syncLockV(){
+  if (!LOCKS.length) return;
+  let ch = false;
+  LOCKS.forEach(p => {
+    const i = lockBase().indexOf(p); if (i < 0) return;
+    const v = VARS ? VARS.list.map(l => l[i]) : (LOCK_V.get(p) || [p]), old = LOCK_V.get(p);
+    if (!old || old.length !== v.length || v.some((q, k) => q !== old[k])) { LOCK_V.set(p, v); ch = true; }
+  });
+  if (ch) saveLocks();
+}
 // 紙面の印（点線の枠）とボタンの形、「ロックを外す」ボタンを今のロックに合わせる（作りなおさない）
 function markLocks(){
   document.querySelectorAll('#sheets .cell[data-i]').forEach(e => e.classList.toggle('lockQ', lockedAt(+e.dataset.i)));
@@ -17206,7 +17263,7 @@ function markLocks(){
 function toggleLock(i){
   const p = lockBase()[i]; if (!p) return;
   const k = LOCKS.indexOf(p), on = k < 0;
-  if (on) LOCKS.push(p); else LOCKS.splice(k, 1);
+  if (on) { LOCKS.push(p); LOCK_V.set(p, VARS ? VARS.list.map(l => l[i]) : [p]); } else { LOCKS.splice(k, 1); LOCK_V.delete(p); }
   saveLocks(); markLocks();
   status(on ? `(${i + 1}) をロックしました。作りなおしても、問題数や設定を変えても残ります。` : `(${i + 1}) のロックを外しました。`);
 }
@@ -17214,10 +17271,11 @@ function toggleLock(i){
 function deleteOne(i){
   const p = PROBS[i]; if (!p) return;
   const base = lockBase()[i], k = LOCKS.indexOf(base);
-  if (k >= 0) { LOCKS.splice(k, 1); saveLocks(); }
+  const kv = LOCK_V.get(base);
+  if (k >= 0) { LOCKS.splice(k, 1); LOCK_V.delete(base); saveLocks(); }
   EXCL.add(keyHash(p.key));
   const keys = new Set((VARS ? VARS.list.flat() : PROBS).map(q => q.key)), q = sibling(p, keys);
-  if (!q) { if (k >= 0) { LOCKS.splice(k, 0, base); saveLocks(); } EXCL.delete(keyHash(p.key)); status('この単元・難しさの、ほかの問題が見つかりませんでした（削除できません）。', true); return; }
+  if (!q) { if (k >= 0) { LOCKS.splice(k, 0, base); if (kv) LOCK_V.set(base, kv); saveLocks(); } EXCL.delete(keyHash(p.key)); status('この単元・難しさの、ほかの問題が見つかりませんでした（削除できません）。', true); return; }
   const before = snapLay();
   if (p.pt != null) q.pt = p.pt;
   PROBS[i] = q;
@@ -17229,13 +17287,19 @@ $('sheets').addEventListener('click', e => {
   const b = e.target.closest('.qb'); if (!b) return;
   if (b.classList.contains('lk')) toggleLock(+b.dataset.pi); else deleteOne(+b.dataset.pi);
 });
-$('bLockAll').addEventListener('click', () => { const n = LOCKS.length; LOCKS = []; saveLocks(); markLocks(); status(`${n}問のロックを外しました（いまの問題はそのままです。次に作りなおすと入れかわります）。`); });
-// 保存したロックを読みもどす（種から作りなおす）
-LOCKS = (Array.isArray(ST.locks) ? ST.locks : []).map(g => { try { if (!Array.isArray(g) || !GEN[g[0]]) return null; const p = regenP(g); if (p) p._g = g.slice(0, 4); return p; } catch (e) { return null; } }).filter(Boolean);
+$('bLockAll').addEventListener('click', () => { const n = LOCKS.length; LOCKS = []; LOCK_V.clear(); saveLocks(); markLocks(); status(`${n}問のロックを外しました（いまの問題はそのままです。次に作りなおすと入れかわります）。`); });
+// 保存したロックを読みもどす（種から作りなおし、印がちがえば写しを使う）。v5.109.0 の形（種だけ）も読む
+let lockChanged = 0;
+(Array.isArray(ST.locks) ? ST.locks : []).forEach(e => {
+  const gs = Array.isArray(e) ? [e] : e && Array.isArray(e.g) ? e.g : null; if (!gs || !gs.length) return;
+  const v = gs.map((g, k) => { const r = reviveP(g, e.s && e.s[k]); if (r.changed) lockChanged++; return r.p; });
+  if (v.some(p => !p)) return;
+  LOCKS.push(v[0]); LOCK_V.set(v[0], v);
+});
 
 /* ========== 小テスト：問題を先に選ぶ ========== */
 // 単元と難しさを選ぶと、候補の問題を式が見える形で並べる。クリックした順に番号がつき、「選んだ問題でレイアウトへ」でその問題だけのプリントにする（全部ロック）
-const PK = { u: null, lv: 1, cand: {}, sel: [] };
+const PK = { u: null, lv: 1, cand: {}, sel: [], open: new Set(), fresh: null };
 const pkLvs = u => ADV_UNITS.has(u) ? [1, 2, 3] : [1, 2];
 function pkMore(n = 9){
   const k = PK.u + '|' + PK.lv, list = PK.cand[k] ||= [], keys = new Set(list.concat(PK.sel).map(p => p.key)), av = avoidSet();
@@ -17245,23 +17309,33 @@ function pkMore(n = 9){
     keys.add(p.key); list.push(p); add++;
   }
 }
-const pkCardHTML = (p, j) => { const n = PK.sel.indexOf(p) + 1; return `<div class="pkCard${n ? ' on' : ''}" role="button" tabindex="0" aria-pressed="${n ? 'true' : 'false'}" data-j="${j}"><span class="pkNo">${n || ''}</span><div class="pkLb">${p.label.split('\n').map(rich).join('<br>')}</div>${showMx(p) ? `<div class="pkMx">${K('\\displaystyle ' + p.math)}</div>` : ''}${p.fig ? `<div class="pkFig">${svgOf(p.fig)}</div>` : ''}</div>`; };
+const pkCardHTML = (p, j) => { const n = PK.sel.indexOf(p) + 1; return `<div class="pkCard${n ? ' on' : ''}" role="button" tabindex="0" aria-pressed="${n ? 'true' : 'false'}" data-j="${j}"><span class="pkNo">${n || ''}</span><div class="pkLb">${p.label.split('\n').map(rich).join('<br>')}</div>${showMx(p) ? `<div class="pkMx">${K('\\displaystyle ' + p.math)}</div>` : ''}${p.fig ? `<div class="pkFig">${svgOf(p.fig)}</div>` : ''}<div class="pkAct"><button type="button" class="pkA${PK.open.has(p) ? ' on' : ''}" data-a="ans" aria-expanded="${PK.open.has(p)}">解答</button><button type="button" class="pkA" data-a="sim" title="同じ形で数がちがう問題を、このすぐ後ろに足します">似た問題</button></div>${PK.open.has(p) ? `<div class="pkAns">${String(p.ans || '').split('\n').map(rich).join('<br>')}<div class="pkT">参考タイム ${fmt3(p.sec)}（理想／標準／初心者）</div></div>` : ''}</div>`; };
 function pkDraw(){
   const lvs = pkLvs(PK.u); if (!lvs.includes(PK.lv)) PK.lv = lvs[0];
   $('pkLv').innerHTML = lvs.map(l => `<button type="button" data-lv="${l}"${l === PK.lv ? ' class="on"' : ''}>${LV_NAME[l]}</button>`).join('');
   const list = PK.cand[PK.u + '|' + PK.lv] || [];
   $('pkGrid').innerHTML = list.map(pkCardHTML).join('') || '<div class="gnote">この単元・難しさの問題が作れませんでした。</div>';
+  if (PK.fresh) { const j = list.indexOf(PK.fresh), c = $('pkGrid').querySelector(`[data-j="${j}"]`); if (c) { c.classList.add('pkNew'); c.scrollIntoView({ block: 'nearest' }); } PK.fresh = null; }
   pkTray();
 }
 function pkTray(){
-  $('pkTray').innerHTML = PK.sel.length ? `<b style="font-size:13px">選んだ問題 ${PK.sel.length}問</b>${PK.sel.map((p, i) => `<span class="pkChip" data-i="${i}" title="ドラッグで順番を変えられます">(${i + 1}) ${esc(UNIT_NAME[p.unit] || p.unit)}・${LV_NAME[p.lv] || ''}<button type="button" data-x="${i}" aria-label="(${i + 1}) を外す">${XMARK}</button></span>`).join('')}<button class="btn" id="pkClear" type="button">すべて外す</button>` : '<span class="gnote" style="margin:0">まだ選んでいません。</span>';
+  pkUnitsHTML();
+  $('pkTray').innerHTML = PK.sel.length ? `<span class="pkSum"><b>選んだ問題 ${PK.sel.length}問</b>・満点 <b>${PK.sel.reduce((t, p) => t + ptOf(p), 0)}点</b>・参考タイム <b>${fmt3(sumSec(PK.sel))}</b>（理想／標準／初心者）</span>${PK.sel.map((p, i) => `<span class="pkChip" data-i="${i}" title="ドラッグで順番を変えられます">(${i + 1}) ${esc(UNIT_NAME[p.unit] || p.unit)}・${LV_NAME[p.lv] || ''}<button type="button" data-x="${i}" aria-label="(${i + 1}) を外す">${XMARK}</button></span>`).join('')}<button class="btn" id="pkClear" type="button">すべて外す</button>` : '<span class="gnote" style="margin:0">まだ選んでいません。</span>';
   $('pkOk').disabled = !PK.sel.length;
   $('pkOk').textContent = PK.sel.length ? `選んだ${PK.sel.length}問でレイアウトへ` : '選んだ問題でレイアウトへ';
 }
-function pkSetUnit(u){ PK.u = u; $('pkUnit').value = u; const lvs = pkLvs(u); if (!lvs.includes(PK.lv)) PK.lv = lvs[0]; if (!(PK.cand[u + '|' + PK.lv] || []).length) pkMore(); pkDraw(); }
+function pkUnitsHTML(){
+  const sj = PK.sj, cnt = {}; PK.sel.forEach(p => { cnt[p.unit] = (cnt[p.unit] || 0) + 1; });
+  const tabs = [...new Set([...document.querySelectorAll('#fields .units')].map(b => b.dataset.subj))];
+  $('pkSubj').innerHTML = tabs.map(t => { const n = PK.sel.filter(p => tabOf(p.unit) === t).length; return `<button type="button" data-sj="${t}"${t === sj ? ' class="on"' : ''}>${SUBJ_NAME[t] || t}${n ? `<b>${n}</b>` : ''}</button>`; }).join('');
+  $('pkUnits').innerHTML = [...document.querySelectorAll(`#fields .units[data-subj="${sj}"]`)].map(b => {
+    const g = b.querySelector('.ugrp'), us = [...b.querySelectorAll('input[name="unit"]')].filter(i => GEN[i.value]);
+    return us.length ? `<div class="units">${g ? `<span class="ugrp">${esc(g.textContent)}</span>` : ''}${us.map(i => `<button type="button" class="chk${i.value === PK.u ? ' on' : ''}" data-u="${i.value}" aria-pressed="${i.value === PK.u}">${esc(unitName(i.value))}${cnt[i.value] ? `<span class="pkC">${cnt[i.value]}</span>` : ''}</button>`).join('')}</div>` : '';
+  }).join('');
+}
+function pkSetUnit(u){ PK.u = u; PK.sj = tabOf(u); pkUnitsHTML(); $('pkUName').textContent = unitName(u); const ub = $('pkUnits').querySelector('.chk.on'); if (ub) ub.scrollIntoView({ block: 'nearest' }); const lvs = pkLvs(u); if (!lvs.includes(PK.lv)) PK.lv = lvs[0]; if (!(PK.cand[u + '|' + PK.lv] || []).length) pkMore(); pkDraw(); }
 function openPick(){
-  const subs = ['1', 'A', '2', 'B', 'C', '3', 'P'];
-  $('pkUnit').innerHTML = subs.map(sj => { const us = UNITS.filter(x => x[2] === sj); return us.length ? `<optgroup label="${SUBJ_NAME[sj]}">${us.map(([u, nm]) => `<option value="${u}">${esc(nm)}${ST.units.includes(u) ? '（選択中）' : ''}</option>`).join('')}</optgroup>` : ''; }).join('');
+  $('pkMsg').textContent = '';
   // ロックした問題があれば、それを選んだ状態から始める（いまのプリントの順）
   const base = lockBase(); PK.sel = base.filter(p => LOCKS.includes(p));
   const u0 = (PK.u && UNIT_SUBJ[PK.u] && (!ST.units.length || ST.units.includes(PK.u))) ? PK.u : (ST.units[0] || UNITS[0][0]);
@@ -17274,19 +17348,38 @@ function pkApply(){
   if (!isQuiz()) { ST.kind = 'quiz'; ST.ptShow = 'on'; ST.ansBox = 'on'; }
   setUnits([...new Set(list.map(p => p.unit))], false); clearTimeout(regenTimer); regenSeq++;
   VARS = null; PROBS = list; ADJ = {}; BRK = { work: new Set(), list: new Set() };
-  LOCKS = list.slice(); saveLocks();
+  LOCKS = list.slice(); LOCK_V.clear(); list.forEach(p => LOCK_V.set(p, [p])); saveLocks();
   ST.count = String(PROBS.length); ST.uCnt = cntFrom(PROBS); ST.uBase = null; ST.fit = 'count'; $('cnt').value = ST.count; save(); syncSeg(); quizSync(); updateGrpSums();
   render(); lastSt = snapSt(); if (before) pushFull('pick', before);
   $('winPick').close();
   status(`選んだ${list.length}問でプリントを作りました（全部ロック）。次は配点・答えの枠・ならび順・用紙などでレイアウトを整えてください。`);
 }
 $('bPick').addEventListener('click', openPick);
-$('pkUnit').addEventListener('change', () => pkSetUnit($('pkUnit').value));
+$('bQuizSave').addEventListener('click', () => {
+  if (!PROBS.length) { status('先に問題を選ぶか、プリントを作ってください。', true); return; }
+  $('presetWithSet').checked = true; $('presetWithProb').checked = true;
+  const d = new Date(); if (!$('presetName').value.trim()) $('presetName').value = (ST.title.trim() || '小テスト') + ' ' + (d.getMonth() + 1) + '月' + d.getDate() + '日';
+  $('winPreset').showModal(); $('presetName').focus(); $('presetName').select();
+  status('名前を確かめて「保存」を押してください。問題・数・配点・ロック・別バージョンもそのまま残ります。');
+});
+$('pkSubj').addEventListener('click', e => { const b = e.target.closest('button[data-sj]'); if (!b) return; PK.sj = b.dataset.sj; pkUnitsHTML(); $('pkUnits').scrollTop = 0; });
+$('pkUnits').addEventListener('click', e => { const b = e.target.closest('button[data-u]'); if (b) pkSetUnit(b.dataset.u); });
 $('pkLv').addEventListener('click', e => { const b = e.target.closest('button[data-lv]'); if (!b) return; PK.lv = +b.dataset.lv; if (!(PK.cand[PK.u + '|' + PK.lv] || []).length) pkMore(); pkDraw(); });
 $('pkMore').addEventListener('click', () => { pkMore(); pkDraw(); const g = $('pkGrid'); g.lastElementChild && g.lastElementChild.scrollIntoView({ block: 'nearest' }); });
 const pkToggle = c => { const p = (PK.cand[PK.u + '|' + PK.lv] || [])[+c.dataset.j]; if (!p) return; const k = PK.sel.indexOf(p); if (k >= 0) PK.sel.splice(k, 1); else PK.sel.push(p); const y = $('pkGrid').scrollTop; pkDraw(); $('pkGrid').scrollTop = y; const nc = $('pkGrid').querySelector(`[data-j="${c.dataset.j}"]`); if (nc) nc.focus({ preventScroll: true }); };
-$('pkGrid').addEventListener('click', e => { const c = e.target.closest('.pkCard'); if (c) pkToggle(c); });
-$('pkGrid').addEventListener('keydown', e => { const c = e.target.closest('.pkCard'); if (c && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); pkToggle(c); } });
+$('pkGrid').addEventListener('click', e => {
+  const c = e.target.closest('.pkCard'); if (!c) return;
+  const a = e.target.closest('.pkA'); $('pkMsg').textContent = '';
+  if (!a) { pkToggle(c); return; }
+  const list = PK.cand[PK.u + '|' + PK.lv] || [], j = +c.dataset.j, p = list[j]; if (!p) return;
+  const y = $('pkGrid').scrollTop;
+  if (a.dataset.a === 'ans') { if (PK.open.has(p)) PK.open.delete(p); else PK.open.add(p); pkDraw(); $('pkGrid').scrollTop = y; return; }
+  // 似た問題：同じ単元・同じ難しさ（パターンのある単元は同じパターン）で数のちがう問題
+  const keys = new Set(Object.values(PK.cand).flat().concat(PK.sel).map(q => q.key)), q = sibling(p, keys);
+  if (!q) { $('pkMsg').textContent = 'この問題と同じ形の、ほかの問題が見つかりませんでした。'; return; }
+  list.splice(j + 1, 0, q); PK.fresh = q; pkDraw();
+});
+$('pkGrid').addEventListener('keydown', e => { const c = e.target.closest('.pkCard'); if (c && !e.target.closest('.pkA') && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); pkToggle(c); } });
 $('pkTray').addEventListener('click', e => {
   if (e.target.closest('#pkClear')) { PK.sel = []; pkDraw(); return; }
   const x = e.target.closest('button[data-x]'); if (x) { PK.sel.splice(+x.dataset.x, 1); pkDraw(); }
@@ -17429,7 +17522,7 @@ document.addEventListener('keydown', e => {
   planCtl = wrapZ(planCtl); placeAnsRe = wrapZ(placeAnsRe); evenPage = wrapZ(evenPage); layoutCheck = wrapZ(layoutCheck);
   layoutAnswers = wrapZ(layoutAnswers); fitMath = wrapZ(fitMath); }
 applyFont(); applyPaper(); syncSeg(); renderPresets(); renderRecent(); applyMore();
-(document.fonts ? document.fonts.ready : Promise.resolve()).then(regenerate);
+(document.fonts ? document.fonts.ready : Promise.resolve()).then(() => { regenerate(); if (lockChanged) status(`アプリを直したため、ロックした問題のうち${lockChanged}問は前と同じ数で作れませんでした。確かめて、必要ならロックしなおしてください。`, true); });
 </script>
 </body>
 </html>
